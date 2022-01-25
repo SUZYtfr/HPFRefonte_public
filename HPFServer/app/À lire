@@ -1,0 +1,29 @@
+Comment démarrer le serveur Django
+
+Le projet utilise la version 3 de Python. Le but étant, pendant la phase de développement, de tenir compte de l'apparition de nouvelles sous-versions d'une part, et leur prise en charge par les hébergeurs d'autre part.
+À ce jour, la sous-version utilisée est 3.9. En cas de doute sur la mise à jour de cette information, se référer au fichier Pipfile indiquant la version utilisée de fait.
+
+- Installer la sous-version de Python en question :
+https://www.python.org/downloads/
+
+- Ouvrir un gestionnaire de commandes.
+
+- Installer l'environnement de travail virtuel / gestionnaire de paquets Pipenv (rubrique Installation) :
+https://pypi.org/project/pipenv/
+
+- Naviguer jusqu'au dossier de travail du projet Django (où se trouve le présent document).
+
+- Installer les dépendances du projet :
+pipenv install
+
+- Créer le schéma de la base de données :
+pipenv makemigrations users features fictions reviews texts colls polls selections news sessions auth reports banners
+
+- Démarrer le serveur test de Django dans Pipenv :
+pipenv run manage.py runserver
+
+
+
+Le projet suit une structure multi-applications typique pour Django avec le module REST framework.
+En plus des fichiers habituels se trouvent à la racine :
+- dump.json, données mock pour la base de données de la version développement

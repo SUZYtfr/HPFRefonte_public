@@ -1,0 +1,2438 @@
+{
+  "users": [
+    {
+      "email": "suzy@tfr.com",
+      "password": "$2a$10$LUaVtgoHTbzsWrxXkgTTluAy8zS/c1iX4ThtqzwSaEeo8Mc.ogaaG",
+      "checkPass": "Azerty123@",
+      "username": "SUZYtfr",
+      "realname": "",
+      "bio": "",
+      "website": "",
+      "id": 1
+    }
+  ],
+  "fanfictions": [
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "«Le coeur n'est jamais si bien en équilibre que sur un tranchant d'acier.» Pierre Reverdy",
+      "summary": "<p>&nbsp;</p>\r\n<p style=\"text-align: center;\"><img src=\"https://i37.servimg.com/u/f37/11/66/29/43/montag12.png\" alt=\"\" /><br /><br /> <strong>Ludo Mentis Aciem - Comme le jeu s'empare de la raison</strong><br /> <strong>Partie 1/7 - Mane tribulationis</strong></p>\r\n<p style=\"text-align: justify;\">1998. Au lendemain de la chute du Seigneur des T&eacute;n&egrave;bres, le monde des sorciers en liesse reconstruit sur ses ruines. Pour Katelyna Whisper, &acirc;g&eacute;e de onze ans et faisant preuve d'une maladresse d&eacute;j&agrave; bien aguerrie, sa rentr&eacute;e &agrave; Poudlard est un r&ecirc;ve qui se r&eacute;alise enfin. Apr&egrave;s des mois de claustration pour &eacute;chapper aux Mangemorts, avides de faire payer &agrave; son p&egrave;re, Phil, ancien Serpentard tra&icirc;tre &agrave; son sang, une dette de longue date, la petite Kate sent l'espoir revigorer sa petite vie. Elle songe &agrave; son avenir &agrave; l'&eacute;cole de sorcellerie. Mais son utopie prend fin d&egrave;s lors qu'elle re&ccedil;oit le Choixpeau magique sur sa t&ecirc;te. Car ce dernier l'envoie dans une cinqui&egrave;me maison...</p>\r\n<p style=\"text-align: center;\"><strong><em>Partie 2/7 - </em>Statim vivus fierem<em>, TERMINEE : &agrave; partir du <a href=\"viewstory.php?sid=25851&amp;chapter=11\">chapitre 11</a><br /></em></strong><strong><em>Partie 3/7 - </em>Multa sunt sispiria<em>, TERMINEE : &agrave; partir du <a href=\"viewstory.php?sid=25851&amp;chapter=23\">chapitre 23</a><br /></em></strong><strong><em>Partie 4/7 - </em>Sicut splendor fulguris<em>, TERMINEE : &agrave; partir du <a href=\"viewstory.php?sid=25851&amp;chapid=131212\">chapitre 42</a><br /></em></strong><strong><em>Partie 5/7 -&nbsp;</em>Miqui quoque niteris<em>, TERMINEE : &agrave; partir du&nbsp;<a href=\"viewstory.php?sid=25851&amp;chapter=61\">chapitre&nbsp;61</a><br /></em></strong><strong><em>Partie 6/7 -&nbsp;</em>Mecum omnes plangite<em>, TERMINEE : &agrave; partir du&nbsp;<a href=\"viewstory.php?sid=25851&amp;chapter=80\">chapitre&nbsp;80</a><br /></em></strong><strong><em>Partie 7/7 -&nbsp;</em>Fortune rota volvitur<em>, EN COURS : &agrave; partir du <a href=\"viewstory.php?sid=25851&amp;chapter=101\">chapitre 101</a></em></strong></p>\r\n<p><strong><em>Rating -16 &agrave; partir de la partie V.</em></strong></p>\r\n<p><em><strong>Cr&eacute;dits du montage :</strong> <br /><strong>Actrice :</strong> Abigail Breslin , extrait du film <em>Ma vie pour la tienne</em>, tous droits &agrave; Metropolitan FilmExport<br /> <strong>Fond :</strong> image de Dermot Power / Warner Bros pour la production cin&eacute;matographique du prisonnier d'Azkaban <br /> <strong>Montage par Ielenna [auteur de cette fan-fic]</strong></em></p>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        },
+        {
+          "author_id": 2,
+          "nickname": "Lilouze"
+        }
+      ],
+      "rating": 0,
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [
+        {
+          "serie_id": 1,
+          "title": "Une série"
+        },
+        {
+          "serie_id": 2,
+          "title": "Une deuxième série"
+        }
+      ],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 4,
+      "featured": true
+    },
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "Ludo Mentis Aciem",
+      "summary": "Tout le monde connaît les maraudeurs, leur carte, leur farce et surtout ceux qui composent le groupe. Cependant un mystère est toujours insoluble : le début de leur amitié. Comment Sirius et James sont devenus les fauteurs de troubles les plus connus ? De quelle façon Remus réussissait-il à mentir à ses amis sur « son problème de fourrure » ? Et surtout le mystère encore plus obscur et dur à résoudre : comment Peter est-il devenu l&#8217;ami des trois autres ? <br />évidemment  rien qu&#8217;à cette idée vous ne pensez qu&#8217;à tuer ce traître en vous moquant de sa vie ; toutefois ce n&#8217;est pas une raison pour le laisser de côté dans les histoires car il n&#8217;a pas toujours était ainsi. <br />Maintenant remontons le temps aux jours moins sombre que les nôtres, là où tout commence, où quatre garçons vont se rencontrer sans savoir qu&#8217;ils seront inséparable, à leur première année dans une école lointaine (et étrange), à leur rentrée dans Poudlard.",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "rating": 0,
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        },
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        },
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        },
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [
+        {
+          "serie_id": 5,
+          "title": "L'univers de Ludo Mentis Aciem"
+        }
+      ],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 1,
+      "featured": true
+    },
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "Mon titre 3",
+      "summary": "<p style=\"text-align: center;\"><br />Quand, dirigé par Voldemort, le nouvel empire est à son apogée... <br /><br />Quand elle et tous les sangs-de-bourbes sont réduits à la condition d'esclave... <br /><br />Quand elle se retrouve seule...<br /><br />Quand toute trace d'espoir a disparu...<br /><br />Et quand il ne reste rien... <br /><br />Un Draco/Hermione commence...<br /><br /> <a><img src=\"http://nsa02.casimages.com/img/2008/07/09/0807091052373995711.jpg\" border=\"0\" alt=\"Image hébergée par Casimages.com : votre hébergeur d images simple et gratuit\" /></a><br /><br /> Fanart original créé par Saphirius, montage réalisé par mes soins...</p>\r\n<hr style=\"text-align: center;\" />\r\n<p style=\"text-align: center;\"><strong>Hermione, devenue esclave suite à la victoire du nouvel empire est envoyée chez son nouveau maître Drago Malfoy...</strong></p>\r\n<hr style=\"text-align: center;\" />\r\n<p style=\"text-align: center;\"><strong> </strong><em>Ne tient pas compte des derniers chapitres du tome 7, DM/HG, lemon au chapitre 12<br /></em></p><br>    <b>Edit Modération : Ne sélectionne pas tous les personnages de ta fanfiction, seulement jusqu'à 4.</b>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "rating": 0,
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 4,
+      "featured": true
+    },
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "Mon titre 4",
+      "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "rating": 0,
+      "comments": [],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 4,
+      "featured": true
+    },
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "Mon titre 5",
+      "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "rating": 0,
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 4,
+      "featured": true
+    },
+    {
+      "fanfiction_id": 22011,
+      "last_update_date": "2019-06-10 21:52:26",
+      "creation_date": "2019-06-10 21:52:26",
+      "title": "Mon titre 6",
+      "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "rating": 0,
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ],
+      "characteristics": [
+        {
+          "characteristic_id": 243,
+          "characteristic_type_id": 5,
+          "name": "Interdit -18"
+        },
+        {
+          "characteristic_id": 215,
+          "characteristic_type_id": 2,
+          "name": "Aventure/Action"
+        },
+        {
+          "characteristic_id": 229,
+          "characteristic_type_id": 4,
+          "name": "Lemon Hard"
+        }
+      ],
+      "series": [],
+      "chapter_count": 75,
+      "word_count": 1500261,
+      "read_count": 85000,
+      "status": 4,
+      "featured": false
+    }
+  ],
+  "news": [
+    {
+      "news_id": 1,
+      "post_date": "2020-11-01T18:25:43.511Z",
+      "title": "Ma super news",
+      "content": "<p style=\"text-align: center;\"><em>Vous organisez un concours, un complot ou une machination sur le forum, directement ou indirectement lié à HPFanfic ?</em></p><p style=\"text-align: justify;\">L’équipe d’HPFanfiction vous propose de <strong style=\"color:#FF7F50\">relayer votre projet via une News comme celle-ci et/ou sur sa page Facebook</strong> ! <br /> Intéressé ? N’hésitez pas à contacter <a href=\"http://www.herosdepapierfroisse.fr/forum/ucp.php?i=pm&amp;mode=compose&amp;u=15297\"><strong style=\"color:#FF7F50\">Chalusse</strong> par MP sur le forum</a> pour lui transmettre les informations principales (thème général, condition particulière d’inscription, deadline, etc.) !<br /> Prenez bien soin de vous !</p>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        }
+      ],
+      "comments": [
+        {
+          "comment_id": 1,
+          "post_date": "2020-11-01T19:25:43.511Z",
+          "content": "Mon super commentaire",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "news_id": 2,
+      "post_date": "2020-11-02T18:25:43.511Z",
+      "title": "Ma news à deux auteurs",
+      "content": "Chers membres d'HPF,<br><br>Nous vous informons que la 90e édition des <i>Nuits d'HPF</i> se déroulera du<b>samedi 22 juin 20h au dimanche 23 juin 19h59</b> Vous pouvez dès à présent venir <a href=\"http://www.herosdepapierfroisse.fr/forum/viewtopic.php?p=784041#p784041\">vous inscrire !</a><br>Pour connaître les modalités de participation, rendez-vous sur <A href=\"http://www.herosdepapierfroisse.fr/forum/viewtopic.php?f=65&t=5075\">ce topic.</A> et <A href=\"http://www.herosdepapierfroisse.fr/forum/viewtopic.php?p=784041#p784041\">celui-ci.</A><br><br>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        },
+        {
+          "author_id": 2,
+          "nickname": "Lilouze66"
+        }
+      ],
+      "comments": []
+    },
+    {
+      "news_id": 3,
+      "post_date": "2020-12-02T18:25:43.511Z",
+      "title": "Ma news à deux auteurs",
+      "content": "<p>Quatre, Cinq, Six</p>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        },
+        {
+          "author_id": 2,
+          "nickname": "Lilouze66"
+        }
+      ],
+      "comments": []
+    },
+    {
+      "news_id": 4,
+      "post_date": "2020-11-08T18:25:43.511Z",
+      "title": "Ma news à deux auteurs",
+      "content": "<p>Quatre, Cinq, Six</p>",
+      "authors": [
+        {
+          "author_id": 1,
+          "nickname": "SUZYtfr"
+        },
+        {
+          "author_id": 2,
+          "nickname": "Lilouze66"
+        }
+      ],
+      "comments": []
+    }
+  ],
+  "authors": [
+    {
+      "id": 1,
+      "user": {
+        "user_id": 1,
+        "creation_date": "2020-11-01T19:25:43.511Z",
+        "status": 2,
+        "nickname": "SUZYtfr",
+        "realname": "Simon",
+        "bio": "<p style=\"text-align: center;\"><strong>Membre HPF et toutes mes dents.</strong></p><br>\r\n<p style=\"text-align: center;\"><strong></strong> <img src=\"http://i22.photobucket.com/albums/b348/Atropos_/asso1.gif\" alt=\"\"></p><br>\r\n<p style=\"text-align: justify;\">Bonjour aux curieux ! Comme mon pseudonyme l'indique si bien, je suis Ielenna. Mon âge reste un grand mystère, je suis ergothérapeute en libéral (le plus beau métier du monde), mais avant tout je suis auteur ! (je suis également graphiste en amateur, dessinatrice et compositrice au piano).</p><br>\r\n<p style=\"text-align: justify;\">Ca commence à faire monstre temps que je suis sur HPF (depuis 2012, dammit). A tel point que je suis en couple avec un HPFien !</p><br>\r\n<p style=\"text-align: justify;\">J'ai pris la plume sous un véritable projet littéraire en mars 2006 et ait intégré les rangs d'internet l'été suivant avec ce qui deviendra mon plus gros projet : <em>Les Chroniques des Fleurs d'Opale</em>. Les deux premiers volumes sont sortis en 2017, des monstres pavés ! Le tome II devrit paraître fin 2019-début 2020.</p><br>\r\n<p style=\"text-align: justify;\">Et sinon, je suis aussi fondatrice et ancienne présidente d'une association de jeunes auteurs : Génération Ecriture. Collectif qui oeuvre pour la reconnaissance des jeunes auteurs, autant par le public extérieur que par le monde professionnel de la littérature.  Je suis du genre à énormément m'investir auprès des jeunes auteurs et suis très sensible à ce qui touche de près ou de loin à l'édition, milieu que je fréquente plus ou moins (traduction : j'essaie d'éviter à un grand nombre de se faire pigeonner)  J'ai rédigé pas mal de textes et de nouvelles, je manque rarement d'imagination et d'inspiration. Je vis dans un monde de Boursoufflets multicolores en pâte d'amande.  Twitter : @ielenna_ GE : www.generation-ecriture.com</p><br>\r\n<p style=\"text-align: justify;\"><em>A propos de Harry Potter</em></p><br>\r\n<p style=\"text-align: justify;\">Ma première réaction face à cette saga a été un rejet total de ce que j'appelais un effet de mode. Puis, j'ai succombé à la tentation et ait lu les quatre premiers tome, alors âgée de neuf-dix ans. Ayant grandi avec les acteurs de la saga, pour appartenir à la même génération qu'eux, j'ai constamment été plongée dans cet univers qui, plus que l'histoire et les personnages, m'a fascinée par la richesse de son univers. Facette que j'essaie de retranscrire au mieux dans mes fanfictions. Au lycée, j'échangeais régulièrement des Drarry avec ma meilleure amie, j'en étais particulièrement friande. J'aime les textes qui se rattachent au canon et qui font preuve d'imagination, qui véhiculent de véritables émotions. Je n'ai pas de personnage favori à proprement parlé, car pour moi <em>Harry Potter</em> est un tout.</p><br>\r\n<p style=\"text-align: center;\">*** *** *** *** *** *** *** ***</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://i39.servimg.com/u/f39/11/66/29/43/montag10.jpg\" alt=\"\"> <strong> </strong></p><br>\r\n<p style=\"font-size: 14px; text-align: center;\"><strong>Ludo Mentis Aciem</strong></p><br>\r\n<p style=\"text-align: center;\"><strong> Comme le jeu s'empare de la raison</strong></p><br>\r\n<p style=\"text-align: justify;\">Fiction commencée en juin 2012. Il s'agit de mon travail le plus important en termes de FF. LMA fait directement suite au tome VII de HP, avec une petite OC qui se retrouve à ouvrir, sans le vouloir, la cinquième maison de Poudlard. L'aventure se décline en sept parties, à la manière de la saga originelle. En phase de devenir l'une des fictions les plus longues du site HPF, LMA a été saluée et plébiscitée par 11 répertoires sur la plateforme Skyrock, où se trouve le \"blog officiel\" de l'histoire (ludo-mentis-aciem.skyrock.com)</p><br>\r\n<p style=\"text-align: justify;\"><em>N'attendez pas plus longtemps pour prendre part à cette grande aventure en compagnie de Kate Whisper, l'une des héroïnes les plus maladroites et touchantes qui soient !</em></p><br>\r\n<p style=\"text-align: justify;\">Images : Warner Bros, Abigail Breslin, brushs divers, montage : bibi</p><br>\r\n<p>&nbsp;</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~</p><br>\r\n<p style=\"text-align: center;\">&nbsp;</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://img15.hostingpics.net/pics/623114premier.jpg\" alt=\"\"></p><br>\r\n<p style=\"text-align: center;\"><strong>Blanche-Neige et les Sept Weasley</strong></p><br>\r\n<p style=\"text-align: center;\">Fanfiction parodique sur le thème des Contes rédigée dans le cadre du concours d'Asianchoose. Je certifie n'avoir consommé aucune drogue durant l'écriture de cette nouvelle !</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~ <br><img src=\"http://i754.photobucket.com/albums/xx182/papier_froisse/riez-1.jpg\" alt=\"\" width=\"204\" height=\"104\"></p><br>\r\n<p style=\"text-align: center;\"><strong>La Contingence des Malchanceux</strong>&nbsp;</p><br>\r\n<p style=\"text-align: center;\">Fanfiction comique pour le concours d'Ellie : et si la coupe des quatre maison tombait à parfaite égalité ? Et si les quatre champions du tournoi étaient ceux qu'on imaginait le moins à ce rôle ? Et si Dumbledore était un sociopathe atteint du syndrome de la Tourette ?</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://img15.hostingpics.net/pics/189353fvrier2016.png\" alt=\"\" width=\"117\" height=\"50\"></p><br>\r\n<p style=\"text-align: center;\"><br><strong>Et je vous laisse découvrir tous mes autres textes un peu plus bas !</strong> ;)</p><br>",
+        "is_premium": true,
+        "is_beta": true,
+        "avatar": "",
+        "stats": {
+          "fanfictions": 1,
+          "chapters": 85,
+          "words": 426000,
+          "series": 10,
+          "challenges": 2,
+          "reviews": 841,
+          "favorites_fanfictions": 4,
+          "favorites_series": 6,
+          "favorites_author": 8
+        },
+        "links": [
+          {
+            "link_type_id": 2,
+            "display_name": "Heron",
+            "link_url": "https://www.le-heron.com/fr/viewuser.php?uid=6853"
+          },
+          {
+            "link_type_id": 1,
+            "display_name": "HPF Forum",
+            "link_url": "https://www.herosdepapierfroisse.fr/forum/memberlist.php?mode=viewprofile&u=15524"
+          },
+          {
+            "link_type_id": 3,
+            "display_name": "SUZY TFR",
+            "link_url": "https://www.herosdepapierfroisse.fr/forum/memberlist.php?mode=viewprofile&u=15524"
+          },
+          {
+            "link_type_id": 4,
+            "display_name": "@SUZYtfr",
+            "link_url": "https://www.herosdepapierfroisse.fr/forum/memberlist.php?mode=viewprofile&u=15524"
+          },
+          {
+            "link_type_id": 5,
+            "display_name": "suzytfr",
+            "link_url": "https://www.herosdepapierfroisse.fr/forum/memberlist.php?mode=viewprofile&u=15524"
+          },
+          {
+            "link_type_id": 6,
+            "display_name": "SUZY DA",
+            "link_url": "https://www.herosdepapierfroisse.fr/forum/memberlist.php?mode=viewprofile&u=15524"
+          }
+        ]
+      },
+      "fanfictions": [
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 1",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 2",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 3",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 4",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 5",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 6",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fanfiction_id": 22011,
+          "last_update_date": "2019-06-10 21:52:26",
+          "title": "Mon titre 7",
+          "summary": "Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+          "authors": [
+            {
+              "author_id": 1,
+              "nickname": "SUZYtfr"
+            }
+          ],
+          "rating": 0,
+          "comments": [
+            {
+              "comment_id": 1,
+              "post_date": "2020-11-01T19:25:43.511Z",
+              "content": "Mon super commentaire",
+              "authors": [
+                {
+                  "author_id": 1,
+                  "nickname": "SUZYtfr"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "characteristics": [
+    {
+      "characteristic_id": 93,
+      "characteristic_type_id": 1,
+      "parent_id": 9,
+      "name": "Fics-cadeau",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 1,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Biographies",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 9,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Autres fics HP",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 10,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Voyages temporels",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 12,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Résistance",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 13,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Quidditch",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 14,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Les Animaux Fantastiques",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 15,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Fêtes / Célébrations",
+      "in_order": 14
+    },
+    {
+      "characteristic_id": 16,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Albus Dumbledore",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 17,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Lucius Malfoy",
+      "in_order": 16
+    },
+    {
+      "characteristic_id": 18,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Remus Lupin",
+      "in_order": 17
+    },
+    {
+      "characteristic_id": 19,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Severus Rogue",
+      "in_order": 18
+    },
+    {
+      "characteristic_id": 20,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Sirius Black",
+      "in_order": 19
+    },
+    {
+      "characteristic_id": 21,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Autres portraits de personnages",
+      "in_order": 20
+    },
+    {
+      "characteristic_id": 22,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Drago Malefoy",
+      "in_order": 14
+    },
+    {
+      "characteristic_id": 23,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Personnage original (OC)",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 24,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Bellatrix Lestrange",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 25,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Jedusor/Voldemort",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 26,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Harry Potter",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 27,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Hermione Granger",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 28,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Nymphadora Tonks",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 29,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Neville Londubat",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 30,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Ron Weasley",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 31,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Luna Lovegood",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 32,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Ginny Weasley",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 33,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Albus Dumbledore",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 34,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Minerva McGonagall",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 35,
+      "characteristic_type_id": 1,
+      "parent_id": 1,
+      "name": "Tranches de vie",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 95,
+      "characteristic_type_id": 1,
+      "parent_id": 9,
+      "name": "Divertissement",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 94,
+      "characteristic_type_id": 1,
+      "parent_id": 9,
+      "name": "Réponse aux défis",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 4,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "Univers Alternatifs",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 6,
+      "characteristic_type_id": 1,
+      "parent_id": null,
+      "name": "CrossOver",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 227,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Tragédie/Drame",
+      "in_order": 16
+    },
+    {
+      "characteristic_id": 226,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Songfic",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 225,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Romance/Amour",
+      "in_order": 14
+    },
+    {
+      "characteristic_id": 224,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Polar/enquête",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 223,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Poésie",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 222,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Parodie",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 221,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Missing Moments",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 213,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Angoisse/Suspense",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 216,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Comédie/Humour",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 212,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Amitié",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 215,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Aventure/Action",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 214,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Autres genres",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 217,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Epistolaire",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 218,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Famille",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 219,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Guerre",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 220,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Horreur",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 228,
+      "characteristic_type_id": 2,
+      "parent_id": null,
+      "name": "Yaoi/Yuri",
+      "in_order": 17
+    },
+    {
+      "characteristic_id": 239,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Picard",
+      "in_order": 28
+    },
+    {
+      "characteristic_id": 238,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Latin",
+      "in_order": 27
+    },
+    {
+      "characteristic_id": 237,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Français",
+      "in_order": 26
+    },
+    {
+      "characteristic_id": 236,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Espagnol",
+      "in_order": 25
+    },
+    {
+      "characteristic_id": 235,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Breton",
+      "in_order": 24
+    },
+    {
+      "characteristic_id": 234,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Anglais",
+      "in_order": 23
+    },
+    {
+      "characteristic_id": 233,
+      "characteristic_type_id": 3,
+      "parent_id": null,
+      "name": "Allemand",
+      "in_order": 22
+    },
+    {
+      "characteristic_id": 229,
+      "characteristic_type_id": 4,
+      "parent_id": null,
+      "name": "Lemon Hard",
+      "in_order": 18
+    },
+    {
+      "characteristic_id": 230,
+      "characteristic_type_id": 4,
+      "parent_id": null,
+      "name": "Lemon soft",
+      "in_order": 19
+    },
+    {
+      "characteristic_id": 231,
+      "characteristic_type_id": 4,
+      "parent_id": null,
+      "name": "Lime",
+      "in_order": 20
+    },
+    {
+      "characteristic_id": 232,
+      "characteristic_type_id": 4,
+      "parent_id": null,
+      "name": "Scène(s) gore(s)",
+      "in_order": 21
+    },
+    {
+      "characteristic_id": 243,
+      "characteristic_type_id": 5,
+      "parent_id": null,
+      "name": "Interdit -18",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 240,
+      "characteristic_type_id": 5,
+      "parent_id": null,
+      "name": "Tout public",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 241,
+      "characteristic_type_id": 5,
+      "parent_id": null,
+      "name": "Déconseillé -12",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 242,
+      "characteristic_type_id": 5,
+      "parent_id": null,
+      "name": "Déconseillé -16",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 97,
+      "characteristic_type_id": 6,
+      "parent_id": 11,
+      "name": "Epoque de Jedusor",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 98,
+      "characteristic_type_id": 6,
+      "parent_id": 11,
+      "name": "Epoque de Harry",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 11,
+      "characteristic_type_id": 6,
+      "parent_id": null,
+      "name": "Durant Poudlard",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 8,
+      "characteristic_type_id": 6,
+      "parent_id": null,
+      "name": "Les Fondateurs",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 7,
+      "characteristic_type_id": 6,
+      "parent_id": null,
+      "name": "Après Poudlard",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 99,
+      "characteristic_type_id": 6,
+      "parent_id": 11,
+      "name": "\"19 ans plus tard\"",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 96,
+      "characteristic_type_id": 6,
+      "parent_id": 11,
+      "name": "Epoque Maraudeurs",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 2,
+      "characteristic_type_id": 6,
+      "parent_id": null,
+      "name": "Enfances",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 193,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Remus Lupin",
+      "in_order": 94
+    },
+    {
+      "characteristic_id": 194,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Rolf Scamander",
+      "in_order": 95
+    },
+    {
+      "characteristic_id": 195,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Ron Weasley",
+      "in_order": 96
+    },
+    {
+      "characteristic_id": 196,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Rose Weasley",
+      "in_order": 97
+    },
+    {
+      "characteristic_id": 197,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Rowena Serdaigle",
+      "in_order": 98
+    },
+    {
+      "characteristic_id": 198,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Roxanne Weasley",
+      "in_order": 99
+    },
+    {
+      "characteristic_id": 199,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Rubeus Hagrid",
+      "in_order": 100
+    },
+    {
+      "characteristic_id": 200,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Salazar Serpentard",
+      "in_order": 101
+    },
+    {
+      "characteristic_id": 201,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Scorpius Malefoy",
+      "in_order": 102
+    },
+    {
+      "characteristic_id": 202,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Seamus Finnigan",
+      "in_order": 103
+    },
+    {
+      "characteristic_id": 203,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Severus Rogue",
+      "in_order": 104
+    },
+    {
+      "characteristic_id": 204,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Sirius Black",
+      "in_order": 105
+    },
+    {
+      "characteristic_id": 205,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Susan Bones",
+      "in_order": 106
+    },
+    {
+      "characteristic_id": 206,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Ted Tonks",
+      "in_order": 107
+    },
+    {
+      "characteristic_id": 207,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Teddy Lupin",
+      "in_order": 108
+    },
+    {
+      "characteristic_id": 208,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Theodore Nott",
+      "in_order": 109
+    },
+    {
+      "characteristic_id": 209,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Vernon Dursley",
+      "in_order": 110
+    },
+    {
+      "characteristic_id": 210,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Victoire Weasley",
+      "in_order": 111
+    },
+    {
+      "characteristic_id": 211,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Viktor Krum",
+      "in_order": 112
+    },
+    {
+      "characteristic_id": 100,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Albus Dumbledore",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 101,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Albus Potter",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 102,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Alice Londubat",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 103,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Alicia Spinnet",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 104,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Andromeda Tonks",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 105,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Angelina Johnson",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 106,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Armée de Dumbledore",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 107,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Arthur Weasley",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 108,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Astoria Greengrass",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 109,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Audrey Weasley",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 110,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Autre personnage",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 111,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Bellatrix Lestrange",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 112,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Bill Weasley",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 113,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Blaise Zabini",
+      "in_order": 14
+    },
+    {
+      "characteristic_id": 114,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Cedric Diggory",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 115,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Charlie Weasley",
+      "in_order": 16
+    },
+    {
+      "characteristic_id": 116,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Cho Chang",
+      "in_order": 17
+    },
+    {
+      "characteristic_id": 117,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Colin Crivey",
+      "in_order": 18
+    },
+    {
+      "characteristic_id": 118,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Croyance Bellebosse",
+      "in_order": 19
+    },
+    {
+      "characteristic_id": 119,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Daphné Greengrass",
+      "in_order": 20
+    },
+    {
+      "characteristic_id": 120,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dean Thomas",
+      "in_order": 21
+    },
+    {
+      "characteristic_id": 121,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dennis Crivey",
+      "in_order": 22
+    },
+    {
+      "characteristic_id": 122,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dobby",
+      "in_order": 23
+    },
+    {
+      "characteristic_id": 123,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dominique Weasley",
+      "in_order": 24
+    },
+    {
+      "characteristic_id": 124,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dorcas Meadowes",
+      "in_order": 25
+    },
+    {
+      "characteristic_id": 125,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Drago Malefoy",
+      "in_order": 26
+    },
+    {
+      "characteristic_id": 126,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Dudley Dursley",
+      "in_order": 27
+    },
+    {
+      "characteristic_id": 127,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Ernie McMillan",
+      "in_order": 28
+    },
+    {
+      "characteristic_id": 128,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Famille Black",
+      "in_order": 29
+    },
+    {
+      "characteristic_id": 129,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Famille Dumbledore",
+      "in_order": 30
+    },
+    {
+      "characteristic_id": 130,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Famille Malefoy",
+      "in_order": 31
+    },
+    {
+      "characteristic_id": 131,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Famille Potter",
+      "in_order": 32
+    },
+    {
+      "characteristic_id": 132,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Famille Weasley",
+      "in_order": 33
+    },
+    {
+      "characteristic_id": 133,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Fenrir Greyback",
+      "in_order": 34
+    },
+    {
+      "characteristic_id": 134,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Filius Flitwick",
+      "in_order": 35
+    },
+    {
+      "characteristic_id": 135,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Fleur Delacour",
+      "in_order": 36
+    },
+    {
+      "characteristic_id": 136,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Frank Londubat",
+      "in_order": 37
+    },
+    {
+      "characteristic_id": 137,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Fred II Weasley",
+      "in_order": 38
+    },
+    {
+      "characteristic_id": 138,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Fred Weasley",
+      "in_order": 39
+    },
+    {
+      "characteristic_id": 139,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Gabrielle Delacour",
+      "in_order": 40
+    },
+    {
+      "characteristic_id": 140,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Gellert Grindelwald",
+      "in_order": 41
+    },
+    {
+      "characteristic_id": 141,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "George Weasley",
+      "in_order": 42
+    },
+    {
+      "characteristic_id": 142,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Ginny Weasley",
+      "in_order": 43
+    },
+    {
+      "characteristic_id": 143,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Godric Gryffondor",
+      "in_order": 44
+    },
+    {
+      "characteristic_id": 144,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Hannah Abbot",
+      "in_order": 45
+    },
+    {
+      "characteristic_id": 145,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Harry Potter",
+      "in_order": 46
+    },
+    {
+      "characteristic_id": 146,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Helga Poufsouffle",
+      "in_order": 47
+    },
+    {
+      "characteristic_id": 147,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Hermione Granger",
+      "in_order": 48
+    },
+    {
+      "characteristic_id": 148,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Hugo Weasley",
+      "in_order": 49
+    },
+    {
+      "characteristic_id": 149,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Jacob Kowalski",
+      "in_order": 50
+    },
+    {
+      "characteristic_id": 150,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "James Potter",
+      "in_order": 51
+    },
+    {
+      "characteristic_id": 151,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "James S. Potter",
+      "in_order": 52
+    },
+    {
+      "characteristic_id": 152,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Jedusor/Voldemort",
+      "in_order": 53
+    },
+    {
+      "characteristic_id": 153,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Jumeaux Weasley",
+      "in_order": 54
+    },
+    {
+      "characteristic_id": 154,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Katie Bell",
+      "in_order": 55
+    },
+    {
+      "characteristic_id": 155,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lavande Brown",
+      "in_order": 56
+    },
+    {
+      "characteristic_id": 156,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Le Trio",
+      "in_order": 57
+    },
+    {
+      "characteristic_id": 157,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lee Jordan",
+      "in_order": 58
+    },
+    {
+      "characteristic_id": 158,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Les Fondateurs",
+      "in_order": 59
+    },
+    {
+      "characteristic_id": 159,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Les Mangemorts",
+      "in_order": 60
+    },
+    {
+      "characteristic_id": 160,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Les Maraudeurs",
+      "in_order": 61
+    },
+    {
+      "characteristic_id": 161,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lily Evans",
+      "in_order": 62
+    },
+    {
+      "characteristic_id": 162,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lily L. Potter",
+      "in_order": 63
+    },
+    {
+      "characteristic_id": 163,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lorcan Scamander",
+      "in_order": 64
+    },
+    {
+      "characteristic_id": 164,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Louis Weasley",
+      "in_order": 65
+    },
+    {
+      "characteristic_id": 165,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lucius Malefoy",
+      "in_order": 66
+    },
+    {
+      "characteristic_id": 166,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lucy Weasley",
+      "in_order": 67
+    },
+    {
+      "characteristic_id": 167,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Luna Lovegood",
+      "in_order": 68
+    },
+    {
+      "characteristic_id": 168,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Lysander Scamander",
+      "in_order": 69
+    },
+    {
+      "characteristic_id": 169,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Marcus Flint",
+      "in_order": 70
+    },
+    {
+      "characteristic_id": 170,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Marlene McKinnon",
+      "in_order": 71
+    },
+    {
+      "characteristic_id": 171,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Membre d'HPF",
+      "in_order": 72
+    },
+    {
+      "characteristic_id": 172,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Minerva McGonagall",
+      "in_order": 73
+    },
+    {
+      "characteristic_id": 173,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Molly II Weasley",
+      "in_order": 74
+    },
+    {
+      "characteristic_id": 174,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Molly Weasley",
+      "in_order": 75
+    },
+    {
+      "characteristic_id": 175,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Narcissa Malefoy",
+      "in_order": 76
+    },
+    {
+      "characteristic_id": 176,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Neville Londubat",
+      "in_order": 77
+    },
+    {
+      "characteristic_id": 177,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Newt Scamander",
+      "in_order": 78
+    },
+    {
+      "characteristic_id": 178,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Nymphadora Tonks",
+      "in_order": 79
+    },
+    {
+      "characteristic_id": 179,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Olivier Dubois",
+      "in_order": 80
+    },
+    {
+      "characteristic_id": 180,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Ordre du Phénix",
+      "in_order": 81
+    },
+    {
+      "characteristic_id": 181,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Padma Patil",
+      "in_order": 82
+    },
+    {
+      "characteristic_id": 182,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Pansy Parkinson",
+      "in_order": 83
+    },
+    {
+      "characteristic_id": 183,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Parvati Patil",
+      "in_order": 84
+    },
+    {
+      "characteristic_id": 185,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Personnage original (OC)",
+      "in_order": 86
+    },
+    {
+      "characteristic_id": 184,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Percy Weasley",
+      "in_order": 85
+    },
+    {
+      "characteristic_id": 186,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Peter Pettigrow",
+      "in_order": 87
+    },
+    {
+      "characteristic_id": 187,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Pétunia Dursley",
+      "in_order": 88
+    },
+    {
+      "characteristic_id": 188,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Pomona Chourave",
+      "in_order": 89
+    },
+    {
+      "characteristic_id": 189,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Porpentina Goldstein",
+      "in_order": 90
+    },
+    {
+      "characteristic_id": 190,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Professeurs de Poudlard",
+      "in_order": 91
+    },
+    {
+      "characteristic_id": 191,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Queenie Goldstein",
+      "in_order": 92
+    },
+    {
+      "characteristic_id": 192,
+      "characteristic_type_id": 7,
+      "parent_id": null,
+      "name": "Regulus Black",
+      "in_order": 93
+    },
+    {
+      "characteristic_id": 64,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Autres couples (Het)",
+      "in_order": 40
+    },
+    {
+      "characteristic_id": 66,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Remus/Tonks",
+      "in_order": 25
+    },
+    {
+      "characteristic_id": 67,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Drago/Pansy",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 68,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Harry/Pansy",
+      "in_order": 16
+    },
+    {
+      "characteristic_id": 69,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Severus/Lily",
+      "in_order": 34
+    },
+    {
+      "characteristic_id": 70,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Scorpius/Rose",
+      "in_order": 33
+    },
+    {
+      "characteristic_id": 71,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Remus/Hermione",
+      "in_order": 24
+    },
+    {
+      "characteristic_id": 72,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Drago/Astoria",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 73,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Teddy/Victoire",
+      "in_order": 38
+    },
+    {
+      "characteristic_id": 74,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Lucius/Narcissa",
+      "in_order": 20
+    },
+    {
+      "characteristic_id": 75,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Fred/Hermione",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 76,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Bill/Fleur",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 77,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Neville/Luna",
+      "in_order": 22
+    },
+    {
+      "characteristic_id": 78,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Charlie/Hermione",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 79,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "George/Angelina",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 80,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Viktor/Hermione",
+      "in_order": 39
+    },
+    {
+      "characteristic_id": 81,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Scorpius/Lily",
+      "in_order": 32
+    },
+    {
+      "characteristic_id": 82,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Arthur/Molly",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 83,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Neville/Hannah",
+      "in_order": 21
+    },
+    {
+      "characteristic_id": 84,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Dean/Luna",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 85,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Alice/Frank",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 86,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Rolf/Luna",
+      "in_order": 26
+    },
+    {
+      "characteristic_id": 87,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Percy/Audrey",
+      "in_order": 23
+    },
+    {
+      "characteristic_id": 88,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Seamus/Lavande",
+      "in_order": 30
+    },
+    {
+      "characteristic_id": 89,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Blaise/Daphné",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 90,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Ted/Andromeda",
+      "in_order": 37
+    },
+    {
+      "characteristic_id": 91,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Sirius/Lily",
+      "in_order": 36
+    },
+    {
+      "characteristic_id": 92,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Rusard/Mme Pince",
+      "in_order": 29
+    },
+    {
+      "characteristic_id": 61,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Ron/Hermione",
+      "in_order": 27
+    },
+    {
+      "characteristic_id": 60,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Harry/Luna",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 59,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Ron/Luna",
+      "in_order": 28
+    },
+    {
+      "characteristic_id": 58,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Drago/Ginny",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 57,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Sirius/Hermione",
+      "in_order": 35
+    },
+    {
+      "characteristic_id": 56,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Drago/Hermione",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 55,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Harry/Ginny",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 54,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Severus/Hermione",
+      "in_order": 31
+    },
+    {
+      "characteristic_id": 53,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "James/Lily",
+      "in_order": 17
+    },
+    {
+      "characteristic_id": 52,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Albus S./Scorpius",
+      "in_order": 1
+    },
+    {
+      "characteristic_id": 51,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Dumbledore/Grindelwald",
+      "in_order": 3
+    },
+    {
+      "characteristic_id": 50,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Sirius/Harry",
+      "in_order": 14
+    },
+    {
+      "characteristic_id": 49,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Ginny/Hermione",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 48,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Ron/Harry",
+      "in_order": 11
+    },
+    {
+      "characteristic_id": 47,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Drago/Ron",
+      "in_order": 2
+    },
+    {
+      "characteristic_id": 46,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Harry/Jedusor",
+      "in_order": 7
+    },
+    {
+      "characteristic_id": 45,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Pansy/Hermione",
+      "in_order": 9
+    },
+    {
+      "characteristic_id": 44,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Sirius/Severus",
+      "in_order": 16
+    },
+    {
+      "characteristic_id": 43,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Lucius/Severus",
+      "in_order": 8
+    },
+    {
+      "characteristic_id": 42,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Remus/Severus",
+      "in_order": 10
+    },
+    {
+      "characteristic_id": 41,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Sirius/Remus",
+      "in_order": 15
+    },
+    {
+      "characteristic_id": 40,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Severus/Harry",
+      "in_order": 12
+    },
+    {
+      "characteristic_id": 39,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Harry/Drago",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 38,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Harry/Lucius",
+      "in_order": 6
+    },
+    {
+      "characteristic_id": 37,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Severus/Drago",
+      "in_order": 13
+    },
+    {
+      "characteristic_id": 36,
+      "characteristic_type_id": 8,
+      "parent_id": 3,
+      "name": "Autres couples (Slash)",
+      "in_order": 17
+    },
+    {
+      "characteristic_id": 5,
+      "characteristic_type_id": 8,
+      "parent_id": null,
+      "name": "Romance (Het)",
+      "in_order": 4
+    },
+    {
+      "characteristic_id": 3,
+      "characteristic_type_id": 8,
+      "parent_id": null,
+      "name": "Romance (Slash)",
+      "in_order": 5
+    },
+    {
+      "characteristic_id": 62,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Jedusor/Hermione",
+      "in_order": 19
+    },
+    {
+      "characteristic_id": 63,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Jedusor/Ginny",
+      "in_order": 18
+    },
+    {
+      "characteristic_id": 65,
+      "characteristic_type_id": 8,
+      "parent_id": 5,
+      "name": "Harry/Hermione",
+      "in_order": 14
+    }
+  ],
+  "characteristics_types": [
+    {
+      "characteristic_type_id": 1,
+      "name": "Genre littéraire"
+    },
+    {
+      "characteristic_type_id": 2,
+      "name": "Genre"
+    },
+    {
+      "characteristic_type_id": 3,
+      "name": "Langue"
+    },
+    {
+      "characteristic_type_id": 4,
+      "name": "Avertissement"
+    },
+    {
+      "characteristic_type_id": 5,
+      "name": "Rating"
+    },
+    {
+      "characteristic_type_id": 6,
+      "name": "Epoque"
+    },
+    {
+      "characteristic_type_id": 7,
+      "name": "Personnage"
+    },
+    {
+      "characteristic_type_id": 8,
+      "name": "Relation"
+    }
+  ]
+}

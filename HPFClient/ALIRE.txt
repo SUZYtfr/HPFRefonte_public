@@ -1,0 +1,28 @@
+// Installation des outils:
+Télécharger et installer NodeJS
+https://nodejs.org/en/
+
+Depuis la ligne de commande windows, installation de yarn saisir:
+"npm install -g yarn"
+
+// Installation et lancement du site nuxt-hpf
+Dans le répertoire HPFClient\nuxt-hpf\ ouvrir un terminal windows
+Saisir "yarn install" (à faire qu'une seule fois)
+Ensuite saisir "yarn dev:host" pour lancer nuxt
+Laisser compiler...
+La ligne "Listening on: http://192.168.1.243:8000/" indique à quelle adresse se rendre pour accéder au site.
+// Réglages possibles nuxt-hpf
+Dans le fichier .env la ligne "VUE_APP_BASE_API = 'http://192.168.1.201:8585'"
+Indique l'adresse de l'api, ici c'est l'adresse du server mock en local.
+
+// Installation et lancement du server de données mock
+Lancer le server de données mock
+Dans le répertoire HPFClient\mock\ ouvrir un terminal windows
+Saisir "npm install" (à faire qu'une seule fois)
+Ensuite saisir "node server.js" pour lancer le serveur mock
+La ligne "JSON Server is running" indique le succés de l'opération.
+// Réglages possibles mock
+Dans le fichier server.js la ligne 30 "server.listen(8585, () => {"
+8585 indique le port utilisé par le serveur mock.
+
+

@@ -1,0 +1,103 @@
+ <style>
+ /*contact*/ 
+ body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+input[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+* {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;}
+.mySlides {display: none;}
+img {vertical-align: middle;}
+        
+/*buttons*/
+        
+.edit {
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background-color: #F07800;
+  color: white;
+  font-style: #42162B; 
+  font-family: 'Roboto', serif;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit:hover {
+  background-color: #FE9E3E;
+  color: white; 
+}
+    </style>
+    <body>
+        </p>
+      <?php
+if($_POST) {
+
+$message=$_POST['fname'];
+$message .=$_POST['lname'];
+$message .=$_POST['mail'];
+$message .=$_POST['country'];
+$message .=$_POST['subject'];
+
+mail("mailhpf@gmail.com", "sujet du courrier", $message, "From: '.$expediteur.'") ;
+
+}
+?>
+<div class="container">
+  <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+    <label for="fname">Nom</label>
+    <input type="text" id="fname" name="firstname" placeholder="Votre nom..">
+
+    <label for="lname">Prénom</label>
+    <input type="text" id="lname" name="lastname" placeholder="Votre prénom..">
+      
+    <label for="mail">Mail</label>
+    <input type="text" name="mail_expediteur" id="mail_expediteur" width="280" placeholder="Votre mail..">
+
+    <label for="country">Objet du message</label>
+    <select id="country" name="country">
+      <option value="affichage">Je rencontre un soucis d'affichage des caractères</option>
+      <option value="moderation">Je rencontre un soucis de modération (rating, (in)validation du texte)</option>
+      <option value="technique">Je rencontre un soucis technique (bogue du site, bogue du compte)</option>
+      <option value="equipe">Je souhaite postuler pour rejoindre une équipe</option>
+      <option value="modération">Je souhaite créer un partenariat</option>
+      <option value="autre">Autre</option>
+    </select>
+    
+
+    <label for="subject">Objet</label>
+    <textarea id="subject" name="subject" placeholder="Votre requête.." style="height:200px"></textarea>
+
+    <button class="edit" button onclick="submit">Envoyer</button> 
+  </form>
+</div>

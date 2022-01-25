@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content = "ie=edge">
+        <!-- Rediriger la page après 3 secondes -->
+        <meta http-equiv="refresh" content="3000000; url=http://www.harrypotterfanfiction.org"/> 
+        <!-- Responsive -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" content="width=375, initial-scale=1">
+        <!-- SEO -->
+        <meta name="keywords" content="site internet" />
+        <meta name="description" content="site internet" />
+        <!-- Facebook Pixel Code ID à replacer-->
+        <script>
+       !function(f,b,e,v,n,t,s)
+       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+       if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+       n.queue=[];t=b.createElement(e);t.async=!0;
+       t.src=v;s=b.getElementsByTagName(e)[0];
+       s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+       fbq('init', '{your-pixel-id-goes-here}');
+       fbq('track', 'PageView');
+       </script>
+       <noscript>
+         <img height="1" width="1" style="display:none" 
+       src="https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1"/>
+        </noscript>
+        <!-- End Facebook Pixel Code -->
+        <!-- Style -->
+        <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Playfair+Display:ital@0;1&family=Roboto&display=swap" rel="stylesheet">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title> Harry Potter Fanfiction </title>
+        <!-- You can use open graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+  <meta property="og:url"           content="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" />
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="Harry Potter fanfiction" />
+  <meta property="og:description"   content="Your description" />
+  <meta property="og:image"         content="https://www.your-domain.com/path/image.jpg" />
+  
+</head>
+<body>
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v9.0&appId=655797771819068&autoLogAppEvents=1" nonce="sNh7m7OQ"></script>
+    
+    <div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v9.0&appId=655797771819068&autoLogAppEvents=1" nonce="aBwo3Lpf"></script>
+    
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  padding: 10px;
+  background: white; 
+}
+     
+a:link{
+  text-decoration: none;
+  color: #42162B; 
+}
+
+ /*Dark mode*/ 
+
+.dark-mode {
+ background-color: black;
+ color: white; 
+        }
+    
+        
+/* Landing page*/ 
+/* Header/Blog Title */
+.header {
+  padding: 50px;
+  text-align: center;
+  background-image: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
+  width: 100%;
+ font-family: 'Playfair Display', serif;
+ color: black;
+} 
+
+.header h1 {
+  font-size: 60px;
+  background-color: white;
+  opacity: 0.8;
+  resize: horizontal;
+  overflow: auto;
+  font-family: 'Amiri', serif;
+  text-transform: uppercase;
+}
+
+/*Navigation bar*/ 
+
+.topnav {
+  overflow: hidden;
+  background-color: #42162B;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-family: 'Playfair Display', serif;
+  text-transform: uppercase;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;    
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: 'Playfair Display', serif;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #F07800;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(179,130,154,0.70);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: #42162B;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.topnav a:hover, .dropdown:hover .dropbtn {
+  background-color: #F07800;
+  color: white;
+}
+
+.dropdown-content a:hover {
+  background-color: #FE9E3E;
+  color: white;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child), .dropdown .dropbtn {
+    display: none;
+  }
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .topnav.responsive .dropdown {float: none;}
+  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+
+/* input connexion */
+        
+.topnav .login-container {
+  float: right;
+}
+        
+.topnav input[type=text] {
+  padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: none;
+  width:100px;
+}
+
+.topnav .login-container button {
+  float: right;
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background-color: #F07800;
+  color: white;
+  font-style: #42162B; 
+  font-family: 'Roboto', serif;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.topnav .login-container button:hover {
+  background-color: #FE9E3E;
+  color: white; 
+}
+
+ /*responsive login container*/    
+@media screen and (max-width: 600px) {
+  .topnav .login-container {
+    float: none;
+  }
+
+        
+  .topnav a, .topnav input[type=text], .topnav .login-container button {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  .topnav input[type=text] {
+    border: 1px solid #000000;  
+  }
+}
+        
+/*Pub*/ 
+ 
+.div1 {
+background-color: #8F5A74; 
+padding: 20px 10px;
+        }
+
+/* Column container */
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Main column */
+.main {   
+  flex: 70%;
+  padding: 20px;
+  border-left: solid 20px #8F5A74; 
+  border-right: solid 20px #8F5A74; 
+  border-bottom: solid 20px #8F5A74;
+  
+}
+
+       
+/*flexbox container for paragraphs*/ 
+    
+* {
+  box-sizing: border-box;
+}
+
+.flex-container {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: row;
+  font-size: 17px;
+  text-align: justify;
+}
+
+.flex-item-left {
+  background-color: #B3829A;
+  padding: 10px;
+  flex: 50%;
+}
+
+.flex-item-right {
+  background-color: #8F5A74;  
+  padding: 10px;
+  flex: 50%;
+}
+
+.flex-item-left2 {
+  padding: 10px;
+  flex: 50%;
+}
+
+.flex-item-right2 {
+  padding: 10px;
+  flex: 50%;
+}
+
+        
+/* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .flex-container {
+    flex-direction: column;
+  }
+}
+        
+/*Paragraph style*/
+        
+.h1 {       
+font-family: 'Playfair Display', serif;
+font-size: 17px;
+text-align: center;
+text-transform: uppercase;
+text-justify: inter-word; 
+color: white;
+background-color:#42162B;
+margin-bottom: 0px;
+
+        }
+.h2 {       
+font-family: 'Roboto', serif;
+font-size: 17px;
+text-align: justify;
+text-justify: inter-word;
+text-decoration: none;
+        }
+        
+.p1 {       
+font-family: 'Roboto', sans-serif;
+font-size: 17px;
+text-align: justify;
+text-justify: inter-word; 
+        }
+
+/*buttons*/
+        
+.edit {
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background-color: #F07800;
+  color: white;
+  font-style: #42162B; 
+  font-family: 'Roboto', serif;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit:hover {
+  background-color: #FE9E3E;
+  color: white; 
+}
+                   
+
+        /* Footer */  
+
+.footer {
+  overflow: hidden;
+  background-color: #42162B;
+  padding: 20px 10px;
+}
+
+.footer a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-family: 'Playfair Display', serif;
+  text-transform: uppercase;
+  font-size: 16px; 
+  line-height: 25px;
+}
+
+.footer a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.footer a:hover {
+  background-color: #F07800;
+  color: white;
+}
+
+.footer-right {
+  float: right;
+}
+    
+@media screen and (max-width: 500px) {
+  .footer a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .footer-right {
+    float: none;
+  }
+}        
+     
+ /*images*/
+
+.image {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://cdn.pixabay.com/photo/2016/03/27/19/32/blur-1283865_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+}
+    .image2 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://cdn.pixabay.com/photo/2015/12/19/20/32/paper-1100254_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+}   
+
+.image3 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+
+.image4 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2018/03/19/14/20/nature-3240075_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+
+.image5 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://herosdepapierfroisse.fr/editionshpf/wp-content/uploads/2019/10/Oiseaux-de-Nuit-couverture-et-tranche-V2.png");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image6 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://www.herosdepapierfroisse.fr/wp-content/uploads/2020/04/bandeau-site-asso-2.png");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+
+.image7 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://www.herosdepapierfroisse.fr/wp-content/uploads/2020/05/vignette-hpf-reader.png");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image8 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2016/02/01/21/15/excavators-1174428_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+
+.image9 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2016/01/19/17/49/bible-1149924_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image10 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://www.herosdepapierfroisse.fr/wp-content/uploads/2019/01/logo_heros_complet_300.png");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image11 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2015/06/22/23/32/articulated-male-818202_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image12 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("https://cdn.pixabay.com/photo/2018/03/18/17/38/teamwork-3237646_960_720.jpg");
+  width: 100%; 
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;  
+} 
+        
+.image-text {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 17px;
+  color: white;
+  margin:50px;
+ padding:10px;
+}
+    
+        
+        
+ /*Search barre*/
+        .search input[type=text] {
+  float: right;
+  padding: 6px;
+  margin-top: 8px;
+  margin-right: 16px;
+  border: none;
+  font-size: 17px;
+}
+/* Responsive*/
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */ 
+@media screen and (max-width: 600px) {
+  .search a, .search input[type=text] {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  
+  .search input[type=text] {
+    border: 1px solid #ccc;  
+  }
+}
+   /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */ 
+@media screen and (max-width: 300px) {
+  .search a, .search input[type=text] {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  
+  .search input[type=text] {
+    border: 1px solid #ccc;  
+  }
+}     
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 700px) {
+    flex-direction: column;
+  }
+}
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 500px) {
+    flex-direction: column;
+  }
+}
+        /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 300px) {
+    flex-direction: column;
+  }
+}
+ 
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media only screen and (max-width: 500px){
+  .img, image {
+    width: 100%;
+  }
+}   
+
+/*social media*/
+.insta {
+  padding: 30px 70px;
+  background-color: #9198e5;
+  background-image:linear-gradient(60deg, #FFC750, #F75153, #CA38A7, #7047CB);
+  color: white;
+  border-radius: 10%;
+}
+
+
+</style>
+</head>
+    <body>
+        
+        <div class="topnav" id="myTopnav">
+            <div class="dropdown">
+    <button class="dropbtn"></button><br></div>
+     <a href="#">Accueil</a>
+  <div class="dropdown">
+    <button class="dropbtn">Association HPF 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="#">Link 1</a>
+      <a href="#">Link 2</a>
+      <a href="#">Link 3</a>
+    </div>
+  </div> 
+  <div class="dropdown">
+    <button class="dropbtn">Lecture 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="#">Link 1</a>
+      <a href="#">Link 2</a>
+      <a href="#">Link 3</a>
+    </div>
+  </div> 
+  <div class="dropdown">
+    <button class="dropbtn">Ecriture
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+        <a href="#">menu 1 </a>
+        <a href="#">menu 2</a>
+        <a hre="#">menu 3</a></div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Top Fanfictions 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+        <a href="#">menu 1 </a>
+        <a href="#">menu 2</a>
+        <a href="#">menu 3</a></div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Nos sites 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+        <a href="#">L'appli HPF</a>
+        <a href="#">Le Héron</a>
+        <a href="#">Les Editions HPF</a>
+        <a href="#">L'association</a>
+        <a href="#">Le Blog HPF</a>
+        <a href="#">Le Forum</a></div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Boutique
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+        <a href="#">Livres et recueils</a>
+        <a href="#">Goodies</a></div>
+  </div>
+  <a href="#contact">Partenaires</a>
+  <a href="#contact">Contact</a>
+  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a></div>
+        <div class="header">
+  <h1>Harry Potter Fanfiction</h1>
+  <p></p>
+        </div>
+<div class="topnav">
+    <div class="login-container">
+   <form action="/action_page.php"><button class="edit">S'inscrire</button><button class="edit">Mon compte</button><input type="text" placeholder="Pseudo" name="username">
+        <input type="text" placeholder="Mot de passe" name="psw"><button type="submit">Se connecter</button></form><br></div></div>
+    <div class="div1"><div class="login-container">
+        <div class="search"><input type="text" placeholder="Chercher"></div><button class="edit" onclick="dark()">Lumos/Nox</button></div></div>
+  <div class="main">
+    <h1 class="h1">News</h1>
+      <div class="flex-container">
+  <div class="flex-item-left"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> (DATE) <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.<br><button class="edit">Lire la suite</button><br><br><a class="twitter-share-button"
+  href="https://twitter.com/intent/tweet?text=Hello%20world"
+  data-size="small">Tweet</a><br><div class="fb-like" data-href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" data-width="" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div></p></div>
+          <div class="flex-item-right"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> (DATE)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.<br><button class="edit">Lire la suite</button><br><br><a class="twitter-share-button"
+  href="https://twitter.com/intent/tweet?text=Hello%20world"
+  data-size="small">Tweet</a><div class="fb-like" data-href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" data-width="" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div></p></div>
+          <div class="flex-item-left"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> (DATE)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.<br><button class="edit">Lire la suite</button><br><br><a class="twitter-share-button"
+  href="https://twitter.com/intent/tweet?text=Hello%20world"
+  data-size="small">Tweet</a><div class="fb-like" data-href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" data-width="" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div></p></div>
+  <div class="flex-item-right"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> (DATE)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.<br><button class="edit">Lire la suite</button><br><br><a class="twitter-share-button"
+  href="https://twitter.com/intent/tweet?text=Hello%20world"
+  data-size="small">Tweet</a><div class="fb-like" data-href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" data-width="" data-layout="box_count" data-action="like" data-size="small" data-share="true"></div></p></div></div>
+    <br>
+    <h2 class="h1">Nouveautés</h2>
+    <div class="flex-container">
+  <div class="flex-item-left2"><h2 class="h2"> <a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p></div>
+  <div class="flex-item-right2"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.
+    </p></div></div>
+    <div class="flex-container">
+  <div class="flex-item-left2"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p></div>
+  <div class="flex-item-right2"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.
+    </p></div></div>
+    <div class="flex-container">
+  <div class="flex-item-left2"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Some text..Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p></div>
+  <div class="flex-item-right2"><h2 class="h2"><a href="viewstory.php?sid=37709">Titre</a> par <a href="viewuser.php?uid=19399">Auteur</a> (RATING)  <a href="news.php?action=newsstory&amp;nid=631">|0 Commentaires|</a></h2><hr><p class="p1">Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.
+      <br>
+</p></div></div>
+    <h2 class="h1">Sélections du mois</h2>
+    <div class="flex-container">
+        <div class="flex-item-left2"><div class="image"><p class="image-text">Découvrez les sélections du mois !<br><button class="edit">Cliquez ici</button></p></div></div>
+  <div class="flex-item-right2"><div class="image2"><p class="image-text">Votez pour les sélections du mois !<br><button class="edit">Cliquez ici</button></p></div></div></div> 
+    <br>
+<h2 class="h1">Notre communauté</h2>
+      <div class="flex-container">
+          <div class="flex-item-left"><h2 class="h2">Nos membres</h2><hr><p class="p1"><p class="p1"><b>La communauté HPF, c'est :</b><br>
+<div><li><span class='label'>Membres : </span>56281</div></li>
+<div><li><span class='label'>Séries : </span>1288</div></li>
+<div><li><span class='label'>Histoires : </span>22414</div></li>
+<div><li><span class='label'>Chapitres : </span>108787</div></li>
+<div><li><span class='label'>Nombre de mots : </span>253838907</div></li>
+<div><li><span class='label'>Auteurs : </span>6816</div></li>
+<div><li><span class='label'>Reviews : </span>460533</div></li>
+<div><li><span class='label'>Reviewers : </span>16193</div></li><br>
+<div><span class='label'><b>Nous souhaitons la bienvenue à :</b> </span><a href="viewuser.php?uid=257483">Noel Labi</a><br></p></div></div>
+  <div class="flex-item-right"><h2 class="h2">Nos réseaux sociaux</h2><hr><p class="p1"><div class="fb-page" data-href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" data-tabs="timeline" data-width="300" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437">Harry Potter Fanfiction</a></blockquote></div>
+    <br><br>
+<div id="container"><a class="twitter-timeline"
+  href="https://twitter.com/hpf_ecriture?lang=fr" data-small-header="false" data-width="300" data-height="200" data-show-facepile="true" data-tabs="timeline" data-size="small">
+Tweets by @HPF_Ecriture
+</a></div>
+    <script>twttr.widgets.createTimeline(
+  {
+      sourceType: "profile",
+      screenName: "HPF écriture"
+  },
+  document.getElementById("container")
+        );</script><br>
+      <div class="insta"><center><i style="font-size:24px" class="fa">&#xf16d;</i><br>@HPF_Ecriture<br><button class="edit" a href="https://www.instagram.com/hpf_ecriture/?hl=fr" target="_blank">Likez</button><br></center></div></p></div>
+<div class="flex-item-left"><h2 class="h2">Notre association</h2><hr><p class="p1">Association loi 1901, créée en 2008 par Marianne, aka Angel_of_shadow, créatrice du site, l'association permet de soutenir et financer les sites et les éditions HPF, d'aider et de promouvoir les jeunes auteurs et autrices. Vous pouvez adhérer, faire un don, ou acheter nos livres et nos goodies afin de nous soutenir !<br></p></div>
+<div class="flex-item-right"><h2 class="h2">Nos partenaires</h2><hr><p class="p1">N'hésitez pas à consulter les sites de nos partenaires :<br>
+    <div><li><a href="http://www.ficothequeardente.com/#ajax/templates/accueil.html" target="_blank" title="La ficothèque ardente">La ficothèque ardente</a></div></li>
+    <div><li><a href="http://reseau-potterien-francophone.kazeo.com/" target="_blank" title="La ficothèque ardente">Membre du Réseau Potterien Francophone</a></div></li>
+    <div><li><a href="http://fr.harrypotter.wikia.com/" target="_blank" title="La ficothèque ardente">Wiki Harry Potter</a></div></li>
+    <div><li><a href="http://generation-ecriture.com/association.html" target="_blank" title="La ficothèque ardente">Génération Ecriture</a></div></li><br>
+    Pour toute demande de partenariat, cliquez <a href="#" target="_blank" title="contact">ici</a>
+    </p></div></div>
+   
+    <h1 class="h1">Nos sites et nos applis</h1>
+      <div class="flex-container">
+          <div class="flex-item-left2"><div class="image3"><p class="image-text"><b>Harry Potter Fanfiction</b><br>Nous sommes le premier site de potterfictions francophones intégralement dédié à l'univers d'Harry Potter. Notre site accueille tout Potterhead créatif et enthousiaste ! <br><button class="edit">S'inscrire</button></p></div></div>
+          <div class="flex-item-right2"><div class="image4"><p class="image-text"><b>Héron à la Plume Flamboyante</b><br>Plateforme d'écriture en ligne, le Héron publie vos textes de fiction et les dépose à BNF. Vous pourrez mettre en ligne vos romans, poésies, nouvelles, etc.<br><button class="edit">Découvrir</button></p></div></div>
+              <div class="flex-item-left2"><div class="image5"><p class="image-text"><b>Les Editions HPF</b><br>Maison d'édition associative consacrée aux littératures de l'imaginaire, mêlant Science-fiction, Fantasy et Fantastique, sans distinction de genre.<br><button class="edit">Découvrir</button></p></div></div>
+              <div class="flex-item-right2"><div class="image6"><p class="image-text"><b>L'association Héros de Papier Froissé</b><br>Association loi 1901, créée en 2008 par Marianne, aka Angel_of_shadow, créatrice du site, l'association permet de soutenir et financer les sites et les éditions HPF, d'aider et de promouvoir les jeunes auteurs et autrices.<br><button class="edit">Découvrir</button></p></div></div></div>
+        <div class="flex-container">
+  <div class="flex-item-left2"><div class="image7"><p class="image-text"><b>L'appli Harry Potter Fanfiction</b><br>Créée par SUZYftr, l'appli Harry Potter Fanfiction est une appli très simple d'utilisation et entièrement gratuite. Ne manquez plus aucune nouveauté sur notre site !<br><button class="edit">Télécharger</button></p></div></div>
+          <div class="flex-item-right2"><div class="image8"><p class="image-text"><b>L'appli Héron à la Plume Flamboyante</b><br>Actuellement en construction, elle sera disponible très prochainement.</p></div></div>
+          <div class="flex-item-left2"><div class="image9"><p class="image-text"><b>Le blog Héros de Papier Froissé</b><br>Sur ce blog, conseils d'écriture, conseils de lecture, interviews des membres, présentation de tous les membres de l'équipe, et nos dernières actus.<br><button class="edit">Découvrir</button></p></div></div>
+            <div class="flex-item-right2"><div class="image10"><p class="image-text"><b>Le forum Héros de Papier Froissé :</b><br>Pour partager vos derniers coups de coeurs, ou faire des ateliers de lecture et d'écriture, trouver un correcteur ou une correctrice, organiser des concours ou y participer ?! C'est ici !<br><button class="edit">Découvrir</button></p></div></div></div>
+    <br>
+    <h2 class="h1">Nos équipes</h2>
+    <div class="flex-container">
+        <div class="flex-item-left2"><div class="image11"><p class="image-text">Découvrez nos équipes !<br><button class="edit">Cliquez ici</button></p></div></div>
+  <div class="flex-item-right2"><div class="image12"><p class="image-text">Intégrer nos équipes !<br><button class="edit">Cliquez ici</button></p></div></div></div> 
+    <br></div></div>
+<div class="footer">
+  <a href="#default" class="logo">Harry Potter Fanfiction</a><a href="https://www.harrypotterfanfiction.org" title="Harry Potter fanfiction" target="_blank"><img src="https://www.herosdepapierfroisse.fr/blog/wp-content/uploads/2014/09/logo_forum_horizontal_300.png" width=50px; height=30px; float="right"></a>
+  <div class="footer-right">
+    <a href="#">Administration</a>
+    <a href="#">Modération</a>
+    <a href="#">Podiums</a>
+    <a href="#">Mentions légales</a> 
+    </div>
+    <br></br><br></br> 
+    <p align="center" style="color:white"; position="bottom" font-family="roboto; sherif"> Tous droits réservés @Association Héros de Papiers Froissés | Site réalisé par Pierre, SUZYftr, Tsilla Aumigny</p></div>
+
+<script>
+    
+    
+// topnav function
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+    
+    
+//darkmode function
+function dark() {
+var element = document.body;
+   element.classList.toggle("dark-mode");
+
+}
+  
+    
+//twitter
+    window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+
+</script>
+
+
+    </body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+</head>
+    
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+font-family: 'Amiri', serif;
+      font-size: 18px;
+}
+        .title2{
+            font-family:'Playfair Display', serif;
+            font-size: 40px;
+        }
+      
+    .title4{
+            font-family:'Amiri', serif;
+            font-size: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .title3{
+            font-family:'Amiri', serif;
+            font-size:18px;
+            font-style: italic;
+            text-align: center;
+            
+        }
+    
+.main {
+background-color:white;
+margin: 10px;
+}
+    
+/* Center website */
+
+.row {
+  margin: 10px 150px;
+}
+
+/* Add padding BETWEEN each column */
+.row,
+.row > .column {
+  padding: 7px;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: auto;
+  display: none; /* Hide all elements by default */
+}
+
+/* Clear floats after rows */ 
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* The "show" class is added to the filtered elements */
+.show {
+  display: block;
+}
+    
+/*images*/
+.poudlard {
+  vertical-align: middle;
+  width: 100px;
+  height: 100px; 
+  border-radius: 5%;
+}
+    
+/*buttons*/ 
+.characteristic-bg-personnage {
+  background: #FE9E3E !important;
+  color: whitesmoke !important;
+}
+.characteristic-bg-personnage:hover {
+  background: #F07800 !important;
+  color: whitesmoke !important;
+}
+
+/*links*/ 
+a {
+  color: #F07800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a strong {
+  color: currentColor;
+}
+
+a:hover {
+  color: black;
+}
+
+/*box*/ 
+.box {
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 0.5em 1em -0.125em rgba(179,130,154,0.70), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+  color: #4a4a4a;
+  display: block;
+  padding: 1.25rem;
+}
+
+ 
+</style>
+<body>
+<div class="main">
+<div id="app">
+        <!-- Buefy components goes here -->
+<!-- MAIN (Center website) -->
+
+<h2 class="title2">Catégories d'Harry Potter Fanfiction : page 1 sur laquelle l'usager atterrit depuis le menu -limiter le nombre de mots dans la description à 50 max</h2>
+<p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+<br/>
+<div id="myBtnContainer">
+ <div class="buttons">
+ <b-button class="characteristic-bg-personnage" type="is-primary" size="large" onclick="filterSelection('all')">Les catégories populaires</b-button>
+  <b-button class="characteristic-bg-personnage" type="is-primary" size="medium" onclick="filterSelection('nature')"> Catégorie 1</b-button>
+  <b-button class="characteristic-bg-personnage" type="is-primary" size="medium" onclick="filterSelection('cars')"> Catégorie 2</b-button>
+  <b-button class="characteristic-bg-personnage" type="is-primary" size="medium" onclick="filterSelection('people')"> Catégorie 3</b-button>
+     </div>
+</div>
+<div class="box">
+<p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+
+<!-- Portfolio Gallery Grid -->
+<div class="row">
+  <div class="column nature">
+    <div class="box">
+        <h3 class="title3"><a href=#cat1>Catégorie 1</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption>
+</figure>
+      <h4 class="title4"><a href=#souscat1a>Sous-catégorie 1a</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column nature">
+    <div class="box" size="auto">
+    <h3 class="title3"><a href=#cat1>Catégorie 1</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <div class="block"><h4 class="title4"><a href=#souscat1b>Sous-catégorie 1b</a></h4>
+          <p>Lorem ipsum dolor..</p></div>
+    </div>
+  </div>
+  <div class="column nature">
+   <div class="box" size="auto">
+    <h3 class="title3"><a href=#cat1>Catégorie 1</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+     <h4 class="title4"><a href=#souscat1c>Sous-catégorie 1c</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column cars">
+    <div class="box">
+    <h3 class="title3"><a href=#cat2>Catégorie 2</a></h3>
+     <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat2a>Sous-catégorie 2a</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column cars">
+    <div class="box">
+    <h3 class="title3"><a href=#cat2>Catégorie 2</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat2b>Sous-catégorie 2b</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column cars">
+    <div class="box">
+    <h3 class="title3"><a href=#cat2>Catégorie 2</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat2c>Sous-catégorie 2c</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column people">
+    <div class="box">
+    <h3 class="title3"><a href=#cat3>Catégorie 3</a></h3>
+      <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat3a>Sous-catégorie 3a</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column people">
+    <div class="box">
+    <h3 class="title3"><a href=#cat3>Catégorie 3</a></h3>
+   <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat3b>Sous-catégorie 3b</a></h4>
+          <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+  <div class="column people">
+    <div class="box">
+    <h3 class="title3"><a href=#cat3>Catégorie 3</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+      <h4 class="title4"><a href=#souscat3c>Sous-catégorie 3c</a></h4>
+      <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+<div class="column people">
+    <div class="box">
+    <h3 class="title3"><a href=#cat3>Catégorie 3</a></h3>
+    <figure>
+      <b-image
+            src="https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg"
+            alt="Poudlard"
+            ratio="6by4"
+            :rounded="rounded"
+        ></b-image>
+        <figcaption class="title3">Source de l'image : Pixabay</figcaption></figure>
+       <h4 class="title4"><a href=#souscat3d>Sous-catégorie 3d</a></h4>
+           <p>Lorem ipsum dolor..</p>
+    </div>
+  </div>
+</div>
+<!-- END GRID -->
+</div>
+
+<!-- END MAIN -->
+</div>
+</div>
+ 
+    <script src="https://unpkg.com/vue"></script>
+    <!-- Full bundle -->
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
+    <!-- Individual components -->
+    <script src="https://unpkg.com/buefy/dist/components/table"></script>
+    <script src="https://unpkg.com/buefy/dist/components/input"></script>
+
+    <script>
+        new Vue({
+            el: '#app'
+        })
+    </script>
+<script>
+filterSelection("all")
+function filterSelection(c) {
+  var x, i;
+  x = document.getElementsByClassName("column");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+function w3AddClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+  }
+}
+
+function w3RemoveClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+    }
+  }
+  element.className = arr1.join(" ");
+}
+
+
+// Add active class to the current button (highlight it)
+var btnContainer = document.getElementById("myBtnContainer");
+var btns = btnContainer.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function(){
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+    
+</script>
+</body>
+</html>

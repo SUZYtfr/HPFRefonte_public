@@ -1,0 +1,352 @@
+<style>
+
+        /*writting*/ 
+        
+ .author{
+            width:400px;
+            height:270px;
+            background-color: #42162B;
+            border:4px double white;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size:36px;
+            color:white;
+        }
+    
+        .title1 {       
+font-family: 'Playfair Display', serif;
+font-size: 20px;
+text-align: center;
+text-transform: uppercase;
+text-justify: inter-word; 
+color: white;
+background-color:#42162B;
+margin-bottom: 2px;
+        }
+.title1 a {
+    color: white;
+    }
+        
+.title1 a:hover {
+    color: #FE9E3E;
+    }
+        
+.title1 a:focus {
+    color: #F07800; 
+    }
+
+.title1 a:visited {
+    color: ghostwhite; 
+    }
+        .title2{
+            font-family:'Amiri', serif;
+            font-size: 18px;
+        }
+        
+        .title3{
+            font-family:'Playfair Display', serif;
+            text-transform: uppercase;
+            font-size:18px;
+            color: #FE9E3E;
+        }
+        
+/* avatar */ 
+        
+.avatar {
+  vertical-align: middle;
+  width: 200px;
+  height: 200px;
+  border-radius: 5%;
+}
+        
+        /*sidebar*/ 
+        
+ * {box-sizing: border-box}
+body {font-family: 'Amiri', serif;
+      font-size: 18px;}
+
+/* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #42162B;
+  width: 30%;
+  height: 200px;
+  
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: #B3829A;
+  padding: 10px 10px;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: 'Amiri', serif;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 25px;
+  
+}
+
+.tab button:after {
+  content: '\002B';
+  float: right;
+}
+    
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #FE9E3E;
+  color: white;
+}
+
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #FE9E3E;
+  color: white;
+}
+        
+.tab button.active:after {
+  content: "\2212";
+  float : right; 
+}
+        
+.tabcontent {
+  float: left;
+  padding: 0px 12px;
+  width: 70%;
+  height: 100%;
+  text-align: justify; 
+}
+        
+/* Column container */
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Main column */
+.main {   
+  flex: 70%;
+  padding: 18px;
+  
+}
+
+ /*column*/
+        
+/*flexbox container for paragraphs*/ 
+    
+* {
+  box-sizing: border-box;
+}
+
+.flex-container {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: row;
+  font-family: 'Amiri', serif;
+  font-size: 20px;
+  text-align: none;
+}
+
+.flex-item-left {
+  padding: 5px;
+  flex: 50%;
+  margin: 0px;
+}
+
+.flex-item-right {
+  padding: 5px;
+  flex: 50%;
+  margin: 0px;
+}
+
+/* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .flex-container {
+    flex-direction: column;
+    flex: 100%;
+    width: 100%;
+  }
+}
+
+/* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .flex-item-right {
+  padding: 5px;
+  flex: 100%;
+  margin: 0px;
+}
+}
+
+/* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .tab  {
+   float: center;
+   width: 100%;
+  height: 200px;
+    
+  }
+}
+        
+/* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .tab button {
+    font-size: 22px;
+    width: 100%; 
+    padding: 20px 20px;
+    
+  }
+}
+        
+
+        /* Responsive layout - makes a one column-layout instead of two-column layout */
+@media (max-width: 800px) {
+  .tabcontent {
+    font-size: 22px;
+    display: inline-block; 
+    width: 70%;   
+  }
+}
+
+        
+/*social media*/ 
+    
+    .fa {
+  padding: 20px;
+  font-size: 20px;
+  width: 40px;
+  border-top-left-radius: 70%; 
+  border-bottom-left-radius: 70%; 
+  text-align: center;
+  text-decoration: none;
+}
+
+.fa:hover {
+    background-color: #FE9E3E;
+    color: #F07800;
+}
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-youtube {
+  background: #E30613;
+  color: white;
+}
+
+.fa-instagram {
+  background: #C94D99;
+  color: white;
+}
+   
+</style>
+</head>
+<body>
+
+<!-- MAIN (Center website) -->
+<div class="main">
+    <center><div class="author">Author<br><img src="https://statics.lesinrocks.com/content/thumbs/uploads/2019/12/07/1448140/width-1125-height-612-quality-10/avatar.jpg.webp" alt="Avatar" class="avatar"></div></center>
+<div class="flex-container">
+  <div class="flex-item-right">
+    <div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'infospersos')" id="defaultOpen">Biographie</button>
+  <button class="tablinks" onclick="openCity(event, 'contact')">Contact, réseaux sociaux et sites</button>
+        <button class="tablinks" onclick="openCity(event, 'hpf')">Projets HPF, podiums</button></div>
+<div class="flex-item-left">
+<div id="infospersos" class="tabcontent">
+  <h2>Informations personnelles</h2>
+  <h3>Prénom : </h3>
+  <h3>Membre depuis le : 00/00/0000</h3>
+  <h3>Biographie : </h3>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+   <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+    <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+  <h3>Préférence de lecture et/ou d'écriture (couple, période, personnage, autre...) : </h3>
+  <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+   <p>Sunt culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+</div>   
+<div id="contact" class="tabcontent">
+    <h3>Contact : <a href="mailto:author@author.fr">author@author.fr</a></h3>
+  <h3>Réseaux sociaux :</h3>
+  <ul><a href="url" class="fa fa-facebook" aria-label="Facebook" title="Page Facebook de l'Auteur"></a> Nom </ul>
+  <ul><a href="url" class="fa fa-instagram" aria-label="Instagram" title="Page Instagram de l'Auteur"></a> Nom</ul>
+  <ul><a href="url" class="fa fa-youtube" aria-label="YouTube" title="chaîne YouTube de l'Auteur"></a> Nom</ul>
+  <ul><a href="url" class="fa fa-twitter" aria-label="Twitter" title="Twitter de l'Auteur"></a> Nom</ul>
+  <h3>Sites et blogs personnels :</h3>
+  <li><a href="#site1">Site 1</a></li>
+  <li><a href="#site2">Site 2</a></li>
+  <li><a href="#site3">Site 3</a></li>
+</div>
+<div id="hpf" class="tabcontent">
+  <h3>Participation aux projets HPF :</h3>
+  <a href="#projet1"><img scr="image1"/>Projet 1</a><br>
+  <a href="#projet2"><img scr="image2"/>Projet 2</a><br>
+  <a href="#projet3"><img scr="image3"/>Projet 3</a><br>
+  <a href="#projet4"><img scr="image4"/>Projet 4</a><br>
+  <a href="#projet5"><img scr="image5"/>Projet 5</a><br>
+  <a href="#projet6"><img scr="image6"/>Projet 6</a><br>
+  <a href="#projet7"><img scr="image7"/>Projet 7</a><br>
+  <a href="#projet8"><img scr="image8"/>Projet 8</a><br>
+  <a href="#projet9"><img scr="image9"/>Projet 9</a><br>
+  <h3>Création de projets HPF :</h3>
+  <a href="#crea1"><img scr="imagea"/>Créa 1</a><br>
+  <a href="#cra2"><img scr="imageb"/>Créa 2</a><br>
+  <a href="#crea3"><img scr="imagec"/>Créa 3</a><br>
+  <a href="#crea4"><img scr="imaged"/>Créa 4</a><br>
+  <a href="#crea5"><img scr="imagee"/>Créa 5</a><br>
+  <a href="#crea6"><img scr="imagef"/>Créa 6</a><br>
+  <a href="#crea7"><img scr="imageg"/>Créa 7</a><br>
+  <a href="#crea8"><img scr="imageh"/>Créa 8</a><br>
+  <a href="#crea9"><img scr="imagei"/>Créa 9</a><br>
+  <h3>Récompenses :</h3>
+  <a href="#podium1"><img scr="imageA"/>Podium 1</a><br>
+  <a href="#podium2"><img scr="imageB"/>Podium 2</a><br>
+  <a href="#podium3"><img scr="imageC"/>Podium 3</a><br>
+  <a href="#podium4"><img scr="imageD"/>Podium 4</a><br>
+  <a href="#podium5"><img scr="imageE"/>Podium 5</a><br>
+  <a href="#podium6"><img scr="imageF"/>Podium 6</a><br>
+  <a href="#podium7"><img scr="imageG"/>Podium 7</a><br>
+  <a href="#podium8"><img scr="imageH"/>Podium 8</a><br>
+  <a href="#podium9"><img scr="imageI"/>Podium 9</a><br>
+    </div></div>
+    
+    
+   
+    
+<script>
+    
+//author 
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();</script>
+
+</body>

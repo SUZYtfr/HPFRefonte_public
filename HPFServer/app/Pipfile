@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+django-extensions = "*"
+python-lorem = "*"
+django-sortedm2m = "*"
+django-ordered-model = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

@@ -1,0 +1,589 @@
+Codes seuls pour les news
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <meta http-equiv="X-UA-Compatible" content = "ie=edge">
+        <title> Keat </title>
+                <!-- Facebook Pixel Code ID à replacer-->
+        <script>
+       !function(f,b,e,v,n,t,s)
+       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+       if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+       n.queue=[];t=b.createElement(e);t.async=!0;
+       t.src=v;s=b.getElementsByTagName(e)[0];
+       s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+       fbq('init', '{your-pixel-id-goes-here}');
+       fbq('track', 'PageView');
+       </script>
+       <noscript>
+         <img height="1" width="1" style="display:none" 
+       src="https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1"/>
+        </noscript>
+        <!-- End Facebook Pixel Code -->
+        <!-- Style -->
+        <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Playfair+Display:ital@0;1&family=Roboto&display=swap" rel="stylesheet">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title> Harry Potter Fanfiction </title>
+        <!-- You can use open graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+  <meta property="og:url"           content="https://www.facebook.com/Harry-Potter-Fanfiction-154610914606437" />
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="Harry Potter fanfiction" />
+  <meta property="og:description"   content="Your description" />
+  <meta property="og:image"         content="https://www.your-domain.com/path/image.jpg" />
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v9.0&appId=655797771819068&autoLogAppEvents=1" nonce="sNh7m7OQ"></script>
+    
+    <div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v9.0&appId=655797771819068&autoLogAppEvents=1" nonce="aBwo3Lpf"></script>
+    <style>
+
+ * {
+  box-sizing: border-box;
+}
+
+body {
+font-family: 'Amiri', serif;
+      font-size: 18px;
+}
+
+        
+    /* Content */
+.content {
+  border: 2px ridge darkgrey;
+  padding: 10px;
+}
+
+        
+/*CSS A ENLEVER ET A REMPLACER PAR LES TOKENS BEUFY*/
+        
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+        
+
+.success {background-color: #FE9E3E;
+          color :white;} /* Orange */
+.success:hover {background-color: #F07800;}
+
+.info {background-color: #2196F3;
+       color :white;} /* Blue */
+.info:hover {background: #0b7dda;}
+
+.cha {background-color: #B3829A;
+      color: white;} 
+.cha:hover {background: #8F5A74;}
+
+.danger {background-color: #da190b;
+        color :white;} /* Red */ 
+.danger:hover {background: #A70000;}
+
+.cat {background-color: #0BD960;
+    color: white;} /* blue and green */ 
+.cat:hover {background: #008C3A;}
+        
+.perso {background-color: #FFCE4A;
+    color: white;} /*yellow */ 
+.perso:hover {background: #CCA53B;}
+        
+.nuit {background-color: #12198A;
+    color: white;} /*blue */ 
+.nuit:hover {background: #0B1057;}
+        
+.ca {background-color: #D13E6E;
+    color: white;} /*blue */ 
+.ca:hover {background: #9E2F54;}
+        
+.ed {background-color: #F07800;
+    color: white;} /*blue */ 
+.ed:hover {background: #CC4510;}
+        
+.tech {background-color: #434A4F;
+    color: white;} /*blue */ 
+.tech:hover {background: #2B3033;}
+        
+.ref {background-color: #86939D;
+    color: white;} /*blue */ 
+.ref:hover {background: #5F6970;}
+  
+        
+.edit {
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background-color: #F07800;
+  color: white;
+  font-style: #42162B; 
+  font-family: 'Roboto', serif;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit:hover {
+  background-color: #FE9E3E;
+  color: white; 
+}
+        
+.fa {
+  font-size: 50px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fa:hover {
+  color: darkblue;
+} 
+
+     
+ /*comments*/ 
+#mycomment {display: none;}
+
+        
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+.comments {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+
+/* Column container */
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+        
+    /* Center website */
+.main {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 50px;
+  word-break: break-all;
+}
+
+        /*Paragraph et header style*/
+        
+ .title1 {       
+font-family: 'Playfair Display', serif;
+font-size: 20px;
+text-align: center;
+text-justify: inter-word; 
+color: #42162B;
+margin-bottom: 2px;
+text-decoration: none; 
+        }
+.title1 a {
+    color: #42162B;
+    }
+        
+.title1 a:hover {
+    color: #FE9E3E;
+    }
+        
+.title1 a:focus {
+    color: #F07800; 
+    }
+
+.title1 a:visited {
+    color: #F07800; 
+    }
+        .title2{
+            font-family:'Amiri', serif;
+            font-size: 25px;
+        }
+        
+        .title3{
+            font-family:'Amiri', serif;
+            font-size:18px;
+            font-style: italic;
+            text-align: center;
+            
+        }       
+.p1 {       
+font-family: 'Roboto', sans-serif;
+font-size: 17px;
+text-align: justify;
+text-justify: inter-word; 
+        }
+.p1 a {
+    color: #42162B;
+    }
+        
+.p1 a:hover {
+    color: #FE9E3E;
+    }
+        
+.p1 a:focus {
+    color: #F07800; 
+    }
+
+.p1 a:visited {
+    color: #F07800; 
+    }
+
+/*liste*/ 
+        
+        ul{
+            list-style-type: none;
+        }
+        
+.row {
+  margin: 10px -16px -18px;
+}
+
+/* Add padding BETWEEN each column */
+.row,
+.row > .column {
+  padding: 8px;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  display: none; /* Hide all elements by default */
+}
+
+/* Clear floats after rows */ 
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Content */
+.content {
+  border: 2px ridge darkgrey;
+  padding: 10px;
+}
+
+/* The "show" class is added to the filtered elements */
+.show {
+  display: block;
+}
+ 
+   /*Comments*/      
+#mycomment {display: none;}
+        
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+input[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+.comments {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+    </head>
+    
+    <body>
+        <h2 class="title2">Page des recherches</h2>
+        <p>Indications : Toutes les catégories (y compris les couples) doivent être rangées par ordre croissant en fonction du nombre de fanfictions ou de séries qu'elles contiennent. Quand on clique sur une catégorie ou sous-catégorie, on attérit sur la page des fanfictions correspondantes, triées par nouveautés avec le token buefy recherche (comme sur le site actuel : si je clique sur "catéforie">page catégorie, si je clique sur "dramione">page avec toutes les dramiones triées par nouveautés). Tous les token Buefy (rating, commentaires) et les boutons sont à remplacer par le token correspondant. La grande nouveauté, c'est simplement de mettre en avant ces pages issus de la page recherche dans le menu, ce qui permettra d'exploser le référencement et de donner plus de visibilité aux fanfictions écrites ^^</p>
+        <p>Cette page de recherche se trouvera dans le menu "Lecture" >"Recherche". A noter que depuis le menu lecture, on aura :<br>
+        <ul><li>Nouveautés (page nouveautés à venir)</li>
+            <li>Recherche (page token buefy + fanfictions qui apparaissent par tri)</li>
+            <li>Genres et Catégories (-> cette page)
+            <li>Couples (-> page romance) <br> > Romance Het (-> page romance het) <br> >> Dramione (Hermione/Drago) (-> etc.)<br> >> Romione (Hermione/Ron) <br> >> Jily (James/Lily) <br> >> Tous les couples (-> page romance het) <br> > Romance Slash (-> page romance slash)<br> >> Drarry (Harry/Drago) (->etc.) <br> >> Snarry (Harry/Rogue) <br> >> Wolfstar (Sirius/Rémus) <br> >> Tous les couples </li>
+            <li>Les Sélections du mois (cette section sera à retravailler)<br> > Comment fonctionne le jury des aspics ? (remise en forme de contenu)<br> > Les textes médaillés (à venir)<br> > Les textes sélectionnés (à venir)<br> > Les thèmes (à venir)<br> > Voter pour les sélections (forum) <br> > Proposer : <br> >> Proposer un thème (forum) <br> >> Proposer un texte (forum)</li>
+            <li>Les concours de Lecture et de Reviews (forum)</li>
+            <li>Lexique des fanfictions (blog)</li>
+        </ul></p>
+    
+    <p>Indication : Page en cours de construction. Seule la catégorie "Durant Poudlard" est opérationnelle pour un premier retour.</p>
+    
+    <h2>Toutes les Fanfictions, Séries, Auteurs</h2>
+    
+    <div id="myBtnContainer">
+    <button class="edit" onclick="filterSelection('all')">Tout voir</button>
+  <button class="edit" onclick="filterSelection('fanfictionsauthor')">Genres</button>
+  <button class="edit" onclick="filterSelection('fanfictionfavorite')">Catégories</button>
+    <button class="edit" onclick="filterSelection('drama')">Couples (Het et Slash)</button>
+</div>
+ 
+    <div class="row">      
+  <div class="column fanfictionsauthor">
+  <div class="content">
+    <h3>Genre des Fanfictions :</h3><p>
+      
+        <p>
+            <button class="btn info" ahref="#page1">Romance</button>
+        <button class="btn info" ahref="#page2">Tragédie/Drame</button>
+            <button class="btn info" ahref="#page3">Polar/Enquête</button>
+      <button class="btn info" ahref="#page4">Comédie/Humour</button>
+        <button class="btn info" ahref="#page5">Angoisse/suspense</button>
+      <button class="btn info" ahref="#page6">Aventure/action</button></p>
+      <p>
+          <button class="btn info" ahref="#page7">Femslash/Yuri</button>
+  <button class="btn info" ahref="#page8">Slash/Yaoi</button>
+      <button class="btn info" ahref="#page9">Guerre</button>
+          <button class="btn info" ahref="#page10">Horreur</button>
+        <button class="btn info" ahref="#page11">Parodie</button>
+          <button class="btn info" ahref="#page12">Amitié</button>
+        </p>
+        <p>
+        <button class="btn info" ahref="#page13">Songfic</button>
+        <button class="btn info" ahref="#page14">Epistolaire</button>
+      <button class="btn info" ahref="#page15">Famille</button>
+        <button class="btn info" ahref="#page16">Poésie</button>
+        <button class="btn info" ahref="#page17">Missing Moments</button>
+      <button class="btn info" ahref="#page18">Autre genre</button></p></div></div></div><br>
+
+     <div class="column fanfictionfavorite">
+         <br><br>
+         
+        <div class="content">
+        <h3>Catégories :</h3>
+            <p><button id="repondre" class="btn cat" onclick="myReponse()">Durant Poudlard [8844]</button><br>
+Récits se déroulant entre les murs de la célèbre école de sorcellerie.</p>
+            <div id="mycomment">
+    <div class="comments">
+    <h4>Sous-catégories</h4>
+    <p class="p1"><ul><li><a href="#page20">"19 ans plus tard" [575]</a>
+<br>Fanfictions racontant la scolarité des enfants de nos héros.</li>
+<li><a href="#page20">Epoque de Jedusor [108]</a>
+<br>Fanfictions racontant la scolarité de personnages contemporains à l'époque de Tom Jedusor</li>
+<li><a href="#page20">Epoque Maraudeurs [1606]</a>
+<br>Fanfictions se déroulant à l'époque des Maraudeurs.</li>
+<li><a href="#page20">Epoque de Harry [3201]</a>
+<br>Fanfictions se déroulant durant les sept années de Harry à Poudlard</li></ul></p>
+        </div></div>
+            <p><button class="btn cat">Biographies [2817]</button><br>
+Fanfictions centrées sur l'histoire et la vie d'un seul personnage en particulier.</p>
+            <p><button class="btn cat">Après Poudlard [4863]</button><br>
+Fanfictions dont l'intrigue se déroule après la scolarité de Harry à Poudlard, cette catégorie inclue la Next Gen.</p>
+            <p><button class="btn cat">Enfances [984]</button><br>
+Fanfictions racontant l'enfance des personnages, avant leur entrée à Poudlard.</p>
+            <p><button class="btn cat">Univers Alternatifs [911]</button><br>
+Fanfictions où les personnages évoluent dans un univers différent du leur.</p>
+            <p><button class="btn cat">Voyages temporels [699]</button><br>
+Fanfictions où les personnages voyagent dans le temps.</p>
+            <p><button class="btn cat">CrossOver [298]</button><br>
+Fanfictions mélangeant l'univers d'Harry Potter à celui d'une ou plusieurs autres séries.</p>
+            <p><button class="btn cat">Les Fondateurs [162]</button><br>
+Fanfictions se déroulant à l'époque des Fondateurs.</p>
+            <p><button class="btn cat">Résistance [122]</button><br>
+Fanfictions centrée sur la Résistance.</p>
+            <p><button class="btn cat">Fêtes / Célébrations [56]</button><br>
+Fanfictions centrées sur les cérémonies.</p>
+            <p><button class="btn cat">Quidditch [39]</button><br>
+    Fanfictions centrées sur le sport sorcier.</p>
+            <p><button class="btn cat">Les Animaux Fantastiques [23]</button><br>
+Fanfictions se déroulant à l'époque de la saga cinématographique.</p> 
+            <p><button class="btn cat">Autres fics HP [2681]</button><br>
+                Toutes les autres catégories de fanfictions.</p></div></div><br>
+    
+    <div class="column drama">
+    <div class="content">
+     <h3>Couples :</h3>
+    <h4>Romances (het)</h4>
+    <p><button class="btn ca">Hétéros [8293]</button><br>
+Fanfictions centrées sur une histoire d'amour entre deux personnages.</p>
+    <p><uL><li>Dramione (Drago/Hermione) [1257]</li>
+        <li>Romione (Ron/Hermione) [617]</li>
+        <li>Jily (James/Lily) [594]</li>
+        <li>Hinny (Harry/Ginny) [394]</li>
+        <li>Harmony (Harry/Hermione) [316]</li>
+        <li>Snamione (Severus/Hermione) [220]</li>
+        <li>Remadora (Remus/Tonks) [117]</li>
+        <li>Sirmione (Sirius/Hermione) [114]</li>
+        <li>Scorose (Scorpius/Rose) [112]</li>
+        <li>Drinny (Drago/Ginny) [100]</li>
+        <li>Tomione (Jedusor/Hermione) [59]</li>
+        <li>Snily (Severus/Lily) [40]</li>
+        <li>Drastoria (Drago/Astoria) [37]</li>
+        <li>Tedoire (Teddy/Victoire) [34]</li>
+        <li>Huna (Harry/Luna) [26]</li>
+        <li>Remione (Remus/Hermione) [23]</li>
+        <li>Dransy (Drago/Pansy) [23]</li>
+        <li>Rona (Ron/Luna) [21]</li>
+        <li>Duna (Dean/Luna) [18]</li>
+        <li>Tominny (Jedusor/Ginny) [18]</li>
+        <li>Hansy (Harry/Pansy) [17]</li>
+        <li>Seamus/Lavande [14]</li>
+        <li>Scorlily (Scorpius/Lily) [13]</li>
+        <li>Fremione (Fred/Hermione) [11]</li>
+        <li>Georgelina (George/Angelina) [9]</li>
+        <li>Bleur (Bill/Fleur) [7]</li>
+        <li>Nevannah (Neville/Hannah) [7]</li>
+        <li>Percy/Audrey [7]</li>
+        <li>Sily (Sirius/Lily) [6]</li>
+        <li>Marthur (Arthur/Molly) [5]</li>
+        <li>Scormione (Hermione/Scorpius) [4]</li>
+        <li>Lucissa (Lucius/Narcissa) [4]</li>
+        <li>Blaphne (Blaise/Daphné) [4]</li>
+        <li>Krumione (Viktor/Hermione) [3]</li>
+        <li>Charmione (Charlie/Hermione) [2]</li>
+        <li>Fralice (Alice/Frank) [2]</li>
+        <li>Lovander (Rolf/Luna) [2]</li>
+        <li>Nuna (Neville/Luna) [1]</li>
+        <li>Frangelina (Angelina/Fred) [1]</li>
+        <li>Rusard/Mme Pince [1]</li>
+        <li>Drarose (Drago/Rose) [0]</li>
+        <li>Lumione (Hermione/Lucius) [0]</li>
+        <li>Bellamort (Bellatrix/Voldemort) [0]</li>
+        <li>Autres couples (Het) [1434]</li></uL></p>
+   
+    <h4>Romances (slash)</h4>
+    <p><button class="btn ca">Slash Yaoi/Yuri [2183]</button><br>
+    <p>Fanfictions centrées sur une histoire d'amour entre deux personnages de même sexe.</p>
+     <p><uL><li>Drarry (Harry/Drago) [674]</li>
+        <li>Snarry (Severus/Harry) [234]</li>
+        <li>Wolfstar (Sirius/Remus) [98]</li>
+        <li>Ronaco (Drago/Ron) [57]</li>
+        <li>Tomarry (Harry/Jedusor) [39]</li>
+        <li>Herminny (Ginny/Hermione) [33]</li>
+        <li>Snack (Sirius/Severus) [31]</li>
+        <li>Snupin (Remus/Severus) [29]</li>
+        <li>Pansmione (Pansy/Hermione) [29]</li>
+        <li>Scorbus (Albus S./Scorpius) [22]</li>
+        <li>Lucarry (Harry/Lucius) [19]</li>
+        <li>Rarry (Ron/Harry) [15]</li>
+        <li>Grindeldore (Dumbledore/Grindelwald) [14]</li>
+        <li>Harrius (Sirius/Harry) [13]</li>
+        <li>Snucius (Lucius/Severus) [12]</li>
+        <li>Jegulus (James/Regulus) [6]</li>
+        <li>Snaco (Severus/Drago) [4]</li>
+        <li>Ginsy (Ginny/Pansy) [2]</li>
+        <li>Bellamione (Bellatrix/Hermione) [1]</li>
+        <li>Parvender (Lavande/Parvati) [1]</li>
+        <li>Jeverus (James/Severus) [0]</li>
+        <li>Fleurmione (Fleur/Hermione) [0]</li>
+        <li>Linny (Ginny/Luna) [0]</li>
+        <li>Lupius (Lucius/Remus) [0]</li>
+        <li>Deamus (Dean/Seamus) [-1]</li>
+        <li>Autres couples (Slash) [278]</li></uL></p><br>
+        </div></div>
+
+<script>
+    //twitter
+    window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+
+
+    
+function myReponse() {
+  var y = document.getElementById('mycomment');
+  if (y.style.display === 'block') {
+    y.style.display = 'none';
+  } else {
+    y.style.display = 'block';
+  }
+}
+    
+//Filtrer 
+filterSelection("all")
+function filterSelection(c) {
+  var x, i;
+  x = document.getElementsByClassName("column");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+function w3AddClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+  }
+}
+
+function w3RemoveClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+    }
+  }
+  element.className = arr1.join(" ");
+}
+
+
+// Add active class to the current button (highlight it)
+var btnContainer = document.getElementById("myBtnContainer");
+var btns = btnContainer.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function(){
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+</script>
+        
+    </body>
+</html>
