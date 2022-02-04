@@ -21,7 +21,7 @@ urlpatterns = [
         path(r"selections/", include("selections.urls", namespace="selections")),
         path(r"news/", include("news.urls", namespace="news")),
         path(r"reports/", include("reports.urls", namespace="reports")),
-        path(r"banners/", include("banners.urls", namespace="banners")),
+        path(r"images/", include("images.urls", namespace="images")),
 
         # URLS PRIVÉES
         path(r"account/", include([

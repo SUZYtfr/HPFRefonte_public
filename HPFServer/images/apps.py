@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BannersConfig(AppConfig):
+class ImagesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'banners'
+    name = 'images'

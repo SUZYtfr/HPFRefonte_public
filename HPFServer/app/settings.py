@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "selections",
     "news",
     "reports",
-    "banners",
+    "images",
 ]
 
 MIDDLEWARE = [
