@@ -8,7 +8,8 @@ from django.utils import timezone
 from tests.samples import *
 from selections.models import Selection
 from fictions.models import Chapter
-from polls.models import Ballot, MAX_POLL_ANSWERS
+from polls.models import Ballot
+from app.settings import MAX_POLL_ANSWERS
 from polls.serializers import ResultSerializer, PollQuestionSerializer
 
 from random import shuffle

@@ -5,8 +5,6 @@ from core.models import CreatedModel, DatedModel
 
 from users.models import User
 
-MAX_POLL_ANSWERS = 5
-
 
 class PollGroup(DatedModel, CreatedModel):
     """Modèle de groupe de sondage"""

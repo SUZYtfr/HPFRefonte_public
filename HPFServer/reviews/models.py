@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from django.conf import settings
+
 from core.models import DatedModel, CreatedModel, TextDependentModel
 from core.text_functions import parse_text
 
@@ -14,8 +16,6 @@ from texts.models import ReviewTextVersion
 
 MIN_GRADING_VALUE = 0
 MAX_GRADING_VALUE = 10
-MEMBERS_MAX_REVIEW_DRAFTS = 2
-PREMIUM_MAX_REVIEW_DRAFTS = 5
 
 
 def check_review_permission(reviewed_element, creation_user):
@@ -34,10 +34,10 @@ def check_draft_permission(creation_user):
 
     draft_number = creation_user.created_reviews.filter(draft=True).count()
     if creation_user.is_premium:
-        if draft_number >= PREMIUM_MAX_REVIEW_DRAFTS:
+        if draft_number >= settings.PREMIUM_MAX_REVIEW_DRAFTS:
             raise PermissionError("Cet adhérent a atteint son nombre de brouillons de reviews maximal autorisé.")
     else:
-        if draft_number >= MEMBERS_MAX_REVIEW_DRAFTS:
+        if draft_number >= settings.MEMBERS_MAX_REVIEW_DRAFTS:
             raise PermissionError("Ce membre a atteint son nombre de brouillons de reviews maximal autorisé.")
 
 
