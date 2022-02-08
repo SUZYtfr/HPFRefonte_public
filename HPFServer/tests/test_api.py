@@ -13,7 +13,7 @@ from users.serializers import PublicUserSerializer, UserCardSerializer
 from fictions.serializers import FictionCardSerializer, FictionSerializer, ChapterSerializer, ChapterCardSerializer, Chapter
 from news.serializers import NewsSerializer, NewsArticle
 from features.serializers import FeatureSerializer
-from banners.serializers import BannerSerializer, Banner
+from images.serializers import BannerSerializer, Banner
 
 
 def generate_url(app_name, object_id=None):
@@ -22,6 +22,12 @@ def generate_url(app_name, object_id=None):
     if object_id:
         return reverse(f"{app_name}:{app_basename}-detail", args=[object_id])
     return reverse(f"{app_name}:{app_basename}-list")
+
+
+def generate_banner_url(banner_id=None):
+    if banner_id:
+        return reverse(f"images:banner-detail", args=[banner_id])
+    return reverse(f"images:banner-list")
 
 
 NEWS_LIST_URL = reverse("news:news-list")
@@ -151,22 +157,22 @@ class TestsPublicAPI(APITestCase):
                 active_banner = Banner.objects.create(
                     creation_user=self.active_user,
                     category=Banner.BannerType.WEBSITE,
-                    image=valid_banner_image,
+                    src_path=valid_banner_image,
                     is_active=True,
                 )
                 inactive_banner = Banner.objects.create(
                     creation_user=self.active_user,
                     category=Banner.BannerType.WEBSITE,
-                    image=valid_banner_image,
+                    src_path=valid_banner_image,
                     is_active=False,
                 )
 
         active_banner_serializer = BannerSerializer(active_banner, context={"request": self.request})
         inactive_banner_serializer = BannerSerializer(inactive_banner, context={"request": self.request})
 
-        res_1 = self.client.get(path=generate_url("banners"))
-        res_2 = self.client.get(path=generate_url("banners", active_banner.id))
-        res_3 = self.client.get(path=generate_url("banners", inactive_banner.id))
+        res_1 = self.client.get(path=generate_banner_url())
+        res_2 = self.client.get(path=generate_banner_url(active_banner.id))
+        res_3 = self.client.get(path=generate_banner_url(inactive_banner.id))
 
         self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertIn(active_banner_serializer.data, res_1.data["results"])

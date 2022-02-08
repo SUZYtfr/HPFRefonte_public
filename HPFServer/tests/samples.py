@@ -69,9 +69,9 @@ def sample_chapter(creation_user=None, title=None, fiction=None, text=None,
         creation_user=creation_user,
         title=lorem.get_sentence() if title is None else title,
         fiction=fiction,
-        text=text or lorem.get_paragraph(3),
         **extra_fields
     )
+    chapter.create_text_version(text=text or lorem.get_paragraph(3), creation_user=creation_user, touch=False)
 
     return chapter
 
