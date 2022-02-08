@@ -12,6 +12,10 @@ django-sortedm2m = "*"
 django-ordered-model = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
+psycopg2 = "*"
+docx2python = "*"
+lxml = "*"
+odfpy = "*"
 
 [dev-packages]
 

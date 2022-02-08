@@ -1,17 +1,18 @@
 from rest_framework.serializers import *
+from django.core.validators import FileExtensionValidator
 
-from .models import Fiction, Chapter, Beta
+from .models import Fiction, Chapter, Beta, ChapterTextVersion
 from features.models import Category, Feature
 
 from core.serializers import BaseModelSerializer
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from core.text_functions import read_text_file
 
-# SÉRIALISEURS PUBLIQUES
 
-class FictionCardSerializer(ModelSerializer):
-    """Sérialiseur publique de carte de fiction"""
+# ALLOWED_EXTENSIONS = ["txt", "doc", "docx", "odt"]
+ALLOWED_EXTENSIONS = ["txt", "docx"]
 
     class Meta:
         model = Fiction
@@ -195,6 +196,148 @@ class MyFictionSerializer(BaseModelSerializer):
         return value
 
 
+class CurrentFictionDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        return serializer_field.context["fiction"]
+
+    def __repr__(self):
+        return '%s()' % self.__class__.__name__
+
+
+class ChapterBaseSerializer(BaseModelSerializer):
+
+    order = SerializerMethodField()
+
+    class Meta:
+        model = Chapter
+        fields = "__all__"
+        read_only_fields = (
+            "id",
+            "order",
+            "validation_status",
+            "word_count",
+            "mean",
+        )
+
+    def get_order(self, obj):
+        return obj._order + 1  # index 0 -> 1
+
+
+class ChapterCardSerializer(ChapterBaseSerializer):
+    """Sérialiseur publique de carte de chapitre"""
+
+    class Meta(ChapterBaseSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+            "creation_user",
+            "order",
+        )
+
+
+class ChapterSerializer(ChapterBaseSerializer):
+    """Sérialiseur publique de chapitre"""
+
+    reviews_url = HyperlinkedIdentityField(
+        view_name="reviews:chapter-reviews",
+        lookup_field="pk",
+        lookup_url_kwarg="pk",
+    )
+
+    class Meta(ChapterBaseSerializer.Meta):
+        fields = (
+            "title",
+            "id",
+            "order",
+            "mean",
+            "startnote",
+            "endnote",
+            "text",
+            "validation_status",
+            "reviews_url",
+            "word_count",
+        )
+
+
+class MyChapterCardSerializer(ChapterBaseSerializer):
+    """Sérialiseur privée de carte de chapitre"""
+
+    class Meta(ChapterBaseSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+        )
+
+
+class MyChapterSerializer(ChapterBaseSerializer):
+    """Sérialiseur privé de chapitre"""
+
+    text_file_upload = FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
+        FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
+                               message="L'extension de fichier %(extension)s n'est pas pris en charge. "
+                                       "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
+    ])
+
+    fiction = HiddenField(default=CreateOnlyDefault(CurrentFictionDefault()))
+
+    text = CharField(allow_blank=True, style={'base_template': 'textarea.html'})
+
+    class Meta(ChapterBaseSerializer.Meta):
+        fields = (
+            "title",
+            "id",
+            "order",
+            "fiction",
+            "modification_user",
+            "creation_user",
+            "modification_date",
+            "creation_date",
+            "text",
+            "text_file_upload",
+            "startnote",
+            "endnote",
+            "validation_status",
+            "word_count",
+        )
+
+    def validate_text_file_upload(self, value):
+        if value:
+            try:
+                return read_text_file(value)
+            except Exception as e:
+                raise ValidationError(e)
+
+    def validate(self, attrs):
+        if not attrs.get("text"):
+            if not attrs.get("text_file_upload"):
+                raise ValidationError("Le texte du chapitre doit être passé.")
+            attrs.update({"text": attrs.get("text_file_upload")})
+        attrs.pop("text_file_upload")
+        return attrs
+
+    def create(self, validated_data):
+        text = validated_data.pop("text")
+        instance = super().create(validated_data)
+        instance.create_text_version(
+            text=text,
+            creation_user=self.context["request"].user,
+            touch=False,
+        )
+        return instance
+
+    def update(self, instance, validated_data):
+        text = validated_data.pop("text")
+        instance = super().update(instance, validated_data)
+        instance.create_text_version(
+            text=text,
+            creation_user=self.context["request"].user,
+            touch=True
+        )
+        return instance
+
+
 class FictionChapterOrderSerializer(ModelSerializer):
 
     class Meta:
@@ -218,45 +361,6 @@ class FictionChapterOrderSerializer(ModelSerializer):
 
     def reorder(self):
         self.instance.set_chapter_order(self.validated_data["get_chapter_order"])
-
-
-class MyChapterCardSerializer(ModelSerializer):
-    """Sérialiseur privée de carte de chapitre"""
-
-    class Meta:
-        model = Chapter
-        fields = (
-            "id",
-            "title",
-        )
-
-
-class MyChapterSerializer(BaseModelSerializer):
-    """Sérialiseur privé de chapitre"""
-
-    fiction = HiddenField(default=CreateOnlyDefault(CurrentFictionDefault()))
-
-    text = CharField()
-
-    class Meta:
-        model = Chapter
-        fields = ("title", "id", "_order",
-                  "fiction",
-                  "modification_user", "creation_user", "modification_date", "creation_date",
-                  "text",
-                  "startnote", "endnote",
-                  "validation_status", "word_count",)
-        read_only_fields = ("id", "_order", "validation_status", "word_count",)
-
-    def update(self, instance, validated_data):
-
-        text = validated_data.pop("text")
-
-        instance = super().update(instance, validated_data)
-
-        instance.create_text_version(creation_user=self.context["request"].user, text=text)
-
-        return instance
 
 
 class BetaSerializer(ModelSerializer):
