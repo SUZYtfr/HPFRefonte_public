@@ -14,8 +14,25 @@ from core.text_functions import read_text_file
 # ALLOWED_EXTENSIONS = ["txt", "doc", "docx", "odt"]
 ALLOWED_EXTENSIONS = ["txt", "docx"]
 
+
+class FictionBaseSerializer(BaseModelSerializer):
     class Meta:
         model = Fiction
+        fields = "__all__"
+        read_only_fields = (
+            "authors",
+            "word_count",
+            "mean",
+            "status",
+            "read_count",
+            "chapters",
+        )
+
+
+class FictionCardSerializer(FictionBaseSerializer):
+    """Sérialiseur publique de carte de fiction"""
+
+    class Meta(FictionBaseSerializer.Meta):
         fields = (
             "id",
             "title",
@@ -24,7 +41,7 @@ ALLOWED_EXTENSIONS = ["txt", "docx"]
         )
 
 
-class FictionSerializer(ModelSerializer):
+class FictionSerializer(FictionBaseSerializer):
     """Sérialiseur publique de fiction"""
 
     features = StringRelatedField(many=True)
@@ -35,81 +52,28 @@ class FictionSerializer(ModelSerializer):
         lookup_url_kwarg="pk",
     )
 
-    class Meta:
-        model = Fiction
-        fields = ("title", "id",
-                  "authors",
-                  "chapters",
-                  "storynote", "summary",
-                  "status",
-                  "features",
-                  "reviews_url",
-                  "read_count", "mean",
-                  "last_update_date",
-                  "word_count",
-                  )
-
-
-class CurrentFictionDefault:
-    requires_context = True
-
-    def __call__(self, serializer_field):
-        return serializer_field.context["fiction"]
-
-    def __repr__(self):
-        return '%s()' % self.__class__.__name__
-
-
-class ChapterCardSerializer(ModelSerializer):
-    """Sérialiseur publique de carte de chapitre"""
-
-    order = SerializerMethodField()
-
-    class Meta:
-        model = Chapter
+    class Meta(FictionBaseSerializer.Meta):
         fields = (
-            "id",
             "title",
-            "creation_user",
-            "order",
+            "id",
+            "authors",
+            "chapters",
+            "storynote",
+            "summary",
+            "status",
+            "features",
+            "reviews_url",
+            "read_count",
+            "mean",
+            "last_update_date",
+            "word_count",
         )
 
-    def get_order(self, obj):
-        return obj._order + 1  # index 0 -> 1
 
-
-class ChapterSerializer(ModelSerializer):
-    """Sérialiseur publique de chapitre"""
-
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:chapter-reviews",
-        lookup_field="pk",
-        lookup_url_kwarg="pk",
-    )
-    order = SerializerMethodField()
-
-    class Meta:
-        model = Chapter
-        fields = ("title", "id", "order",
-                  "mean",
-                  "startnote", "endnote",
-                  "text",
-                  "validation_status",
-                  "reviews_url",
-                  "word_count",)
-        read_only_fields = ("id", "order", "validation_status", "word_count", "mean",)
-
-    def get_order(self, obj):
-        return obj._order + 1  # index 0 -> 1
-
-
-# SÉRIALISEURS PRIVÉS
-
-class MyFictionCardSerializer(ModelSerializer):
+class MyFictionCardSerializer(FictionBaseSerializer):
     """Sérialiseur privé de carte de fiction"""
 
-    class Meta:
-        model = Chapter
+    class Meta(FictionBaseSerializer.Meta):
         fields = (
             "id",
             "title",
@@ -146,25 +110,30 @@ class FeaturesChoiceRelatedField(RelatedField):
         return feature
 
 
-class MyFictionSerializer(BaseModelSerializer):
+class MyFictionSerializer(FictionBaseSerializer):
     """Sérialiseur privé de fiction"""
 
     features = FeaturesChoiceRelatedField(
         many=True,
     )
 
-    class Meta:
-        model = Fiction
-        fields = ("id", "title", "storynote", "summary",
-                  "authors",
-                  "features",
-                  "chapters",
-                  "status",
-                  "read_count", "mean",
-                  "creation_user", "creation_date",
-                  "modification_user", "modification_date",)
-        read_only_fields = ("id", "read_count", "mean",
-                            "creation_user", "creation_date", "modification_user", "modification_user",)
+    class Meta(FictionBaseSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+            "storynote",
+            "summary",
+            "authors",
+            "features",
+            "chapters",
+            "status",
+            "read_count",
+            "mean",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
 
     def validate_features(self, value):
         """Valide le nombre de caractéristiques pour chaque catégorie"""
@@ -214,7 +183,6 @@ class ChapterBaseSerializer(BaseModelSerializer):
         model = Chapter
         fields = "__all__"
         read_only_fields = (
-            "id",
             "order",
             "validation_status",
             "word_count",

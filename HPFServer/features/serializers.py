@@ -7,14 +7,28 @@ from .models import Feature, Category
 from core.serializers import BaseModelSerializer
 
 
-class FeatureSerializer(BaseModelSerializer):
+class FeatureBaseSerializer(BaseModelSerializer):
+
+    class Meta:
+        model = Feature
+        fields = "__all__"
+
+
+class FeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique"""
 
     is_personal = HiddenField(default=True)
 
-    class Meta:
-        model = Feature
-        fields = ("id", "name", "url", "category", "parent", "description", "is_personal",)
+    class Meta(FeatureBaseSerializer.Meta):
+        fields = (
+            "id",
+            "name",
+            "url",
+            "category",
+            "parent",
+            "description",
+            "is_personal",
+        )
         extra_kwargs = {
             "description": {"read_only": True},
             "category": {"queryset": Category.objects.exclude(is_closed=True)},
@@ -56,14 +70,13 @@ class FeatureSerializer(BaseModelSerializer):
         return self.instance
 
 
-class StaffFeatureSerializer(BaseModelSerializer):
+class StaffFeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique pour les modérateurs"""
 
     url = HyperlinkedIdentityField(view_name="features:feature-detail")
 
-    class Meta:
-        model = Feature
-        fields = "__all__"
+    class Meta(FeatureBaseSerializer.Meta):
+        pass
 
     def save(self, **kwargs):
         """Enregistre la caractéristique
@@ -96,7 +109,7 @@ class StaffCategorySerializer(BaseModelSerializer):
         return attrs
 
 
-class StaffFeatureOrderSerializer(ModelSerializer):
+class StaffFeatureOrderSerializer(BaseModelSerializer):
     """Sérialiseur d'ordre de caractéristiques pour les modérateurs"""
 
     class Meta:

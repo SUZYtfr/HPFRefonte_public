@@ -38,8 +38,23 @@ class PublicUserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "realname", "email", "birthdate", "bio", "gender", "fictions",
-                  "last_login", "mean", "reviews_url", "creation_date", "modification_date", "user_links", "banner",)
+        fields = (
+            "id",
+            "nickname",
+            "realname",
+            "email",
+            "birthdate",
+            "bio",
+            "gender",
+            "fictions",
+            "last_login",
+            "mean",
+            "reviews_url",
+            "creation_date",
+            "modification_date",
+            "user_links",
+            "banner",
+        )
 
     # # cf : https://stackoverflow.com/questions/28309507/django-rest-framework-filtering-for-serializer-field#28310334
     def _get_published_fictions(self, obj):

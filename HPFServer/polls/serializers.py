@@ -47,8 +47,15 @@ class PollAnswerSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollAnswer
-        fields = ("id", "answer_text", "poll_question",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
+        fields = (
+            "id",
+            "answer_text",
+            "poll_question",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
 
 
 class PollQuestionSerializer(BaseModelSerializer):
@@ -66,13 +73,24 @@ class PollQuestionSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollQuestion
-        fields = ("id", "question_text",
-                  "opening_datetime", "closing_datetime",
-                  "members_only", "visibility",
-                  "max_choices", "answers",
-                  "chapter",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
-        read_only_fields = ("answers",)
+        fields = (
+            "id",
+            "question_text",
+            "opening_datetime",
+            "closing_datetime",
+            "members_only",
+            "visibility",
+            "max_choices",
+            "answers",
+            "chapter",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
+        read_only_fields = (
+            "answers",
+        )
 
 
 class PollSerializer(BaseModelSerializer):
@@ -85,8 +103,15 @@ class PollSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollGroup
-        fields = ("id", "title", "questions",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
+        fields = (
+            "id",
+            "title",
+            "questions",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
 
 
 # TODO - Implémenter si on veut un vote pour un groupe de sondage
@@ -154,7 +179,14 @@ class BallotSerializer(ModelSerializer):
 
     class Meta:
         model = Ballot
-        fields = ("poll_question", "choices", "user", "poll_question", "ip_address", "vote_datetime",)
+        fields = (
+            "poll_question",
+            "choices",
+            "user",
+            "poll_question",
+            "ip_address",
+            "vote_datetime",
+        )
         # list_serializer_class = BulkBallotSerializer
 
 

@@ -8,11 +8,7 @@ class NewsCommentSerializer(BaseModelSerializer):
 
     class Meta:
         model = NewsComment
-        exclude = (
-            "modification_date",
-            "modification_user",
-            "newsarticle",
-        )
+        fields = "__all__"
 
 
 class NewsSerializer(BaseModelSerializer):

@@ -10,11 +10,16 @@ class ReportSerializer(ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ("element", "datetime", "argument", "status")
-        extra_kwargs = {
-            "status": {"read_only": True},
-            "datetime": {"read_only": True},
-        }
+        fields = (
+            "element",
+            "datetime",
+            "argument",
+            "status",
+        )
+        read_only_fields = (
+            "status",
+            "datetime",
+        )
 
     def create(self, validated_data):
         validated_data["report_user"] = self.context["request"].user

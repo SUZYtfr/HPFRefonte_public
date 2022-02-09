@@ -53,7 +53,10 @@ class ReviewSerializer(BaseModelSerializer):
 
     class Meta:
         model = Review
-        exclude = ("content_type", "object_id",)
+        exclude = (
+            "content_type",
+            "object_id",
+        )
         extra_kwargs = {
             "draft": {"write_only": True},
         }
@@ -175,5 +178,8 @@ class ReviewCardSerializer(ReviewSerializer):
 class ReviewTextSerializer(ModelSerializer):
 
     class Meta:
-        exclude = ("id", "review",)
+        exclude = (
+            "id",
+            "review",
+        )
         model = ReviewTextVersion
