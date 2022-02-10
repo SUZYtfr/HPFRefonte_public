@@ -44,14 +44,19 @@ class FeatureViewSet(ModelViewSet):
             return StaffFeatureSerializer
         return self.serializer_class
 
-    # Réécriture de cette méthode juste pour changer le code 201 en 200 si caractéristique existait déjà...
-    def create(self, request, *args, **kwargs):
+    # Crée le tag ou renvoie le tag existant
+    @action(methods=["POST"], detail=False, url_name="upsert", name="Feature create or retrieve", url_path="upsert")
+    def create_or_retrieve(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        created = self.perform_create_or_retrieve(serializer)
         headers = self.get_success_headers(serializer.data)
-        feature_status = status.HTTP_201_CREATED if hasattr(serializer, "created") else status.HTTP_200_OK
+        feature_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(serializer.data, status=feature_status, headers=headers)
+
+    def perform_create_or_retrieve(self, serializer):
+        instance, created = serializer.save(upsert=True)
+        return created
 
 
 class CategoryViewSet(ModelViewSet):

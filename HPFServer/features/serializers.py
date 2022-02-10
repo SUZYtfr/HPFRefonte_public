@@ -54,20 +54,16 @@ class FeatureSerializer(FeatureBaseSerializer):
         return instance, created
 
     # Ceci est une réécriture, penser aux conséquences de laisser à côté les vérifications faites par Django !
-    def save(self, **kwargs):
+    def save(self, upsert=False, **kwargs):
         validated_data = {**self.validated_data, **kwargs}
 
-        if self.instance is not None:
-            validated_data["modification_user"] = self.context["request"].user
-            validated_data["modification_date"] = timezone.now()
-            self.instance = self.update(self.instance, validated_data)
-        else:
+        if upsert:
             validated_data["creation_user"] = self.context["request"].user
             validated_data["creation_date"] = timezone.now()
             self.instance, created = self.get_or_create(validated_data)
-            if created:
-                self.created = True  # Capté par la vue correspondante pour changer le code HTTP
-        return self.instance
+            return self.instance, created
+        else:
+            return super().save(**kwargs)
 
 
 class StaffFeatureSerializer(FeatureBaseSerializer):
