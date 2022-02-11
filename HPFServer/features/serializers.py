@@ -31,8 +31,8 @@ class FeatureSerializer(FeatureBaseSerializer):
         )
         extra_kwargs = {
             "description": {"read_only": True},
-            "category": {"queryset": Category.objects.exclude(is_closed=True)},
-            "parent": {"queryset": Feature.objects.exclude(is_forbidden=True),
+            "category": {"queryset": Category.open.all()},
+            "parent": {"queryset": Feature.allowed.all(),
                        "allow_null": True,
                        "initial": ""},
             "url": {"view_name": "features:feature-detail"},

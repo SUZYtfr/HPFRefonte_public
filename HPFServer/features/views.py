@@ -1,35 +1,35 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 from .serializers import FeatureSerializer, StaffFeatureSerializer, StaffCategorySerializer, StaffFeatureOrderSerializer
 from .models import Feature, Category
 
 
-class IsStaffOrCreateOnly(BasePermission):
+class IsStaffOrCreateOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in [*SAFE_METHODS, "POST"]:
+        if request.method in [*permissions.SAFE_METHODS, "POST"]:
             return True
         if request.user.is_staff:
             return True
         return False
 
 
-class IsStaff(BasePermission):
+class IsStaffOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
         if request.user.is_staff:
             return True
-        return False
 
 
 class FeatureViewSet(ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
-    permission_classes = (IsAuthenticatedOrReadOnly, IsStaffOrCreateOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsStaffOrCreateOnly,)
     serializer_class = FeatureSerializer
-    queryset = Feature.objects.exclude(is_forbidden=True).order_by("category")
+    queryset = Feature.allowed.order_by("category")
     search_fields = ("name",)
 
     def get_queryset(self):
@@ -62,8 +62,8 @@ class FeatureViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     """Ensemble de vues de modération pour les catégories"""
 
-    permission_classes = (IsAuthenticated, IsStaff)
-    queryset = Category.objects
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsStaffOrReadOnly)
+    queryset = Category.objects.all()
     serializer_class = StaffCategorySerializer
 
     @action(methods=["GET", "PUT"], detail=True, serializer_class=StaffFeatureOrderSerializer, url_name="feature-order")

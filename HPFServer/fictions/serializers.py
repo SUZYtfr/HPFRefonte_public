@@ -1,13 +1,11 @@
 from rest_framework.serializers import *
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Fiction, Chapter, Beta, ChapterTextVersion
+from .models import Fiction, Chapter, Beta
 from features.models import Category, Feature
 
 from core.serializers import BaseModelSerializer
-
-from django.core.exceptions import ObjectDoesNotExist
-
 from core.text_functions import read_text_file
 
 
@@ -15,75 +13,10 @@ from core.text_functions import read_text_file
 ALLOWED_EXTENSIONS = ["txt", "docx"]
 
 
-class FictionBaseSerializer(BaseModelSerializer):
-    class Meta:
-        model = Fiction
-        fields = "__all__"
-        read_only_fields = (
-            "authors",
-            "word_count",
-            "mean",
-            "status",
-            "read_count",
-            "chapters",
-        )
-
-
-class FictionCardSerializer(FictionBaseSerializer):
-    """Sérialiseur publique de carte de fiction"""
-
-    class Meta(FictionBaseSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-            "authors",
-            "word_count",
-        )
-
-
-class FictionSerializer(FictionBaseSerializer):
-    """Sérialiseur publique de fiction"""
-
-    features = StringRelatedField(many=True)
-
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:fiction-reviews",
-        lookup_field="pk",
-        lookup_url_kwarg="pk",
-    )
-
-    class Meta(FictionBaseSerializer.Meta):
-        fields = (
-            "title",
-            "id",
-            "authors",
-            "chapters",
-            "storynote",
-            "summary",
-            "status",
-            "features",
-            "reviews_url",
-            "read_count",
-            "mean",
-            "last_update_date",
-            "word_count",
-        )
-
-
-class MyFictionCardSerializer(FictionBaseSerializer):
-    """Sérialiseur privé de carte de fiction"""
-
-    class Meta(FictionBaseSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-        )
-
-
 class FeaturesChoiceRelatedField(RelatedField):
     """Champ de choix de caractéristiques"""
 
-    queryset = Feature.objects.exclude(is_forbidden=True)
+    queryset = Feature.allowed.all()
 
     def to_representation(self, value):
         """Renvoie l'ID de la caractéristique pour sérialisation"""
@@ -110,30 +43,33 @@ class FeaturesChoiceRelatedField(RelatedField):
         return feature
 
 
-class MyFictionSerializer(FictionBaseSerializer):
+class FictionSerializer(BaseModelSerializer):
     """Sérialiseur privé de fiction"""
+
+    class Meta:
+        model = Fiction
+        fields = "__all__"
+        read_only_fields = (
+            "authors",
+            "word_count",
+            "mean",
+            "status",
+            "read_count",
+            "chapters",
+        )
+        extra_kwargs = {
+            "featured": {"read_only": True}
+        }
 
     features = FeaturesChoiceRelatedField(
         many=True,
     )
 
-    class Meta(FictionBaseSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-            "storynote",
-            "summary",
-            "authors",
-            "features",
-            "chapters",
-            "status",
-            "read_count",
-            "mean",
-            "creation_user",
-            "creation_date",
-            "modification_user",
-            "modification_date",
-        )
+    reviews_url = HyperlinkedIdentityField(
+        view_name="reviews:fiction-reviews",
+        lookup_field="pk",
+        lookup_url_kwarg="pk",
+    )
 
     def validate_features(self, value):
         """Valide le nombre de caractéristiques pour chaque catégorie"""
@@ -165,6 +101,16 @@ class MyFictionSerializer(FictionBaseSerializer):
         return value
 
 
+class FictionCardSerializer(FictionSerializer):
+    """Sérialiseur publique de carte de fiction"""
+
+    class Meta(FictionSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+        )
+
+
 class CurrentFictionDefault:
     requires_context = True
 
@@ -175,9 +121,25 @@ class CurrentFictionDefault:
         return '%s()' % self.__class__.__name__
 
 
-class ChapterBaseSerializer(BaseModelSerializer):
+class ChapterSerializer(BaseModelSerializer):
 
     order = SerializerMethodField()
+
+    reviews_url = HyperlinkedIdentityField(
+        view_name="reviews:chapter-reviews",
+        lookup_field="pk",
+        lookup_url_kwarg="pk",
+    )
+
+    text_file_upload = FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
+        FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
+                               message="L'extension de fichier %(extension)s n'est pas pris en charge. "
+                                       "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
+    ])
+
+    text = CharField(allow_blank=True, style={'base_template': 'textarea.html'})
+
+    fiction = HiddenField(default=CreateOnlyDefault(default=CurrentFictionDefault()))
 
     class Meta:
         model = Chapter
@@ -187,87 +149,8 @@ class ChapterBaseSerializer(BaseModelSerializer):
             "validation_status",
             "word_count",
             "mean",
-        )
-
-    def get_order(self, obj):
-        return obj._order + 1  # index 0 -> 1
-
-
-class ChapterCardSerializer(ChapterBaseSerializer):
-    """Sérialiseur publique de carte de chapitre"""
-
-    class Meta(ChapterBaseSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-            "creation_user",
-            "order",
-        )
-
-
-class ChapterSerializer(ChapterBaseSerializer):
-    """Sérialiseur publique de chapitre"""
-
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:chapter-reviews",
-        lookup_field="pk",
-        lookup_url_kwarg="pk",
-    )
-
-    class Meta(ChapterBaseSerializer.Meta):
-        fields = (
-            "title",
-            "id",
-            "order",
-            "mean",
-            "startnote",
-            "endnote",
-            "text",
-            "validation_status",
+            "poll",
             "reviews_url",
-            "word_count",
-        )
-
-
-class MyChapterCardSerializer(ChapterBaseSerializer):
-    """Sérialiseur privée de carte de chapitre"""
-
-    class Meta(ChapterBaseSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-        )
-
-
-class MyChapterSerializer(ChapterBaseSerializer):
-    """Sérialiseur privé de chapitre"""
-
-    text_file_upload = FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
-        FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
-                               message="L'extension de fichier %(extension)s n'est pas pris en charge. "
-                                       "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
-    ])
-
-    fiction = HiddenField(default=CreateOnlyDefault(CurrentFictionDefault()))
-
-    text = CharField(allow_blank=True, style={'base_template': 'textarea.html'})
-
-    class Meta(ChapterBaseSerializer.Meta):
-        fields = (
-            "title",
-            "id",
-            "order",
-            "fiction",
-            "modification_user",
-            "creation_user",
-            "modification_date",
-            "creation_date",
-            "text",
-            "text_file_upload",
-            "startnote",
-            "endnote",
-            "validation_status",
-            "word_count",
         )
 
     def validate_text_file_upload(self, value):
@@ -304,6 +187,20 @@ class MyChapterSerializer(ChapterBaseSerializer):
             touch=True
         )
         return instance
+
+    def get_order(self, obj):
+        return obj._order + 1  # index 0 -> 1
+
+
+class ChapterCardSerializer(ChapterSerializer):
+    """Sérialiseur publique de carte de chapitre"""
+
+    class Meta(ChapterSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+            "order",
+        )
 
 
 class FictionChapterOrderSerializer(ModelSerializer):

@@ -24,6 +24,12 @@ def generate_url(app_name, object_id=None):
     return reverse(f"{app_name}:{app_basename}-list")
 
 
+def generate_chapters_url(fiction_id, chapter_id=None):
+    if chapter_id:
+        return reverse(f"fictions:chapter-detail", kwargs={"pk": fiction_id, "chapter_pk": chapter_id})
+    return reverse(f"fictions:chapter-list", kwargs={"pk": fiction_id})
+
+
 def generate_banner_url(banner_id=None):
     if banner_id:
         return reverse(f"images:banner-detail", args=[banner_id])
@@ -94,16 +100,16 @@ class TestsPublicAPI(APITestCase):
         self.assertEqual(res_2.data, published_fiction_serializer.data)
         self.assertEqual(res_3.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_chapter_api_returns_only_validated_chapters(self):
-        """Teste que l'API de chapitres renvoie uniquement les chapitres validés"""
+    def test_fiction_api_returns_only_validated_chapters(self):
+        """Teste que l'API de fictions renvoie uniquement les chapitres validés"""
 
         validated_chapter_card_serializer = ChapterCardSerializer(self.validated_chapter, context={"request": self.request})
         unvalidated_chapter_card_serializer = ChapterCardSerializer(self.unvalidated_chapter, context={"request": self.request})
         validated_chapter_serializer = ChapterSerializer(self.validated_chapter, context={"request": self.request})
 
-        res_1 = self.client.get(path=generate_url("chapters"))
-        res_2 = self.client.get(path=generate_url("chapters", self.validated_chapter.id))
-        res_3 = self.client.get(path=generate_url("chapters", self.unvalidated_chapter.id))
+        res_1 = self.client.get(path=generate_chapters_url(fiction_id=self.validated_chapter.fiction.id))
+        res_2 = self.client.get(path=generate_chapters_url(fiction_id=self.validated_chapter.fiction.id, chapter_id=self.validated_chapter.id))
+        res_3 = self.client.get(path=generate_chapters_url(fiction_id=self.unvalidated_chapter.fiction.id, chapter_id=self.unvalidated_chapter.id))
 
         self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertIn(validated_chapter_card_serializer.data, res_1.data["results"])

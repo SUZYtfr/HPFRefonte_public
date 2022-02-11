@@ -3,6 +3,11 @@ from django.utils import timezone
 from core.models import DatedModel, CreatedModel
 
 
+class OpenCategoryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_closed=False)
+
+
 class Category(DatedModel, CreatedModel):
     """Modèle de catégorie de caractéristiques"""
 
@@ -11,6 +16,9 @@ class Category(DatedModel, CreatedModel):
     min_limit = models.PositiveSmallIntegerField(verbose_name="minimum")
     max_limit = models.PositiveSmallIntegerField(verbose_name="maximum", null=True, blank=True)
     is_closed = models.BooleanField(verbose_name="restreinte")
+
+    objects = models.Manager()
+    open = OpenCategoryManager()
 
     class Meta:
         verbose_name = "catégorie"
@@ -23,6 +31,11 @@ class Category(DatedModel, CreatedModel):
 
     def __str__(self):
         return self.name
+
+
+class AllowedFeatureManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_forbidden=False)
 
 
 class Feature(DatedModel, CreatedModel):
@@ -42,6 +55,9 @@ class Feature(DatedModel, CreatedModel):
     replace_with = models.ForeignKey(to="self", on_delete=models.SET_NULL, null=True, blank=True, default=None,
                                      verbose_name="remplacer par", related_name="remplace",
                                      limit_choices_to={"is_forbidden": False})  # idem
+
+    objects = models.Manager()
+    allowed = AllowedFeatureManager()
 
     class Meta:
         verbose_name = "caractéristique"
@@ -86,4 +102,3 @@ class Feature(DatedModel, CreatedModel):
                 raise RecursionError("La caractéristique parente est déjà sous-ordonnée.")
             self.category = self.parent.category  # Impose que la catégorie de l'enfant soit celle du parent
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
-
