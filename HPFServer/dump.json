@@ -128,7 +128,7 @@
   "nickname": "Loutre",
   "realname": "tempor ullamco",
   "email": "do@nisi.fr",
-  "password": "pbkdf2_sha256$260000$hXWd3NzwhvNFdG8jytBShD$3izOBA9eWDFGcKFR3JvjoFduJat30qZt+pJ7UnDI6kI=",
+  "password": "pbkdf2_sha256$320000$lacUySFx5AMmotFOgV2bLP$ZEdZ0Lr+f5wwFf64x5sWVPASJ/O2kqAEJaCpmv0kV7c=",
   "birthdate": "1958-06-04",
   "age_consent": false,
   "bio": "",
@@ -145,7 +145,9 @@
   "is_staff": false,
   "is_superuser": false,
   "last_login": null,
-  "groups": [],
+  "groups": [
+   3
+  ],
   "user_permissions": []
  }
 },
@@ -175,7 +177,9 @@
   "is_staff": true,
   "is_superuser": false,
   "last_login": null,
-  "groups": [],
+  "groups": [
+   4
+  ],
   "user_permissions": []
  }
 },
@@ -200,7 +204,12 @@
  "pk": 3,
  "fields": {
   "name": "L'équipe Communication",
-  "permissions": []
+  "permissions": [
+   107,
+   108,
+   109,
+   110
+  ]
  }
 },
 {
@@ -208,7 +217,17 @@
  "pk": 4,
  "fields": {
   "name": "L'équipe de Modération",
-  "permissions": []
+  "permissions": [
+   30,
+   31,
+   32,
+   35,
+   36,
+   47,
+   48,
+   51,
+   52
+  ]
  }
 },
 {
@@ -3030,6 +3049,37 @@
   "description": "",
   "category": 1,
   "_order": 4
+ }
+},
+{
+ "model": "news.newsarticle",
+ "pk": 1,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.037Z",
+  "creation_user": 6,
+  "title": "News en attente",
+  "content": "Cette news est en attente de publication",
+  "category": 0,
+  "status": 1,
+  "teams": [
+   3
+  ]
+ }
+},
+{
+ "model": "news.newsarticle",
+ "pk": 2,
+ "fields":{
+  "creation_date": "2021-08-12T10:12:21.037Z",
+  "creation_user": 6,
+  "title": "News publiée",
+  "content": "Cette news est publiée",
+  "category": 0,
+  "status": 3,
+  "authors": [
+   6
+  ],
+  "post_date": "2022-02-13T10:12:21.037Z"
  }
 }
 ]

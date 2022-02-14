@@ -8,6 +8,7 @@ from core.serializers import BaseModelSerializer
 
 
 class FeatureBaseSerializer(BaseModelSerializer):
+    """Base pour les sérialiseurs de caractéristiques"""
 
     class Meta:
         model = Feature
@@ -45,6 +46,7 @@ class FeatureSerializer(FeatureBaseSerializer):
         Si la caractéristique existe déjà et est remplacée, renvoie la caractéristique de remplacement
         Si la caractéristique existe déjà et est interdite sans remplacement, lance une erreur.
         """
+
         name = validated_data.pop("name")
         instance, created = self.Meta.model.objects.get_or_create(name=name, defaults=validated_data)
         if instance.is_forbidden:
@@ -78,6 +80,7 @@ class StaffFeatureSerializer(FeatureBaseSerializer):
         """Enregistre la caractéristique
 
         Si la caractéristique est mise à jour et est indiquée comme interdite, appelle sa fonction ban()."""
+
         validated_data = {**self.validated_data, **kwargs}
 
         if self.instance and validated_data["is_forbidden"]:
@@ -118,7 +121,6 @@ class StaffFeatureOrderSerializer(BaseModelSerializer):
     )
 
     def validate_order(self, value):
-
         if not len(set(value)) == len(value):
             raise ValidationError("Des ID de caractéristiques sont en double.")
 

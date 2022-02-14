@@ -102,7 +102,7 @@ class FictionSerializer(BaseModelSerializer):
 
 
 class FictionCardSerializer(FictionSerializer):
-    """Sérialiseur publique de carte de fiction"""
+    """Sérialiseur de carte de fiction"""
 
     class Meta(FictionSerializer.Meta):
         fields = (
@@ -111,17 +111,8 @@ class FictionCardSerializer(FictionSerializer):
         )
 
 
-class CurrentFictionDefault:
-    requires_context = True
-
-    def __call__(self, serializer_field):
-        return serializer_field.context["fiction"]
-
-    def __repr__(self):
-        return '%s()' % self.__class__.__name__
-
-
 class ChapterSerializer(BaseModelSerializer):
+    """Sérialiseur de chapitre"""
 
     order = SerializerMethodField()
 
@@ -139,8 +130,6 @@ class ChapterSerializer(BaseModelSerializer):
 
     text = CharField(allow_blank=True, style={'base_template': 'textarea.html'})
 
-    fiction = HiddenField(default=CreateOnlyDefault(default=CurrentFictionDefault()))
-
     class Meta:
         model = Chapter
         fields = "__all__"
@@ -151,6 +140,7 @@ class ChapterSerializer(BaseModelSerializer):
             "mean",
             "poll",
             "reviews_url",
+            "fiction",
         )
 
     def validate_text_file_upload(self, value):
@@ -193,7 +183,7 @@ class ChapterSerializer(BaseModelSerializer):
 
 
 class ChapterCardSerializer(ChapterSerializer):
-    """Sérialiseur publique de carte de chapitre"""
+    """Sérialiseur de carte de chapitre"""
 
     class Meta(ChapterSerializer.Meta):
         fields = (

@@ -93,9 +93,6 @@ class Fiction(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, Reviewable
 
     class Meta:
         verbose_name = "fiction"
-        permissions = [
-            ("fiction_list_full_view", "Affiche la liste de toutes les fictions sur le site")
-        ]
 
 
 class ChallengeManager(models.Manager):
@@ -166,9 +163,6 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
     class Meta:
         verbose_name = "chapitre"
         order_with_respect_to = "fiction"
-        permissions = [
-            ("chapter_list_extended_view", "Affiche la liste de tous les chapitres sauf les brouillons sur le site")
-        ]
 
     class ChapterValidationStage(models.IntegerChoices):
         DRAFT = (1, "Brouillon")

@@ -2,29 +2,40 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import status, permissions
+from rest_framework import status
 
-from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly
+from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly, DjangoPermissionOrReadOnly
 
 from .serializers import *
 from .models import Fiction, Chapter, Beta
 
 
-class IsParentFictionAuthorOrReadOnly(permissions.BasePermission):
+class IsParentFictionAuthorOReadOnly(DjangoPermissionOrReadOnly):
+    """Permission autorisant le contrôle d'un chapitre par l'auteur de sa fiction parente"""
+
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
+        if super(IsParentFictionAuthorOReadOnly, self).has_permission(request, view):
             return True
-        if request.user in get_object_or_404(Fiction, pk=view.kwargs["pk"]).authors.all():  # TODO - beurk
+        elif request.user in get_object_or_404(Fiction, pk=view.kwargs["fiction_pk"]).authors.all():
             return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if super(IsParentFictionAuthorOReadOnly, self).has_object_permission(request, view, obj):
+            return True
+        elif request.user in obj.fiction.authors.all():
+            return True
+        return False
 
 
 class FictionViewSet(ModelViewSet):
     """Ensemble de vues pour les fictions"""
 
     serializer_class = FictionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly]
 
     def get_queryset(self):
         """Détermine la liste de fictions à afficher."""
@@ -75,28 +86,22 @@ class FictionViewSet(ModelViewSet):
 class ChapterViewSet(ModelViewSet):
     """Ensemble de vues publiques pour les chapitres"""
 
-    lookup_url_kwarg = "chapter_pk"
     serializer_class = ChapterSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsParentFictionAuthorOrReadOnly]
-
-    def get_parent_fiction(self):
-        """Récupère la fiction parente depuis l'ID indiqué dans l'URL."""
-
-        return get_object_or_404(Fiction, pk=self.kwargs["pk"])
+    permission_classes = [IsAuthenticatedOrReadOnly, IsParentFictionAuthorOReadOnly]
 
     def get_queryset(self):
         """Détermine la liste des chapitres à afficher."""
 
-        parent_fiction = self.get_parent_fiction()
+        base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
 
         if self.request.query_params.get("mine", False) == "True":
-            return parent_fiction.chapters.filter(creation_user_id=self.request.user.id)
+            return base_queryset.filter(creation_user=self.request.user.id)
         elif self.kwargs.pop("mine", False):
-            return parent_fiction.chapters.filter(creation_user_id=self.request.user.id)
+            return base_queryset.filter(creation_user=self.request.user.id)
         elif self.request.user.has_perm("chapters.chapter_list_extended_view"):
-            return parent_fiction.chapters.exclude(validation_status=Chapter.ChapterValidationStage.DRAFT)
+            return base_queryset.exclude(validation_status=Chapter.ChapterValidationStage.DRAFT)
         else:
-            return parent_fiction.chapters.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            return base_queryset.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
 
     def get_object(self):
         """Renvoie le chapitre correspondant à l'ordre, incrémente le compte de lectures de la fiction"""
@@ -116,8 +121,8 @@ class ChapterViewSet(ModelViewSet):
             return ChapterCardSerializer
         return self.serializer_class
 
-    def get_serializer_context(self):
-        """Ajoute la fiction parente au contexte passé au sérialiseur."""
+    def perform_create(self, serializer):
+        serializer.save(fiction_id=self.kwargs["fiction_pk"])
 
         parent_fiction = self.get_parent_fiction()
         context = super().get_serializer_context()
@@ -153,7 +158,7 @@ class ChapterViewSet(ModelViewSet):
 class BetaViewSet(ModelViewSet):
     """Ensemble de vues pour les bêtatages"""
 
-    permission_classes = (permissions.IsAuthenticated, HasBetaTurnOrReadOnly,)
+    permission_classes = (IsAuthenticated, HasBetaTurnOrReadOnly,)
     serializer_class = BetaSerializer
 
     def get_queryset(self):

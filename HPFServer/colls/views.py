@@ -12,14 +12,16 @@ from core.permissions import IsObjectAuthorOrReadOnly
 class PublicCollectionViewSet(ModelViewSet):
     """Ensemble de vues pour les séries"""
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly]
     serializer_class = CollectionSerializer
+    queryset = Collection.objects.all()
 
     def get_queryset(self):
         """Détermine la liste de séries à afficher."""
+
         if self.request.query_params.get("mine", False) == "True":
-            return Collection.objects.filter(authors__id=self.request.user.id)
-        return Collection.objects.all()
+            return self.queryset.filter(authors__id=self.request.user.id)
+        return self.queryset
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""

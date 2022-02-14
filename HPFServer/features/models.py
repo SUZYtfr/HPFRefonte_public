@@ -80,6 +80,7 @@ class Feature(DatedModel, CreatedModel):
         - Le cas échéant, retire la caractéristique de toutes les fictions, ou la remplace par celle qui est indiquée
         - Appelle cette fonction pour chaque enfant de la caractéristique (sans règle de remplacement)
         """
+
         self.is_forbidden = True
         self.replace_with = replace_with
         self.parent = None

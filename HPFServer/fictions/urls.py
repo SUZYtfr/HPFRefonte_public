@@ -9,18 +9,11 @@ app_name = "fictions"
 
 fiction_router = SimpleRouter()
 fiction_router.register(r"", FictionViewSet, basename="fiction")
+chapter_router = SimpleRouter()
+chapter_router.register(r"", ChapterViewSet, basename="chapter")
 
-urlpatterns = fiction_router.urls + [
-    path(r"<pk>/chapters/", include([
-        path(r"", ChapterViewSet.as_view(actions={"get": "list",
-                                                  "post": "create"}),
-             name="chapter-list"),
-        path(r"<chapter_pk>/", ChapterViewSet.as_view(actions={"get": "retrieve",
-                                                               "put": "update",
-                                                               "patch": "partial_update",
-                                                               "delete": "destroy"}),
-             name="chapter-detail"),
-        path(r"<chapter_pk>/validation/", ChapterViewSet.as_view(actions={"put": "submit"}),
-             name="chapter-submit"),
-        ]))
-]
+urlpatterns = [
+    path(
+        r"<fiction_pk>/chapters/", include(chapter_router.urls),
+    )
+] + fiction_router.urls

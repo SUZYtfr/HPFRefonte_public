@@ -5,48 +5,46 @@ from rest_framework import status, permissions
 
 from .serializers import FeatureSerializer, StaffFeatureSerializer, StaffCategorySerializer, StaffFeatureOrderSerializer
 from .models import Feature, Category
+from core.permissions import DjangoPermissionOrReadOnly
 
 
-class IsStaffOrCreateOnly(permissions.BasePermission):
+class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
+    """Permission autorisant la création"""
+
     def has_permission(self, request, view):
         if request.method in [*permissions.SAFE_METHODS, "POST"]:
             return True
-        if request.user.is_staff:
+        elif self.has_django_permissions(view, request):
             return True
         return False
-
-
-class IsStaffOrReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        if request.user.is_staff:
-            return True
 
 
 class FeatureViewSet(ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsStaffOrCreateOnly,)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = FeatureSerializer
     queryset = Feature.allowed.order_by("category")
     search_fields = ("name",)
 
     def get_queryset(self):
         """Détermine la liste de caractéristiques à afficher"""
+
         if self.request.user.is_staff:
             return Feature.objects.order_by("category")
         return self.queryset
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
+
         if self.request.user.is_staff:
             return StaffFeatureSerializer
         return self.serializer_class
 
-    # Crée le tag ou renvoie le tag existant
     @action(methods=["POST"], detail=False, url_name="upsert", name="Feature create or retrieve", url_path="upsert")
     def create_or_retrieve(self, request, *args, **kwargs):
+        """Traite la requête de création ou récupération de la caractéristique"""
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         created = self.perform_create_or_retrieve(serializer)
@@ -55,6 +53,8 @@ class FeatureViewSet(ModelViewSet):
         return Response(serializer.data, status=feature_status, headers=headers)
 
     def perform_create_or_retrieve(self, serializer):
+        """Finalise l'action de création ou récupération de la caractéristique"""
+
         instance, created = serializer.save(upsert=True)
         return created
 
@@ -62,7 +62,7 @@ class FeatureViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     """Ensemble de vues de modération pour les catégories"""
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsStaffOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = StaffCategorySerializer
 
