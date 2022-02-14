@@ -191,12 +191,15 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
             if not anonymise and fiction.authors.count() == 0:
                 fiction.delete()
 
+    # TODO - retirer des équipes de modération
     def ban(self, anonymise=False, keep_reviews=False):
         """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
         self.remove_personal_information()
         if not keep_reviews:
             self.delete_reviews()
         self.remove_authoring(anonymise=anonymise)
+        self.is_staff = False
+        self.is_superuser = False
         self.is_active = False
         self.modification_date = timezone.now()
         self.save_base()

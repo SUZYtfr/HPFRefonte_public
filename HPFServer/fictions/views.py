@@ -138,7 +138,7 @@ class MyChapterViewSet(ModelViewSet):
     def get_queryset(self):
         """Détermine la liste de chapitres du membre authentifier à afficher, selon l'ID fiction récupéré dans l'URL"""
 
-        return Chapter.objects.filter(authors__id=self.request.user.id)
+        return Chapter.objects.filter(creation_user_id=self.request.user.id)
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""

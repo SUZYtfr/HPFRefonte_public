@@ -111,21 +111,11 @@ class TextDependentModel(FullCleanModel):
     class Meta:
         abstract = True
 
-    def create_text_version(self, creation_user, text):
-        """Réécrit par les classes héritées"""
-        pass
-
     @property
     def text(self):
         """Renvoie la dernière version en date du texte"""
         if version := self.versions.last():
             return version.text
-
-    @text.setter
-    def text(self, text):
-        """Enregistre une version du texte si celui-ci a changé"""
-        if text != self.text:
-            self.create_text_version(creation_user=self.creation_user, text=text)
 
     # TODO - Implémenter ces méthodes
     def get_text_version(self, date=None, step=None):

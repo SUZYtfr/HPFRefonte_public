@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "selections",
     "news",
     "reports",
-    "banners",
+    "images",
 ]
 
 MIDDLEWARE = [
@@ -166,3 +166,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # IDs hardcodées
 MODERATION_ACCOUNT_ID = 0
+BANNER_MAX_SIZE = (468, 60)  # (largeur, hauteur)
+MAX_POLL_ANSWERS = 5
+MEMBERS_MAX_REVIEW_DRAFTS = 2
+PREMIUM_MAX_REVIEW_DRAFTS = 5

@@ -160,28 +160,6 @@ class Challenge(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
         super().save(*args, **kwargs)
 
 
-class ChapterManager(models.Manager):
-    """Gestionnaire de chapitres"""
-
-    def create(self, creation_user, title: str, fiction: Fiction, text, **extra_fields):
-        """Crée un chapitre, assigne sa fiction, le sauvegarde, assigne son autorat, et le renvoie"""
-
-        parsed_text = parse_text(text)
-
-        chapter = self.model(
-            title=title,
-            creation_user=creation_user,
-            fiction=fiction,
-            **extra_fields
-        )
-
-        chapter.save()
-
-        chapter.create_text_version(text=parsed_text, creation_user=creation_user)
-
-        return chapter
-
-
 class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
     """Modèle de chapitre"""
 
@@ -221,8 +199,6 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
                                 on_delete=models.SET_NULL,
                                 null=True, blank=True)
 
-    objects = ChapterManager()
-
     def __str__(self):
         return self.title
 
@@ -232,7 +208,7 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
             return version.word_count
         return 0
 
-    def create_text_version(self, creation_user, text):
+    def create_text_version(self, creation_user, text, touch=True):
         """Crée une nouvelle version du texte du chapitre par l'utilisateur passé"""
 
         version = ChapterTextVersion.objects.create(
@@ -244,7 +220,8 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
         )
         version.save()
 
-        self.save()
+        if touch:  # à utiliser en cas de modification
+            self.save()
 
 
 class Beta(FullCleanModel):

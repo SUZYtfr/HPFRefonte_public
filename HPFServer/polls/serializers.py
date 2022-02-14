@@ -1,5 +1,6 @@
 from rest_framework.serializers import *
-from .models import PollGroup, PollQuestion, PollAnswer, Ballot, MAX_POLL_ANSWERS
+from .models import PollGroup, PollQuestion, PollAnswer, Ballot
+from django.conf import settings
 from fictions.models import Chapter
 from random import randint
 from core.serializers import BaseModelSerializer
@@ -39,7 +40,7 @@ class PollAnswerSerializer(BaseModelSerializer):
             ).annotate(
                 answer_count=models.Count("answers")
             ).filter(
-                answer_count__lt=MAX_POLL_ANSWERS
+                answer_count__lt=settings.MAX_POLL_ANSWERS
             )
 
     poll_question = PollQuestionField()
