@@ -18,11 +18,12 @@ def extract_text_from_doc_file(file):
 
 
 def extract_text_from_docx_file(file):
-    temp_file = NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR)
-    temp_file.write(file.read())
-    temp_file.close()
-    file.close()
-    return docx2python(temp_file.name, html=True, paragraph_styles=False).text
+    # temp_file = NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR)
+    # temp_file.write(file.read())
+    # temp_file.close()
+    # file.close()
+    # return docx2python(temp_file.name, html=True, paragraph_styles=False).text
+    return docx2python(file.temporary_file_path(), html=True, paragraph_styles=False).text
 
 
 def extract_text_from_odt_file(file):

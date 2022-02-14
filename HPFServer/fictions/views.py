@@ -124,11 +124,12 @@ class ChapterViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(fiction_id=self.kwargs["fiction_pk"])
 
-        parent_fiction = self.get_parent_fiction()
-        context = super().get_serializer_context()
-        if self.action == "create":
-            context["fiction"] = parent_fiction
-        return context
+    def initialize_request(self, request, *args, **kwargs):
+        """Force la requête à écrire les fichiers téléchargés dans un fichier temporaire."""
+
+        request = super().initialize_request(request, *args, **kwargs)
+        request.upload_handlers = [TemporaryFileUploadHandler(request=request)]
+        return request
 
     def submit(self, request, **kwargs):
 
