@@ -3,6 +3,7 @@ export interface ICharacteristic {
     characteristic_type_id: number,
     parent_id: number,
     name: string,
+    description: string,
     in_order: number,
 }
 
@@ -17,4 +18,15 @@ export interface ICharacteristicType {
     max_occurence: number,
     visible: boolean,
     enabled: boolean
+}
+
+export class ICharacteristicGetOptions {
+    with_stats: boolean = false;
+}
+
+export interface ICharacteristicFilters {
+    characteristic_type_id: number | null,
+    parent_id: number | null,
+    options: ICharacteristicGetOptions | null,
+    limit: number | null
 }

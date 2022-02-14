@@ -136,32 +136,41 @@ $badge-font-size: 0.7rem;
   transition: flex-grow 1s ease;
 }
 
+$characteristic-litteraire: #e6ccb2;
+$characteristic-genre: #fec5bb;
+$characteristic-langue: #74c69d;
+$characteristic-warning: #fcbf49;
+$characteristic-rating: #e0aaff;
+$characteristic-epoque: #4a4e69;
+$characteristic-personnage: #1d3557;
+$characteristic-relation: #a8dadc;
+
 .characteristic-bg-litteraire {
-  background: #e6ccb2 !important;
+  background: $characteristic-litteraire !important;
 }
 .characteristic-bg-genre {
-  background: #fec5bb !important;
+  background: $characteristic-genre !important;
 }
 .characteristic-bg-langue {
-  background: #74c69d !important;
+  background: $characteristic-langue !important;
 }
 .characteristic-bg-warning {
   /*background: #e63946 !important;*/
-  background: #fcbf49 !important;
+  background: $characteristic-warning !important;
 }
 .characteristic-bg-rating {
-  background: #e0aaff !important;
+  background: $characteristic-rating !important;
 }
 .characteristic-bg-epoque {
-  background: #4a4e69 !important;
+  background: $characteristic-epoque !important;
   color: whitesmoke !important;
 }
 .characteristic-bg-personnage {
-  background: #1d3557 !important;
+  background: $characteristic-personnage !important;
   color: whitesmoke !important;
 }
 .characteristic-bg-relation {
-  background: #a8dadc !important;
+  background: $characteristic-relation !important;
 }
 
 .characteristic-bg-excluded {

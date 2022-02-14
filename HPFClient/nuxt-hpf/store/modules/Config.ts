@@ -31,7 +31,7 @@ export default class _Config extends VuexModule implements ConfigState {
 
     @Action
     public async LoadConfig() {
-        this.SET_CHARACTERISTICS((await getCharacteristics()).data.items);
+        this.SET_CHARACTERISTICS((await getCharacteristics(null)).data.items);
         this.SET_CHARACTERISTIC_TYPES((await getCharacteristicsTypes()).data.items);
     }
 
