@@ -9,7 +9,7 @@ from rest_framework import status
 
 from tests.samples import *
 
-from users.serializers import PublicUserSerializer, UserCardSerializer
+from users.serializers import UserSerializer, UserCardSerializer
 from fictions.serializers import FictionCardSerializer, FictionSerializer, ChapterSerializer, ChapterCardSerializer, Chapter
 from news.serializers import NewsSerializer, NewsArticle
 from features.serializers import FeatureSerializer
@@ -26,8 +26,8 @@ def generate_url(app_name, object_id=None):
 
 def generate_chapters_url(fiction_id, chapter_id=None):
     if chapter_id:
-        return reverse(f"fictions:chapter-detail", kwargs={"pk": fiction_id, "chapter_pk": chapter_id})
-    return reverse(f"fictions:chapter-list", kwargs={"pk": fiction_id})
+        return reverse(f"fictions:chapter-detail", kwargs={"fiction_pk": fiction_id, "pk": chapter_id})
+    return reverse(f"fictions:chapter-list", kwargs={"fiction_pk": fiction_id})
 
 
 def generate_banner_url(banner_id=None):
@@ -68,7 +68,7 @@ class TestsPublicAPI(APITestCase):
         self.inactive_user.save()
 
         active_user_serializer = UserCardSerializer(self.active_user, context={"request": self.request})
-        active_user_card_serializer = PublicUserSerializer(self.active_user, context={"request": self.request})
+        active_user_card_serializer = UserSerializer(self.active_user, context={"request": self.request})
         inactive_user_serializer = UserCardSerializer(self.inactive_user, context={"request": self.request})
 
         res_1 = self.client.get(path=generate_url("users"))
