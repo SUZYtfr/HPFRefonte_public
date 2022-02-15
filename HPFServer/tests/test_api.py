@@ -6,6 +6,7 @@ from django.core.files.images import ImageFile
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from tests.samples import *
 
@@ -14,6 +15,15 @@ from fictions.serializers import FictionCardSerializer, FictionSerializer, Chapt
 from news.serializers import NewsSerializer, NewsArticle
 from features.serializers import FeatureSerializer
 from images.serializers import BannerSerializer, Banner
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 
 def generate_url(app_name, object_id=None):
@@ -34,6 +44,18 @@ def generate_banner_url(banner_id=None):
     if banner_id:
         return reverse(f"images:banner-detail", args=[banner_id])
     return reverse(f"images:banner-list")
+
+
+def generate_account_url(profile=False):
+    if profile:
+        return reverse(f"accounts:manage")
+    return reverse(f"accounts:create")
+
+
+def generate_token_url(refresh=False):
+    if refresh:
+        return reverse("accounts:token_refresh")
+    return reverse(f"accounts:token_obtain_pair")
 
 
 NEWS_LIST_URL = reverse("news:news-list")
@@ -186,3 +208,48 @@ class TestsPublicAPI(APITestCase):
         self.assertEqual(res_2.status_code, status.HTTP_200_OK)
         self.assertEqual(res_2.data, active_banner_serializer.data)
         self.assertEqual(res_3.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestsAccountAPI(APITestCase):
+    """Testent le comportement de l'API de compte utilisateur"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user_password = "password1234"
+        cls.user = sample_user(password=cls.user_password)
+        cls.client = APIClient()
+        # cls.token = str(RefreshToken.for_user(cls.user).access_token)
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.user)
+
+    def test_password_change(self):
+        """Teste que le mot de passe n'est pas obligatoire pour modifier le compte"""
+
+        payload_blank = {
+            "password": None
+        }
+
+        payload = {
+            "password": "new123pwd",
+        }
+
+        res1 = self.client.patch(generate_account_url(profile=True), payload_blank)
+        is_same_password = self.user.check_password(self.user_password)
+        res2 = self.client.patch(generate_account_url(profile=True), payload)
+        is_new_password = self.user.check_password("new123pwd")
+
+        self.assertEqual(res1.status_code, status.HTTP_200_OK)
+        self.assertTrue(is_same_password)
+        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        self.assertTrue(is_new_password)
+
+    def test_token(self):
+        """Teste qu'un utilisateur peut obtenir un jeton d'authentification JWT"""
+
+        res = self.client.post(generate_token_url(), {"nickname": self.user.nickname, "password": self.user_password})
+        self.assertContains(res, "access", status_code=status.HTTP_200_OK)
+
+        res_2 = self.client.post(generate_token_url(refresh=True), {"refresh": res.data["refresh"]})
+        self.assertContains(res_2, "access", status_code=status.HTTP_200_OK)
