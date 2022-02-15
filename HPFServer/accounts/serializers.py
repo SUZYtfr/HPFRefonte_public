@@ -1,75 +1,85 @@
-from rest_framework.serializers import Serializer, ModelSerializer, CharField,\
-    ValidationError, api_settings
+from rest_framework.serializers import ModelSerializer
 
 from users.models import User
 
-from django.contrib.auth import authenticate
 
-
-class PublicAccountCreationSerializer(ModelSerializer):
-    """Sérialiseur d'informations de création d'un compte utilisateur"""
+class AccountCreationSerializer(ModelSerializer):
+    """Sérialiseur de création de compte utilisateur"""
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "realname", "email", "password", "birthdate",)
-        # write_only : aucune requête renvoyée ne contient le mdp par sécurité
-        extra_kwargs = {"password": {"write_only": True,
-                                     "min_length": 8,
-                                     "max_length": 20}}
+        fields = [
+            "id",
+            "nickname",
+            "email",
+            "password",
+            "birthdate",
+            "age_consent",
+            "bio",
+            "gender",
+            "creation_date",
+        ]
+        extra_kwargs = {
+            "password": {
+                "write_only": True,
+                "allow_null": False,
+                "min_length": 8,
+                "max_length": 20,
+            }
+        }
 
     def create(self, validated_data):
-        """Crée le modèle User et le renvoie"""
-
-        return self.Meta.model.objects.create_user(**validated_data)
-
-
-class PrivateAccountManagementSerializer(ModelSerializer):
-    """Sérialiseur d'informations de gestion de compte utilisateur"""
-
-    class Meta:
-        model = User
-        fields = ("id", "nickname", "realname", "email", "birthdate",
-                  "age_consent", "bio", "sex", "password",)
-        extra_kwargs = {"password": {"write_only": True,
-                                     "min_length": 8,
-                                     "max_length": 20,
-                                     "allow_null": True},
-                        "nickname": {"read_only": True}}
-
-    def update(self, instance, validated_data):
-        """Met à jour l'objet User et le renvoie"""
-
         password = validated_data.pop("password")
-        user = super().update(instance, validated_data)
-
-        if password:
-            user.set_password(password)
-
-        user.save()
-
+        user = self.Meta.model.objects.create_user(**validated_data, password=None)
+        user.set_password(password)
         return user
 
 
-class PublicAccountLoginSerializer(Serializer):
-    """Sérialiseur de jeton d'authentification"""
+class AccountManagementSerializer(ModelSerializer):
+    """Sérialiseur de gestion de compte utilisateur"""
 
-    nickname = CharField()
-    password = CharField(style={"input_type": "password"},
-                         trim_whitespace=False)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "nickname",
+            "password",
+            "email",
+            "birthdate",
+            "age_consent",
+            "bio",
+            "gender",
+            "creation_date",
+            "user_pref_font",
+            "user_pref_font_size",
+            "user_pref_line_spacing",
+            "user_pref_dark_mode",
+            "user_pref_skin",
+            "user_pref_show_reaction",
+            "modification_date",
+            "last_login",
+            "is_active",
+        ]
+        read_only_fields = [
+            "nickname",
+            "last_login",
+            "is_active",
+            "mean",
+            "banner",
+        ]
+        extra_kwargs = {
+            "password": {
+                "write_only": True,
+                "allow_null": True,
+                "min_length": 8,
+                "max_length": 20,
+            }
+        }
 
-    def validate(self, attrs):
-        """Authentifie et connecte un utilisateur"""
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password")
 
-        nickname = attrs.get("nickname")
-        password = attrs.get("password")
+        if password:
+            instance.set_password(password)
 
-        user = authenticate(request=self.context.get("request"),
-                            username=nickname,
-                            password=password)
-
-        if not user:
-            msg = "Le nom de compte et le mot de passe ne correspondent pas."
-            raise ValidationError(msg, code="authentication")
-
-        attrs["user"] = user
-        return attrs
+        return super().update(instance, validated_data)

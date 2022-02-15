@@ -218,6 +218,9 @@
  "fields": {
   "name": "L'équipe de Modération",
   "permissions": [
+   22,
+   23,
+   24,
    30,
    31,
    32,

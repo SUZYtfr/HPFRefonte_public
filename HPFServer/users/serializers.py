@@ -2,7 +2,11 @@ from rest_framework.serializers import *
 
 from .models import User
 from fictions.serializers import FictionCardSerializer
-from django.utils import timezone
+
+
+# TODO
+class UserStats(ModelSerializer):
+    pass
 
 
 class UserCardSerializer(HyperlinkedModelSerializer):
@@ -21,24 +25,21 @@ class UserCardSerializer(HyperlinkedModelSerializer):
         }
 
 
-class PublicUserSerializer(ModelSerializer):
-    """Sérialiseur de présentation d'un utilisateur"""
+class UserSerializer(ModelSerializer):
+    """Sérialiseur d'utilisateur"""
 
-    fictions = SerializerMethodField(method_name="_get_published_fictions")
+    fictions = SerializerMethodField(method_name="_get_fictions", read_only=True)
     reviews_url = HyperlinkedIdentityField(
         view_name="reviews:user-reviews",
         lookup_field="pk",
         lookup_url_kwarg="pk",
+        read_only=True,
     )
-    last_login = StringRelatedField()
-    user_links = StringRelatedField(many=True)
-
-    creation_date = HiddenField(default=CreateOnlyDefault(default=timezone.now()))
-    modification_date = HiddenField(default=timezone.now())
+    user_links = StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = (
+        fields = [
             "id",
             "nickname",
             "realname",
@@ -46,6 +47,7 @@ class PublicUserSerializer(ModelSerializer):
             "birthdate",
             "bio",
             "gender",
+            "age_consent",
             "fictions",
             "last_login",
             "mean",
@@ -54,10 +56,19 @@ class PublicUserSerializer(ModelSerializer):
             "modification_date",
             "user_links",
             "banner",
-        )
+        ]
+        read_only_fields = [
+            "banner",
+        ]
+        extra_kwargs = {
+            "gender": {"write_only": True},
+            "age_consent": {"write_only": True},
+            "email": {"write_only": True},
+            "birthdate": {"write_only": True},
+            "realname": {"write_only": True},
+        }
 
-    # # cf : https://stackoverflow.com/questions/28309507/django-rest-framework-filtering-for-serializer-field#28310334
-    def _get_published_fictions(self, obj):
+    def _get_fictions(self, obj):
         """Renvoie la liste des fictions validées de l'auteur"""
 
         return FictionCardSerializer(obj.authored_fictions.filter(chapters__validation_status=7).distinct(),
