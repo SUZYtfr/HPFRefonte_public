@@ -711,7 +711,8 @@
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Biographies",
-      "in_order": 1
+      "in_order": 1,
+      "description": "Fanfictions centrées sur l'histoire et la vie d'un seul personnage en particulier"
     },
     {
       "characteristic_id": 9,
@@ -725,7 +726,8 @@
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Voyages temporels",
-      "in_order": 10
+      "in_order": 10,
+      "description": "Fanfictions où les personnages voyagent dans le temps."
     },
     {
       "characteristic_id": 12,
@@ -914,14 +916,16 @@
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Univers Alternatifs",
-      "in_order": 8
+      "in_order": 8,
+      "description": "Fanfictions où les personnages évoluent dans un univers différent du leur."
     },
     {
       "characteristic_id": 6,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "CrossOver",
-      "in_order": 2
+      "in_order": 2,
+      "description": "Fanfictions mélangeant l'univers d'Harry Potter à celui d'une ou plusieurs autres séries."
     },
     {
       "characteristic_id": 227,
@@ -1124,7 +1128,8 @@
       "characteristic_type_id": 5,
       "parent_id": null,
       "name": "Interdit -18",
-      "in_order": 4
+      "in_order": 4,
+      "description": "Attention, cette fanfiction est strictement interdite aux moins de 18 ans"
     },
     {
       "characteristic_id": 240,
@@ -1152,21 +1157,24 @@
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque de Jedusor",
-      "in_order": 2
+      "in_order": 2, 
+      "description": "Fanfictions racontant la scolarité de personnages contemporains à l'époque de Tom Jedusor"
     },
     {
       "characteristic_id": 98,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque de Harry",
-      "in_order": 4
+      "in_order": 4,
+      "description": "Fanfictions se déroulant durant les sept années de Harry à Poudlard"
     },
     {
       "characteristic_id": 11,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Durant Poudlard",
-      "in_order": 6
+      "in_order": 6,
+      "description": "Récits se déroulant entre les murs de la célèbre école de sorcellerie"
     },
     {
       "characteristic_id": 8,
@@ -1180,28 +1188,32 @@
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Après Poudlard",
-      "in_order": 7
+      "in_order": 7,
+      "description": "Fanfictions dont l'intrigue se déroule après la scolarité de Harry à Poudlard."
     },
     {
       "characteristic_id": 99,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "\"19 ans plus tard\"",
-      "in_order": 1
+      "in_order": 1,
+      "description": "Fanfictions racontant la scolarité des enfants de nos héros."
     },
     {
       "characteristic_id": 96,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque Maraudeurs",
-      "in_order": 3
+      "in_order": 3,
+      "description": "Fanfictions se déroulant à l'époque des Maraudeurs."
     },
     {
       "characteristic_id": 2,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Enfances",
-      "in_order": 3
+      "in_order": 3,
+      "description": "Fanfictions racontant l'enfance des personnages, avant leur entrée à Poudlard."
     },
     {
       "characteristic_id": 193,
@@ -1733,7 +1745,8 @@
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Le Trio",
-      "in_order": 57
+      "in_order": 57,
+      "description": "Harry potter, Hermione Granger, Ron Weasley"
     },
     {
       "characteristic_id": 157,
@@ -1747,7 +1760,8 @@
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Les Fondateurs",
-      "in_order": 59
+      "in_order": 59,
+      "description" : "Fanfictions se déroulant à l'époque des Fondateurs."
     },
     {
       "characteristic_id": 159,
@@ -2370,14 +2384,16 @@
       "characteristic_type_id": 8,
       "parent_id": null,
       "name": "Romance (Het)",
-      "in_order": 4
+      "in_order": 4,
+      "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages."
     },
     {
       "characteristic_id": 3,
       "characteristic_type_id": 8,
       "parent_id": null,
       "name": "Romance (Slash)",
-      "in_order": 5
+      "in_order": 5,
+      "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages de même sexe."
     },
     {
       "characteristic_id": 62,
