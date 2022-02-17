@@ -2,48 +2,28 @@ from PIL import Image
 import tempfile
 
 from django.core.files.images import ImageFile
+from django.contrib.auth.models import Permission
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from tests.samples import *
 
 from users.serializers import UserSerializer, UserCardSerializer
-from fictions.serializers import FictionCardSerializer, FictionSerializer, ChapterSerializer, ChapterCardSerializer, Chapter
+from fictions.serializers import FictionCardSerializer, FictionSerializer, Fiction, ChapterSerializer, ChapterCardSerializer, Chapter
 from news.serializers import NewsSerializer, NewsArticle
 from features.serializers import FeatureSerializer
 from images.serializers import BannerSerializer, Banner
 
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
+def generate_url(app_name, pk=None, **kwargs):
+    comp = app_name.split(".")
 
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
-
-
-def generate_url(app_name, object_id=None):
-    app_basename = app_name[:-1]
-
-    if object_id:
-        return reverse(f"{app_name}:{app_basename}-detail", args=[object_id])
-    return reverse(f"{app_name}:{app_basename}-list")
-
-
-def generate_chapters_url(fiction_id, chapter_id=None):
-    if chapter_id:
-        return reverse(f"fictions:chapter-detail", kwargs={"fiction_pk": fiction_id, "pk": chapter_id})
-    return reverse(f"fictions:chapter-list", kwargs={"fiction_pk": fiction_id})
-
-
-def generate_banner_url(banner_id=None):
-    if banner_id:
-        return reverse(f"images:banner-detail", args=[banner_id])
-    return reverse(f"images:banner-list")
+    if pk:
+        kwargs.update({"pk": pk})
+        return reverse(f"{comp[0]}:{comp[-1][:-1]}-detail", kwargs=kwargs)
+    return reverse(f"{comp[0]}:{comp[-1][:-1]}-list", kwargs=kwargs)
 
 
 def generate_account_url(profile=False):
@@ -58,7 +38,10 @@ def generate_token_url(refresh=False):
     return reverse(f"accounts:token_obtain_pair")
 
 
-NEWS_LIST_URL = reverse("news:news-list")
+def generate_news_url(news_id=None):
+    if news_id:
+        return reverse("news:news-detail", args=[news_id])
+    return reverse("news:news-list")
 
 
 class TestsPublicAPI(APITestCase):
@@ -129,9 +112,9 @@ class TestsPublicAPI(APITestCase):
         unvalidated_chapter_card_serializer = ChapterCardSerializer(self.unvalidated_chapter, context={"request": self.request})
         validated_chapter_serializer = ChapterSerializer(self.validated_chapter, context={"request": self.request})
 
-        res_1 = self.client.get(path=generate_chapters_url(fiction_id=self.validated_chapter.fiction.id))
-        res_2 = self.client.get(path=generate_chapters_url(fiction_id=self.validated_chapter.fiction.id, chapter_id=self.validated_chapter.id))
-        res_3 = self.client.get(path=generate_chapters_url(fiction_id=self.unvalidated_chapter.fiction.id, chapter_id=self.unvalidated_chapter.id))
+        res_1 = self.client.get(path=generate_url("fictions.chapters", fiction_pk=self.validated_chapter.fiction.id))
+        res_2 = self.client.get(path=generate_url("fictions.chapters", self.validated_chapter.id, fiction_pk=self.validated_chapter.fiction.id))
+        res_3 = self.client.get(path=generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id))
 
         self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertIn(validated_chapter_card_serializer.data, res_1.data["results"])
@@ -147,7 +130,7 @@ class TestsPublicAPI(APITestCase):
         pending_news = sample_news(creation_user=self.active_user, status=NewsArticle.NewsStatus.PENDING)
         published_news = sample_news(creation_user=self.active_user, status=NewsArticle.NewsStatus.PUBLISHED)
 
-        res = self.client.get(NEWS_LIST_URL)
+        res = self.client.get(generate_news_url())
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotIn(NewsSerializer(draft_news).data, res.data["results"])
@@ -198,9 +181,9 @@ class TestsPublicAPI(APITestCase):
         active_banner_serializer = BannerSerializer(active_banner, context={"request": self.request})
         inactive_banner_serializer = BannerSerializer(inactive_banner, context={"request": self.request})
 
-        res_1 = self.client.get(path=generate_banner_url())
-        res_2 = self.client.get(path=generate_banner_url(active_banner.id))
-        res_3 = self.client.get(path=generate_banner_url(inactive_banner.id))
+        res_1 = self.client.get(path=generate_url("images.banners"))
+        res_2 = self.client.get(path=generate_url("images.banners", active_banner.id))
+        res_3 = self.client.get(path=generate_url("images.banners", inactive_banner.id))
 
         self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertIn(active_banner_serializer.data, res_1.data["results"])
@@ -235,17 +218,20 @@ class TestsAccountAPI(APITestCase):
             "password": "new123pwd",
         }
 
-        res1 = self.client.patch(generate_account_url(profile=True), payload_blank)
+        res_1 = self.client.patch(generate_account_url(profile=True), payload_blank)
+        self.user.refresh_from_db(fields=["password"])
         is_same_password = self.user.check_password(self.user_password)
-        res2 = self.client.patch(generate_account_url(profile=True), payload)
+
+        res_2 = self.client.patch(generate_account_url(profile=True), payload)
+        self.user.refresh_from_db(fields=["password"])
         is_new_password = self.user.check_password("new123pwd")
 
-        self.assertEqual(res1.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertTrue(is_same_password)
-        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_2.status_code, status.HTTP_200_OK)
         self.assertTrue(is_new_password)
 
-    def test_token(self):
+    def test_user_can_get_token(self):
         """Teste qu'un utilisateur peut obtenir un jeton d'authentification JWT"""
 
         res = self.client.post(generate_token_url(), {"nickname": self.user.nickname, "password": self.user_password})
@@ -253,3 +239,201 @@ class TestsAccountAPI(APITestCase):
 
         res_2 = self.client.post(generate_token_url(refresh=True), {"refresh": res.data["refresh"]})
         self.assertContains(res_2, "access", status_code=status.HTTP_200_OK)
+
+    def test_user_cannot_change_nickname(self):
+        """Teste qu'un utilisateur ne peut pas modifier son pseudo"""
+
+        res = self.client.patch(generate_account_url(profile=True), {"nickname": "NickTheName"})
+
+        self.user.refresh_from_db(fields=["nickname"])
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)  # les paramètres inconnus sont ignorés
+        self.assertNotEqual(self.user.nickname, "NickTheName")
+
+
+class TestsUserAPI(APITestCase):
+    """Testent le comportement de l'API de membre"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user = sample_user()
+        cls.unvalidated_fiction = sample_fiction(creation_user=cls.user)
+
+        cls.client = APIClient()
+
+        cls.factory = APIRequestFactory()
+        cls.request = cls.factory.get('/')
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.user)
+
+    def test_auth_user_can_control_all_own_fictions(self):
+        """Teste qu'un membre a le contrôle sur toutes ses fictions"""
+
+        payload = {
+            "title": "Test title",
+            "features": random_valid_feature_id_list(),
+        }
+
+        res_1 = self.client.post(generate_url("fictions"), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+
+        fiction = Fiction.objects.get(pk=res_1.data.get("id"))
+
+        res_2 = self.client.get(generate_url("fictions"), {"mine": True})
+        res_3 = self.client.get(generate_url("fictions", fiction.id), {"mine": True})
+        self.assertEqual(res_2.status_code, status.HTTP_200_OK)
+        self.assertIn(FictionCardSerializer(fiction, context={"request": self.request}).data, res_2.data["results"])
+        self.assertEqual(res_3.status_code, status.HTTP_200_OK)
+        self.assertEqual(FictionSerializer(fiction, context={"request": self.request}).data, res_3.data)
+
+        res_4 = self.client.patch(generate_url("fictions", fiction.id), {"title": "Test title 2"}, **{"QUERY_STRING": "mine=True"})
+        self.assertEqual(res_4.status_code, status.HTTP_200_OK)
+
+        res_5 = self.client.delete(generate_url("fictions", fiction.id), **{"QUERY_STRING": "mine=True"})
+        self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_auth_user_can_control_all_own_chapters(self):
+        """Teste qu'un membre a le contrôle sur tous ses chapitres"""
+
+        payload = {
+            "title": "Test title",
+            "text": "Test texte",
+            "text_file_upload": None,
+        }
+
+        res_1 = self.client.post(generate_url("fictions.chapters", fiction_pk=self.unvalidated_fiction.id), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+
+        chapter = Chapter.objects.get(pk=res_1.data.get("id"))
+
+        res_2 = self.client.get(generate_url("fictions.chapters", fiction_pk=chapter.fiction.id), {"mine": True})
+        res_3 = self.client.get(generate_url("fictions.chapters", chapter.id, fiction_pk=chapter.fiction.id), {"mine": True})
+        self.assertEqual(res_2.status_code, status.HTTP_200_OK)
+        self.assertIn(ChapterCardSerializer(chapter, context={"request": self.request}).data, res_2.data["results"])
+        self.assertEqual(res_3.status_code, status.HTTP_200_OK)
+        self.assertEqual(ChapterSerializer(chapter, context={"request": self.request}).data, res_3.data)
+
+        res_4 = self.client.patch(generate_url("fictions.chapters", chapter.id, fiction_pk=chapter.fiction.id), {"title": "Test title 2", "text_file_upload": None, "text": "bla"}, **{"QUERY_STRING": "mine=True"})
+        self.assertEqual(res_4.status_code, status.HTTP_200_OK)
+
+        res_5 = self.client.delete(generate_url("fictions.chapters", chapter.id, fiction_pk=chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
+        self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestsModeratorAPI(APITestCase):
+    """Testent le comportement de l'API de modération"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.moderator = sample_user()
+        cls.moderator.user_permissions.set([
+            Permission.objects.get(codename="view_fiction"),
+            Permission.objects.get(codename="change_fiction"),
+            Permission.objects.get(codename="delete_fiction"),
+            Permission.objects.get(codename="view_chapter"),
+            Permission.objects.get(codename="change_chapter"),
+            Permission.objects.get(codename="delete_chapter"),
+        ])
+
+        cls.unvalidated_fiction = sample_fiction()
+        cls.draft_chapter = sample_chapter(creation_user=cls.unvalidated_fiction.creation_user,
+                                           validation_status=Chapter.ChapterValidationStage.DRAFT)
+        cls.unvalidated_chapter = sample_chapter(creation_user=cls.unvalidated_fiction.creation_user,
+                                                 fiction=cls.draft_chapter.fiction,
+                                                 validation_status=Chapter.ChapterValidationStage.PENDING)
+
+        cls.client = APIClient()
+        cls.factory = APIRequestFactory()
+        cls.request = cls.factory.get('/')
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(user=self.moderator)
+
+    def test_moderator_can_control_all_fictions(self):
+        """Teste qu'un modérateur a le contrôle sur toutes les fictions"""
+
+        res_1 = self.client.get(generate_url("fictions"))
+        res_2 = self.client.get(generate_url("fictions", self.unvalidated_fiction.id))
+
+        self.assertEqual(res_1.status_code, status.HTTP_200_OK)
+        self.assertIn(FictionCardSerializer(self.unvalidated_fiction, context={"request": self.request}).data, res_1.data["results"])
+        self.assertEqual(res_2.status_code, status.HTTP_200_OK)
+        self.assertEqual(FictionSerializer(self.unvalidated_fiction, context={"request": self.request}).data, res_2.data)
+
+        res_3 = self.client.patch(generate_url("fictions", self.unvalidated_fiction.id), {"title": "Test title 2"})
+        self.assertEqual(res_3.status_code, status.HTTP_200_OK)
+
+        res_4 = self.client.delete(generate_url("fictions", self.unvalidated_fiction.id))
+        self.assertEqual(res_4.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_staff_can_control_all_chapters_but_drafts(self):
+        """Teste qu'un modérateur a le contrôle sur tous les chapitres sauf les brouillons"""
+
+        res_1 = self.client.get(generate_url("fictions.chapters", fiction_pk=self.draft_chapter.fiction.id))
+        res_2 = self.client.get(generate_url("fictions.chapters", self.draft_chapter.id, fiction_pk=self.draft_chapter.fiction.id))
+        res_3 = self.client.get(generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id))
+
+        self.assertEqual(res_1.status_code, status.HTTP_200_OK)
+        self.assertNotIn(ChapterCardSerializer(self.draft_chapter, context={"request": self.request}).data, res_1.data["results"])
+        self.assertEqual(res_2.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(res_3.status_code, status.HTTP_200_OK)
+        self.assertEqual(ChapterSerializer(self.unvalidated_chapter, context={"request": self.request}).data, res_3.data)
+
+        res_4 = self.client.patch(generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id), {"title": "Test title 2", "text_file_upload": None, "text": "bla"})
+        self.assertEqual(res_4.status_code, status.HTTP_200_OK)
+
+        res_5 = self.client.delete(generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id))
+        self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestsNewsCreatorAPI(APITestCase):
+    """Testent le comportement de l'API de créateur de news"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.news_creator = sample_user()
+        cls.news_creator.user_permissions.set([
+            Permission.objects.get(codename="add_newsarticle"),
+            Permission.objects.get(codename="view_newsarticle"),
+            Permission.objects.get(codename="change_newsarticle"),
+            Permission.objects.get(codename="delete_newsarticle"),
+        ])
+
+        cls.client = APIClient()
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(self.news_creator)
+
+    def test_news_creator_can_controll_all_news(self):
+        """Teste qu'un créateur de news a le contrôle sur toutes les news"""
+
+        payload = {
+            "title": "Test title",
+            "content": "Test content",
+            "category": NewsArticle.NewsCategory.UNDEFINED,
+        }
+
+        res_1 = self.client.post(generate_news_url(), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+
+        news = NewsArticle.objects.get(pk=res_1.data.get("id"))
+
+        res_2 = self.client.get(generate_news_url())
+        res_3 = self.client.get(generate_news_url(news.id))
+        self.assertEqual(res_2.status_code, status.HTTP_200_OK)
+        self.assertIn(NewsSerializer(news).data, res_2.data["results"])
+        self.assertEqual(res_3.status_code, status.HTTP_200_OK)
+        self.assertEqual(NewsSerializer(news).data, res_3.data)
+
+        res_4 = self.client.patch(generate_news_url(news.id), {"title": "Test title 2"})
+        self.assertEqual(res_4.status_code, status.HTTP_200_OK)
+
+        res_5 = self.client.delete(generate_news_url(news.id))
+        self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
