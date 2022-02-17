@@ -77,7 +77,7 @@ class AccountManagementSerializer(ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password")
+        password = validated_data.pop("password", None)
 
         if password:
             instance.set_password(password)
