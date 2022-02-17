@@ -42,7 +42,7 @@ class FictionViewSet(ModelViewSet):
 
         if self.request.query_params.get("mine", False) == "True":
             return Fiction.objects.filter(authors__id=self.request.user.id)
-        elif self.request.user.has_perm("fictions.fiction_list_full_view"):
+        elif self.request.user.has_perm("fictions.view_fiction"):
             return Fiction.objects.all()
         else:
             return Fiction.published.all()
@@ -98,7 +98,7 @@ class ChapterViewSet(ModelViewSet):
             return base_queryset.filter(creation_user=self.request.user.id)
         elif self.kwargs.pop("mine", False):
             return base_queryset.filter(creation_user=self.request.user.id)
-        elif self.request.user.has_perm("chapters.chapter_list_extended_view"):
+        elif self.request.user.has_perm("fictions.view_chapter"):
             return base_queryset.exclude(validation_status=Chapter.ChapterValidationStage.DRAFT)
         else:
             return base_queryset.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
