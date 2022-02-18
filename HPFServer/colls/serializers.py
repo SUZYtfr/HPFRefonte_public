@@ -5,8 +5,6 @@ from rest_framework.serializers import *
 from .models import Collection
 from fictions.models import Chapter
 
-from core.serializers import BaseModelSerializer
-
 
 class CollectionChapterOrderSerializer(ModelSerializer):
 
@@ -49,7 +47,7 @@ class MyCollectionChapterChoiceRelatedField(PrimaryKeyRelatedField):
         return f"{instance.fiction.title[:25]} : {instance.title}"
 
 
-class CollectionSerializer(BaseModelSerializer):
+class CollectionSerializer(ModelSerializer):
     """Sérialiseur de série"""
 
     reviews_url = HyperlinkedIdentityField(

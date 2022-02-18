@@ -3,7 +3,6 @@ from .models import PollGroup, PollQuestion, PollAnswer, Ballot
 from django.conf import settings
 from fictions.models import Chapter
 from random import randint
-from core.serializers import BaseModelSerializer
 
 
 class CurrentPollQuestionDefault:
@@ -30,7 +29,7 @@ class CurrentIPAdresseDefault:
         return '%s()' % self.__class__.__name__
 
 
-class PollAnswerSerializer(BaseModelSerializer):
+class PollAnswerSerializer(ModelSerializer):
     """Sérialiseur de réponse de question de sondage"""
 
     class PollQuestionField(PrimaryKeyRelatedField):
@@ -58,7 +57,7 @@ class PollAnswerSerializer(BaseModelSerializer):
         )
 
 
-class PollQuestionSerializer(BaseModelSerializer):
+class PollQuestionSerializer(ModelSerializer):
     """Sérialiseur de question de sondage"""
 
     class ChapterField(PrimaryKeyRelatedField):
@@ -93,7 +92,7 @@ class PollQuestionSerializer(BaseModelSerializer):
         )
 
 
-class PollSerializer(BaseModelSerializer):
+class PollSerializer(ModelSerializer):
     """Sérialiseur de sondage"""
 
     questions = PollQuestionSerializer(

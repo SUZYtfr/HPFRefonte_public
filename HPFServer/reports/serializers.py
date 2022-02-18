@@ -1,7 +1,5 @@
 from rest_framework.serializers import *
 
-from django.utils import timezone
-
 from .models import Report
 
 
@@ -20,10 +18,3 @@ class ReportSerializer(ModelSerializer):
             "status",
             "datetime",
         )
-
-    def create(self, validated_data):
-        validated_data["report_user"] = self.context["request"].user
-        validated_data["datetime"] = timezone.now()
-        validated_data["object"] = self.context["object"]
-
-        return super().create(validated_data)

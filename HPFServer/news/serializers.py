@@ -1,11 +1,9 @@
-from rest_framework.serializers import CreateOnlyDefault
+from rest_framework.serializers import CreateOnlyDefault, ModelSerializer
 
 from .models import NewsArticle, NewsComment
 
-from core.serializers import BaseModelSerializer
 
-
-class NewsSerializer(BaseModelSerializer):
+class NewsSerializer(ModelSerializer):
     """Sérialiseur d'actualité"""
 
     class Meta:
@@ -30,7 +28,7 @@ class NewsSerializer(BaseModelSerializer):
         )
 
 
-class NewsCommentSerializer(BaseModelSerializer):
+class NewsCommentSerializer(ModelSerializer):
     """Sérialiseur de commentaire d'actualité"""
 
     class Meta:

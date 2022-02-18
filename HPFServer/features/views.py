@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -52,10 +54,20 @@ class FeatureViewSet(ModelViewSet):
         feature_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(serializer.data, status=feature_status, headers=headers)
 
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
     def perform_create_or_retrieve(self, serializer):
         """Finalise l'action de création ou récupération de la caractéristique"""
 
-        instance, created = serializer.save(upsert=True)
+        instance, created = serializer.save(
+            upsert=True,
+            creation_user=self.request.user,
+            creation_date=timezone.now(),
+        )
         return created
 
 
@@ -65,6 +77,12 @@ class CategoryViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = StaffCategorySerializer
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     @action(methods=["GET", "PUT"], detail=True, serializer_class=StaffFeatureOrderSerializer, url_name="feature-order")
     def order(self, request, *args, **kwargs):

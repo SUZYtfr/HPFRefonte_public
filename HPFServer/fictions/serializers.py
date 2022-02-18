@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Fiction, Chapter, Beta
 from features.models import Category, Feature
 
-from core.serializers import BaseModelSerializer
 from core.text_functions import read_text_file
 
 
@@ -43,7 +42,7 @@ class FeaturesChoiceRelatedField(RelatedField):
         return feature
 
 
-class FictionSerializer(BaseModelSerializer):
+class FictionSerializer(ModelSerializer):
     """Sérialiseur privé de fiction"""
 
     class Meta:
@@ -111,7 +110,7 @@ class FictionCardSerializer(FictionSerializer):
         )
 
 
-class ChapterSerializer(BaseModelSerializer):
+class ChapterSerializer(ModelSerializer):
     """Sérialiseur de chapitre"""
 
     order = SerializerMethodField()

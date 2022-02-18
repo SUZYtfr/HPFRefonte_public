@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework.viewsets import *
 from rest_framework.mixins import *
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -30,3 +32,6 @@ class UserViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, UpdateMode
         if self.action == "list":
             return UserCardSerializer
         return self.serializer_class
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())

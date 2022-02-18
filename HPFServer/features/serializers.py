@@ -4,10 +4,9 @@ from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 
 from .models import Feature, Category
-from core.serializers import BaseModelSerializer
 
 
-class FeatureBaseSerializer(BaseModelSerializer):
+class FeatureBaseSerializer(ModelSerializer):
     """Base pour les sérialiseurs de caractéristiques"""
 
     class Meta:
@@ -60,8 +59,6 @@ class FeatureSerializer(FeatureBaseSerializer):
         validated_data = {**self.validated_data, **kwargs}
 
         if upsert:
-            validated_data["creation_user"] = self.context["request"].user
-            validated_data["creation_date"] = timezone.now()
             self.instance, created = self.get_or_create(validated_data)
             return self.instance, created
         else:
@@ -92,7 +89,7 @@ class StaffFeatureSerializer(FeatureBaseSerializer):
         return super().save(**kwargs)
 
 
-class StaffCategorySerializer(BaseModelSerializer):
+class StaffCategorySerializer(ModelSerializer):
     """Sérialiseur de catégorie pour les modérateurs"""
 
     class Meta:
@@ -108,7 +105,7 @@ class StaffCategorySerializer(BaseModelSerializer):
         return attrs
 
 
-class StaffFeatureOrderSerializer(BaseModelSerializer):
+class StaffFeatureOrderSerializer(ModelSerializer):
     """Sérialiseur d'ordre de caractéristiques pour les modérateurs"""
 
     class Meta:

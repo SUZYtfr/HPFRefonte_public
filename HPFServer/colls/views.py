@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -29,6 +31,12 @@ class PublicCollectionViewSet(ModelViewSet):
         if self.action == "list":
             return CollectionCardSerializer
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     def perform_destroy(self, instance):
         """Finalise le retrait de l'autorat du membre authentifié sur la série, la supprime si plus aucun autorat"""

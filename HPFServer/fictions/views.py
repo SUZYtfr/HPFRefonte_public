@@ -5,7 +5,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import status
 
 from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly, DjangoPermissionOrReadOnly
 
@@ -53,6 +52,12 @@ class FictionViewSet(ModelViewSet):
         if self.action == "list":
             return FictionCardSerializer
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     def perform_destroy(self, instance):
         """Finalise le retrait de l'autorat du membre authentifié sur la fiction, la supprime si plus aucun autorat"""
@@ -122,7 +127,14 @@ class ChapterViewSet(ModelViewSet):
         return self.serializer_class
 
     def perform_create(self, serializer):
-        serializer.save(fiction_id=self.kwargs["fiction_pk"])
+        serializer.save(
+            fiction_id=self.kwargs["fiction_pk"],
+            creation_user=self.request.user,
+            creation_date=timezone.now()
+        )
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     def initialize_request(self, request, *args, **kwargs):
         """Force la requête à écrire les fichiers téléchargés dans un fichier temporaire."""

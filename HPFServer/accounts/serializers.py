@@ -18,6 +18,7 @@ class AccountCreationSerializer(ModelSerializer):
             "bio",
             "gender",
             "creation_date",
+            "modification_date",
         ]
         extra_kwargs = {
             "password": {

@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -20,13 +20,19 @@ class NewsViewSet(ModelViewSet):
             return NewsArticle.objects.order_by("-creation_date")
         return self.queryset
 
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
 
 class NewsCommentViewSet(ModelViewSet):
     """Ensemble de vues de commentaires d'actualités"""
 
     permission_classes = [IsAuthenticatedOrReadOnly, IsObjectCreatorOrReadOnly]
     serializer_class = NewsCommentSerializer
-    queryset = NewsComment.objects
+    queryset = NewsComment.objects.all()
 
     def get_queryset(self):
         if self.request.user.has_perm("news.view_newsarticle"):
@@ -40,4 +46,11 @@ class NewsCommentViewSet(ModelViewSet):
             )
 
     def perform_create(self, serializer):
-        serializer.save(newsarticle_id=self.kwargs["news_pk"])
+        serializer.save(
+            newsarticle_id=self.kwargs["news_pk"],
+            creation_user=self.request.user,
+            creation_date=timezone.now(),
+        )
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())

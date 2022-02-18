@@ -8,7 +8,6 @@ from users.serializers import UserCardSerializer
 from users.models import User
 from reviews.models import Review, ReviewReply, ReviewTextVersion
 from core.models import get_moderation_account
-from core.serializers import BaseModelSerializer
 
 from django.utils import timezone
 
@@ -18,7 +17,7 @@ from rest_framework.status import HTTP_403_FORBIDDEN
 
 # RAR
 
-class ReviewReplySerializer(BaseModelSerializer):
+class ReviewReplySerializer(ModelSerializer):
     """Sérialiseur de réponse à review"""
 
     class Meta:
@@ -44,7 +43,7 @@ class ReviewReplySerializer(BaseModelSerializer):
 
 # SÉRIALISEURS PUBLIQUES
 
-class ReviewSerializer(BaseModelSerializer):
+class ReviewSerializer(ModelSerializer):
     """Sérialiseur publique de review"""
 
     replies = ReviewReplySerializer(read_only=True, many=True)
