@@ -164,7 +164,8 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
         verbose_name = "chapitre"
         order_with_respect_to = "fiction"
         permissions = [
-            ("automatic_validation", "A la validation automatique des chapitres")
+            ("automatic_validation", "A la validation automatique des chapitres"),
+            ("staff_validation", "A la validation de modérateur des chapitres"),
         ]
 
     class ChapterValidationStage(models.IntegerChoices):
@@ -220,26 +221,16 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
         if touch:  # à utiliser en cas de modification
             self.save()
 
-    def change_status(self, status, modification_user=None):
+    def change_status(self, status, modification_user=None, modification_time=None):
         """Change le status de validation du chapitre"""
 
         self.validation_status = status
 
         if modification_user:
             self.modification_user = modification_user
-            self.modification_date = timezone.now()
+            self.modification_date = modification_time or timezone.now()
 
         self.save()
-
-    def submit(self, modification_user=None):
-        """Envoie le chapitre à la modération"""
-
-        self.change_status(self.ChapterValidationStage.PENDING, modification_user)
-
-    def validate(self, modification_user=None):
-        """Valide le chapitre"""
-
-        self.change_status(self.ChapterValidationStage.PUBLISHED, modification_user)
 
 
 class Beta(FullCleanModel):

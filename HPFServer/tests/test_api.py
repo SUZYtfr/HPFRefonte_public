@@ -48,6 +48,14 @@ def generate_chapter_submit_url(**kwargs):
     return reverse(f"fictions:chapter-submit", kwargs=kwargs)
 
 
+def generate_chapter_validate_url(**kwargs):
+    return reverse(f"fictions:chapter-validate", kwargs=kwargs)
+
+
+def generate_chapter_invalidate_url(**kwargs):
+    return reverse(f"fictions:chapter-invalidate", kwargs=kwargs)
+
+
 class TestsPublicAPI(APITestCase):
     """Testent le comportement de l'API publique"""
 
@@ -332,8 +340,12 @@ class TestsUserAPI(APITestCase):
 
         draft_chapter = sample_chapter(creation_user=self.user)
 
-        res_1 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
-        res_2 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
+        res_1 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id,
+                                                            fiction_pk=draft_chapter.fiction.id),
+                                **{"QUERY_STRING": "mine=True"})
+        res_2 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id,
+                                                            fiction_pk=draft_chapter.fiction.id),
+                                **{"QUERY_STRING": "mine=True"})
 
         self.assertContains(res_1, "validation_status", status_code=status.HTTP_200_OK)
         self.assertEqual(res_1.data["validation_status"], Chapter.ChapterValidationStage.PENDING)
@@ -345,12 +357,23 @@ class TestsUserAPI(APITestCase):
         premium_user = sample_user()
         premium_user.user_permissions.add(Permission.objects.get(codename="automatic_validation"))
         premium_draft_chapter = sample_chapter(creation_user=premium_user)
+        premium_edit_required_chapter = sample_chapter(creation_user=premium_user,
+                                                       fiction=premium_draft_chapter.fiction,
+                                                       validation_status=Chapter.ChapterValidationStage.EDIT_REQUIRED)
 
         self.client.force_authenticate(premium_user)
 
-        res = self.client.put(generate_chapter_submit_url(pk=premium_draft_chapter.id, fiction_pk=premium_draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
-        self.assertContains(res, "validation_status", status_code=status.HTTP_200_OK)
-        self.assertEqual(res.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
+        res_1 = self.client.put(generate_chapter_submit_url(pk=premium_draft_chapter.id,
+                                                            fiction_pk=premium_draft_chapter.fiction.id),
+                                **{"QUERY_STRING": "mine=True"})
+        res_2 = self.client.put(generate_chapter_submit_url(pk=premium_edit_required_chapter.id,
+                                                            fiction_pk=premium_edit_required_chapter.fiction.id),
+                                **{"QUERY_STRING": "mine=True"})
+
+        self.assertContains(res_1, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_1.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
+        self.assertContains(res_2, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_2.data["validation_status"], Chapter.ChapterValidationStage.EDITED)
 
 
 class TestsModeratorAPI(APITestCase):
@@ -359,6 +382,8 @@ class TestsModeratorAPI(APITestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.user = sample_user()
+
         cls.moderator = sample_user()
         cls.moderator.user_permissions.set([
             Permission.objects.get(codename="view_fiction"),
@@ -367,12 +392,13 @@ class TestsModeratorAPI(APITestCase):
             Permission.objects.get(codename="view_chapter"),
             Permission.objects.get(codename="change_chapter"),
             Permission.objects.get(codename="delete_chapter"),
+            Permission.objects.get(codename="staff_validation"),
         ])
 
-        cls.unvalidated_fiction = sample_fiction()
-        cls.draft_chapter = sample_chapter(creation_user=cls.unvalidated_fiction.creation_user,
+        cls.unvalidated_fiction = sample_fiction(cls.user)
+        cls.draft_chapter = sample_chapter(creation_user=cls.user,
                                            validation_status=Chapter.ChapterValidationStage.DRAFT)
-        cls.unvalidated_chapter = sample_chapter(creation_user=cls.unvalidated_fiction.creation_user,
+        cls.unvalidated_chapter = sample_chapter(creation_user=cls.user,
                                                  fiction=cls.draft_chapter.fiction,
                                                  validation_status=Chapter.ChapterValidationStage.PENDING)
 
@@ -400,7 +426,7 @@ class TestsModeratorAPI(APITestCase):
         res_4 = self.client.delete(generate_url("fictions", self.unvalidated_fiction.id))
         self.assertEqual(res_4.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_staff_can_control_all_chapters_but_drafts(self):
+    def test_moderator_can_control_all_chapters_but_drafts(self):
         """Teste qu'un modérateur a le contrôle sur tous les chapitres sauf les brouillons"""
 
         res_1 = self.client.get(generate_url("fictions.chapters", fiction_pk=self.draft_chapter.fiction.id))
@@ -418,6 +444,69 @@ class TestsModeratorAPI(APITestCase):
 
         res_5 = self.client.delete(generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id))
         self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_moderator_can_validate_chapters(self):
+        """Teste qu'un modérateur peut valider des chapitres"""
+
+        draft_chapter = sample_chapter(creation_user=self.user, validation_status=Chapter.ChapterValidationStage.DRAFT)
+        res_1 = self.client.put(generate_chapter_validate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.PENDING
+        draft_chapter.save()
+
+        res_2 = self.client.put(generate_chapter_validate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.EDIT_REQUIRED
+        draft_chapter.save()
+
+        res_3 = self.client.put(generate_chapter_validate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.EDITED
+        draft_chapter.save()
+
+        res_4 = self.client.put(generate_chapter_validate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        self.assertEqual(res_1.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertContains(res_2, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_2.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
+        self.assertEqual(res_3.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertContains(res_4, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_4.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
+
+    def test_moderator_can_invalidate_chapters(self):
+        """Teste qu'un modérateur peut invalider des chapitres"""
+
+        draft_chapter = sample_chapter(creation_user=self.user, validation_status=Chapter.ChapterValidationStage.DRAFT)
+        res_1 = self.client.put(generate_chapter_invalidate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.PENDING
+        draft_chapter.save()
+
+        res_2 = self.client.put(generate_chapter_invalidate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.EDIT_REQUIRED
+        draft_chapter.save()
+
+        res_3 = self.client.put(generate_chapter_invalidate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.EDITED
+        draft_chapter.save()
+
+        res_4 = self.client.put(generate_chapter_invalidate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        draft_chapter.validation_status = Chapter.ChapterValidationStage.PUBLISHED
+        draft_chapter.save()
+
+        res_5 = self.client.put(generate_chapter_invalidate_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id))
+
+        self.assertEqual(res_1.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertContains(res_2, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_2.data["validation_status"], Chapter.ChapterValidationStage.EDIT_REQUIRED)
+        self.assertEqual(res_3.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertContains(res_4, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_4.data["validation_status"], Chapter.ChapterValidationStage.EDIT_REQUIRED)
+        self.assertContains(res_5, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_5.data["validation_status"], Chapter.ChapterValidationStage.EDIT_REQUIRED)
 
 
 class TestsNewsCreatorAPI(APITestCase):

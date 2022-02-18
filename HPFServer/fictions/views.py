@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -26,6 +26,20 @@ class IsParentFictionAuthorOReadOnly(DjangoPermissionOrReadOnly):
         if super(IsParentFictionAuthorOReadOnly, self).has_object_permission(request, view, obj):
             return True
         elif request.user in obj.fiction.authors.all():
+            return True
+        return False
+
+
+class HasStaffValidation(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.has_perm("fictions.staff_validation"):
+            return True
+        return False
+
+
+class IsFictionAuthor(BasePermission):
+    def has_permission(self, request, view):
+        if request.user in get_object_or_404(Fiction, pk=view.kwargs["fiction_pk"]).authors.all():
             return True
         return False
 
@@ -113,8 +127,10 @@ class ChapterViewSet(ModelViewSet):
 
         chapter = super().get_object()
 
-        if (self.action == "retrieve") and (self.request.user not in chapter.fiction.authors.all()):
-            chapter.fiction.read_count += 1
+        if all([(self.action == "retrieve"),
+                (self.request.user not in chapter.fiction.authors.all()),
+                (chapter.validation_status == Chapter.ChapterValidationStage.PUBLISHED)]):
+            chapter.fiction.read_count += 1  # TODO - F(read_count) + 1 !
             chapter.fiction.save()
 
         return chapter
@@ -143,19 +159,62 @@ class ChapterViewSet(ModelViewSet):
         request.upload_handlers = [TemporaryFileUploadHandler(request=request)]
         return request
 
-    @action(["PUT"], detail=True, url_path="submit", permission_classes=[IsAuthenticated])
+    @action(["PUT"], detail=True, url_path="submit", name="Envoyer", permission_classes=[IsFictionAuthor])
     def submit(self, request, pk, **kwargs):
+        """Envoie le chapitre à la modération"""
 
         chapter = Chapter.objects.get(pk=pk)
 
-        if chapter.validation_status not in [chapter.ChapterValidationStage.DRAFT,
-                                             chapter.ChapterValidationStage.BETA_COMPLETE,
-                                             chapter.ChapterValidationStage.EDITED]:
-            return self.permission_denied(request)
-        if request.user.has_perm("fictions.automatic_validation"):
-            chapter.validate(modification_user=self.request.user)
+        if chapter.validation_status == Chapter.ChapterValidationStage.DRAFT:
+            if request.user.has_perm("fictions.automatic_validation"):
+                chapter.change_status(Chapter.ChapterValidationStage.PUBLISHED,
+                                      modification_user=self.request.user, modification_time=timezone.now())
+            else:
+                chapter.change_status(Chapter.ChapterValidationStage.PENDING,
+                                      modification_user=self.request.user, modification_time=timezone.now())
+
+        elif chapter.validation_status == chapter.ChapterValidationStage.EDIT_REQUIRED:
+            chapter.change_status(Chapter.ChapterValidationStage.EDITED,
+                                  modification_user=self.request.user, modification_time=timezone.now())
+
         else:
-            chapter.submit(modification_user=self.request.user)
+            return self.permission_denied(
+                request,
+                message="Ce chapitre ne peut pas être envoyé à la modération pour l'instant."
+            )
+
+        return self.retrieve(request)
+
+    @action(["PUT"], detail=True, url_path="validate", name="Valider", permission_classes=[HasStaffValidation])
+    def validate(self, request, pk, **kwargs):
+        """Valide le chapitre"""
+
+        chapter = Chapter.objects.get(pk=pk)
+
+        if chapter.validation_status not in [Chapter.ChapterValidationStage.PENDING,
+                                             Chapter.ChapterValidationStage.EDITED]:
+            return self.permission_denied(request, "Ce chapitre ne peut pas être validé pour l'instant.")
+
+        chapter.change_status(Chapter.ChapterValidationStage.PUBLISHED,
+                              modification_user=self.request.user,
+                              modification_time=timezone.now())
+
+        return self.retrieve(request)
+
+    @action(["PUT"], detail=True, url_path="invalidate", name="Invalider", permission_classes=[HasStaffValidation])
+    def invalidate(self, request, pk, **kwargs):
+        """Invalide le chapitre"""
+
+        chapter = Chapter.objects.get(pk=pk)
+
+        if chapter.validation_status not in [Chapter.ChapterValidationStage.PENDING,
+                                             Chapter.ChapterValidationStage.EDITED,
+                                             Chapter.ChapterValidationStage.PUBLISHED]:
+            return self.permission_denied(request, "Ce chapitre ne peut pas être invalidé pour l'instant.")
+
+        chapter.change_status(Chapter.ChapterValidationStage.EDIT_REQUIRED,
+                              modification_user=self.request.user,
+                              modification_time=timezone.now())
 
         return self.retrieve(request)
 
