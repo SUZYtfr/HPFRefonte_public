@@ -44,6 +44,10 @@ def generate_news_url(news_id=None):
     return reverse("news:news-list")
 
 
+def generate_chapter_submit_url(**kwargs):
+    return reverse(f"fictions:chapter-submit", kwargs=kwargs)
+
+
 class TestsPublicAPI(APITestCase):
     """Testent le comportement de l'API publique"""
 
@@ -322,6 +326,31 @@ class TestsUserAPI(APITestCase):
 
         res_5 = self.client.delete(generate_url("fictions.chapters", chapter.id, fiction_pk=chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
         self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_auth_user_can_submit_own_chapter(self):
+        """Teste qu'un membre peut envoyer son chapitre à la validation"""
+
+        draft_chapter = sample_chapter(creation_user=self.user)
+
+        res_1 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
+        res_2 = self.client.put(generate_chapter_submit_url(pk=draft_chapter.id, fiction_pk=draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
+
+        self.assertContains(res_1, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res_1.data["validation_status"], Chapter.ChapterValidationStage.PENDING)
+        self.assertEqual(res_2.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_premium_user_validates_automatically(self):
+        """Teste qu'un adhérent valide son chapitre automatiquement"""
+
+        premium_user = sample_user()
+        premium_user.user_permissions.add(Permission.objects.get(codename="automatic_validation"))
+        premium_draft_chapter = sample_chapter(creation_user=premium_user)
+
+        self.client.force_authenticate(premium_user)
+
+        res = self.client.put(generate_chapter_submit_url(pk=premium_draft_chapter.id, fiction_pk=premium_draft_chapter.fiction.id), **{"QUERY_STRING": "mine=True"})
+        self.assertContains(res, "validation_status", status_code=status.HTTP_200_OK)
+        self.assertEqual(res.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
 
 
 class TestsModeratorAPI(APITestCase):

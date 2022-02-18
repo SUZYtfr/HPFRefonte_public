@@ -108,7 +108,7 @@ class ChapterViewSet(ModelViewSet):
 
         chapter = super().get_object()
 
-        if self.request.user not in chapter.fiction.authors.all():
+        if (self.action == "retrieve") and (self.request.user not in chapter.fiction.authors.all()):
             chapter.fiction.read_count += 1
             chapter.fiction.save()
 
@@ -131,29 +131,21 @@ class ChapterViewSet(ModelViewSet):
         request.upload_handlers = [TemporaryFileUploadHandler(request=request)]
         return request
 
-    def submit(self, request, **kwargs):
+    @action(["PUT"], detail=True, url_path="submit", permission_classes=[IsAuthenticated])
+    def submit(self, request, pk, **kwargs):
 
-        chapter = self.get_object()
+        chapter = Chapter.objects.get(pk=pk)
 
-        if request.user.is_premium:
-            chapter.validation_status = chapter.ChapterValidationStage.PUBLISHED
-            chapter.modification_user = request.user
-            chapter.modification_date = timezone.now()
-            chapter.save()
-            return Response(data="Envoyé", status=status.HTTP_200_OK)
+        if chapter.validation_status not in [chapter.ChapterValidationStage.DRAFT,
+                                             chapter.ChapterValidationStage.BETA_COMPLETE,
+                                             chapter.ChapterValidationStage.EDITED]:
+            return self.permission_denied(request)
+        if request.user.has_perm("fictions.automatic_validation"):
+            chapter.validate(modification_user=self.request.user)
         else:
-            if chapter.validation_status in {
-                Chapter.ChapterValidationStage.DRAFT,
-                Chapter.ChapterValidationStage.BETA_COMPLETE,
-                Chapter.ChapterValidationStage.EDITED,
-            }:
-                chapter.validation_status = chapter.ChapterValidationStage.PENDING
-                chapter.modification_user = request.user
-                chapter.modification_date = timezone.now()
-                chapter.save()
-                return Response(data="Envoyé", status=status.HTTP_200_OK)
-            else:
-                return Response(data="Problème", status=status.HTTP_403_FORBIDDEN)
+            chapter.submit(modification_user=self.request.user)
+
+        return self.retrieve(request)
 
 
 class BetaViewSet(ModelViewSet):

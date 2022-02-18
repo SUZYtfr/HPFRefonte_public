@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from django.utils import timezone
 
 
-class BaseModelSerializer(ModelSerializer):
+class BaseModelSerializer(ModelSerializer):  # TODO - virer ça
     """Base de sérialiseur de modèle implémentant les champs automatiques de création et de mise à jour"""
 
     def create(self, validated_data):
