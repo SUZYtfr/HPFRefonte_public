@@ -20,7 +20,6 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": true,
   "is_superuser": true,
@@ -50,7 +49,6 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": true,
   "is_superuser": false,
@@ -80,7 +78,6 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": false,
   "is_superuser": false,
@@ -110,12 +107,13 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": false,
   "is_superuser": false,
   "last_login": null,
-  "groups": [],
+  "groups": [
+   9
+  ],
   "user_permissions": []
  }
 },
@@ -140,7 +138,6 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": false,
   "is_superuser": false,
@@ -172,7 +169,6 @@
   "user_pref_skin": "default",
   "user_pref_show_reaction": true,
   "is_beta": false,
-  "is_premium": false,
   "is_active": true,
   "is_staff": true,
   "is_superuser": false,
@@ -265,6 +261,16 @@
  "fields": {
   "name": "L'équipe Technique",
   "permissions": []
+ }
+},
+{
+ "model": "auth.group",
+ "pk": 9,
+ "fields": {
+  "name": "Adhérents",
+  "permissions": [
+   50
+  ]
  }
 },
 {
@@ -465,7 +471,7 @@
   "fiction": 3,
   "startnote": "",
   "endnote": "",
-  "validation_status": 4,
+  "validation_status": 1,
   "poll": null,
   "_order": 3
  }

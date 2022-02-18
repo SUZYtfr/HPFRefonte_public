@@ -33,7 +33,7 @@ def check_draft_permission(creation_user):
     """Vérifie la permission de brouillon de l'utilisateur"""
 
     draft_number = creation_user.created_reviews.filter(draft=True).count()
-    if creation_user.is_premium:
+    if creation_user.has_perm("extra_review_drafts"):
         if draft_number >= settings.PREMIUM_MAX_REVIEW_DRAFTS:
             raise PermissionError("Cet adhérent a atteint son nombre de brouillons de reviews maximal autorisé.")
     else:
@@ -111,7 +111,8 @@ class Review(DatedModel, CreatedModel, TextDependentModel):
     class Meta:
         verbose_name = "review"
         permissions = [
-            ("can_post_review_as_staff", "Peut publier une review avec le compte de modération")
+            ("can_post_review_as_staff", "Peut publier une review avec le compte de modération"),
+            ("extra_review_drafts", "Peut sauvegarder plus de brouillons de reviews")
         ]
 
     @property

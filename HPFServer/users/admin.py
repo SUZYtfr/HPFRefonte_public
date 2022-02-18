@@ -8,8 +8,8 @@ class UserAdminAccess(UserAdmin):
     """Accès d'administration aux utilisateurs"""
 
     ordering = ("-id",)
-    list_display = ("id", "username", "creation_date", "is_active", "is_premium", "is_staff", "is_superuser", "mean",)
-    list_filter = ("creation_date", "is_premium", "is_active",)
+    list_display = ("id", "username", "creation_date", "is_active", "is_staff", "is_superuser", "mean",)
+    list_filter = ("creation_date", "is_active",)
     list_per_page = 20
     fieldsets = (
         ("Informations publiques", {"fields": ("nickname",
@@ -25,7 +25,7 @@ class UserAdminAccess(UserAdmin):
                                     "user_pref_dark_mode",
                                     "user_pref_skin",
                                     "user_pref_show_reaction",)}),
-        ("Status et permissions", {"fields": (("is_active", "is_premium",),
+        ("Status et permissions", {"fields": (("is_active",),
                                               ("is_staff", "is_superuser",),
                                               "age_consent",)}),
         ("Groupes", {"classes": ("collapse",),

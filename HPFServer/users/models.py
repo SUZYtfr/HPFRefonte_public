@@ -131,8 +131,6 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
     # Champs par défaut restreints modifiables par la modération
     is_beta = models.BooleanField(verbose_name="bêta",
                                   default=False)
-    is_premium = models.BooleanField(verbose_name="adhérent",
-                                     default=False)
     is_active = models.BooleanField(verbose_name="actif",
                                     default=True)
 

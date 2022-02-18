@@ -69,7 +69,6 @@ class Banner(BaseImage):
         PREMIUM = (4, "Bannière d'adhérent")
 
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
-                                limit_choices_to={"is_premium": True},
                                 verbose_name="utilisateur")
     category = models.SmallIntegerField(choices=BannerType.choices,
                                         verbose_name="catégorie")
