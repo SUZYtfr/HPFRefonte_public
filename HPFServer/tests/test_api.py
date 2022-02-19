@@ -124,13 +124,15 @@ class TestsPublicAPI(APITestCase):
     def test_fiction_api_returns_only_validated_chapters(self):
         """Teste que l'API de fictions renvoie uniquement les chapitres validés"""
 
-        validated_chapter_card_serializer = ChapterCardSerializer(self.validated_chapter, context={"request": self.request})
-        unvalidated_chapter_card_serializer = ChapterCardSerializer(self.unvalidated_chapter, context={"request": self.request})
-        validated_chapter_serializer = ChapterSerializer(self.validated_chapter, context={"request": self.request})
-
         res_1 = self.client.get(path=generate_url("fictions.chapters", fiction_pk=self.validated_chapter.fiction.id))
         res_2 = self.client.get(path=generate_url("fictions.chapters", self.validated_chapter.id, fiction_pk=self.validated_chapter.fiction.id))
         res_3 = self.client.get(path=generate_url("fictions.chapters", self.unvalidated_chapter.id, fiction_pk=self.unvalidated_chapter.fiction.id))
+
+        self.validated_chapter.refresh_from_db(fields=["read_count"])
+
+        validated_chapter_card_serializer = ChapterCardSerializer(self.validated_chapter, context={"request": self.request})
+        unvalidated_chapter_card_serializer = ChapterCardSerializer(self.unvalidated_chapter, context={"request": self.request})
+        validated_chapter_serializer = ChapterSerializer(self.validated_chapter, context={"request": self.request})
 
         self.assertEqual(res_1.status_code, status.HTTP_200_OK)
         self.assertIn(validated_chapter_card_serializer.data, res_1.data["results"])

@@ -48,6 +48,9 @@ class FeaturesChoiceRelatedField(RelatedField):
 class FictionSerializer(ModelSerializer):
     """Sérialiseur privé de fiction"""
 
+    read_count = IntegerField(read_only=True)
+    word_count = IntegerField(read_only=True)
+
     class Meta:
         model = Fiction
         fields = "__all__"
@@ -62,9 +65,6 @@ class FictionSerializer(ModelSerializer):
         extra_kwargs = {
             "featured": {"read_only": True}
         }
-
-    read_count = IntegerField()
-    word_count = IntegerField()
 
     features = FeaturesChoiceRelatedField(
         many=True,
