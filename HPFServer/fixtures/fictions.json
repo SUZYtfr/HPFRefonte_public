@@ -1,0 +1,269 @@
+[
+{
+ "model": "fictions.fiction",
+ "pk": 1,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.550Z",
+  "modification_date": null,
+  "creation_user": 5,
+  "modification_user": null,
+  "title": "Ma première fic",
+  "summary": "C'est l'histoire de Chacalou le coyote pas foufou",
+  "storynote": "J'ai voulu représenter l'habitude du territoire liminal.",
+  "status": 4,
+  "featured": false,
+  "last_update_date": null,
+  "authors": [
+   5
+  ],
+  "features": []
+ }
+},
+{
+ "model": "fictions.fiction",
+ "pk": 2,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.558Z",
+  "modification_date": null,
+  "creation_user": 7,
+  "modification_user": null,
+  "title": "La fiction pour terminer toutes les fictions",
+  "summary": "",
+  "storynote": "",
+  "status": 1,
+  "featured": false,
+  "last_update_date": null,
+  "authors": [
+   7
+  ],
+  "features": [
+   150,
+   128,
+   151
+  ]
+ }
+},
+{
+ "model": "fictions.fiction",
+ "pk": 3,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.560Z",
+  "modification_date": null,
+  "creation_user": 5,
+  "modification_user": null,
+  "title": "Deuxième fic",
+  "summary": "",
+  "storynote": "",
+  "status": 1,
+  "featured": false,
+  "last_update_date": null,
+  "authors": [
+   5
+  ],
+  "features": []
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 1,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.560Z",
+  "modification_date": "2022-02-19T19:22:55.755Z",
+  "creation_user": 5,
+  "modification_user": 5,
+  "title": "Chapitre 1 : Chacalou mange des loukoums",
+  "fiction": 1,
+  "startnote": "",
+  "endnote": "",
+  "read_count": 1314,
+  "validation_status": 7,
+  "poll": null,
+  "_order": 0
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 2,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.560Z",
+  "modification_date": "2022-02-19T19:27:07.170Z",
+  "creation_user": 5,
+  "modification_user": 5,
+  "title": "Chapitre 2 : Chacalou rend visite à sa sœur",
+  "fiction": 1,
+  "startnote": "",
+  "endnote": "",
+  "read_count": 1130,
+  "validation_status": 7,
+  "poll": null,
+  "_order": 1
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 3,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.569Z",
+  "modification_date": "2022-02-19T19:38:19.071Z",
+  "creation_user": 7,
+  "modification_user": 7,
+  "title": "Avocado Lime Icecream",
+  "fiction": 2,
+  "startnote": "",
+  "endnote": "",
+  "read_count": 433,
+  "validation_status": 7,
+  "poll": null,
+  "_order": 0
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 4,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.571Z",
+  "modification_date": "2022-02-19T19:38:30.398Z",
+  "creation_user": 7,
+  "modification_user": 7,
+  "title": "Cotton Lime Cheesecake",
+  "fiction": 2,
+  "startnote": "",
+  "endnote": "",
+  "read_count": 322,
+  "validation_status": 7,
+  "poll": null,
+  "_order": 1
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 5,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.571Z",
+  "modification_date": "2022-02-19T19:30:34.276Z",
+  "creation_user": 5,
+  "modification_user": 5,
+  "title": "Chapitre publié",
+  "fiction": 3,
+  "startnote": "Ce chapitre est publié",
+  "endnote": "",
+  "read_count": 110,
+  "validation_status": 7,
+  "poll": null,
+  "_order": 0
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 6,
+ "fields": {
+  "creation_date": "2021-08-12T10:12:21.571Z",
+  "modification_date": "2022-02-19T19:33:10.962Z",
+  "creation_user": 5,
+  "modification_user": 5,
+  "title": "Chapitre en attente",
+  "fiction": 3,
+  "startnote": "Ce texte est en attente de validation",
+  "endnote": "",
+  "read_count": 0,
+  "validation_status": 4,
+  "poll": null,
+  "_order": 1
+ }
+},
+{
+ "model": "fictions.chapter",
+ "pk": 7,
+ "fields": {
+  "creation_date": "2022-02-19T19:36:34.270Z",
+  "modification_date": null,
+  "creation_user": 5,
+  "modification_user": null,
+  "title": "Chapitre en brouillon",
+  "fiction": 3,
+  "startnote": "Ce chapitre est un brouillon",
+  "endnote": "",
+  "read_count": 0,
+  "validation_status": 1,
+  "poll": null,
+  "_order": 2
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 1,
+ "fields": {
+  "text": "Obéissait-il simplement à une opération chirurgicale dont les journaux m'avaient, à la femme qui présidait alors aux destinées des hommes, étrangers à l'île d'un littoral. Renonce, disait-il, à quarante ans ; un corps de toute sa fortune était médiocre. Émis dans un tel frisson. Achetez du maïs grillé dans un cinéma bon marché, plutôt qu'à sa majorité, on prenait le corridor, un frôlement de robe se fit entendre sous la fenêtre ! Effectivement, personne n'en parle même plus de passion tout court. Rappelons-nous que nous avons analysé dans le premier système. Sera-t-elle meilleure, enfin, le crépuscule noyait la route, qui s'estompait devant toi. Dressant sur la table où ils buvaient étaient un encrier, acier et ébène, d'un soir...\r\nLance-toi dans l'espace laissé vide, monté sur tes flancs. Réussir dans les intrigues politiques, mais s'élevait en silhouettes étranges, terrifiantes. Pur effet d'une vive lumière. Séparé des siens, elle lui parlait, il ne fît maison nette. Honnêtement, je l'aidai de mon mieux. Était-elle bête, de ne détruire jamais aucun papier, et dont quelques mots arrivaient à ses oreilles les comédies qui assaisonnent un festin chinois. Cours par le chemin de la ville elle joignait à sa beauté et à la lisière du bois. Connaissant les goûts artistiques de son fils le comte de sa voix grêle.",
+  "creation_time": "2022-02-19T19:22:55.759Z",
+  "creation_user": 5,
+  "chapter": 1,
+  "word_count": 212
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 2,
+ "fields": {
+  "text": "Chose terrible il avait été mis sous la protection d'une légion de démons hallucinés. Celui-ci fit volte-face et galopa vers le nord avec le midi. Étouffant ce mouvement de la danse. Raconterais-je la suite de l'affaire à la chambrée, lui dit-il... Main dans la main et le tomahawk levé dans l'attitude vis-à-vis de votre maman, par exemple... Passant devant ce long garage, progressant à un rythme d'une très petite distance l'une de l'autre des deux formes. Croyant d'abord intercepter un texte adressé au sous-marin américain. Chevalier, dit une des deux est employée comme père ou comme mon frère vit avec moi, il faut, c'est dit, s'écria-t-elle, en échangeant d'inexplicables grimaces.\r\nMettre du petit bois dans la tige coupée d'une fougère, une capillaire sur le flanc. Jour hostile où loin de tout chemin. Législation sur le commerce avec les bons d'amour, sa contenance était digne et mesurée. Jetez vos armes et mettez la baïonnette au bout de très peu de personnes savaient alors ce que cela signifiait. Placez devant vous le nom de leurs cartes, et qui auraient pu, ce matin-là. Possible, rétorquai-je, agacé qu'on résume ainsi ma personnalité en trois phrases à l'emporte-pièce et laissant transparaître le jour par une colonne de vide. Halte-là, monsieur l'abbé l'y trouvera à coup sûr la demande faite par ceux-ci diminuerait. Imaginez à ce coup de commerce.",
+  "creation_time": "2022-02-19T19:27:07.176Z",
+  "creation_user": 5,
+  "chapter": 2,
+  "word_count": 223
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 3,
+ "fields": {
+  "text": "Fous-moi la paix ou de plaisir, son petit singe, et les cosaques se regardèrent stupéfaits, les jurés prêtèrent serment, et que toute tête qui s'argentait. Résolument, il s'écoula encore, un cercle de treize personnes qu'il avait la carte de la péninsule balkanique. Faute d'un autre mal est à l'ouest du fort, pour que la pluie cesse comme le vent soufflait de l'est. Marie-toi plutôt vieux et bon à rien. Poussez un bouton de rose blanche, quoique la gravité et l'air fatiguée. Son indisposition de quelques jours ils résolurent de débarquer. Ordonnance pour la réformation de la justice est une justice à leur assiduité au travail, contemplé les progrès atroces de l'infection. Lundi soir, et puis encore cent autres.\r\nMouton, qui était par hasard seule. Mon seul réconfort est de me donner, qu'il grandissait comme autrefois, ou bien y renoncer, on faisait comme attachées à sa barbe ; il ne sentait plus ses jambes. Philosophe comme vous êtes des réfutations mouvantes de la foi et le mystère s'expliqua. Jetant les yeux de la perfection plus ou moins fangeux de toutes les affaires, et j'attendais le moins. Défalquons du nombre des victimes dix fois moindre qu'à la vitesse de sa monture. Fais-moi la courte échelle, comme le vétérinaire l'avait abandonnée, pour un peu de leur senteur, de bouquet d'arbres. Service du roi de la ville qu'il rencontra, près de vous, jeune homme très bien fait de refuser. Méchant enfant, peux-tu nous causer une telle peine, au milieu d'hommes isolés comme nous, qui doit la fixer.",
+  "creation_time": "2022-02-19T19:30:34.282Z",
+  "creation_user": 5,
+  "chapter": 5,
+  "word_count": 252
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 4,
+ "fields": {
+  "text": "Entré dans le champ des activités humaines, surtout dans un pays constitutionnel. Debout, formidable, secouait la tête, puis elle appela. Soufflant comme un phoque, allait faire la lecture et l'étude des maladies mentales. Ennuyé de la compagnie, pourquoi vous faut-il ce détour pour me rendre malheureux ? Aimez-vous mieux quelques balles dans la tête au dehors, il réfléchirait mieux. Puisse-t-il aussi me délivrer du scrupule qui me reste qu'à mourir. Insouciant, irrégulier, d'environ vingt pas, dans tout cela. Mets donc vite tes patins, la glace ricanait et le sorcier riait de sa prouesse.\r\nTourmente, sans savoir par où aller, sinon là ? Inutile, dit-elle en s'animant de plus en décembre qu'en janvier l'emprunt de sa maison. Dételez vite, et regarde-moi cela. Charmé d'avoir une si magnifique ceinture. Une prestigieuse figure tragique envoyée sur la scène tandis que le petit accident de la petite rue que certainement vous ne pouvez conclure autre chose, j'ose à peine penser. Penser que l'intelligence d'un philosophe, un littérateur ou un poète. Hou, peut-être cent cinquante millions dans les coffres du roi. Permets que j'ajoute encore cent réaux.",
+  "creation_time": "2022-02-19T19:33:10.968Z",
+  "creation_user": 5,
+  "chapter": 6,
+  "word_count": 180
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 5,
+ "fields": {
+  "text": "Lors même qu'on est à la foi jurée. Examen du coffre, sous mes yeux, elle s'offrit à notre vue, il était d'avoir, sous les regards de ces honnêtes célébrités qu'on nous permette ici une digression. Connaît-on la cause de mon malaise ne vous est pas arrivé par la poste. Lavés, ils étaient suivis, et nous ont attaqués et forcés à rendre du revenu. Vient l'heure du coucher, aucun de ses mouvements. Tâchez de lui persuader de se tenir à sa hauteur ses actions les moins élevées que nous puissions accroître notre connaissance de la vérité. Donne-nous une possession au milieu de spectateurs assis et buvant de la bière, et de tout le soir et je choisis aussi un témoin qui ne me laissera pas accuser de mensonge les anciens navigateurs. Mise à feu dans quatre minutes, et ne prit un escalier ou un corridor qui conduisait aux prairies.\r\nBâcle, mais engoué au point de créer la cohésion sociale ; bon gré mal gré, y accepter à souper chez lui. Distinguons principalement dans tout procès, dans toute sa longueur. Plantes chez lesquelles l'administration est centralisée, n'ont pas coûté le quart de l'eau les dernières gouttes d'huile, et le bourgeois m'a retenu. Réprimant son impétuosité, et décidé qu'elle pouvait à peine prononcer les mots magiques qui enchantent l'imagination. Trempe ta plume dans le sang qui s'est perpétué jusqu'à nos temps les règles de bonne conduite pour ménager sa bourse. Remontées, les manches relevées jusqu'aux épaules, il se ressaisissait sans effort. Nature des obstacles qui semblaient interdire aux hommes d'être, sous les plus faibles des créatures, qui borne leur réceptivité. Dites-le, si c'était avec raison que l'autorité du prince le soir du troisième jour, le mariage est manqué ?",
+  "creation_time": "2022-02-19T19:36:34.279Z",
+  "creation_user": 5,
+  "chapter": 7,
+  "word_count": 284
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 6,
+ "fields": {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pharetra lectus cursus ex volutpat ornare. Proin tortor tortor, iaculis sed justo ut, blandit cursus sapien. Duis sem urna, vestibulum quis sollicitudin sed, auctor scelerisque magna. Phasellus condimentum blandit leo, scelerisque iaculis neque porttitor a. Integer eleifend fermentum nibh, vel varius neque ullamcorper eget. Quisque eros urna, condimentum sit amet consequat tempus, imperdiet congue dui. Proin eget sapien congue libero dapibus laoreet at eget sapien. Nam cursus venenatis porttitor.",
+  "creation_time": "2022-02-19T19:38:19.078Z",
+  "creation_user": 7,
+  "chapter": 3,
+  "word_count": 78
+ }
+},
+{
+ "model": "fictions.chaptertextversion",
+ "pk": 7,
+ "fields": {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque pharetra lectus cursus ex volutpat ornare. Proin tortor tortor, iaculis sed justo ut, blandit cursus sapien. Duis sem urna, vestibulum quis sollicitudin sed, auctor scelerisque magna. Phasellus condimentum blandit leo, scelerisque iaculis neque porttitor a. Integer eleifend fermentum nibh, vel varius neque ullamcorper eget. Quisque eros urna, condimentum sit amet consequat tempus, imperdiet congue dui. Proin eget sapien congue libero dapibus laoreet at eget sapien. Nam cursus venenatis porttitor.",
+  "creation_time": "2022-02-19T19:38:30.403Z",
+  "creation_user": 7,
+  "chapter": 4,
+  "word_count": 78
+ }
+}
+]

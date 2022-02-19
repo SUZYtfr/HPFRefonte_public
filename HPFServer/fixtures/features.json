@@ -1,484 +1,5 @@
 [
 {
- "model": "users.user",
- "pk": 2,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.166Z",
-  "modification_date": "2021-08-12T10:12:21.166Z",
-  "nickname": "admin",
-  "realname": null,
-  "email": "admin@le-heron.fr",
-  "password": "pbkdf2_sha256$260000$eqOkzgXYbYFuLAAbZDxOWI$bpC8/fw3+I1YMvdTKe0UM/ye6oemk9stNxvzGkeTJMg=",
-  "birthdate": null,
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": true,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 3,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.234Z",
-  "modification_date": "2021-08-12T10:12:21.234Z",
-  "nickname": "modo",
-  "realname": null,
-  "email": "modo@modo.modo",
-  "password": "pbkdf2_sha256$260000$J4kM2a7EqFhZdsIyLuFQFP$e422bIdTTpJg+XfGAQ26yap5dFfypYCiynprsNP0L2E=",
-  "birthdate": "1970-01-01",
-  "age_consent": true,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 4,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.321Z",
-  "modification_date": "2021-08-12T10:12:21.321Z",
-  "nickname": "Le reviewer compulsif",
-  "realname": null,
-  "email": "reviewer@reviewer.fr",
-  "password": "pbkdf2_sha256$260000$YmApRPfGxoX21UqQ13aFF9$tU4NC4bVeQ4uz8cS0hcsvyNBromC/utzTzMIhiJz4d0=",
-  "birthdate": "1986-06-06",
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 5,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.394Z",
-  "modification_date": "2021-08-12T10:12:21.394Z",
-  "nickname": "Chacal",
-  "realname": "Lucien Dupain",
-  "email": "chacal@chacal.com",
-  "password": "pbkdf2_sha256$260000$nxapbETE7dF0gG9yVe8335$MAWBK/QLgIN9AUPCeBXCNB9cQPaDynHzlk38vtpaye4=",
-  "birthdate": "1986-06-06",
-  "age_consent": true,
-  "bio": "Chacal est un animal. Chacal n'est pas sale.",
-  "gender": 3,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   9
-  ],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 6,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.467Z",
-  "modification_date": "2021-08-12T10:12:21.467Z",
-  "nickname": "Loutre",
-  "realname": "tempor ullamco",
-  "email": "do@nisi.fr",
-  "password": "pbkdf2_sha256$320000$lacUySFx5AMmotFOgV2bLP$ZEdZ0Lr+f5wwFf64x5sWVPASJ/O2kqAEJaCpmv0kV7c=",
-  "birthdate": "1958-06-04",
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   3
-  ],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 7,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.550Z",
-  "modification_date": "2021-08-12T10:12:21.550Z",
-  "nickname": "Pollo le Mollusque",
-  "realname": "Paul Moëlle",
-  "email": "pollo@mollo.fr",
-  "password": "pbkdf2_sha256$260000$7SI3YUDTmDae6gDflk7vie$RTSd6CtegMdbsReWMX/OX4GE1aaKCcAeA5BbXW/J2XE=",
-  "birthdate": "2852-06-15",
-  "age_consent": false,
-  "bio": "Salut moi c'est Pollo l'octopus à puces",
-  "gender": 2,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   4
-  ],
-  "user_permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 1,
- "fields": {
-  "name": "L'équipe des Nuits",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 2,
- "fields": {
-  "name": "L'association HPF",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 3,
- "fields": {
-  "name": "L'équipe Communication",
-  "permissions": [
-   107,
-   108,
-   109,
-   110
-  ]
- }
-},
-{
- "model": "auth.group",
- "pk": 4,
- "fields": {
-  "name": "L'équipe de Modération",
-  "permissions": [
-   22,
-   23,
-   24,
-   30,
-   31,
-   32,
-   35,
-   36,
-   47,
-   48,
-   49,
-   51,
-   52,
-   53,
-   137
-  ]
- }
-},
-{
- "model": "auth.group",
- "pk": 5,
- "fields": {
-  "name": "L'équipe des Éditions",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 6,
- "fields": {
-  "name": "L'équipe des Podiums",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 7,
- "fields": {
-  "name": "L'équipe du CA",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 8,
- "fields": {
-  "name": "L'équipe Technique",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 9,
- "fields": {
-  "name": "Adhérents",
-  "permissions": [
-   50,
-   136
-  ]
- }
-},
-{
- "model": "fictions.fiction",
- "pk": 1,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.550Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Ma première fic",
-  "summary": "C'est l'histoire de Chacalou le coyote pas foufou",
-  "storynote": "J'ai voulu représenter l'habitude du territoire liminal.",
-  "read_count": 34,
-  "status": 4,
-  "featured": false,
-  "last_update_date": null,
-  "authors": [
-   5
-  ],
-  "features": []
- }
-},
-{
- "model": "fictions.fiction",
- "pk": 2,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.558Z",
-  "modification_date": null,
-  "creation_user": 7,
-  "modification_user": null,
-  "title": "La fiction pour terminer toutes les fictions",
-  "summary": "",
-  "storynote": "",
-  "read_count": 13,
-  "status": 1,
-  "featured": false,
-  "last_update_date": null,
-  "authors": [
-   7
-  ],
-  "features": [
-   150,
-   128,
-   151
-  ]
- }
-},
-{
- "model": "fictions.fiction",
- "pk": 3,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.560Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Deuxième fic",
-  "summary": "",
-  "storynote": "",
-  "read_count": 42,
-  "status": 1,
-  "featured": false,
-  "last_update_date": null,
-  "authors": [
-   5
-  ],
-  "features": []
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 1,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.560Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Chapitre 1 : Chacalou mange des loukoums",
-  "fiction": 1,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 0
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 2,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.560Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Chapitre 2 : Chacalou visite sa sœur à l'orphelinat",
-  "fiction": 1,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 1
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 3,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.569Z",
-  "modification_date": null,
-  "creation_user": 7,
-  "modification_user": null,
-  "title": "Avocado Lime Icecream",
-  "fiction": 2,
-  "startnote": "Le début modifié",
-  "endnote": "La fin modifiée",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 0
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 4,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.571Z",
-  "modification_date": null,
-  "creation_user": 7,
-  "modification_user": null,
-  "title": "Cotton Lime Cheesecake",
-  "fiction": 2,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 1
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 5,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.571Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Nouveau chapitre",
-  "fiction": 3,
-  "startnote": "",
-  "endnote": "lu",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 0
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 6,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.571Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "Second Chapitre",
-  "fiction": 3,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 5,
-  "poll": null,
-  "_order": 1
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 7,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.581Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "niou",
-  "fiction": 3,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 7,
-  "poll": null,
-  "_order": 2
- }
-},
-{
- "model": "fictions.chapter",
- "pk": 8,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.581Z",
-  "modification_date": null,
-  "creation_user": 5,
-  "modification_user": null,
-  "title": "test de nouveau chap sur deuxième fic",
-  "fiction": 3,
-  "startnote": "",
-  "endnote": "",
-  "validation_status": 1,
-  "poll": null,
-  "_order": 3
- }
-},
-{
  "model": "features.category",
  "pk": 1,
  "fields": {
@@ -489,7 +10,7 @@
   "name": "Genres littéraires",
   "min_limit": 1,
   "max_limit": 1,
-  "is_closed":false
+  "is_closed": false
  }
 },
 {
@@ -599,9 +120,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Albus Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 0
  }
 },
@@ -614,9 +139,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Alice Londubat",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 1
  }
 },
@@ -629,9 +158,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Alicia Spinnet",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 2
  }
 },
@@ -644,9 +177,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Andromeda Tonks",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 3
  }
 },
@@ -659,9 +196,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Angelina Johnson",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 4
  }
 },
@@ -674,9 +215,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Armée de Dumbledore",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 5
  }
 },
@@ -689,9 +234,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Arthur Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 6
  }
 },
@@ -704,9 +253,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Astoria Greengrass",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 7
  }
 },
@@ -719,9 +272,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Audrey Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 8
  }
 },
@@ -734,9 +291,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Autre personnage",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 9
  }
 },
@@ -749,9 +310,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Bellatrix Lestrange",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 10
  }
 },
@@ -764,9 +329,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Bill Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 11
  }
 },
@@ -779,9 +348,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Blaise Zabini",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 12
  }
 },
@@ -794,9 +367,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Cedric Diggory",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 13
  }
 },
@@ -809,9 +386,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Charlie Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 14
  }
 },
@@ -824,9 +405,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Cho Chang",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 15
  }
 },
@@ -839,9 +424,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Colin Crivey",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 16
  }
 },
@@ -854,9 +443,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Croyance Bellebosse",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 17
  }
 },
@@ -869,9 +462,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Daphné Greengrass",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 18
  }
 },
@@ -884,9 +481,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dean Thomas",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 19
  }
 },
@@ -899,9 +500,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dennis Crivey",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 20
  }
 },
@@ -914,9 +519,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dobby",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 21
  }
 },
@@ -929,9 +538,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dominique Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 22
  }
 },
@@ -944,9 +557,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dorcas Meadowes",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 23
  }
 },
@@ -959,9 +576,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Drago Malefoy",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 24
  }
 },
@@ -974,9 +595,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Dudley Dursley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 25
  }
 },
@@ -989,9 +614,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Ernie McMillan",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 26
  }
 },
@@ -1004,9 +633,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille Black",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 27
  }
 },
@@ -1019,9 +652,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille Dumbledore",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 28
  }
 },
@@ -1034,9 +671,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille Malefoy",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 29
  }
 },
@@ -1049,9 +690,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 30
  }
 },
@@ -1064,9 +709,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 31
  }
 },
@@ -1079,9 +728,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Fenrir Greyback",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 32
  }
 },
@@ -1094,9 +747,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Filius Flitwick",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 33
  }
 },
@@ -1109,9 +766,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Fleur Delacour",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 34
  }
 },
@@ -1124,9 +785,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Frank Londubat",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 35
  }
 },
@@ -1139,9 +804,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Fred II Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 36
  }
 },
@@ -1154,9 +823,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Fred Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 37
  }
 },
@@ -1169,9 +842,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Gabrielle Delacour",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 38
  }
 },
@@ -1184,9 +861,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Gellert Grindelwald",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 39
  }
 },
@@ -1199,9 +880,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "George Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 40
  }
 },
@@ -1214,9 +899,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Ginny Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 41
  }
 },
@@ -1229,9 +918,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Godric Gryffondor",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 42
  }
 },
@@ -1244,9 +937,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Hannah Abbot",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 43
  }
 },
@@ -1259,9 +956,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Harry Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 44
  }
 },
@@ -1274,9 +975,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Helga Poufsouffle",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 45
  }
 },
@@ -1289,9 +994,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Hermione Granger",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 46
  }
 },
@@ -1304,9 +1013,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Hugo Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 47
  }
 },
@@ -1319,9 +1032,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Jacob Kowalski",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 48
  }
 },
@@ -1334,9 +1051,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "James Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 49
  }
 },
@@ -1349,9 +1070,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "James S. Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 50
  }
 },
@@ -1364,9 +1089,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Jedusor/Voldemort",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 51
  }
 },
@@ -1379,9 +1108,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Jumeaux Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 52
  }
 },
@@ -1394,9 +1127,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Katie Bell",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 53
  }
 },
@@ -1409,9 +1146,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lavande Brown",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 54
  }
 },
@@ -1424,9 +1165,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Le Trio",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 55
  }
 },
@@ -1439,9 +1184,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lee Jordan",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 56
  }
 },
@@ -1454,9 +1203,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Les Fondateurs",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 57
  }
 },
@@ -1469,9 +1222,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Les Mangemorts",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 58
  }
 },
@@ -1484,9 +1241,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Les Maraudeurs",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 59
  }
 },
@@ -1499,9 +1260,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lily Evans",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 60
  }
 },
@@ -1514,9 +1279,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lily L. Potter",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 61
  }
 },
@@ -1529,9 +1298,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lorcan Scamander",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 62
  }
 },
@@ -1544,9 +1317,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Louis Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 63
  }
 },
@@ -1559,9 +1336,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lucius Malefoy",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 64
  }
 },
@@ -1574,9 +1355,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lucy Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 65
  }
 },
@@ -1589,9 +1374,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Luna Lovegood",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 66
  }
 },
@@ -1604,9 +1393,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lysander Scamander",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 67
  }
 },
@@ -1619,9 +1412,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Marcus Flint",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 68
  }
 },
@@ -1634,9 +1431,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Marlene McKinnon",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 69
  }
 },
@@ -1649,9 +1450,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Membre d'HPF",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 70
  }
 },
@@ -1664,9 +1469,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Minerva McGonagall",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 71
  }
 },
@@ -1679,9 +1488,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Molly II Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 72
  }
 },
@@ -1694,9 +1507,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Molly Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 73
  }
 },
@@ -1709,9 +1526,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Narcissa Malefoy",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 74
  }
 },
@@ -1724,9 +1545,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Neville Londubat",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 75
  }
 },
@@ -1739,9 +1564,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Newt Scamander",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 76
  }
 },
@@ -1754,9 +1583,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Nymphadora Tonks",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 77
  }
 },
@@ -1769,9 +1602,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Olivier Dubois",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 78
  }
 },
@@ -1784,9 +1621,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Ordre du Phénix",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 79
  }
 },
@@ -1799,9 +1640,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Padma Patil",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 80
  }
 },
@@ -1814,9 +1659,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Pansy Parkinson",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 81
  }
 },
@@ -1829,9 +1678,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Parvati Patil",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 82
  }
 },
@@ -1844,9 +1697,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Percy Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 83
  }
 },
@@ -1859,9 +1716,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Personnage original (OC)",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 84
  }
 },
@@ -1874,9 +1735,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Peter Pettigrow",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 85
  }
 },
@@ -1889,9 +1754,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Pétunia Dursley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 86
  }
 },
@@ -1904,9 +1773,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Pomona Chourave",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 87
  }
 },
@@ -1919,9 +1792,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Porpentina Goldstein",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 88
  }
 },
@@ -1934,9 +1811,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Professeurs de Poudlard",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 89
  }
 },
@@ -1949,9 +1830,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Queenie Goldstein",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 90
  }
 },
@@ -1964,9 +1849,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Regulus Black",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 91
  }
 },
@@ -1979,9 +1868,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Remus Lupin",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 92
  }
 },
@@ -1994,9 +1887,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Rolf Scamander",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 93
  }
 },
@@ -2009,9 +1906,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Ron Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 94
  }
 },
@@ -2024,9 +1925,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Rose Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 95
  }
 },
@@ -2039,9 +1944,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Rowena Serdaigle",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 96
  }
 },
@@ -2054,9 +1963,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Roxanne Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 97
  }
 },
@@ -2069,9 +1982,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Rubeus Hagrid",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 98
  }
 },
@@ -2084,9 +2001,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Salazar Serpentard",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 99
  }
 },
@@ -2099,9 +2020,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Scorpius Malefoy",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 100
  }
 },
@@ -2114,9 +2039,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Seamus Finnigan",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 101
  }
 },
@@ -2129,9 +2058,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Severus Rogue",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 102
  }
 },
@@ -2144,9 +2077,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Sirius Black",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 103
  }
 },
@@ -2159,9 +2096,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Susan Bones",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 104
  }
 },
@@ -2174,9 +2115,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Ted Tonks",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 105
  }
 },
@@ -2189,9 +2134,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Teddy Lupin",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 106
  }
 },
@@ -2204,9 +2153,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Theodore Nott",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 107
  }
 },
@@ -2219,9 +2172,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Vernon Dursley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 108
  }
 },
@@ -2234,9 +2191,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Victoire Weasley",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 109
  }
 },
@@ -2249,9 +2210,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Viktor Krum",
-  "is_personal": false,
   "description": "",
   "category": 7,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 110
  }
 },
@@ -2264,10 +2229,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Biographies",
-  "is_personal": false,
   "description": "Fanfictions centrées sur l'histoire et la vie d'un seul personnage en particulier.",
   "category": 1,
+  "parent": null,
   "is_highlighted": true,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 0
  }
 },
@@ -2280,11 +2248,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "CrossOver",
-  "is_personal": false,
   "description": "Fanfictions mélangeant l'univers d'Harry Potter à celui d'une ou plusieurs autres séries.",
   "category": 2,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 1
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 0
  }
 },
 {
@@ -2296,11 +2267,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Enfances",
-  "is_personal": false,
   "description": "Fanfictions racontant l'enfance des personnages, avant leur entrée à Poudlard.",
   "category": 2,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 2
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 1
  }
 },
 {
@@ -2312,11 +2286,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Romance (Het)",
-  "is_personal": false,
   "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages.",
   "category": 8,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 3
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 0
  }
 },
 {
@@ -2328,11 +2305,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Romance (Slash)",
-  "is_personal": false,
   "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages de même sexe.",
   "category": 8,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 4
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 1
  }
 },
 {
@@ -2344,11 +2324,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Durant Poudlard",
-  "is_personal": false,
   "description": "Récits se déroulant entre les murs de la célèbre école de sorcellerie.",
   "category": 6,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 5
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 0
  }
 },
 {
@@ -2360,11 +2343,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Après Poudlard",
-  "is_personal": false,
   "description": "Fanfictions dont l'intrigue se déroule après la scolarité de Harry à Poudlard.",
   "category": 6,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 6
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 1
  }
 },
 {
@@ -2376,11 +2362,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Univers Alternatifs",
-  "is_personal": false,
   "description": "Fanfictions où les personnages évoluent dans un univers différent du leur.",
   "category": 2,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 7
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 2
  }
 },
 {
@@ -2392,11 +2381,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Voyages temporels",
-  "is_personal": false,
   "description": "Fanfictions où les personnages voyagent dans le temps.",
   "category": 2,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 9
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 3
  }
 },
 {
@@ -2408,11 +2400,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Résistance",
-  "is_personal": false,
   "description": "",
   "category": 6,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 10
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 2
  }
 },
 {
@@ -2424,11 +2419,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Quidditch",
-  "is_personal": false,
   "description": "",
   "category": 8,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 11
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 2
  }
 },
 {
@@ -2440,11 +2438,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Les Animaux Fantastiques",
-  "is_personal": false,
   "description": "",
   "category": 6,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 12
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 3
  }
 },
 {
@@ -2456,11 +2457,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Fêtes / Célébrations",
-  "is_personal": false,
   "description": "",
   "category": 6,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 13
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 4
  }
 },
 {
@@ -2472,11 +2476,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Autres fics HP",
-  "is_personal": false,
   "description": "",
   "category": 2,
+  "parent": null,
   "is_highlighted": true,
-  "_order": 14
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 4
  }
 },
 {
@@ -2488,9 +2495,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Tous",
-  "is_personal": false,
   "description": "",
   "category": 5,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 0
  }
 },
@@ -2503,9 +2514,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Déconseillé -12",
-  "is_personal": false,
   "description": "",
   "category": 5,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 1
  }
 },
@@ -2518,9 +2533,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Déconseillé -16",
-  "is_personal": false,
   "description": "",
   "category": 5,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 2
  }
 },
@@ -2533,9 +2552,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Interdit -18",
-  "is_personal": false,
   "description": "",
   "category": 5,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 3
  }
 },
@@ -2548,9 +2571,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Tout public",
-  "is_personal": false,
   "description": "",
   "category": 5,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 4
  }
 },
@@ -2563,10 +2590,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Amitié",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 0
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 5
  }
 },
 {
@@ -2578,10 +2609,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Angoisse/Suspense",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 1
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 6
  }
 },
 {
@@ -2593,10 +2628,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Autres genres",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 2
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 7
  }
 },
 {
@@ -2608,10 +2647,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Aventure/Action",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 3
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 8
  }
 },
 {
@@ -2623,10 +2666,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Comédie/Humour",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 4
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 9
  }
 },
 {
@@ -2638,10 +2685,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Epistolaire",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 5
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 10
  }
 },
 {
@@ -2653,10 +2704,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Famille",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 6
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 11
  }
 },
 {
@@ -2668,10 +2723,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Femslash/Yuri",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 7
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 12
  }
 },
 {
@@ -2683,10 +2742,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Guerre",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 8
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 13
  }
 },
 {
@@ -2698,10 +2761,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Horreur",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 9
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 14
  }
 },
 {
@@ -2713,10 +2780,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Missing Moments",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 10
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 15
  }
 },
 {
@@ -2728,10 +2799,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Parodie",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 11
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 16
  }
 },
 {
@@ -2743,10 +2818,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Poésie",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 12
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 17
  }
 },
 {
@@ -2758,10 +2837,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Polar/enquête",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 13
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 18
  }
 },
 {
@@ -2773,10 +2856,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Romance/Amour",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 14
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 19
  }
 },
 {
@@ -2788,10 +2875,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Slash/Yaoi",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 15
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 20
  }
 },
 {
@@ -2803,10 +2894,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Songfic",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 16
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 21
  }
 },
 {
@@ -2818,10 +2913,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Tragédie/Drame",
-  "is_personal": false,
   "description": "",
   "category": 2,
-  "_order": 17
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 22
  }
 },
 {
@@ -2833,9 +2932,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Français",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 0
  }
 },
@@ -2848,9 +2951,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Anglais",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 1
  }
 },
@@ -2863,9 +2970,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Allemand",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 2
  }
 },
@@ -2878,9 +2989,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Breton",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 3
  }
 },
@@ -2893,9 +3008,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Picard",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 4
  }
 },
@@ -2908,9 +3027,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Espagnol",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 5
  }
 },
@@ -2923,9 +3046,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Latin",
-  "is_personal": false,
   "description": "",
   "category": 3,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 6
  }
 },
@@ -2938,9 +3065,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Scène(s) gore(s)",
-  "is_personal": false,
   "description": "",
   "category": 4,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 0
  }
 },
@@ -2953,9 +3084,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lime",
-  "is_personal": false,
   "description": "",
   "category": 4,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 1
  }
 },
@@ -2968,9 +3103,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lemon soft",
-  "is_personal": false,
   "description": "",
   "category": 4,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 2
  }
 },
@@ -2983,9 +3122,13 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Lemon Hard",
-  "is_personal": false,
   "description": "",
   "category": 4,
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
   "_order": 3
  }
 },
@@ -2998,10 +3141,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Nouvelle",
-  "is_personal": false,
   "description": "",
   "category": 1,
-  "_order": 0
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 1
  }
 },
 {
@@ -3013,10 +3160,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Poésie (Prose)",
-  "is_personal": false,
   "description": "",
   "category": 1,
-  "_order": 1
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 2
  }
 },
 {
@@ -3028,10 +3179,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Poésie (Vers)",
-  "is_personal": false,
   "description": "",
   "category": 1,
-  "_order": 2
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 3
  }
 },
 {
@@ -3043,10 +3198,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Roman",
-  "is_personal": false,
   "description": "",
   "category": 1,
-  "_order": 3
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 4
  }
 },
 {
@@ -3058,41 +3217,14 @@
   "creation_user": 0,
   "modification_user": null,
   "name": "Théâtre",
-  "is_personal": false,
   "description": "",
   "category": 1,
-  "_order": 4
- }
-},
-{
- "model": "news.newsarticle",
- "pk": 1,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.037Z",
-  "creation_user": 6,
-  "title": "News en attente",
-  "content": "Cette news est en attente de publication",
-  "category": 0,
-  "status": 1,
-  "teams": [
-   3
-  ]
- }
-},
-{
- "model": "news.newsarticle",
- "pk": 2,
- "fields":{
-  "creation_date": "2021-08-12T10:12:21.037Z",
-  "creation_user": 6,
-  "title": "News publiée",
-  "content": "Cette news est publiée",
-  "category": 0,
-  "status": 3,
-  "authors": [
-   6
-  ],
-  "post_date": "2022-02-13T10:12:21.037Z"
+  "parent": null,
+  "is_highlighted": false,
+  "is_personal": false,
+  "is_forbidden": false,
+  "replace_with": null,
+  "_order": 5
  }
 }
 ]
