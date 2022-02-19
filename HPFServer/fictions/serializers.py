@@ -63,6 +63,9 @@ class FictionSerializer(ModelSerializer):
             "featured": {"read_only": True}
         }
 
+    read_count = IntegerField()
+    word_count = IntegerField()
+
     features = FeaturesChoiceRelatedField(
         many=True,
     )
@@ -159,6 +162,7 @@ class ChapterSerializer(ModelSerializer):
             "order",
             "validation_status",
             "word_count",
+            "read_count",
             "mean",
             "poll",
             "reviews_url",

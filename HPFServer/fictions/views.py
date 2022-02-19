@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -113,15 +113,17 @@ class ChapterViewSet(ModelViewSet):
             return base_queryset.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
 
     def get_object(self):
-        """Renvoie le chapitre correspondant à l'ordre, incrémente le compte de lectures de la fiction"""
+        """Renvoie le chapitre correspondant à l'ordre, incrémente son compte de lectures."""
 
         chapter = super().get_object()
 
+        # https://docs.djangoproject.com/en/4.0/ref/models/expressions/#avoiding-race-conditions-using-f
         if all([(self.action == "retrieve"),
                 (self.request.user not in chapter.fiction.authors.all()),
                 (chapter.validation_status == Chapter.ChapterValidationStage.PUBLISHED)]):
-            chapter.fiction.read_count += 1  # TODO - F(read_count) + 1 !
-            chapter.fiction.save()
+            chapter.read_count = F("read_count") + 1
+            chapter.save_base()
+            chapter.refresh_from_db(fields=["read_count"])
 
         return chapter
 

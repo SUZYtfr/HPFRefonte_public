@@ -7,9 +7,9 @@ class FictionAdminAccess(BaseAdminAccess):
     """Accès d'administration aux fictions"""
 
     ordering = ("-id",)
-    list_display = ("id", "title", "creation_date", "read_count", "last_update_date", "status", "mean", "published",)
+    list_display = ("id", "title", "creation_date", "read_count", "word_count", "last_update_date", "status", "mean", "published",)
     list_per_page = 20
-    list_filter = ("read_count", "status", "creation_date",)
+    list_filter = ("status", "creation_date",)
 
     fieldsets = (
         ("Détails", {"fields": ("title",
@@ -45,12 +45,16 @@ class FictionAdminAccess(BaseAdminAccess):
         return obj.word_count
     word_count.short_description = "compte de mots"
 
+    def read_count(self, obj):
+        return obj.read_count
+    read_count.short_description = "lectures"
+
 
 class ChapterAdminAccess(BaseAdminAccess):
     """Accès d'administration aux chapitres"""
 
     ordering = ("-id",)
-    list_display = ("id", "title", "validation_status", "word_count", "creation_date", "mean",)
+    list_display = ("id", "title", "validation_status", "read_count", "word_count", "creation_date", "mean",)
     list_filter = ("validation_status", "creation_date")
     list_per_page = 20
     fieldsets = (
