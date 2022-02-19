@@ -43,7 +43,7 @@ class FictionAdminAccess(BaseAdminAccess):
 
     def word_count(self, obj):
         return obj.word_count
-    word_count.short_description = "compte de mots"
+    word_count.short_description = "mots"
 
     def read_count(self, obj):
         return obj.read_count

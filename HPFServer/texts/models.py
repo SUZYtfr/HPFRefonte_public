@@ -15,13 +15,14 @@ class BaseTextVersionModel(FullCleanModel):
                                       to=settings.AUTH_USER_MODEL, on_delete=models.SET(get_user_deleted_sentinel))
 
     def __str__(self):
-        return "{:25} ({})".format(str(self.text), self.creation_time.strftime("%d/%m/%y, %H:%M"))
+        return "{0} ({1})".format(str(self.text)[:50], self.creation_time.strftime("%d/%m/%y, %H:%M"))
 
 
 class ChapterTextVersion(BaseTextVersionModel):
     """Modèle de version de texte de chapitre"""
 
     class Meta:
+        app_label = "fictions"
         verbose_name = "version de texte de chapitre"
 
     chapter = models.ForeignKey(verbose_name="chapitre", editable=False, related_name="versions",
@@ -33,6 +34,7 @@ class ReviewTextVersion(BaseTextVersionModel):
     """Modèle de version de texte de review"""
 
     class Meta:
+        app_label = "reviews"
         verbose_name = "version de texte de review"
 
     review = models.ForeignKey(verbose_name="review", editable=False, related_name="versions",
