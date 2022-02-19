@@ -1,6 +1,9 @@
 from rest_framework.serializers import *
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+
+from users.models import User
 
 from .models import Fiction, Chapter, Beta
 from features.models import Category, Feature
@@ -108,6 +111,26 @@ class FictionCardSerializer(FictionSerializer):
             "id",
             "title",
         )
+
+
+class FictionExtraAuthorSerializer(Serializer):
+    """Sérialiseur d'ajout d'auteur à une fiction"""
+
+    class AuthorNicknameField(CharField):
+        def to_internal_value(self, data):
+            try:
+                user = User.objects.get(nickname=data)
+            except User.DoesNotExist:
+                raise ValidationError(f"L'utilisateur {data} n'a pas été trouvé.")
+
+            return user
+
+    author_nickname = AuthorNicknameField(write_only=True)
+    authors = StringRelatedField(many=True, read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.authors.add(validated_data["author_nickname"])
+        return instance
 
 
 class ChapterSerializer(ModelSerializer):

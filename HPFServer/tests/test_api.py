@@ -56,6 +56,10 @@ def generate_chapter_invalidate_url(**kwargs):
     return reverse(f"fictions:chapter-invalidate", kwargs=kwargs)
 
 
+def generate_fiction_authors_url(**kwargs):
+    return reverse(f"fictions:fiction-authors", kwargs=kwargs)
+
+
 class TestsPublicAPI(APITestCase):
     """Testent le comportement de l'API publique"""
 
@@ -374,6 +378,22 @@ class TestsUserAPI(APITestCase):
         self.assertEqual(res_1.data["validation_status"], Chapter.ChapterValidationStage.PUBLISHED)
         self.assertContains(res_2, "validation_status", status_code=status.HTTP_200_OK)
         self.assertEqual(res_2.data["validation_status"], Chapter.ChapterValidationStage.EDITED)
+
+    def test_first_author_can_add_more_authors(self):
+
+        user_2 = sample_user()
+        user_3 = sample_user()
+
+        res_1 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_nickname": user_2.nickname}, **{"QUERY_STRING": "mine=True"})
+
+        self.client.force_authenticate(user_2)
+
+        res_2 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_nickname": user_3.nickname}, **{"QUERY_STRING": "mine=True"})
+
+        self.assertContains(res_1, "authors", status_code=status.HTTP_200_OK)
+        self.assertIn(user_2, self.unvalidated_fiction.authors.all())
+        self.assertEqual(res_2.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertNotIn(user_3, self.unvalidated_fiction.authors.all())
 
 
 class TestsModeratorAPI(APITestCase):

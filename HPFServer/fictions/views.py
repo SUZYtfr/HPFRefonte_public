@@ -1,47 +1,15 @@
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly, DjangoPermissionOrReadOnly
+from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly
 
 from .serializers import *
+from .permissions import *
 from .models import Fiction, Chapter, Beta
-
-
-class IsParentFictionAuthorOReadOnly(DjangoPermissionOrReadOnly):
-    """Permission autorisant le contrôle d'un chapitre par l'auteur de sa fiction parente"""
-
-    def has_permission(self, request, view):
-        if super(IsParentFictionAuthorOReadOnly, self).has_permission(request, view):
-            return True
-        elif request.user in get_object_or_404(Fiction, pk=view.kwargs["fiction_pk"]).authors.all():
-            return True
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        if super(IsParentFictionAuthorOReadOnly, self).has_object_permission(request, view, obj):
-            return True
-        elif request.user in obj.fiction.authors.all():
-            return True
-        return False
-
-
-class HasStaffValidation(BasePermission):
-    def has_permission(self, request, view):
-        if request.user.has_perm("fictions.staff_validation"):
-            return True
-        return False
-
-
-class IsFictionAuthor(BasePermission):
-    def has_permission(self, request, view):
-        if request.user in get_object_or_404(Fiction, pk=view.kwargs["fiction_pk"]).authors.all():
-            return True
-        return False
 
 
 class FictionViewSet(ModelViewSet):
@@ -79,6 +47,28 @@ class FictionViewSet(ModelViewSet):
         instance.authors.remove(self.request.user)
         if instance.authors.count() <= 0:
             instance.delete()
+
+    @action(methods=["GET", "PUT"], detail=True, url_name="authors", url_path="authors", name="Ajouter un co-auteur",
+            serializer_class=FictionExtraAuthorSerializer, permission_classes=[IsFictionFirstAuthor])
+    def manage_authors(self, request, pk, **kwargs):
+        """Ajoute """
+
+        fiction = self.get_object()
+
+        if self.request.method == "PUT":
+            if self.request.user != fiction.authors.first():
+                return self.permission_denied(request,
+                                              message="Seul l'auteur principal peut ajouter des co-auteurs.")
+
+            serializer = self.serializer_class(instance=fiction, data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            serializer.save(
+                modification_user=self.request.user,
+                modification_time=timezone.now(),
+            )
+
+        return self.retrieve(request)
 
     @action(methods=["GET", "PUT"], detail=True, serializer_class=FictionChapterOrderSerializer, url_name="chapter-order")
     def order(self, request, *args, **kwargs):
