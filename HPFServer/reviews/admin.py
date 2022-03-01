@@ -6,9 +6,9 @@ from reviews.models import Review, ReviewReply
 class ReviewAdminAccess(BaseAdminAccess):
     """Accès d'administration aux reviews"""
 
-    list_display = ("id", "creation_user", "grading",)
-    fields = ("creation_user", "grading", "work",)
-    readonly_fields = ("creation_user", "creation_date", "work",)
+    list_display = ("id", "creation_user", "creation_date", "grading")
+    fields = ("creation_user", "creation_date", "grading", "work",)
+    readonly_fields = ("creation_user", "creation_date", "creation_date", "work",)
 
     def work(self, obj):
         return obj.work

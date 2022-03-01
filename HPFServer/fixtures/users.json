@@ -48,7 +48,8 @@
    55,
    22,
    23,
-   24
+   24,
+   72
   ]
  }
 },
@@ -191,7 +192,7 @@
   "nickname": "Le reviewer compulsif",
   "realname": null,
   "email": "reviewer@reviewer.fr",
-  "password": "pbkdf2_sha256$260000$YmApRPfGxoX21UqQ13aFF9$tU4NC4bVeQ4uz8cS0hcsvyNBromC/utzTzMIhiJz4d0=",
+  "password": "pbkdf2_sha256$320000$9DWZ9ULKgvOGm6phllYwPH$nFHLd7PlLmwe/6vlkoPZiFvQzj8tRGIKUGWIcjZrSgM=",
   "birthdate": "1986-06-06",
   "age_consent": false,
   "bio": "",

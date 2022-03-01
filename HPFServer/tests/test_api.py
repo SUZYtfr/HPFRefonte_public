@@ -1,6 +1,7 @@
 from PIL import Image
 import tempfile
 
+from django.conf import settings
 from django.core.files.images import ImageFile
 from django.contrib.auth.models import Permission
 
@@ -15,6 +16,8 @@ from fictions.serializers import FictionCardSerializer, FictionSerializer, Ficti
 from news.serializers import NewsSerializer, NewsArticle
 from features.serializers import FeatureSerializer
 from images.serializers import BannerSerializer, Banner
+
+import logging
 
 
 def generate_url(app_name, pk=None, **kwargs):
@@ -577,3 +580,132 @@ class TestsNewsCreatorAPI(APITestCase):
 
         res_5 = self.client.delete(generate_news_url(news.id))
         self.assertEqual(res_5.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestsReviewAPI(APITestCase):
+    """Testent les modèles de reviews et de réponses à reviews"""
+
+    @staticmethod
+    def generate_object_review_url(model, object_pk):
+        return reverse(f"reviews:{model}:object-review-list", kwargs={"object_pk": object_pk})
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.author = sample_user()
+        cls.chapter = sample_chapter(creation_user=cls.author,
+                                     validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+        cls.fiction = cls.chapter.fiction
+        cls.reviewer = sample_user()
+        cls.staff_user = sample_user()
+        cls.staff_user.user_permissions.add(
+            Permission.objects.get(codename="can_post_review_as_staff")
+        )
+
+        cls.client = APIClient()
+
+    def test_review_creation_permissions(self):
+        """Teste les permissions de création de reviews"""
+
+        payload = {
+            "text": "Test texte",
+            "grading": 10,
+            "draft": False,
+        }
+
+        self.client.force_authenticate(self.reviewer)
+        # 1 review = ok
+        res_1 = self.client.post(self.generate_object_review_url("users", self.author.id), payload)
+        # 2 reviews sur le même objet = FAIL
+        res_2 = self.client.post(self.generate_object_review_url("users", self.author.id), payload)
+        # review sur soi-même = FAIL
+        res_3 = self.client.post(self.generate_object_review_url("users", self.reviewer.id), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_2.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res_3.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_user_can_post_review_as_staff(self):
+        """Teste qu'un modérateur peut poster une review en utilisant le compte de modération"""
+
+        payload = {
+            "draft": False,
+            "text": "Test Text",
+            "grading": None
+        }
+
+        payload_as_staff = payload.copy()
+        payload_as_staff["as_staff"] = True
+
+        payload_as_staff_with_draft = payload_as_staff.copy()
+        payload_as_staff_with_draft["draft"] = True
+
+        self.client.force_authenticate(self.staff_user)
+        res_2 = self.client.post(self.generate_object_review_url("chapters", self.chapter.id), payload_as_staff)
+        res_3 = self.client.post(self.generate_object_review_url("chapters", self.chapter.id), payload_as_staff_with_draft)
+        res_1 = self.client.post(self.generate_object_review_url("chapters", self.chapter.id), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_1.data["creation_user"], self.staff_user.id)
+        self.assertContains(res_2, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_2.data["creation_user"], settings.MODERATION_ACCOUNT_ID)
+        self.assertContains(res_3, "non_field_errors", status_code=status.HTTP_400_BAD_REQUEST)
+
+    def test_anonymous_can_post_reviews(self):
+        """Teste qu'un visiteur peut poster une review"""
+
+        payload = {
+            "email": "anonyme@example.example",
+            "text": "Test Text",
+            "grading": None
+        }
+
+        # 1 review anonyme = ok
+        res_1 = self.client.post(self.generate_object_review_url("fictions", self.fiction.id), payload)
+        # 2 reviews anonymes = FAIL
+        res_2 = self.client.post(self.generate_object_review_url("fictions", self.fiction.id), payload)
+        # review anonyme avec email de membre actif = FAIL
+        res_3 = self.client.post(self.generate_object_review_url("fictions", self.fiction.id), payload)
+
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_2.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res_3.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authors_can_reply_to_reviews(self):
+        """Teste qu'un auteur peut répondre à une review le concernant"""
+
+        review = sample_review(self.reviewer, work=self.fiction, draft=False)
+
+        payload = {
+            "text": "Test Réponse",
+        }
+
+        self.client.force_authenticate(self.reviewer)
+        res_1 = self.client.post(generate_url("reviews.replys", review_pk=review.id), payload)
+        self.client.force_authenticate(self.author)
+        res_2 = self.client.post(generate_url("reviews.replys", review_pk=review.id), payload)
+        self.client.force_authenticate(self.author)
+        res_3 = self.client.post(generate_url("reviews.replys", review_pk=review.id), payload)
+
+        self.assertEqual(res_1.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertContains(res_2, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_3.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_staff_can_reply_to_reviews(self):
+        """Teste qu'un modérateur peut répondre à une review avec le compte de modération"""
+
+        review = sample_review(self.reviewer, work=self.fiction, draft=False)
+
+        payload = {
+            "text": "Test Réponse",
+            "as_staff": True,
+        }
+
+        self.client.force_authenticate(self.staff_user)
+        res_1 = self.client.post(generate_url("reviews.replys", review_pk=review.id), payload)
+        res_2 = self.client.post(generate_url("reviews.replys", review_pk=review.id), payload)
+        self.assertContains(res_1, "id", status_code=status.HTTP_201_CREATED)
+        self.assertEqual(res_2.status_code, status.HTTP_403_FORBIDDEN)
+
+    def tearDown(self) -> None:
+        self.client.force_authenticate()
+        self.reviewer.reviews.all().delete()

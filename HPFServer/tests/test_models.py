@@ -361,67 +361,10 @@ class TestsReviewModels(TestCase):
 
     def test_grading_validators(self):
         """Teste les validateurs de notation"""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             sample_review(creation_user=self.reviewer, grading=MIN_GRADING_VALUE - 1)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             sample_review(creation_user=self.reviewer, grading=MAX_GRADING_VALUE + 1)
-        with self.assertRaises(ValueError):
-            sample_review(creation_user=self.reviewer, grading=5.2)
-
-    def test_authors_cannot_review_themselves(self):
-        """Teste qu'un auteur ne peut pas se reviewer lui-même ou ses œuvres"""
-        with self.assertRaises(PermissionError):
-            Review.objects.create(
-                creation_user=self.author,
-                work=self.fiction,
-                text="Exemple de review",
-            )
-
-        with self.assertRaises(PermissionError):
-            Review.objects.create(
-                creation_user=self.author,
-                work=self.author,
-                text="Exemple de review",
-            )
-
-    def test_reviewer_can_only_review_once_per_object(self):
-        """Teste qu'une seule review peut être écrite par reviewer et par objet"""
-        sample_review(creation_user=self.reviewer, work=self.fiction)
-
-        with self.assertRaises(PermissionError):
-            sample_review(creation_user=self.reviewer, work=self.fiction)
-
-    def test_only_authors_can_reply_to_review(self):
-        """Teste que seul un auteur peut répondre à la review concernant son œuvre"""
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=sample_user(),
-                text=lorem.get_paragraph(),
-                review=self.review,
-            )
-
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=sample_user(),
-                text=lorem.get_paragraph(),
-                review=sample_review(work=self.author))
-
-    def test_only_one_reply_to_fiction_per_author(self):
-        """Teste qu'une seule réponse est possible par auteur"""
-        # RàR 1
-        ReviewReply.objects.create(
-            creation_user=self.author,
-            text=lorem.get_paragraph(),
-            review=self.review,
-        )
-
-        # RàR2
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=self.author,
-                text=lorem.get_paragraph(),
-                review=self.review,
-            )
 
     # devrait être automatique, en cascade, cf notes
     def test_deleting_review_with_a_reply(self):

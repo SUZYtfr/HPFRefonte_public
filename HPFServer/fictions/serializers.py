@@ -71,9 +71,9 @@ class FictionSerializer(ModelSerializer):
     )
 
     reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:fiction-reviews",
+        view_name="reviews:fictions:object-review-list",
         lookup_field="pk",
-        lookup_url_kwarg="pk",
+        lookup_url_kwarg="object_pk",
     )
 
     def validate_features(self, value):
@@ -142,9 +142,9 @@ class ChapterSerializer(ModelSerializer):
     order = SerializerMethodField()
 
     reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:chapter-reviews",
+        view_name="reviews:chapters:object-review-list",
         lookup_field="pk",
-        lookup_url_kwarg="pk",
+        lookup_url_kwarg="object_pk",
     )
 
     text_file_upload = FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[

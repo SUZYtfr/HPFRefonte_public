@@ -1,138 +1,58 @@
 from rest_framework.serializers import *
 
-from fictions.serializers import FictionCardSerializer, Fiction, ChapterCardSerializer
-from colls.serializers import CollectionCardSerializer, Collection
-from fictions.models import Chapter
-from users.serializers import UserCardSerializer
-
-from users.models import User
 from reviews.models import Review, ReviewReply, ReviewTextVersion
-from core.models import get_moderation_account
 
-from django.utils import timezone
-
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.status import HTTP_403_FORBIDDEN
-
-
-# RAR
 
 class ReviewReplySerializer(ModelSerializer):
     """Sérialiseur de réponse à review"""
 
+    as_staff = HiddenField(default=False, write_only=True)
+
     class Meta:
         model = ReviewReply
-        fields = "__all__"
-
-    def create(self, validated_data):
-        try:
-            validated_data["parent"] = self.context["parent"]
-        except KeyError:
-            validated_data["review"] = self.context["review"]
-
-        try:
-            instance = super().create(validated_data)
-        except PermissionError as e:
-            raise PermissionDenied(
-                code=HTTP_403_FORBIDDEN,
-                detail=str(e),
-            )
-
-        return instance
+        fields = [
+            "id",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+            "review",
+            "as_staff",
+            "text",
+        ]
 
 
-# SÉRIALISEURS PUBLIQUES
+class StaffReviewReplySerializer(ReviewReplySerializer):
+    as_staff = HiddenField(default=True, write_only=True)
+
 
 class ReviewSerializer(ModelSerializer):
     """Sérialiseur publique de review"""
 
+    content_type = StringRelatedField(source="content_type.name")
+    text = CharField(allow_blank=False, style={'base_template': 'textarea.html'})
     replies = ReviewReplySerializer(read_only=True, many=True)
-    reviewed_object = SerializerMethodField()
-    text = CharField()
+    as_staff = HiddenField(default=False, label="Publication par le compte de modération", write_only=True)
 
     class Meta:
         model = Review
-        exclude = (
+        fields = [
+            "id",
             "content_type",
             "object_id",
-        )
+            "text",
+            "replies",
+            "draft",
+            "grading",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+            "as_staff",
+        ]
         extra_kwargs = {
             "draft": {"write_only": True},
         }
-
-    def create(self, validated_data):
-
-        validated_data["work"] = self.context["work"]
-
-        try:
-            instance = super().create(validated_data)
-        except PermissionError as e:
-            raise PermissionDenied(
-                code=HTTP_403_FORBIDDEN,
-                detail=str(e),
-            )
-
-        return instance
-
-    def get_reviewed_object(self, obj):
-        """Renvoie le sérialiseur approprié au type d'élément reviewé"""
-
-        serializer = {
-            User: UserCardSerializer,
-            Fiction: FictionCardSerializer,
-            Chapter: ChapterCardSerializer,
-            Collection: CollectionCardSerializer,
-        }.get(type(obj.work))
-
-        return serializer(obj.work, context=self.context).data
-
-
-class AnonymousReviewSerializer(ReviewSerializer):
-    """Sérialiseur de review anonyme"""
-
-    email = EmailField(write_only=True, label="adresse e-mail")
-    draft = HiddenField(default=False)
-
-    class Meta(ReviewSerializer.Meta):
-        pass
-
-    def create(self, validated_data):
-        try:
-            creation_user = User.objects.get(
-                email=validated_data["email"],
-            )
-        except User.DoesNotExist:
-            creation_user = User(
-                email=validated_data["email"],
-            )
-            creation_user.set_unusable_password()
-            creation_user.save_base()  # outrepasse le full_clean
-
-        validated_data["work"] = self.context["work"]
-        validated_data["creation_user"] = creation_user
-        validated_data["creation_date"] = timezone.now()
-
-        try:
-            instance = ModelSerializer.create(self, validated_data)
-        except PermissionError as e:
-            raise PermissionDenied(
-                code=HTTP_403_FORBIDDEN,
-                detail=str(e),
-            )
-
-        return instance
-
-
-class StaffReviewSerializer(ReviewSerializer):
-    """Sérialiseur de review de modérateur"""
-
-    replies = ReviewReplySerializer(read_only=True, many=True)
-    text = CharField()
-
-    as_staff = BooleanField(default=False, label="Publication par le compte de modération", write_only=True)
-
-    class Meta(ReviewSerializer.Meta):
-        pass
 
     def validate(self, attrs):
         if attrs.get("as_staff") and attrs.get("draft"):
@@ -140,24 +60,43 @@ class StaffReviewSerializer(ReviewSerializer):
         return attrs
 
     def create(self, validated_data):
-        if self.context["request"].user.has_perm("reviews.can_post_review_as_staff") and (validated_data["as_staff"] is True):
-            creation_user = get_moderation_account()
-        else:
-            creation_user = self.context["request"].user
+        text = validated_data.pop("text")
+        instance = super().create(validated_data)
 
-        validated_data["work"] = self.context["work"]
-        validated_data["creation_user"] = creation_user
-        validated_data["creation_date"] = timezone.now()
-
-        try:
-            instance = ModelSerializer.create(self, validated_data)
-        except PermissionError as e:
-            raise PermissionDenied(
-                code=HTTP_403_FORBIDDEN,
-                detail=str(e),
-            )
-
+        instance.create_text_version(
+            text=text,
+            creation_user=validated_data["creation_user"],
+            touch=False,
+        )
         return instance
+
+    def update(self, instance, validated_data):
+        text = validated_data.pop("text", None)
+        instance = super().update(instance, validated_data)
+        if text and text != instance.text:
+            instance.create_text_version(
+                text=text,
+                creation_user=validated_data["modification_user"],
+                touch=True
+            )
+        return instance
+
+
+class StaffReviewSerializer(ReviewSerializer):
+    """Sérialiseur de review de modérateur"""
+
+    as_staff = BooleanField(default=False, label="Publication par le compte de modération", write_only=True)
+
+
+class AnonymousReviewSerializer(ReviewSerializer):
+    """Sérialiseur de review anonyme"""
+
+    email = EmailField(write_only=True, label="adresse e-mail")
+    as_staff = BooleanField(default=False, label="Publication par le compte de modération", write_only=True)
+    draft = HiddenField(default=False)
+
+    class Meta(ReviewSerializer.Meta):
+        fields = ReviewSerializer.Meta.fields + ["email"]
 
 
 class ReviewCardSerializer(ReviewSerializer):

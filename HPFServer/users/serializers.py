@@ -30,9 +30,9 @@ class UserSerializer(ModelSerializer):
 
     fictions = SerializerMethodField(method_name="_get_fictions", read_only=True)
     reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:user-reviews",
+        view_name="reviews:users:object-review-list",
         lookup_field="pk",
-        lookup_url_kwarg="pk",
+        lookup_url_kwarg="object_pk",
         read_only=True,
     )
     user_links = StringRelatedField(many=True, read_only=True)

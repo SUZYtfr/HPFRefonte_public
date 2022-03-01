@@ -265,5 +265,49 @@
   "chapter": 4,
   "word_count": 78
  }
+},
+{
+ "model": "reviews.review",
+ "pk": 1,
+ "fields": {
+   "creation_user": 4,
+   "creation_date": "2022-02-19T19:38:30.403Z",
+   "object_id": 1,
+   "content_type": 13,
+   "grading": 10,
+   "draft": false
+ }
+},
+{
+ "model": "reviews.review",
+ "pk": 2,
+ "fields": {
+   "creation_user": 4,
+   "creation_date": "2022-02-20T19:38:30.403Z",
+   "object_id": 2,
+   "content_type": 13,
+   "grading": 8,
+   "draft": false
+ }
+},
+{
+  "model": "reviews.reviewtextversion",
+  "pk": 1,
+  "fields": {
+   "creation_user": 4,
+   "creation_time": "2022-02-19T19:38:30.403Z",
+   "text": "Très bien ! J'ai adoré !",
+   "review": 1
+  }
+},
+{
+  "model": "reviews.reviewtextversion",
+  "pk": 2,
+  "fields": {
+   "creation_user": 5,
+   "creation_time": "2022-02-19T19:38:30.403Z",
+   "text": "Lorem Ipsum !",
+   "review": 2
+  }
 }
 ]

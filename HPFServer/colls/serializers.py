@@ -51,9 +51,9 @@ class CollectionSerializer(ModelSerializer):
     """Sérialiseur de série"""
 
     reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:collection-reviews",
+        view_name="reviews:collections:object-review-list",
         lookup_field="pk",
-        lookup_url_kwarg="pk",
+        lookup_url_kwarg="object_pk",
         read_only=True,
     )
 
