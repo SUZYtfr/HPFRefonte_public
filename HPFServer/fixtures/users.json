@@ -92,7 +92,8 @@
   "name": "Adhérents",
   "permissions": [
    50,
-   69
+   69,
+   122
   ]
  }
 },

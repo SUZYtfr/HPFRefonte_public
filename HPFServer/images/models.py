@@ -54,7 +54,9 @@ class BaseImage(CreatedModel, DatedModel):
         return bool(self.src_path)
 
     def __str__(self):
-        return f"{0}{1}".format(self.src_url, " (on disk)" if self.is_uploaded else "")
+        filename = self.src_url.split("/")[-1]
+        on_disk = " (sur disque)" if self.is_uploaded else ""
+        return f"{filename}{on_disk}"
 
 
 class Banner(BaseImage):
@@ -68,7 +70,8 @@ class Banner(BaseImage):
         EVENT = (3, "Bannière événementielle")
         PREMIUM = (4, "Bannière d'adhérent")
 
-    user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
+    user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                null=True, blank=True, editable=False,
                                 verbose_name="utilisateur")
     category = models.SmallIntegerField(choices=BannerType.choices,
                                         verbose_name="catégorie")
@@ -82,6 +85,12 @@ class Banner(BaseImage):
 
     class Meta:
         verbose_name = "bannière"
+
+    def __str__(self):
+        owner = " de {}".format(self.user.nickname) if self.user else ""
+        status = "active" if self.is_active else "inactive"
+        on_disk = " (sur disque)" if self.is_uploaded else ""
+        return f"Bannière{owner} {status}{on_disk}"
 
 
 class NewsPicture(BaseImage):
