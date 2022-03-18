@@ -11,7 +11,6 @@ feature_router.register(r"", FeatureViewSet, basename="feature")
 category_router = SimpleRouter()
 category_router.register(r"", CategoryViewSet, basename="category")
 
-
 urlpatterns = [
     path(
         r"categories/", include(category_router.urls),

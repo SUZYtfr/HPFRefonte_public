@@ -5,8 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions
 
-from .serializers import CollectionCardSerializer, CollectionSerializer, CollectionChapterOrderSerializer
+from features.serializers import ShelvedElementSerializer
 
+from .serializers import CollectionCardSerializer, CollectionSerializer, CollectionChapterOrderSerializer
 from .models import Collection
 from core.permissions import IsObjectAuthorOrReadOnly
 
@@ -66,3 +67,11 @@ class PublicCollectionViewSet(ModelViewSet):
                 instance._prefetched_objects_cache = {}
 
             return Response(serializer.data)
+
+    @action(methods=["POST"], detail=True, url_path="add-to-bookshelf",
+            serializer_class=ShelvedElementSerializer,
+            permission_classes=[permissions.IsAuthenticated])
+    def add_to_bookshelf(self, request, pk):
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.save(work=self.get_object())
+        return Response(serializer.data, status=201)

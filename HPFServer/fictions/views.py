@@ -7,6 +7,8 @@ from rest_framework.decorators import action
 
 from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly
 
+from features.serializers import ShelvedElementSerializer
+
 from .serializers import *
 from .permissions import *
 from .models import Fiction, Chapter, Beta
@@ -90,6 +92,15 @@ class FictionViewSet(ModelViewSet):
                 instance._prefetched_objects_cache = {}
 
             return Response(serializer.data)
+
+    @action(methods=["POST"], detail=True, url_path="add-to-bookshelf",
+            serializer_class=ShelvedElementSerializer,
+            permission_classes=[IsAuthenticated])
+    def add_to_bookshelf(self, request, pk):
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(work=self.get_object())
+        return Response(serializer.data, status=201)
 
 
 class ChapterViewSet(ModelViewSet):
@@ -209,6 +220,14 @@ class ChapterViewSet(ModelViewSet):
                               modification_time=timezone.now())
 
         return self.retrieve(request)
+
+    @action(methods=["POST"], detail=True, url_path="add-to-bookshelf",
+            serializer_class=ShelvedElementSerializer,
+            permission_classes=[IsAuthenticated])
+    def add_to_bookshelf(self, request, pk):
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.save(work=self.get_object())
+        return Response(serializer.data, status=201)
 
 
 class BetaViewSet(ModelViewSet):

@@ -3226,5 +3226,215 @@
   "replace_with": null,
   "_order": 5
  }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 1,
+ "fields": {
+  "name": "Favoris",
+  "owner": 0,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 2,
+ "fields": {
+  "name": "Favoris",
+  "owner": 2,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 3,
+ "fields": {
+  "name": "Favoris",
+  "owner": 3,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 4,
+ "fields": {
+  "name": "Favoris",
+  "owner": 4,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 5,
+ "fields": {
+  "name": "Favoris",
+  "owner": 5,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 6,
+ "fields": {
+  "name": "Favoris",
+  "owner": 6,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 7,
+ "fields": {
+  "name": "Favoris",
+  "owner": 7,
+  "can_be_deleted": false,
+  "is_visible": true
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 8,
+ "fields": {
+  "name": "À lire",
+  "owner": 0,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 9,
+ "fields": {
+  "name": "À lire",
+  "owner": 2,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 10,
+ "fields": {
+  "name": "À lire",
+  "owner": 3,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 11,
+ "fields": {
+  "name": "À lire",
+  "owner": 4,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 12,
+ "fields": {
+  "name": "À lire",
+  "owner": 5,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 13,
+ "fields": {
+  "name": "À lire",
+  "owner": 6,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 14,
+ "fields": {
+  "name": "À lire",
+  "owner": 7,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 15,
+ "fields": {
+  "name": "En cours",
+  "owner": 0,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 16,
+ "fields": {
+  "name": "En cours",
+  "owner": 2,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 17,
+ "fields": {
+  "name": "En cours",
+  "owner": 3,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 18,
+ "fields": {
+  "name": "En cours",
+  "owner": 4,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 19,
+ "fields": {
+  "name": "En cours",
+  "owner": 5,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 20,
+ "fields": {
+  "name": "En cours",
+  "owner": 6,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
+},
+{
+ "model": "features.bookshelf",
+ "pk": 21,
+ "fields": {
+  "name": "En cours",
+  "owner": 7,
+  "can_be_deleted": false,
+  "is_visible": false
+ }
 }
 ]

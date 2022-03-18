@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from django.utils import timezone
 
-from .models import Feature, Category
+from .models import Feature, Category, Bookshelf, ShelvedElement
 
 
 class FeatureBaseSerializer(ModelSerializer):
@@ -128,3 +128,32 @@ class StaffFeatureOrderSerializer(ModelSerializer):
 
     def reorder(self):
         self.instance.set_feature_order(self.validated_data["get_feature_order"])
+
+
+class BookshelfSerializer(ModelSerializer):
+
+    # shelved_elements = ShelvedElementSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Bookshelf
+        fields = [
+            "id",
+            "name",
+            "owner",
+            # "shelved_elements",
+            "is_visible",
+        ]
+
+
+
+
+class ShelvedElementSerializer(ModelSerializer):
+    # bookshelf = BookshelfSerializer(read_only=True)
+    work = StringRelatedField()
+
+    class Meta:
+        model = ShelvedElement
+        fields = [
+            "bookshelf",
+            "work",
+        ]

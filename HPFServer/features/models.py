@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils import timezone
 from core.models import DatedModel, CreatedModel
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 class OpenCategoryManager(models.Manager):
@@ -103,3 +106,37 @@ class Feature(DatedModel, CreatedModel):
                 raise RecursionError("La caractéristique parente est déjà sous-ordonnée.")
             self.category = self.parent.category  # Impose que la catégorie de l'enfant soit celle du parent
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
+
+
+class Bookshelf(models.Model):
+    """Modèle d'étagère"""
+
+    name = models.CharField(max_length=50,
+                            verbose_name="nom")
+    owner = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False,
+                              related_name="bookshelves", verbose_name="propriétaire")
+    can_be_deleted = models.BooleanField(default=True, editable=False, verbose_name="peut être supprimée")
+    is_visible = models.BooleanField(default=True, verbose_name="est visible")
+
+    class Meta:
+        verbose_name = "étagère"
+        constraints = [
+            models.UniqueConstraint(name="unique_name_for_owner_id", fields=["name", "owner"])
+        ]
+
+    def __str__(self):
+        return f"Bibliothèque {self.name} de {self.owner}"
+
+
+class ShelvedElement(models.Model):
+    """Modèle d'élément sauvegardé"""
+
+    bookshelf = models.ForeignKey(to=Bookshelf, on_delete=models.CASCADE,
+                                  related_name="shelved_elements")
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, editable=False)
+    object_id = models.PositiveIntegerField(editable=False)
+    work = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        verbose_name = "élément sauvegardé"
+        verbose_name_plural = "éléments sauvegardés"

@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.apps import apps
 from core.models import DatedModel, ReviewableModel, FullCleanModel
 
 
@@ -31,6 +31,8 @@ class UserManager(BaseUserManager):
         user.set_password(password)
 
         user.save()
+
+        self.create_default_bookshelves()
 
         return user
 
@@ -202,6 +204,25 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
         self.is_active = False
         self.modification_date = timezone.now()
         self.save_base()
+
+    def create_default_bookshelves(self):
+        """Crée les trois étagères par défaut"""
+
+        Bookshelf = apps.get_model("features", "Bookshelf")
+
+        default_bookshelves = [
+            ("Favoris", True),
+            ("À lire", False),
+            ("En cours", False),
+        ]
+
+        for bookshelf in default_bookshelves:
+            Bookshelf(
+                name=bookshelf[0],
+                owner_id=self.id,
+                can_be_deleted=False,
+                visible=bookshelf[1],
+            ).save()
 
     def save(self, *args, **kwargs):
         if not self.is_superuser and not self.is_anonymous:
