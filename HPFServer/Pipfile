@@ -16,6 +16,7 @@ psycopg2 = "*"
 docx2python = "*"
 lxml = "*"
 odfpy = "*"
+gunicorn = "*"
 
 [dev-packages]
 
