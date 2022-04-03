@@ -17,7 +17,8 @@ const config: NuxtConfig = {
     // }
   },
   buildModules: [
-    '@nuxt/typescript-build'
+    '@nuxt/typescript-build',
+    '@nuxtjs/fontawesome',
   ],
   components: false,
   css: [
@@ -46,7 +47,7 @@ const config: NuxtConfig = {
       defaultIconPack: 'fas',
       defaultIconComponent: 'font-awesome-icon'
     }],
-    'nuxt-fontawesome',
+    /*'nuxt-fontawesome',*/
     ['nuxt-facebook-pixel-module', {
       /* module options */
       track: 'PageView',
@@ -59,7 +60,7 @@ const config: NuxtConfig = {
   plugins: [
     '~/plugins/truncate',
     '~/plugins/axios',
-    { src: "~/plugins/vue-quill-editor.ts", mode: 'client' },
+    '~/plugins/vue-resize-text.client.ts',
   ],
   axios: {
     baseURL: process.env.VUE_APP_BASE_API, // Used as fallback if no runtime config is provided,
@@ -67,16 +68,20 @@ const config: NuxtConfig = {
   },
   fontawesome: {
     component: 'font-awesome-icon',
-    imports: [
-      {
-        set: '@fortawesome/free-brands-svg-icons',
-        icons: ['fab']
-      },
-      {
-        set: '@fortawesome/free-solid-svg-icons',
-        icons: ['fas']
-      }
-    ]
+    icons: {
+      solid: true,
+      brands: true,
+    },
+    // imports: [
+    //   {
+    //     set: '@fortawesome/free-brands-svg-icons',
+    //     icons: ['fab']
+    //   },
+    //   {
+    //     set: '@fortawesome/free-solid-svg-icons',
+    //     icons: ['fas']
+    //   }
+    // ]
   } 
 }
 
