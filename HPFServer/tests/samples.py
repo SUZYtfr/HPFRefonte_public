@@ -69,9 +69,9 @@ def sample_chapter(creation_user=None, title=None, fiction=None, text=None,
         creation_user=creation_user,
         title=lorem.get_sentence() if title is None else title,
         fiction=fiction,
-        text=text or lorem.get_paragraph(3),
         **extra_fields
     )
+    chapter.create_text_version(text=text or lorem.get_paragraph(3), creation_user=creation_user, touch=False)
 
     return chapter
 
@@ -120,7 +120,7 @@ def sample_feature(category=None, creation_user=None, name=None,
     return feature
 
 
-def sample_review(creation_user=None, content=None, work=None, object_type=None, text=None,
+def sample_review(creation_user=None, work=None, object_type=None, text=None, draft=False,
                   **extra_fields):
     types_to_models = {"fiction": sample_fiction,
                        "chapter": sample_chapter,
@@ -130,13 +130,15 @@ def sample_review(creation_user=None, content=None, work=None, object_type=None,
     if not work:
         work = types_to_models.get(object_type or "fiction")()
 
-    return ReviewModel.objects.create(
+    review = ReviewModel.objects.create(
         creation_user=creation_user or sample_user(),
-        content=lorem.get_paragraph() if content is None else content,
         work=work,
-        text=text or lorem.get_paragraph(2),
+        draft=draft,
         **extra_fields
     )
+    review.create_text_version(text=text or lorem.get_paragraph(2), creation_user=review.creation_user)
+
+    return review
 
 
 def sample_poll_group(**kwargs):

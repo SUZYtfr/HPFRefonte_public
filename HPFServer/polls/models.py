@@ -173,7 +173,7 @@ class Ballot(models.Model):
                              null=True, editable=False)
     ip_address = models.GenericIPAddressField(verbose_name="adresse IP", editable=False)
     vote_datetime = models.DateTimeField(verbose_name="horodatage du vote", default=timezone.now, editable=False)
-    poll_question = models.ForeignKey(to=PollQuestion, on_delete=models.CASCADE)
+    poll_question = models.ForeignKey(to=PollQuestion, on_delete=models.CASCADE, editable=False)
 
     objects = BallotManager()
 
@@ -201,10 +201,10 @@ class Ballot(models.Model):
 class PollVote(models.Model):
     """Modèle de vote"""
 
-    ballot = models.ForeignKey(to=Ballot, on_delete=models.CASCADE)
+    ballot = models.ForeignKey(to=Ballot, on_delete=models.CASCADE, editable=False)
     poll_answer = models.ForeignKey(verbose_name="réponse", to=PollAnswer, on_delete=models.CASCADE,
-                                    related_name="votes")
-    points = models.PositiveSmallIntegerField(verbose_name="points", default=1)
+                                    related_name="votes", editable=False)
+    points = models.PositiveSmallIntegerField(verbose_name="points", default=1, editable=False)
 
     class Meta:
         verbose_name = "vote"

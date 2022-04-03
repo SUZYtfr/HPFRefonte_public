@@ -3,7 +3,6 @@ from .models import PollGroup, PollQuestion, PollAnswer, Ballot
 from django.conf import settings
 from fictions.models import Chapter
 from random import randint
-from core.serializers import BaseModelSerializer
 
 
 class CurrentPollQuestionDefault:
@@ -30,7 +29,7 @@ class CurrentIPAdresseDefault:
         return '%s()' % self.__class__.__name__
 
 
-class PollAnswerSerializer(BaseModelSerializer):
+class PollAnswerSerializer(ModelSerializer):
     """Sérialiseur de réponse de question de sondage"""
 
     class PollQuestionField(PrimaryKeyRelatedField):
@@ -47,11 +46,18 @@ class PollAnswerSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollAnswer
-        fields = ("id", "answer_text", "poll_question",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
+        fields = (
+            "id",
+            "answer_text",
+            "poll_question",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
 
 
-class PollQuestionSerializer(BaseModelSerializer):
+class PollQuestionSerializer(ModelSerializer):
     """Sérialiseur de question de sondage"""
 
     class ChapterField(PrimaryKeyRelatedField):
@@ -66,16 +72,27 @@ class PollQuestionSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollQuestion
-        fields = ("id", "question_text",
-                  "opening_datetime", "closing_datetime",
-                  "members_only", "visibility",
-                  "max_choices", "answers",
-                  "chapter",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
-        read_only_fields = ("answers",)
+        fields = (
+            "id",
+            "question_text",
+            "opening_datetime",
+            "closing_datetime",
+            "members_only",
+            "visibility",
+            "max_choices",
+            "answers",
+            "chapter",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
+        read_only_fields = (
+            "answers",
+        )
 
 
-class PollSerializer(BaseModelSerializer):
+class PollSerializer(ModelSerializer):
     """Sérialiseur de sondage"""
 
     questions = PollQuestionSerializer(
@@ -85,8 +102,15 @@ class PollSerializer(BaseModelSerializer):
 
     class Meta:
         model = PollGroup
-        fields = ("id", "title", "questions",
-                  "creation_user", "creation_date", "modification_user", "modification_date",)
+        fields = (
+            "id",
+            "title",
+            "questions",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
 
 
 # TODO - Implémenter si on veut un vote pour un groupe de sondage
@@ -154,7 +178,14 @@ class BallotSerializer(ModelSerializer):
 
     class Meta:
         model = Ballot
-        fields = ("poll_question", "choices", "user", "poll_question", "ip_address", "vote_datetime",)
+        fields = (
+            "poll_question",
+            "choices",
+            "user",
+            "poll_question",
+            "ip_address",
+            "vote_datetime",
+        )
         # list_serializer_class = BulkBallotSerializer
 
 

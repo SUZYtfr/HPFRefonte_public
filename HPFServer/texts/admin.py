@@ -7,7 +7,7 @@ class TextAdminAccess(admin.ModelAdmin):
 
     list_display = ("id", "__str__", "creation_user")
     fields = ("text",)
-    readonly_fields = ("creation_user", "__str__",)
+    readonly_fields = ("creation_user", "__str__", "text",)
 
 
 admin.site.register(ChapterTextVersion, TextAdminAccess)

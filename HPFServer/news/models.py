@@ -50,7 +50,7 @@ class NewsComment(DatedModel, CreatedModel):
     text = models.TextField(verbose_name="texte")
     newsarticle = models.ForeignKey(to=NewsArticle, verbose_name="actualité", related_name="comments",
                                     on_delete=models.CASCADE,
-                                    limit_choices_to=models.Q(status=NewsArticle.NewsStatus.PUBLISHED))
+                                    limit_choices_to={"status": NewsArticle.NewsStatus.PUBLISHED},)
 
     class Meta:
         verbose_name = "commentaire"

@@ -16,7 +16,7 @@ from fictions.models import Fiction, Chapter
 from features.models import Category, Feature
 from selections.models import Selection, Proposition
 from reviews.models import Review, ReviewReply, MIN_GRADING_VALUE, MAX_GRADING_VALUE
-from banners.models import Banner, validate_maximum_size
+from images.models import Banner
 
 
 class TestCoreModels(TestCase):
@@ -361,67 +361,10 @@ class TestsReviewModels(TestCase):
 
     def test_grading_validators(self):
         """Teste les validateurs de notation"""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             sample_review(creation_user=self.reviewer, grading=MIN_GRADING_VALUE - 1)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             sample_review(creation_user=self.reviewer, grading=MAX_GRADING_VALUE + 1)
-        with self.assertRaises(ValueError):
-            sample_review(creation_user=self.reviewer, grading=5.2)
-
-    def test_authors_cannot_review_themselves(self):
-        """Teste qu'un auteur ne peut pas se reviewer lui-même ou ses œuvres"""
-        with self.assertRaises(PermissionError):
-            Review.objects.create(
-                creation_user=self.author,
-                work=self.fiction,
-                text="Exemple de review",
-            )
-
-        with self.assertRaises(PermissionError):
-            Review.objects.create(
-                creation_user=self.author,
-                work=self.author,
-                text="Exemple de review",
-            )
-
-    def test_reviewer_can_only_review_once_per_object(self):
-        """Teste qu'une seule review peut être écrite par reviewer et par objet"""
-        sample_review(creation_user=self.reviewer, work=self.fiction)
-
-        with self.assertRaises(PermissionError):
-            sample_review(creation_user=self.reviewer, work=self.fiction)
-
-    def test_only_authors_can_reply_to_review(self):
-        """Teste que seul un auteur peut répondre à la review concernant son œuvre"""
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=sample_user(),
-                text=lorem.get_paragraph(),
-                review=self.review,
-            )
-
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=sample_user(),
-                text=lorem.get_paragraph(),
-                review=sample_review(work=self.author))
-
-    def test_only_one_reply_to_fiction_per_author(self):
-        """Teste qu'une seule réponse est possible par auteur"""
-        # RàR 1
-        ReviewReply.objects.create(
-            creation_user=self.author,
-            text=lorem.get_paragraph(),
-            review=self.review,
-        )
-
-        # RàR2
-        with self.assertRaises(PermissionError):
-            ReviewReply.objects.create(
-                creation_user=self.author,
-                text=lorem.get_paragraph(),
-                review=self.review,
-            )
 
     # devrait être automatique, en cascade, cf notes
     def test_deleting_review_with_a_reply(self):
@@ -448,17 +391,17 @@ class TestsBannerModel(TestCase):
 
         cls.valid_banner_image = ImageFile(cls.ntf.file, name="test_banner.jpg")
 
-    def test_banner_image_size_validator(self):
-        """Teste le validateur de dimensions de l'image de bannière"""
-
-        with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
-            img = Image.new("RGB", (470, 10))
-            img.save(ntf, format="JPEG")
-            ntf.seek(0)
-
-            with ImageFile(ntf.file) as file:
-                with self.assertRaises(ValidationError):
-                    validate_maximum_size(file)
+    # def test_banner_image_size_validator(self):
+    #     """Teste le validateur de dimensions de l'image de bannière"""
+    #
+    #     with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
+    #         img = Image.new("RGB", (470, 10))
+    #         img.save(ntf, format="JPEG")
+    #         ntf.seek(0)
+    #
+    #         with ImageFile(ntf.file) as file:
+    #             with self.assertRaises(ValidationError):
+    #                 validate_maximum_size(file)
 
     def test_deleting_banner(self):
         """Teste la suppression de l'image de bannière du système de fichier lors de la suppression de la bannière"""
@@ -466,9 +409,9 @@ class TestsBannerModel(TestCase):
         banner = Banner.objects.create(
             creation_user=self.user,
             category=Banner.BannerType.WEBSITE,
-            image=self.valid_banner_image,
+            src_path=self.valid_banner_image,
         )
-        file_path = Path(banner.image.path)
+        file_path = Path(banner.src_path.path)
 
         file_exists = file_path.exists()
 

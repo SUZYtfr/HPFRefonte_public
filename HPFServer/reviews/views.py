@@ -1,116 +1,103 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.status import HTTP_403_FORBIDDEN
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.generics import ListAPIView
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, UpdateModelMixin
+from rest_framework.exceptions import NotAuthenticated
 
+from users.models import User
+
+from core.models import get_moderation_account
 from .models import Review, ReviewReply
 from .serializers import ReviewSerializer, AnonymousReviewSerializer, StaffReviewSerializer, \
-    ReviewReplySerializer, ReviewCardSerializer, ReviewTextSerializer
+    ReviewReplySerializer, ReviewTextSerializer, StaffReviewReplySerializer
+from .permissions import IsNotRelatedToObjectOrReadOnly, IsReviewOwnerOrReadOnly, IsRelatedToReviewObjectOrReadOnly, \
+    IsAnonymousOrStaffOrReadOnly, HasNotReviewedAlready, IsStaffOrReadOnly, HasNotRepliedAlready
 
-from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
-class ReviewsListCreateView(ListCreateAPIView):
-    """Vue de listage et de création de reviews"""
+class ModelReviewListView(ListAPIView):
+    """Vue de listage de reviews pour un modèle"""
 
     serializer_class = ReviewSerializer
 
-    # TODO - fonctionne mais beurk
     def get_queryset(self):
-        """Récupère la liste des reviews portant sur le type de contenu passé dans l'URL"""
+        model_name = self.kwargs.get("model_name")
+        content_type_id = ContentType.objects.get(model=model_name).id
+        return Review.objects.filter(content_type_id=content_type_id, draft=False).order_by("-creation_date")
 
-        return Review.objects.filter(
-            draft=False,
-            content_type=ContentType.objects.get(model=self.kwargs["contenttype"]).id,
-            object_id=self.kwargs["pk"],
-        )
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
+class ObjectReviewListCreateView(GenericViewSet, ListModelMixin, CreateModelMixin):
+    """Vue de création et de listage de reviews pour un objet"""
 
-        work = ContentType.objects.get(model=self.kwargs["contenttype"]).get_object_for_this_type(pk=self.kwargs["pk"])
+    serializer_class = ReviewSerializer
+    permission_classes = [HasNotReviewedAlready & (IsAnonymousOrStaffOrReadOnly | IsNotRelatedToObjectOrReadOnly)]
 
-        context["work"] = work
-        return context
+    def get_work(self):
+        model_name = self.kwargs["model_name"]
+        work = ContentType.objects.get(model=model_name).get_object_for_this_type(pk=self.kwargs["object_pk"])
+        return work
+
+    def get_queryset(self):
+        work = self.get_work()
+        return work.reviews.filter(draft=False).order_by("-creation_date")
 
     def get_serializer_class(self):
-        """Détermine le sérialiseur selon le rôle de l'utilisateur"""
-        if self.request.user.is_anonymous:
-            return AnonymousReviewSerializer
-        elif self.request.user.has_perm("reviews.can_post_review_as_staff"):
-            return StaffReviewSerializer
-
+        if self.action == "create":
+            if self.request.user.is_anonymous:
+                return AnonymousReviewSerializer
+            elif self.request.user.has_perm("reviews.can_post_review_as_staff"):
+                return StaffReviewSerializer
+            else:
+                return self.serializer_class
         return self.serializer_class
 
-
-class PersonalReviewsListView(ListAPIView):
-    """Vue publique de listage des reviews personnelles"""
-
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ReviewSerializer
-
-    def get_queryset(self):
-        return Review.objects.filter(draft=False, creation_user=self.kwargs["user_id"])
-
-
-# VUES PRIVÉES
-
-class ReviewsOnMeListView(ModelViewSet):
-    """Vue privée de listage des reviews concernant l'auteur et ses œuvres"""
-
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        """Renvoie les reviews publiées concernant l'auteur et ses œuvres"""
-
-        return Review.objects.filter(
-            Q(user=self.request.user) |
-            Q(fiction__authors=self.request.user) |
-            Q(chapter__authors=self.request.user) |
-            Q(collection__authors=self.request.user),
-            draft=False,
-        )
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return ReviewCardSerializer
-        elif self.action == "retrieve":
-            return ReviewSerializer
-        elif self.action == "create":
-            return ReviewReplySerializer
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-
-        if self.action in ["create", "retrieve"]:
-            context["review"] = self.get_object()
-
-        return context
-
     def perform_create(self, serializer):
-        """Finalise la création de la réponse à review
+        creation_user = self.request.user
 
-        Vérifie le droit de réponse à review de l'utilisateur"""
+        # Ces deux contrôles peuvent potentiellement changer le créateur de la review
+        if serializer.validated_data.pop("as_staff"):
+            creation_user = get_moderation_account()
 
-        try:
-            serializer.save()
-        except PermissionError as e:
-            raise PermissionDenied(
-                code=HTTP_403_FORBIDDEN,
-                detail=str(e),
-            )
+        elif email := serializer.validated_data.pop("email", None):
+            try:
+                creation_user = User.objects.get(
+                    email=email,  # Cet e-mail est-il déjà connu ?
+                )
+
+                if creation_user.is_active:  # Si oui, et c'est un compte actif, imposer l'authentification
+                    raise NotAuthenticated("Un compte actif existe avec cette adresse e-mail.")
+
+            except User.DoesNotExist:
+                creation_user = User.objects.create_anonymous_user(
+                    email=email,  # Si non, on crée le compte anonymisé
+                )
+
+        # On revérifie l'absence de double-review avec l'utilisateur anonyme ou le compte de modération
+        work = self.get_work()
+        if work.reviews.filter(creation_user=creation_user).exists():
+            self.permission_denied(request=self.request)
+
+        serializer.save(creation_user=creation_user, creation_date=timezone.now(), work=work)
 
 
-class MyPersonalReviewsListView(ModelViewSet):
-    """Vue privée de listage des reviews personnelles"""
+class ReviewsViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    """Ensemble de vues de reviews"""
 
-    permission_classes = (IsAuthenticated,)
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsReviewOwnerOrReadOnly]
+    queryset = Review.objects.filter(draft=False).order_by("-creation_date")
+    search_fields = ["creation_user__nickname"]
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     def get_queryset(self):
-        return Review.objects.filter(creation_user=self.request.user)
+        if self.request.query_params.get("mine", False) == "True":
+            return Review.objects.filter(creation_user=self.request.user.id)
+        return self.queryset
 
 
 class MyPersonalReviewHistoryView(ListAPIView):
@@ -122,23 +109,35 @@ class MyPersonalReviewHistoryView(ListAPIView):
 
 
 class ReplyViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [HasNotRepliedAlready & (IsStaffOrReadOnly | IsRelatedToReviewObjectOrReadOnly)]
     serializer_class = ReviewReplySerializer
 
-    def get_queryset(self):
-        return Review.objects.filter(
-            pk=self.kwargs["pk"],
+    def get_review(self):
+        return get_object_or_404(
+            Review,
+            pk=self.kwargs["review_pk"],
             draft=False,
-        ).replies.all()
+        )
 
-    def get_object(self):
-        return ReviewReply.objects.get(pk=self.kwargs["reply_pk"])
+    def get_queryset(self):
+        return self.get_review().replies.all()
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        if "reply_pk" in self.kwargs.keys():
-            context["parent"] = self.get_object()
-        else:
-            context["parent"] = None
-        context["review"] = Review.objects.get(pk=self.kwargs["pk"])
-        return context
+    def get_serializer_class(self):
+        if self.request.user.has_perm("reviews.can_post_review_as_staff"):
+            return StaffReviewReplySerializer
+        return self.serializer_class
+
+    def perform_create(self, serializer):
+        creation_user = self.request.user
+
+        if serializer.validated_data.pop("as_staff"):
+            creation_user = get_moderation_account()
+
+        review = self.get_review()
+        if review.replies.filter(creation_user=creation_user).exists():
+            self.permission_denied(request=self.request)
+
+        serializer.save(creation_user=creation_user, creation_date=timezone.now(), review=review)
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())

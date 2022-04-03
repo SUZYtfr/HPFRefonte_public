@@ -1,34 +1,39 @@
+from rest_framework.serializers import CreateOnlyDefault, ModelSerializer
+
 from .models import NewsArticle, NewsComment
 
-from core.serializers import BaseModelSerializer
 
-
-class NewsCommentSerializer(BaseModelSerializer):
-    """Sérialiseur de commentaire d'actualité"""
-
-    class Meta:
-        model = NewsComment
-        exclude = (
-            "modification_date",
-            "modification_user",
-            "newsarticle",
-        )
-
-
-class NewsSerializer(BaseModelSerializer):
+class NewsSerializer(ModelSerializer):
     """Sérialiseur d'actualité"""
-
-    comments = NewsCommentSerializer(many=True)
 
     class Meta:
         model = NewsArticle
         fields = (
             "id",
-            "post_date",
             "title",
-            "content",
+            "post_date",
             "category",
+            "status",
+            "content",
             "authors",
             "teams",
-            "comments",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+        )
+        read_only_fields = (
+            "authors",
+            "teams",
+        )
+
+
+class NewsCommentSerializer(ModelSerializer):
+    """Sérialiseur de commentaire d'actualité"""
+
+    class Meta:
+        model = NewsComment
+        fields = "__all__"
+        read_only_fields = (
+            "newsarticle",
         )

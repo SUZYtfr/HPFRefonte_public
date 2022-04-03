@@ -4,21 +4,35 @@ from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 
 from .models import Feature, Category
-from core.serializers import BaseModelSerializer
 
 
-class FeatureSerializer(BaseModelSerializer):
+class FeatureBaseSerializer(ModelSerializer):
+    """Base pour les sérialiseurs de caractéristiques"""
+
+    class Meta:
+        model = Feature
+        fields = "__all__"
+
+
+class FeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique"""
 
     is_personal = HiddenField(default=True)
 
-    class Meta:
-        model = Feature
-        fields = ("id", "name", "url", "category", "parent", "description", "is_personal",)
+    class Meta(FeatureBaseSerializer.Meta):
+        fields = (
+            "id",
+            "name",
+            "url",
+            "category",
+            "parent",
+            "description",
+            "is_personal",
+        )
         extra_kwargs = {
             "description": {"read_only": True},
-            "category": {"queryset": Category.objects.exclude(is_closed=True)},
-            "parent": {"queryset": Feature.objects.exclude(is_forbidden=True),
+            "category": {"queryset": Category.open.all()},
+            "parent": {"queryset": Feature.allowed.all(),
                        "allow_null": True,
                        "initial": ""},
             "url": {"view_name": "features:feature-detail"},
@@ -31,6 +45,7 @@ class FeatureSerializer(BaseModelSerializer):
         Si la caractéristique existe déjà et est remplacée, renvoie la caractéristique de remplacement
         Si la caractéristique existe déjà et est interdite sans remplacement, lance une erreur.
         """
+
         name = validated_data.pop("name")
         instance, created = self.Meta.model.objects.get_or_create(name=name, defaults=validated_data)
         if instance.is_forbidden:
@@ -40,35 +55,29 @@ class FeatureSerializer(BaseModelSerializer):
         return instance, created
 
     # Ceci est une réécriture, penser aux conséquences de laisser à côté les vérifications faites par Django !
-    def save(self, **kwargs):
+    def save(self, upsert=False, **kwargs):
         validated_data = {**self.validated_data, **kwargs}
 
-        if self.instance is not None:
-            validated_data["modification_user"] = self.context["request"].user
-            validated_data["modification_date"] = timezone.now()
-            self.instance = self.update(self.instance, validated_data)
-        else:
-            validated_data["creation_user"] = self.context["request"].user
-            validated_data["creation_date"] = timezone.now()
+        if upsert:
             self.instance, created = self.get_or_create(validated_data)
-            if created:
-                self.created = True  # Capté par la vue correspondante pour changer le code HTTP
-        return self.instance
+            return self.instance, created
+        else:
+            return super().save(**kwargs)
 
 
-class StaffFeatureSerializer(BaseModelSerializer):
+class StaffFeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique pour les modérateurs"""
 
     url = HyperlinkedIdentityField(view_name="features:feature-detail")
 
-    class Meta:
-        model = Feature
-        fields = "__all__"
+    class Meta(FeatureBaseSerializer.Meta):
+        pass
 
     def save(self, **kwargs):
         """Enregistre la caractéristique
 
         Si la caractéristique est mise à jour et est indiquée comme interdite, appelle sa fonction ban()."""
+
         validated_data = {**self.validated_data, **kwargs}
 
         if self.instance and validated_data["is_forbidden"]:
@@ -80,7 +89,7 @@ class StaffFeatureSerializer(BaseModelSerializer):
         return super().save(**kwargs)
 
 
-class StaffCategorySerializer(BaseModelSerializer):
+class StaffCategorySerializer(ModelSerializer):
     """Sérialiseur de catégorie pour les modérateurs"""
 
     class Meta:
@@ -109,7 +118,6 @@ class StaffFeatureOrderSerializer(ModelSerializer):
     )
 
     def validate_order(self, value):
-
         if not len(set(value)) == len(value):
             raise ValidationError("Des ID de caractéristiques sont en double.")
 

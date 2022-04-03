@@ -50,8 +50,6 @@ class Fiction(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, Reviewable
                                null=False, blank=True, default="")
     storynote = models.TextField(verbose_name="note de fiction",
                                  null=False, blank=True, default="")
-    read_count = models.PositiveIntegerField(verbose_name="lectures",
-                                             default=0)
     status = models.SmallIntegerField(verbose_name="état d'écriture",
                                       choices=FictionStatus.choices,
                                       default=FictionStatus.PROGRESS)
@@ -69,7 +67,15 @@ class Fiction(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, Reviewable
 
     @property
     def word_count(self):
+        """Renvoie la somme des comptes de mots des chapitres publiés"""
+
         return sum([chapter.word_count for chapter in self.chapters.filter(validation_status=7)])
+
+    @property
+    def read_count(self):
+        """Renvoie la somme des comptes de lectures des chapitres publiés"""
+
+        return sum([chapter.read_count for chapter in self.chapters.filter(validation_status=7)])
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -93,9 +99,6 @@ class Fiction(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, Reviewable
 
     class Meta:
         verbose_name = "fiction"
-        permissions = [
-            ("fiction_list_full_view", "Affiche la liste de toutes les fictions sur le site")
-        ]
 
 
 class ChallengeManager(models.Manager):
@@ -167,7 +170,8 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
         verbose_name = "chapitre"
         order_with_respect_to = "fiction"
         permissions = [
-            ("chapter_list_extended_view", "Affiche la liste de tous les chapitres sauf les brouillons sur le site")
+            ("automatic_validation", "A la validation automatique des chapitres"),
+            ("staff_validation", "A la validation de modérateur des chapitres"),
         ]
 
     class ChapterValidationStage(models.IntegerChoices):
@@ -179,7 +183,6 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
         EDITED = (6, "Modifié")
         PUBLISHED = (7, "Publié")
 
-    # Champs à renseigner à la création du chapitre
     title = models.CharField(verbose_name="titre", max_length=250,
                              blank=False)
     fiction = models.ForeignKey(to=Fiction,
@@ -190,7 +193,8 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
                                  null=False, blank=True, default="")
     endnote = models.TextField(verbose_name="note de fin",
                                null=False, blank=True, default="")
-
+    read_count = models.PositiveIntegerField(default=0, editable=False,
+                                             verbose_name="lectures")
     validation_status = models.SmallIntegerField(verbose_name="étape de validation",
                                                  choices=ChapterValidationStage.choices,
                                                  default=ChapterValidationStage.DRAFT)
@@ -222,6 +226,17 @@ class Chapter(DatedModel, CreatedModel, ReviewableModel, TextDependentModel):
 
         if touch:  # à utiliser en cas de modification
             self.save()
+
+    def change_status(self, status, modification_user=None, modification_time=None):
+        """Change le status de validation du chapitre"""
+
+        self.validation_status = status
+
+        if modification_user:
+            self.modification_user = modification_user
+            self.modification_date = modification_time or timezone.now()
+
+        self.save()
 
 
 class Beta(FullCleanModel):

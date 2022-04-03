@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from .models import PollQuestion, PollAnswer
 from .serializers import PollQuestionSerializer, BallotSerializer, ResultSerializer, PollAnswerSerializer
@@ -11,6 +13,12 @@ class PollViewSet(ReadOnlyModelViewSet):
     serializer_class = PollQuestionSerializer
     queryset = PollQuestion.objects.filter(answers__gte=2).distinct()
 
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
 
 class MyPollViewSet(ModelViewSet):
     """Ensemble de vues privées de sondage"""
@@ -21,6 +29,12 @@ class MyPollViewSet(ModelViewSet):
     def get_queryset(self):
         return PollQuestion.objects.filter(creation_user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
 
 class MyPollAnswerViewSet(ModelViewSet):
     """Ensemble de vues pricées de réponses de sondage"""
@@ -30,6 +44,12 @@ class MyPollAnswerViewSet(ModelViewSet):
 
     def get_queryset(self):
         return PollAnswer.objects.filter(creation_user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
 
 class VoteView(CreateAPIView):

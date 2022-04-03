@@ -5,8 +5,6 @@ from rest_framework.serializers import *
 from .models import Collection
 from fictions.models import Chapter
 
-from core.serializers import BaseModelSerializer
-
 
 class CollectionChapterOrderSerializer(ModelSerializer):
 
@@ -33,44 +31,8 @@ class CollectionChapterOrderSerializer(ModelSerializer):
         self.instance.set_work_order(self.validated_data["get_work_order"])
 
 
-# SÉRIALISEURS PUBLIQUES
-
-class CollectionCardSerializer(ModelSerializer):
-    """Sérialiseur publique de carte de série """
-
-    class Meta:
-        fields = (
-            "id",
-            "title",
-            "authors",
-        )
-
-
-class CollectionSerializer(ModelSerializer):
-    """Sérialiseur de série publique"""
-
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:collection-reviews",
-        lookup_field="pk",
-        lookup_url_kwarg="pk",
-    )
-
-    class Meta:
-        model = Collection
-        fields = "__all__"
-
-
-# SÉRIALISEURS PRIVÉS
-
-class MyCollectionCardSerializer(Serializer):
-    """Sérialiseur privé de carte de série"""
-
-    title = CharField()
-    url = HyperlinkedIdentityField(view_name="mycollections:mycollection-detail")
-
-
 class MyCollectionChapterChoiceRelatedField(PrimaryKeyRelatedField):
-    """Champ de choix de chapitre pour le sérialiseur privé de série"""
+    """Champ de choix de chapitre pour le sérialiseur de série"""
 
     queryset = Chapter.objects.filter(validation_status=7).order_by("fiction", "_order")
 
@@ -85,19 +47,46 @@ class MyCollectionChapterChoiceRelatedField(PrimaryKeyRelatedField):
         return f"{instance.fiction.title[:25]} : {instance.title}"
 
 
-class MyCollectionSerializer(BaseModelSerializer):
-    """Sérialiseur privé de série"""
+class CollectionSerializer(ModelSerializer):
+    """Sérialiseur de série"""
+
+    reviews_url = HyperlinkedIdentityField(
+        view_name="reviews:collections:object-review-list",
+        lookup_field="pk",
+        lookup_url_kwarg="object_pk",
+        read_only=True,
+    )
 
     chapters = MyCollectionChapterChoiceRelatedField(many=True)
 
     class Meta:
         model = Collection
-        fields = ("title", "id",
-                  "authors",
-                  "chapters",
-                  "summary",
-                  "status",)
-        read_only_fields = ("id", "authors",)
+        fields = (
+            "id",
+            "title",
+            "summary",
+            "status",
+            "creation_user",
+            "modification_user",
+            "creation_date",
+            "modification_date",
+            "authors",
+            "chapters",
+            "reviews_url",
+        )
+        read_only_fields = (
+            "authors",
+        )
+
+
+class CollectionCardSerializer(CollectionSerializer):
+    """Sérialiseur de carte de série"""
+
+    class Meta(CollectionSerializer.Meta):
+        fields = (
+            "id",
+            "title",
+        )
 
     # TODO - Repenser ceci : peut-être ne pas obliger le passage de chapitres lors de la création
     # du modèle Collection ? Mais alors comment garantir l'ordonnement des chapitres si la méthode

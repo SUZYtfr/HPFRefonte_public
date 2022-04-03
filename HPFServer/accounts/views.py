@@ -1,30 +1,29 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
-from rest_framework.authtoken.views import ObtainAuthToken
+from django.utils import timezone
+
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import *
 
 
-# VUES PUBLIQUES
+class AccountCreationView(CreateAPIView):
+    """Vue de l'API de création de compte utilisateur"""
 
-class PublicAccountCreateView(CreateAPIView):
-    """Vue de l'API publique de création de compte utilisateur"""
+    serializer_class = AccountCreationSerializer
+    permission_classes = [AllowAny]
 
-    serializer_class = PublicAccountCreationSerializer
-
-
-class PublicAccountLoginView(ObtainAuthToken):
-    """Vue de l'API publique de connexion de compte utilisateur"""
-
-    serializer_class = PublicAccountLoginSerializer
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+    # def perform_create(self, serializer):
+    #     serializer.save(creation_date=timezone.now())
 
 
-# VUES PRIVÉES
+class AccountManagementView(RetrieveUpdateDestroyAPIView):
+    """Vue de l'API de gestion de compte utilisateur"""
 
-class PrivateAccountManageView(RetrieveUpdateAPIView):
-    """Vue de l'API privée de gestion de compte utilisateur"""
-
-    serializer_class = PrivateAccountManagementSerializer
+    serializer_class = AccountManagementSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+
+    def perform_update(self, serializer):
+        serializer.save(modification_time=timezone.now())

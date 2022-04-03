@@ -131,8 +131,6 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
     # Champs par défaut restreints modifiables par la modération
     is_beta = models.BooleanField(verbose_name="bêta",
                                   default=False)
-    is_premium = models.BooleanField(verbose_name="adhérent",
-                                     default=False)
     is_active = models.BooleanField(verbose_name="actif",
                                     default=True)
 
@@ -191,13 +189,14 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
             if not anonymise and fiction.authors.count() == 0:
                 fiction.delete()
 
-    # TODO - retirer des équipes de modération
     def ban(self, anonymise=False, keep_reviews=False):
         """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
+
         self.remove_personal_information()
         if not keep_reviews:
             self.delete_reviews()
         self.remove_authoring(anonymise=anonymise)
+        self.groups.clear()  # Supprime de tous les groupes / équipes
         self.is_staff = False
         self.is_superuser = False
         self.is_active = False

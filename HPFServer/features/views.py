@@ -1,25 +1,22 @@
+from django.utils import timezone
+
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 from .serializers import FeatureSerializer, StaffFeatureSerializer, StaffCategorySerializer, StaffFeatureOrderSerializer
 from .models import Feature, Category
+from core.permissions import DjangoPermissionOrReadOnly
 
 
-class IsStaffOrCreateOnly(BasePermission):
+class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
+    """Permission autorisant la création"""
+
     def has_permission(self, request, view):
-        if request.method in [*SAFE_METHODS, "POST"]:
+        if request.method in [*permissions.SAFE_METHODS, "POST"]:
             return True
-        if request.user.is_staff:
-            return True
-        return False
-
-
-class IsStaff(BasePermission):
-    def has_permission(self, request, view):
-        if request.user.is_staff:
+        elif self.has_django_permissions(view, request):
             return True
         return False
 
@@ -27,39 +24,65 @@ class IsStaff(BasePermission):
 class FeatureViewSet(ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
-    permission_classes = (IsAuthenticatedOrReadOnly, IsStaffOrCreateOnly,)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = FeatureSerializer
-    queryset = Feature.objects.exclude(is_forbidden=True).order_by("category")
+    queryset = Feature.allowed.order_by("category")
     search_fields = ("name",)
 
     def get_queryset(self):
         """Détermine la liste de caractéristiques à afficher"""
+
         if self.request.user.is_staff:
             return Feature.objects.order_by("category")
         return self.queryset
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
+
         if self.request.user.is_staff:
             return StaffFeatureSerializer
         return self.serializer_class
 
-    # Réécriture de cette méthode juste pour changer le code 201 en 200 si caractéristique existait déjà...
-    def create(self, request, *args, **kwargs):
+    @action(methods=["POST"], detail=False, url_name="upsert", name="Feature create or retrieve", url_path="upsert")
+    def create_or_retrieve(self, request, *args, **kwargs):
+        """Traite la requête de création ou récupération de la caractéristique"""
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        created = self.perform_create_or_retrieve(serializer)
         headers = self.get_success_headers(serializer.data)
-        feature_status = status.HTTP_201_CREATED if hasattr(serializer, "created") else status.HTTP_200_OK
+        feature_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(serializer.data, status=feature_status, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
+    def perform_create_or_retrieve(self, serializer):
+        """Finalise l'action de création ou récupération de la caractéristique"""
+
+        instance, created = serializer.save(
+            upsert=True,
+            creation_user=self.request.user,
+            creation_date=timezone.now(),
+        )
+        return created
 
 
 class CategoryViewSet(ModelViewSet):
     """Ensemble de vues de modération pour les catégories"""
 
-    permission_classes = (IsAuthenticated, IsStaff)
-    queryset = Category.objects
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
+    queryset = Category.objects.all()
     serializer_class = StaffCategorySerializer
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
     @action(methods=["GET", "PUT"], detail=True, serializer_class=StaffFeatureOrderSerializer, url_name="feature-order")
     def order(self, request, *args, **kwargs):
