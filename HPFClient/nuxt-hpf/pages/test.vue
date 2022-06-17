@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 70%; width: 70%">
+  <div style="height: 500px; width: 70%;">
     <client-only>
       <TipTapEditor class="m-5" />
     </client-only>

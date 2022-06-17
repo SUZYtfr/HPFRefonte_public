@@ -39,7 +39,7 @@
           <template v-if="index > 0">,</template>
           <a
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="author.author_id"
+            v-bind:key="'author_' + author.author_id.toString()"
             v-bind:href="'auteurs/' + author.author_id"
             >{{ author.nickname }}
           </a>
@@ -69,19 +69,17 @@
           <template v-if="index > 0">,</template>
           <a
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="serie.serie_id"
+            v-bind:key="'serie_' + serie.serie_id.toString()"
             v-bind:href="'series/' + serie.serie_id"
             >{{ serie.title }}
           </a>
         </template>
       </div>
     </div>
-    <!-- <div class="columns is-mobile mb-0 mx-0 is-vcentered">
-      <div class="column pt-0 pl-0 pb-2"> -->
     <b-taglist class="mb-0">
       <a
         v-for="characteristic in fanfiction.characteristics"
-        v-bind:key="characteristic.characteristic_id"
+        v-bind:key="'tag_' + characteristic.characteristic_id.toString()"
         v-bind:href="'auteurs/' + characteristic.characteristic_id"
         ><b-tag
           :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
@@ -90,8 +88,6 @@
         ></a
       >
     </b-taglist>
-    <!-- </div>
-    </div> -->
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
         <p v-html="fanfiction.summary"></p>
@@ -111,32 +107,6 @@
         {{ " lecture" + (fanfiction.read_count > 1 ? "s" : "") }}</span
       >
     </div>
-    <!-- <nav class="level is-mobile mb-0">
-      <div class="level-item has-text-centered">
-        <div>
-          <p class="is-size-6 has-text-weight-semibold">{{ fanfiction.chapter_count }}</p>
-          <p class="heading">
-            {{ "Chapitre" + (fanfiction.chapter_count > 1 ? "s" : "") }}
-          </p>
-        </div>
-      </div>
-      <div class="level-item has-text-centered">
-        <div>
-          <p class="is-size-6 has-text-weight-semibold">{{ fanfiction.word_count }}</p>
-          <p class="heading">
-            {{ "Mot" + (fanfiction.word_count > 1 ? "s" : "") }}
-          </p>        
-        </div>
-      </div>
-      <div class="level-item has-text-centered">
-        <div>
-          <p class="is-size-6 has-text-weight-semibold">{{ fanfiction.read_count }}</p>
-          <p class="heading">
-            {{ "Lecture" + (fanfiction.read_count > 1 ? "s" : "") }}
-          </p>     
-        </div>
-      </div>
-    </nav> -->
     <div
       class="
         is-flex
@@ -160,10 +130,7 @@
         ><span class="is-size-6-5 is-hidden-mobile">)</span>
       </div>
       <div class="is-block">
-        <b-tooltip
-          label="Ajouter à la pile à lire"
-          type="is-primary"
-        >
+        <b-tooltip label="Ajouter à la pile à lire" type="is-primary">
           <b-button
             type="is-primary"
             icon-left="bookmark"
@@ -242,7 +209,6 @@ export default class Fanfiction extends Vue {
   width: 20px;
   height: 25px;
   z-index: 2;
-  /*background: blue;*/
   text-align: center;
   font-size: 13px !important;
   padding-right: 5px;
@@ -271,5 +237,4 @@ export default class Fanfiction extends Vue {
 hr {
   background-color: $primary;
 }
-
 </style>

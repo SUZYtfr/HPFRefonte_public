@@ -1,5 +1,6 @@
 <template>
   <a
+    ref="mainElement"
     :class="[
       { 'tag-hover': hover },
       'tag p-2 is-relative',
@@ -8,9 +9,9 @@
     @mouseover="hover = true"
     @mouseleave="hover = false"
     @click="$emit('click', characteristic_type_id, characteristic_id)"
-    style="height: 100px; width: 100%; text-decoration: none"
   >
     <div
+      id="tag-wrapper"
       class="
         is-flex
         is-flex-direction-column
@@ -18,35 +19,43 @@
         is-align-items-center
       "
     >
-      <!-- <div style="background-color: #ffffff; opacity: 0.10;"> -->
-      <!--<div style="display: block; overflow: hidden; position: absolute; inset: 0px; box-sizing: border-box; margin: 0px;">
-			 <img alt="" src="https://image.tmdb.org/t/p/w1280_filter(duotone,991B1B,FCA5A5)/eNI7PtK6DEYgZmHWP9gQNuff8pv.jpg" decoding="async" data-nimg="fill" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: medium none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;">
-				<noscript/>
-			</div>-->
-      <!--<div class="absolute z-10 inset-0 w-full h-full transition duration-300 bg-gray-800 bg-opacity-30"/>-->
-      <!-- <div class="relative z-20 w-full text-2xl font-bold text-center text-white truncate whitespace-normal sm:text-3xl">Action</div> -->
-      <label
-        :class="[
-          'is-size-5',
-          'is-clickable',
-          { 'has-text-weight-bold': hover },
-          { 'has-text-weight-semibold': !hover },
-        ]"
-        >{{ characteristic_name }}</label
+      <div class="has-text-centered">
+        <label
+          ref="lblCharName"
+          :class="[
+            'is-block',
+            'is-clickable',
+            { 'has-text-weight-bold': hover },
+            { 'has-text-weight-semibold': !hover },
+          ]"
+          >{{ characteristic_name }}</label
+        >
+      </div>
+      <div
+        class="has-text-centered"
+        style="
+          width: 100%;
+          max-height: 50%;
+          padding: 0px 5px;
+          overflow-x: auto;
+          overflow-y: hidden;
+        "
       >
-      <label
-        v-if="characteristic_description !== undefined"
-        :class="[
-          'is-size-7',
-          'has-text-centered',
-          'is-clickable',
-          'has-text-weight-semibold',
-        ]"
-        >{{ characteristic_description }}</label
-      >
+        <label
+          ref="lblCharDescription"
+          v-if="characteristic_description !== undefined"
+          :class="[
+            'is-block',
+            'has-text-centered',
+            'is-clickable',
+            'has-text-weight-semibold',
+          ]"
+          >{{ characteristic_description }}</label
+        >
+      </div>
     </div>
     <label
-      v-if="characteristic_id !== undefined"
+      v-if="characteristic_count !== undefined"
       :class="[
         'is-size-7',
         'is-clickable',
@@ -56,10 +65,8 @@
         { 'has-text-weight-bold': hover },
         { 'has-text-weight-semibold': !hover },
       ]"
-      >1258</label
+      >{{ characteristic_count }}</label
     >
-
-    <!-- </div> -->
   </a>
 </template>
 
@@ -80,11 +87,77 @@ export default class extends Vue {
 
   //#region Datas
   private hover: boolean = false;
+  private transform: string = "";
+  private fontSize: string = "";
+  private ro: ResizeObserver | null = null;
+  private timerResize: number = -1;
+  //#endregion
+
+  //#region Hooks
+  mounted() {
+    this.resizeTag();
+    this.ro = new ResizeObserver(this.onResize);
+    this.ro.observe(this.$refs.mainElement as HTMLElement);
+  }
+
+  beforeDestroy() {
+    this.ro?.unobserve(this.$refs.mainElement as HTMLElement);
+  }
   //#endregion
 
   //#region Methods
+  // Récupération couleur du tag
   private getCaracteristicTypeColor(characteristic_type_id: number) {
     return getCaracteristicTypeColor(characteristic_type_id);
+  }
+
+  // Lors du resize de l'élément
+  private onResize() {
+    clearTimeout(this.timerResize);
+    this.timerResize = window.setTimeout(this.resizeTag, 100);
+  }
+
+  // Vérifier si un élément overflow son parent
+  private isOverflown(
+    clientWidth: number,
+    scrollWidth: number,
+    clientHeight: number,
+    scrollHeight: number
+  ) {
+    return scrollWidth > clientWidth || scrollHeight > clientHeight;
+  }
+
+  // Resizer un élément
+  private resizeText(
+    element: HTMLElement,
+    minSize: number = 8,
+    maxSize: number = 20,
+    step: number = 1,
+    unit: string = "px"
+  ) {
+    if (element === null || element === undefined) return;
+    let i = minSize;
+    let overflow = false;
+    const parent = element.parentNode as HTMLElement;
+
+    while (!overflow && i < maxSize) {
+      element.style.fontSize = `${i}${unit}`;
+      overflow = this.isOverflown(
+        parent.clientWidth,
+        parent.scrollWidth,
+        parent.clientHeight,
+        parent.scrollHeight
+      );
+      if (!overflow) i += step;
+    }
+    // revert to last state where no overflow happened:
+    element.style.fontSize = `${i - step}${unit}`;
+  }
+
+  // Resize Name + Description
+  private resizeTag() {
+    this.resizeText(this.$refs.lblCharName as HTMLElement);
+    this.resizeText(this.$refs.lblCharDescription as HTMLElement, 6, 12);
   }
   //#endregion
 }
@@ -93,33 +166,43 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import "~/assets/scss/custom.scss";
 
-.overflow-hidden {
-  overflow: hidden;
+a {
+  height: 100px !important;
+  width: 100% !important;
+  text-decoration: none !important;
+  #tag-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    div {
+      width: 100%;
+      max-height: 50%;
+      padding: 0px 5px;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  }
+  label {
+    white-space: normal;
+  }
+  .absolute-count {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: 80px;
+    right: 5px;
+  }
+
+  .absolute-count-hover {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: 74px;
+    right: 5px;
+  }
 }
 
 .tag-hover {
   border: 5px solid $primary-light !important;
   border-radius: 10px !important;
-}
-a label {
-  white-space: normal;
-}
-
-.absolute-count {
-  display: block;
-  position: absolute;
-  z-index: 2;
-  //background: blue;
-  top: 80px;
-  right: 5px;
-}
-
-.absolute-count-hover {
-  display: block;
-  position: absolute;
-  z-index: 2;
-  //background: blue;
-  top: 74px;
-  right: 5px;
 }
 </style>

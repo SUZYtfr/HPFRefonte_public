@@ -25,12 +25,12 @@
               <div
                 class="column is-half py-2"
                 v-for="(fanfiction, innerindex) of fanfictions"
-                :key="fanfiction.id"
+                :key="'ff_recent_' + fanfiction.fanfiction_id.toString()"
               >
                 <FanfictionThumbnail
                   :fanfiction="fanfiction"
                   v-bind:index="innerindex"
-                  v-bind:key="fanfiction.id"
+                  v-bind:key="fanfiction.fanfiction_id"
                 ></FanfictionThumbnail>
               </div>
             </div>
@@ -66,12 +66,12 @@
               <div
                 class="column is-half py-2"
                 v-for="(fanfiction, innerindex) of fanfictions"
-                :key="fanfiction.id"
+                :key="'ff_selection_' + fanfiction.fanfiction_id.toString()"
               >
                 <FanfictionThumbnail
                   :fanfiction="fanfiction"
                   v-bind:index="innerindex"
-                  v-bind:key="fanfiction.id"
+                  v-bind:key="fanfiction.fanfiction_id"
                 ></FanfictionThumbnail>
               </div>
             </div>
@@ -99,7 +99,7 @@
           <div class="card-content">
             <News_2
               v-for="(item, innerindex) of news"
-              :key="item.id"
+              :key="'news_' + item.news_id.toString()"
               :news="item"
               :activeColor="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
               :class="[{ 'is-hidden-mobile': innerindex > 0 }]"

@@ -15,7 +15,7 @@
         characteristic_type.name
       }}</span>
       <span v-if="totalIds > 0" class="is-size-6"
-        ><b> {{ "(" + totalIds + ")" }} </b></span
+        ><strong> {{ "(" + totalIds + ")" }} </strong></span
       >
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'">
       </b-icon>
@@ -110,13 +110,13 @@ export default class extends Vue {
 
 .header {
   border: 1px solid rgba(0, 0, 0, 0);
-  border-radius: 5px;
+  border-radius: 0.27rem;
 }
 
 .header-expanded {
   border-bottom: 1px solid $primary;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  border-top-left-radius: 0.27rem;
+  border-top-right-radius: 0.27rem;
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }

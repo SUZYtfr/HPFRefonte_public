@@ -38,7 +38,8 @@
                 <p class="title is-5">{{ user.nickname }}</p>
                 <p class="subtitle is-7">{{ user.realname }}</p>
                 <p class="subtitle is-7">
-                  Inscrit le <b>{{ user.creation_date | parseTime }}</b>
+                  Inscrit le
+                  <strong>{{ user.creation_date | parseTime }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -75,7 +76,7 @@
               <section>
                 <!-- Tag list auteur skeleton -->
                 <b-taglist v-if="userLoading || user == undefined">
-                    <b-skeleton></b-skeleton>
+                  <b-skeleton></b-skeleton>
                 </b-taglist>
                 <!-- Tag list auteur -->
                 <b-taglist v-else>
@@ -354,30 +355,14 @@
                   </span>
                 </template>
                 <FanfictionFilters
-                  :authorFieldVisible="true"
-                  v-bind="fanfictionFilters"
-                  v-on:change="fanfictionFilters = $event"
+                  :fanfictionFilters="fanfictionFilters"
                 />
                 <div class="columns mt-2">
                   <div class="column is-12">
-                    <b-pagination
-                      :total="total"
-                      v-model="current"
-                      :range-before="rangeBefore"
-                      :range-after="rangeAfter"
-                      :order="order"
-                      :size="size"
-                      :simple="isSimple"
-                      :rounded="isRounded"
-                      :per-page="perPage"
-                      :icon-prev="prevIcon"
-                      :icon-next="nextIcon"
-                      aria-next-label="Next page"
-                      aria-previous-label="Previous page"
-                      aria-page-label="Page"
-                      aria-current-label="Current page"
-                    >
-                    </b-pagination>
+                    <FanfictionList
+                      :isCard="false"
+                      :fanfictionFilters="fanfictionFilters"
+                    />
                   </div>
                 </div>
               </b-tab-item>
@@ -487,10 +472,11 @@ import "simplebar/dist/simplebar.min.css";
 import "simplebar/dist/simplebar.min.js";
 import SimpleBar from "simplebar";
 import UserLink from "@/components/UserLink.vue";
-import FanfictionFilters from "@/components/FanfictionFilters.vue";
+import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
 import { UserData } from "@/types/users";
 import { FanfictionFiltersData } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
+import FanfictionList from "~/components/FanfictionList.vue";
 
 @Component({
   name: "Author",
@@ -498,6 +484,7 @@ import { getUser } from "@/api/users";
     simplebar,
     UserLink,
     FanfictionFilters,
+    FanfictionList,
   },
   filters: {
     parseTime: (timestamp: string) => {
@@ -513,18 +500,6 @@ export default class extends Vue {
   //#region  Data
   private user!: UserData;
   private userLoading = false;
-
-  private total = 200;
-  private current = 10;
-  private perPage = 10;
-  private rangeBefore = 3;
-  private rangeAfter = 1;
-  private order = "";
-  private size = "";
-  private isSimple = false;
-  private isRounded = false;
-  private prevIcon = "chevron-left";
-  private nextIcon = "chevron-right";
 
   // Filtres de recherche
   private fanfictionFilters: FanfictionFiltersData = {
@@ -542,6 +517,8 @@ export default class extends Vue {
     inclusive: false,
     fromDate: null,
     toDate: null,
+    currentPage: 1,
+    perPage: 10,
   };
 
   //#endregion

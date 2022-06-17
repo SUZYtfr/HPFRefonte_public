@@ -53,7 +53,7 @@
             px-2
             pb-2
           "
-          style="gap: 2px; min-width: 300px"
+          style="gap: 2px; min-width: 250px"
         >
           <b-field
             label="Url"
@@ -226,10 +226,6 @@ export default class extends Vue {
 
   //#region Hooks
   created() {
-    console.log("created");
-    console.log(this.editor);
-    console.log(this.node);
-    console.log(this.extension);
     if (this.extension.storage.images === undefined)
       this.extension.storage.images = new Array<ImageHPFData>();
     this.image = this.editor.extensionStorage.hpfImage.images.filter(
@@ -268,7 +264,6 @@ export default class extends Vue {
   }
 
   beforeDestroy() {
-    console.log("beforeDestroy");
     // Sauvegarder les choix actuels du component
     this.node.attrs.editing = this.editing;
     this.node.attrs.preserveRatio = this.preserveRatio;

@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- Debug sidebar -->
-    <!-- <SidebarDebug /> -->
+    <SidebarDebug />
     <!-- Header -->
     <Navbar />
     <div id="wrapper">
@@ -17,13 +17,13 @@
 import { Component, Vue } from "vue-property-decorator";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
-//import SidebarDebug from "@/components/SidebarDebug.vue";
+import SidebarDebug from "@/components/SidebarDebug.vue";
 
 @Component({
   components: {
     Navbar,
     Footer,
-    //SidebarDebug,
+    SidebarDebug,
   },
 })
 export default class extends Vue {}

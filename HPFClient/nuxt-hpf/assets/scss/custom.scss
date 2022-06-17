@@ -136,6 +136,7 @@ $badge-font-size: 0.7rem;
   transition: flex-grow 1s ease;
 }
 
+// Characteristic colors
 $characteristic-litteraire: #e6ccb2;
 $characteristic-genre: #fec5bb;
 $characteristic-langue: #74c69d;
@@ -177,3 +178,6 @@ $characteristic-relation: #a8dadc;
   background: #e63946 !important;
   color: whitesmoke !important;
 }
+
+// Fix FontAwesome 6 
+/*.icon svg { width: 1em; height: 1em; max-width: 80%; max-height: 80%; }*/
