@@ -1,5 +1,5 @@
 <template>
-  <div :value="fanfictionFilters">
+  <div>
     <div class="columns my-0">
       <div class="column pt-0">
         <b-field
@@ -16,113 +16,29 @@
           </b-input>
         </b-field>
       </div>
-      <div class="column is-3 pt-0" v-if="authorFieldVisible">
-        <b-field
-          label="Rechercher un auteur"
-          label-position="on-border"
-          custom-class="has-text-primary"
-        >
-          <b-input
-            placeholder="Rechercher..."
-            type="search"
-            icon="search"
-            v-model="fanfictionFilters.searchAuthor"
-          >
-          </b-input>
-        </b-field>
-      </div>
-      <div class="column is-3 pt-0">
-        <b-field
-          label="Ordre de tri"
-          label-position="on-border"
-          custom-class="has-text-primary"
-        >
-          <b-select
-            placeholder="Trier par"
-            icon="sort"
-            expanded
-            v-model="fanfictionFilters.sortBy"
-          >
-            <option value="alpha">Ordre alphabétique</option>
-            <option value="most_recent">Plus récent au plus ancien</option>
-            <option value="less_recent">Plus ancien au plus récent</option>
-            <option value="most_reviews">Nombre de reviews - croissant</option>
-            <option value="less_reviews">
-              Nombre de reviews - décroissant
-            </option>
-            <option value="most_rating">Rating - croissant</option>
-            <option value="less_rating">Rating - décroissant</option>
-          </b-select>
-        </b-field>
-      </div>
-    </div>
-    <div class="columns mt-0 is-vcentered">
       <div class="column is-6 pt-0">
-        <b-switch :rounded="false" v-model="fanfictionFilters.completed"
-          >Terminées</b-switch
-        >
-        <b-switch :rounded="false" v-model="fanfictionFilters.coauthor"
-          >Co-écrites</b-switch
-        >
+        <ThreeStateCheckbox
+            class="py-1 pl-1"
+            :externalValue="fanfictionFilters.status"
+            :checkedValue="4"
+            :excludedValue="1"
+            :uncheckedValue="null"
+            @change="fanfictionFilters.status = $event"
+            title="Histoires terminées"
+          />
+          <ThreeStateCheckbox
+            class="py-1 pl-1"
+            :externalValue="fanfictionFilters.multipleAuthors"
+            @change="fanfictionFilters.multipleAuthors = $event"
+            title="Histoires co-écrites"
+          />
+          <ThreeStateCheckbox
+            class="py-1 pl-1"
+            :externalValue="fanfictionFilters.featured"
+            @change="fanfictionFilters.featured = $event"
+            title="Histoires médaillés"
+          />
       </div>
-      <div class="column is-3 pt-0">
-        <b-field
-          label="Mots minimums"
-          label-position="on-border"
-          custom-class="has-text-primary"
-        >
-          <b-input
-            v-model="displayMinWords"
-            type="text"
-            placeholder="Mots minimums"
-            icon-right="close-circle"
-            icon-right-clickable
-            @icon-right-click="clearFieldMinWord($event)"
-            @keydown.native="restrictNumber($event)"
-          >
-          </b-input>
-        </b-field>
-      </div>
-      <div class="column is-3 pt-0">
-        <b-field
-          label="Mots maximums"
-          label-position="on-border"
-          custom-class="has-text-primary"
-        >
-          <b-input
-            v-model="displayMaxWords"
-            type="text"
-            placeholder="Mots maximums"
-            icon-right="close-circle"
-            icon-right-clickable
-            @icon-right-click="clearFieldMaxWord($event)"
-            @keydown.native="restrictNumber($event)"
-          >
-          </b-input>
-        </b-field>
-      </div>
-      <!-- <div class="column pt-0 pb-1">
-        <b-slider
-          v-model="fanfictionFilters.words"
-          type="is-primary"
-          :min="1"
-          :max="6"
-          :step="1"
-          lazy
-          :custom-formatter="(val) => sliderCustomFormatter(val)"
-          append-to-body
-          ticks
-        >
-          <template v-for="val in sliderTicks">
-            <b-slider-tick
-              :value="val.sliderValue"
-              :key="val.displayValue"
-              class="has-text-weight-semibold"
-              >{{ val.displayValue }}</b-slider-tick
-            >
-          </template>
-        </b-slider>
-      </div> -->
     </div>
     <div class="columns mt-0">
       <div class="column is-6 pt-0">
@@ -225,47 +141,21 @@ import { ICharacteristic, ICharacteristicType } from "@/types/characteristics";
 import { ConfigModule } from "@/utils/store-accessor";
 import { groupBy } from "@/utils/es6-utils";
 import { getClassTypeColor, getFullPath } from "@/utils/characteristics";
+import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 
 @Component({
-  name: "FanfictionFilters",
+  name: "FanfictionFiltersSmall",
+  components:{
+    ThreeStateCheckbox,
+  }
 })
 export default class extends Vue {
   //#region Props
   @Prop() private authorFieldVisible!: boolean;
+  @Prop() private fanfictionFilters!: FanfictionFiltersData;
   //#endregion
 
   //#region Data
-  private fanfictionFilters: FanfictionFiltersData = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: 0,
-    sortBy: "most_recent",
-    multipleAuthors: null,
-    status: null,
-    minWord: null,
-    maxWord: null,
-    words: [1, 6],
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: false,
-    inclusive: false,
-    fromDate: null,
-    toDate: null,
-  };
-
-  private displayMinWords: string = "";
-  private displayMaxWords: string = "";
-
-  private sliderTicks = [
-    { sliderValue: 1, realValue: 500, displayValue: "<500" },
-    { sliderValue: 2, realValue: 1000, displayValue: "1000" },
-    { sliderValue: 3, realValue: 5000, displayValue: "5000" },
-    { sliderValue: 4, realValue: 10000, displayValue: "10000" },
-    { sliderValue: 5, realValue: 50000, displayValue: "50000" },
-    { sliderValue: 6, realValue: 100000, displayValue: ">100000" },
-  ];
-
   private characteristics: any[] = [];
   private filteredCharacteristics: any[] = [];
   //#endregion
@@ -285,32 +175,9 @@ export default class extends Vue {
   private onFiltersChanged() {
     this.$emit("change", this.fanfictionFilters);
   }
-
-  @Watch("displayMinWords")
-  private minWordsChanged() {
-    console.log(this.displayMinWords);
-    this.fanfictionFilters.minWord = isNaN(parseInt(this.displayMinWords))
-      ? null
-      : parseInt(this.displayMinWords);
-  }
-
-  @Watch("displayMaxWords")
-  private maxWordsChanged() {
-    this.fanfictionFilters.maxWord = isNaN(parseInt(this.displayMaxWords))
-      ? null
-      : parseInt(this.displayMaxWords);
-  }
   //#endregion
 
   //#region Methods
-  private sliderCustomFormatter(sliderValue: number) {
-    let result = "";
-    if (sliderValue == 1) result += "< ";
-    if (sliderValue == 6) result += "> ";
-    result += this.sliderTicks[sliderValue - 1].realValue;
-    return result + " mots";
-  }
-
   private getFilteredTags(text: string) {
     this.filteredCharacteristics = [];
     this.characteristics.forEach((element) => {
@@ -328,8 +195,10 @@ export default class extends Vue {
       }
       items = items.filter(
         (item: ICharacteristic) =>
-          !this.fanfictionFilters.includedTags.includes(item) &&
-          !this.fanfictionFilters.excludedTags.includes(item)
+          !this.fanfictionFilters.includedTags.includes(
+            item.characteristic_id
+          ) &&
+          !this.fanfictionFilters.excludedTags.includes(item.characteristic_id)
       );
 
       let itemsSorted: ICharacteristic[] = items
@@ -402,25 +271,6 @@ export default class extends Vue {
       });
     });
     this.filteredCharacteristics = this.characteristics;
-  }
-
-  private clearFieldMinWord(event: any) {
-    this.displayMinWords = "";
-  }
-
-  private clearFieldMaxWord(event: any) {
-    this.displayMaxWords = "";
-  }
-
-  private restrictNumber(event: any) {
-    if (
-      (event.keyCode < 8 || event.keyCode > 13) &&
-      (event.keyCode < 35 || event.keyCode > 46) &&
-      (event.keyCode < 96 || event.keyCode > 105)
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
   }
 
   private getClassTypeColor(characteristic: ICharacteristic) {

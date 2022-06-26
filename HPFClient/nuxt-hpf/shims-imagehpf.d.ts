@@ -1,0 +1,1 @@
+declare module "~/components/hpf_image/ImageEditor.vue";

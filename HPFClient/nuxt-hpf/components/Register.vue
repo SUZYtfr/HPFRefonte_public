@@ -1,12 +1,12 @@
 <template>
   <b-modal v-model="modalActive" scroll="clip">
-    <form ref="signupForm">
-      <div class="modal-card mx-5" style="width: auto">
+    <form ref="signupForm" class="fullheight">
+      <div id="registerCard" class="modal-card mx-5 fullheight">
         <header class="modal-card-head">
           <p class="modal-card-title">Inscription</p>
           <button type="button" class="delete" @click="modalActive = false" />
         </header>
-        <section class="modal-card-body pt-2">
+        <section class="modal-card-body pt-2 fixed-height-card">
           <p>
             En application du Règlement Général sur la Protection des Données
             n°2016/679 du 27 avril 2016 (RGPD), vous bénéficiez d’un droit
@@ -135,11 +135,11 @@
                     <div class="content has-text-centered">
                       <div v-if="uploadedFile">
                         <img
+                          id="previewPicture"
                           :src="signupForm.avatar"
                           :alt="this.uploadedFile.name"
                           width="256"
                           height="256"
-                          style="max-width: 128px; max-height: 128px"
                         />
                         <button
                           class="delete is-small"
@@ -160,8 +160,9 @@
             </div>
             <!-- Bio -->
             <div class="column is-6">
-              <Editor
+              <TipTapEditor
                 :placeholder="'Votre description'"
+                :showFooter="false"
                 @change="(value) => (signupForm.bio = value)"
               />
             </div>
@@ -187,13 +188,13 @@
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
 import { signup } from "@/api/users";
 import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
-import Editor from "@/components/Editor.vue";
+import TipTapEditor from "@/components/TipTapEditor.vue";
 import { UserRegisterData } from "@/types/users";
 
 @Component({
   name: "Inscription",
   components: {
-    Editor,
+    TipTapEditor,
   },
 })
 export default class extends Vue {
@@ -202,7 +203,7 @@ export default class extends Vue {
   //#endregion
 
   //#region Data
-  private uploadedFile = null;
+  private uploadedFile: Blob | null = null;
   //private previewAvatar!: Blob;
   private checkPass: string = "";
 
@@ -257,9 +258,10 @@ export default class extends Vue {
   private onChanged() {
     var reader = new FileReader();
     reader.onloadend = (e) => (this.signupForm.avatar = reader.result);
-    reader.readAsDataURL(
-      this.uploadedFile != null ? this.uploadedFile : new Blob()
-    );
+    if(this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
+    // reader.readAsDataURL(
+    //   this.uploadedFile != null ? this.uploadedFile : new Blob()
+    // );
     console.log(this.uploadedFile);
     console.log(reader);
     console.log(this.signupForm.avatar);
@@ -303,4 +305,18 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 @import "~/assets/scss/custom.scss";
+
+#registerCard {
+  width: auto;
+}
+
+#previewPicture {
+  max-width: 128px;
+  max-height: 128px;
+}
+
+.fullheight {
+  height: 100%;
+  min-height: 250px;
+}
 </style>

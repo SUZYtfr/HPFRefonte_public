@@ -41,7 +41,7 @@
           <template v-if="index > 0">,</template>
           <a
             class="is-size-7 has-text-weight-normal"
-            v-bind:key="author.author_id"
+            v-bind:key="'author_' + author.author_id.toString()"
             v-bind:href="'auteurs/' + author.author_id"
             >{{ author.nickname }}
           </a>
@@ -50,7 +50,7 @@
       <div class="overflow-hidden white-space-nowrap">
         <a
           v-for="characteristic in fanfiction.characteristics"
-          v-bind:key="characteristic.characteristic_id"
+          v-bind:key="'characteristic_' + characteristic.characteristic_id.toString()"
           v-bind:href="'auteurs/' + characteristic.characteristic_id"
           ><b-tag
             :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"

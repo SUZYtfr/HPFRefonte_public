@@ -11,7 +11,7 @@
             </p>
           </header>
           <!-- Contenu -->
-          <div class="card-content px-4 pt-2 pb-4 is-flex-grow-5">
+          <div class="card-content px-4 pt-2 pb-4">
             <b-loading :is-full-page="false" v-model="listLoading"></b-loading>
             <!-- Breadcrumb -->
             <b-breadcrumb align="is-left" class="mb-0">
@@ -28,12 +28,15 @@
             </b-breadcrumb>
             <hr class="mt-1 mb-3" />
             <!-- Liste -->
-            <div class="columns is-multiline is-centered is-variable is-8">
+            <div
+              v-if="currentCharacs.length > 0"
+              class="columns is-multiline is-centered is-variable is-8"
+            >
               <div
                 v-for="(charac, innerindex) of currentCharacs"
                 v-bind:index="innerindex"
                 v-bind:key="innerindex"
-                class="column is-3"
+                class="column is-4 is-4-desktop is-4-widescreen is-3-fullhd"
               >
                 <TagPanel
                   :characteristic_type_id="charac.characteristic_type_id"
@@ -45,10 +48,17 @@
                 />
               </div>
             </div>
+            <div v-if="currentCharacs.length == 0">
+              <FanfictionList
+                :isCard="false"
+                :fanfictionFilters="fanfictionFilters"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <br />
   </div>
 </template>
 
@@ -62,11 +72,14 @@ import {
   ICharacteristicFilters,
 } from "@/types/characteristics";
 import { getCharacteristics } from "@/api/characteristics";
-import { FanfictionFiltersData, FanfictionData } from "@/types/fanfictions";
+import { FanfictionFiltersData } from "@/types/fanfictions";
+import FanfictionList from "~/components/FanfictionList.vue";
+
 @Component({
   name: "Category",
   components: {
     TagPanel,
+    FanfictionList,
   },
 })
 export default class extends Vue {
@@ -86,8 +99,25 @@ export default class extends Vue {
     limit: 10,
   };
 
-  // Fanfictions correspondantes
-  private fanfictions: FanfictionData[] = [];
+  // Filtres
+  private fanfictionFilters: FanfictionFiltersData = {
+    searchTerm: "",
+    searchAuthor: "",
+    searchAuthorId: 0,
+    sortBy: "most_recent",
+    multipleAuthors: null,
+    status: null,
+    words: [1, 6],
+    includedTags: [],
+    excludedTags: [],
+    customTags: [],
+    featured: null,
+    inclusive: false,
+    fromDate: null,
+    toDate: null,
+    currentPage: 1,
+    perPage: 10,
+  };
 
   private listLoading: boolean = false;
   //#endregion
@@ -112,6 +142,9 @@ export default class extends Vue {
         current.characteristic_type_id;
       this.caracteristicFilters.parent_id = current.characteristic_id;
       await this.getCharacteristics();
+      // Si pas de nouvelle caractéristique, on est en bas de la pile on déclenche recherche les fictions
+      if (this.currentCharacs.length == 0)
+        this.fanfictionFilters.includedTags = [current.characteristic_id];
     } else {
       await this.getCharacteristicsTypes();
     }

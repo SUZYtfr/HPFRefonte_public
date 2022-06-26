@@ -33,6 +33,8 @@ export interface FanfictionFiltersData {
   inclusive: boolean,
   fromDate: Date | null,
   toDate: Date | null,
+  currentPage: number,
+  perPage: number,
 }
 
 interface AuthorData {
