@@ -94,7 +94,7 @@
         </div>
       </template>
       <template #start>
-        <b-navbar-item active tag="router-link" target="_blank" to="/">
+        <b-navbar-item active tag="router-link" to="/">
           Accueil
         </b-navbar-item>
         <b-navbar-dropdown :collapsible="true" label="Association HPF">

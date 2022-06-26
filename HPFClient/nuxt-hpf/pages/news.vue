@@ -8,11 +8,9 @@
       class="is-hidden-desktop"
       has-modal-card
     >
-      <FanfictionFilters
-        :fanfictionFilters="fanfictionFilters"
+      <NewsFilters
+        :newsFilters="newsFilters"
         :loading="listLoading"
-        :isFixedHeightCard="true"
-        :tooltipPosition="'is-top'"
       />
     </b-modal>
     <br />
@@ -21,15 +19,15 @@
       <div
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
-        <FanfictionFilters
-          :fanfictionFilters="fanfictionFilters"
+        <NewsFilters
+          :newsFilters="newsFilters"
           :loading="listLoading"
         />
       </div>
-      <!-- Liste des fictions -->
+      <!-- Liste des news -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
-        <FanfictionList
-          :fanfictionFilters="fanfictionFilters"
+        <NewsList
+          :newsFilters="newsFilters"
           :isLoading="listLoading"
           @loadingChange="(value) => (listLoading = value)"
         />
@@ -52,35 +50,27 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { FanfictionFiltersData } from "@/types/fanfictions";
-import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
-import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilters.vue";
+import { NewsFiltersData } from "@/types/news";
+import NewsList from "~/components/list/news/NewsList.vue";
+import NewsFilters from "~/components/filters/news/NewsFilters.vue";
 
 @Component({
-  name: "Recherche",
+  name: "Nouveautés",
   components: {
-    FanfictionList,
-    FanfictionFilters,
+    NewsList,
+    NewsFilters,
   },
 })
 export default class extends Vue {
   //#region Data
   public filtersOpened: boolean = false;
 
-  private fanfictionFilters: FanfictionFiltersData = {
+  private newsFilters: NewsFiltersData = {
     searchTerm: "",
     searchAuthor: "",
     searchAuthorId: 0,
     sortBy: "most_recent",
-    multipleAuthors: null,
     status: null,
-    minWords: null,
-    maxWords: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: null,
-    inclusive: false,
     fromDate: null,
     toDate: null,
     currentPage: 1,
@@ -92,7 +82,9 @@ export default class extends Vue {
   //#endregion
 
   //#region Hooks
-
+  mounted(){
+    console.log("mounted");
+  }
   //#endregion
 
   //#region Methods

@@ -476,7 +476,7 @@ import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilter
 import { UserData } from "@/types/users";
 import { FanfictionFiltersData } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
-import FanfictionList from "~/components/FanfictionList.vue";
+import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 
 @Component({
   name: "Author",
@@ -509,7 +509,8 @@ export default class extends Vue {
     sortBy: "most_recent",
     multipleAuthors: null,
     status: null,
-    words: [1, 6],
+    minWords: null,
+    maxWords: null,
     includedTags: [],
     excludedTags: [],
     customTags: [],
@@ -572,6 +573,7 @@ export default class extends Vue {
   //#region Computed
   //#endregion
 
+  
   //#region Methods
   //#endregion
 }

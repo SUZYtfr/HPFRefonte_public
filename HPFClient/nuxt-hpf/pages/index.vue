@@ -109,7 +109,7 @@
           <footer class="card-footer">
             <p class="card-footer-item py-2">
               <span>
-                <a href="">Plus d'actualités</a>
+                <NuxtLink to="/news"> Plus d'actualités </NuxtLink>
               </span>
             </p>
           </footer>
@@ -138,6 +138,7 @@ import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
   },
 })
 export default class extends Vue {
+  //#region  Datas
   private fFByRow = 2;
   private news: NewsData[] = [];
   private fanfictions: FanfictionData[] = [];
@@ -146,32 +147,24 @@ export default class extends Vue {
     page: 1,
     limit: 20,
   };
+  //#endregion
 
-  created() {
-    console.log("created");
-  }
+  //#region Hooks
+  created() {}
 
-  async asyncData() {
-    console.log("asyncData");
-  }
+  async asyncData() {}
 
   async fetch() {
-    console.log("fetch");
-    // let { data } = await getNews(this.listQuery);
-    // this.news = data.items;
     this.news = (await getNews(this.listQuery)).data.items;
-    // console.log(await getFanfictions(this.listQuery));
-    // console.log((await getFanfictions(this.listQuery)).data);
-    // console.log((await getFanfictions(this.listQuery)).data.items);
     this.fanfictions = (await getFanfictions(this.listQuery)).data.items;
-    // let { data } = await getFanfictions(this.listQuery);
-    // this.fanfictions = data.items;
-    // this.getNews();
-    // this.getFanfictions();
-    console.log(this.news.length);
-    console.log(this.fanfictions.length);
   }
 
+  beforeMount() {}
+
+  mouted() {}
+  //#endregion
+
+  //#region Methods
   private async getNews() {
     this.listLoading = true;
     try {
@@ -193,12 +186,7 @@ export default class extends Vue {
       this.listLoading = false;
     }
   }
-  beforeMount() {
-    console.log("beforemount");
-  }
-  mouted() {
-    console.log("mounted");
-  }
+  //#endregion
 }
 </script>
 
