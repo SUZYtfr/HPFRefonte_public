@@ -44,7 +44,7 @@
         custom-class="has-text-primary z-index-zero"
       >
         <b-slider
-          v-model="fanfictionFilters.words"
+          v-model="sliderWords"
           type="is-primary"
           class="px-4 pt-4 pb-3"
           :min="1"
@@ -230,12 +230,25 @@ export default class extends Vue {
   private filteredTags: ICharacteristic[] = [];
   private characteristics: ICharacteristic[] = [];
   private characteristics_types: ICharacteristicType[] = [];
+
+  private sliderWords: number[] = [1,6];
   //#endregion
 
   //#region Hooks
   async fetch() {
     // Récupération des caractéristiques
     await this.getCharacteristics();
+  }
+  //#endregion
+
+  //#region Watchers
+  @Watch("sliderWords")
+  private onSliderChanged() {
+    this.fanfictionFilters.minWords = this.sliderTicks[this.sliderWords[0] - 1].realValue;
+    this.fanfictionFilters.maxWords = this.sliderTicks[this.sliderWords[1] - 1].realValue;
+    // Valeurs min et max -> null
+    if(this.fanfictionFilters.minWords == 500) this.fanfictionFilters.minWords = null;
+    if(this.fanfictionFilters.maxWords == 100000) this.fanfictionFilters.maxWords = null;
   }
   //#endregion
 

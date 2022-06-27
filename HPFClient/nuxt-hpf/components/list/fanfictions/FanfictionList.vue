@@ -69,8 +69,8 @@
         :class="[{'card-footer-item': isCard}, 'py-2']"
         :total="fanfictions.length"
         v-model="fanfictionFilters.currentPage"
-        :range-before="rangeBefore"
-        :range-after="rangeAfter"
+        :range-before="3"
+        :range-after="1"
         :rounded="false"
         :per-page="fanfictionFilters.perPage"
         icon-prev="chevron-left"
@@ -101,17 +101,13 @@ export default class FanfictionList extends Vue {
   //#region Props
   @Prop({ default: true }) private isCard!: boolean;
   @Prop({ default: true }) private showRefreshButton!: boolean;
-  @Prop({ default: false }) private listLoading!: boolean;
+  @Prop({ default: false }) private isLoading!: boolean;
   @Prop() private fanfictionFilters!: FanfictionFiltersData;
   //#endregion
 
   //#region Data
   private fanfictions: FanfictionData[] = [];
   private timerId: number = 0;
-
-  // Pagination
-  private rangeBefore: number = 3;
-  private rangeAfter: number = 1;
   //#endregion
 
   //#region Computed
@@ -125,6 +121,14 @@ export default class FanfictionList extends Vue {
     result += this.fanfictions.length > 1 ? "s" : "";
     return result;
   }
+
+  get listLoading() {
+    return this.isLoading;
+  }
+
+  set listLoading(value) {
+    this.$emit("loadingChange", value);
+  }
   //#endregion
 
   //#region Watchers
@@ -133,10 +137,13 @@ export default class FanfictionList extends Vue {
     clearTimeout(this.timerId);
     this.timerId = window.setTimeout(this.getFanfictions, 500);
   }
+  //#endregion
 
-  @Watch("listLoading", { deep: true })
-  private onlistLoadingChanged() {
-    this.$emit("isLoading", this.listLoading);
+  //#region Hooks
+  mounted(){
+    // Déclenche une recherche à l'affichage
+    clearTimeout(this.timerId);
+    this.timerId = window.setTimeout(this.getFanfictions, 500);
   }
   //#endregion
 

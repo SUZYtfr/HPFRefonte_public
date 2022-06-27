@@ -42,3 +42,8 @@ export interface UserLoginData {
   username: string,
   password: string,
 }
+
+export interface AuthorData {
+  author_id: number,
+  nickname: string
+}

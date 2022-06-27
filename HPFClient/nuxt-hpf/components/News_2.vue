@@ -1,10 +1,17 @@
 <template>
-  <div class="news" v-bind:style="{ backgroundColor: activeColor }">
+  <div
+    :class="['news', 'px-3']"
+    v-bind:style="{ backgroundColor: activeColor }"
+  >
     <!-- Header -->
     <div class="columns is-vcentered is-mobile mb-1">
       <div class="column">
         <h3 class="h3 is-inline">
-          <a class="pl-0" href="viewstory.php?sid=37709">{{ news.title }}</a>
+          <NuxtLink
+            class="pl-0"
+            :to="{ name: 'actualités-id', params: { id: news.news_id } }"
+            >{{ news.title }}</NuxtLink
+          >
         </h3>
         <b-button
           class="news_comment_button"
@@ -35,13 +42,12 @@
           {{ news.post_date | parseTime }}
         </span>
         <span> par </span>
-        <span
-          class="has-text-weight-semibold"
-          v-for="author in news.authors"
-          v-bind:key="author.id"
-        >
-          {{ author.nickname }}
-        </span>
+        <template v-for="(author, index) in news.authors">
+          <template v-if="index > 0">,</template>
+          <span class="has-text-weight-semibold" v-bind:key="author.id">{{
+            author.nickname
+          }}</span>
+        </template>
       </div>
     </div>
   </div>
@@ -63,8 +69,10 @@ import { NewsData } from "@/api/news";
   },
 })
 export default class News_2 extends Vue {
+  //#region Props
   @Prop() private news!: NewsData;
   @Prop() private activeColor!: string;
+  //#endregion
 }
 </script>
 
@@ -82,6 +90,18 @@ hr {
   float: right;
 }
 .news {
+  //background-color: #ffffff;
   padding: 10px 5px 5px 5px;
+}
+
+.news-hover {
+  /*background-color: #f6f6f6 !important;
+  //border: 1px solid #f6f6f6 !important;
+  border-radius: 10px 10px 0px 0px !important;*/
+}
+
+.fanfiction {
+  /*background-color: #ffffff;
+  border-bottom: 2px solid $primary;*/
 }
 </style>

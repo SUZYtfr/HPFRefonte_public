@@ -39,18 +39,23 @@
       <div class="mr-3 white-space-nowrap">
         <template v-for="(author, index) in fanfiction.authors">
           <template v-if="index > 0">,</template>
-          <a
+          <NuxtLink
             class="is-size-7 has-text-weight-normal"
             v-bind:key="'author_' + author.author_id.toString()"
-            v-bind:href="'auteurs/' + author.author_id"
-            >{{ author.nickname }}
-          </a>
+            :to="{ name: 'auteurs-id', params: { id: author.author_id } }"
+            >{{ author.nickname }}</NuxtLink
+          >
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">
         <a
           v-for="characteristic in fanfiction.characteristics"
-          v-bind:key="'characteristic_' + characteristic.characteristic_id.toString()"
+          v-bind:key="
+            'ff_' +
+            fanfiction.fanfiction_id +
+            '_characteristic_' +
+            characteristic.characteristic_id.toString()
+          "
           v-bind:href="'auteurs/' + characteristic.characteristic_id"
           ><b-tag
             :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"

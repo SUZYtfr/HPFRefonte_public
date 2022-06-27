@@ -73,7 +73,7 @@ import {
 } from "@/types/characteristics";
 import { getCharacteristics } from "@/api/characteristics";
 import { FanfictionFiltersData } from "@/types/fanfictions";
-import FanfictionList from "~/components/FanfictionList.vue";
+import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 
 @Component({
   name: "Category",
@@ -107,7 +107,8 @@ export default class extends Vue {
     sortBy: "most_recent",
     multipleAuthors: null,
     status: null,
-    words: [1, 6],
+    minWords: null,
+    maxWords: null,
     includedTags: [],
     excludedTags: [],
     customTags: [],

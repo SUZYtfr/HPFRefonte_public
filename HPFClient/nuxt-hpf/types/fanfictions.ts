@@ -1,9 +1,11 @@
 import { ICharacteristic } from "./characteristics";
+import { AuthorData } from "./users";
+import { CommentData } from "./comments";
 
 export class FanfictionData {
   fanfiction_id: number | null = null;
-  last_update_date: number | null = null;
-  creation_date: number | null = null;
+  last_update_date: Date | null = null;
+  creation_date: Date | null = null;
   title: string | null = null;
   summary: string | null = null;
   authors: AuthorData[] | null = null;
@@ -25,7 +27,8 @@ export interface FanfictionFiltersData {
   sortBy: string,
   multipleAuthors: boolean | null,
   status: boolean | null,
-  words: number[],
+  minWords: number | null,
+  maxWords: number | null,
   includedTags: number[],
   excludedTags: number[],
   customTags: number[],
@@ -35,18 +38,6 @@ export interface FanfictionFiltersData {
   toDate: Date | null,
   currentPage: number,
   perPage: number,
-}
-
-interface AuthorData {
-  author_id: number,
-  nickname: string
-}
-
-interface CommentData {
-  comment_id: number,
-  post_date: Date,
-  content: string,
-  authors: AuthorData[],
 }
 
 interface SerieData {
