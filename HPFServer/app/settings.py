@@ -27,6 +27,11 @@ SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 DEBUG = os.getenv("DEBUG", "1") == "1"  # astuce pour "parser" un boolean d'.env
 
 ALLOWED_HOSTS = [os.getenv("SERVER_HOST", "*")]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+# ]
 
 
 # Application definition
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django_extensions",
+    "django_filters",
     "core",
     "users",
     "accounts",
@@ -48,7 +54,6 @@ INSTALLED_APPS = [
     "fictions",
     "colls",
     "reviews",
-    "texts",
     "polls",
     "selections",
     "news",
@@ -61,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -104,7 +110,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
+# TODO - créer un auto-field avec pk= {classname}_id
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'  # Django 3.2
 
 
@@ -167,8 +173,18 @@ STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 AUTH_USER_MODEL = 'users.User'
 
-# IDs hardcodées
-MODERATION_ACCOUNT_ID = 0
+# HARDCODAGE
+MODERATION_ACCOUNT = {
+    "pk": 0,
+    "nickname": "La modération",
+    "email": "moderation@hpf.fr",
+}
+ANONYMOUS_ACCOUNT = {
+    "pk": -1,
+    "nickname": "",
+    "email": "anonyme@hpf.fr",
+}
+
 BANNER_MAX_SIZE = (468, 60)  # (largeur, hauteur)
 MAX_POLL_ANSWERS = 5
 MEMBERS_MAX_REVIEW_DRAFTS = 2

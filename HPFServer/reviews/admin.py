@@ -31,5 +31,5 @@ class ReviewReplyAdminAccess(BaseAdminAccess):
     depend_on.short_description = "répond à"
 
 
-admin.site.register(Review, ReviewAdminAccess)
+# admin.site.register(Review, ReviewAdminAccess)
 admin.site.register(ReviewReply, ReviewReplyAdminAccess)

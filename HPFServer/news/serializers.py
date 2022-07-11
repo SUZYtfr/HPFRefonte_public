@@ -2,9 +2,32 @@ from rest_framework.serializers import CreateOnlyDefault, ModelSerializer
 
 from .models import NewsArticle, NewsComment
 
+from users.models import User
+from django.contrib.auth.models import Group
+
+class NewsAuthorSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "nickname",
+        ]
+
+
+class NewsTeamSerializer(ModelSerializer):
+    class Meta:
+        model = Group
+        fields = [
+            "id",
+            "name",
+        ]
+
 
 class NewsSerializer(ModelSerializer):
     """Sérialiseur d'actualité"""
+
+    authors = NewsAuthorSerializer(read_only=True, many=True)
+    teams = NewsTeamSerializer(read_only=True, many=True)
 
     class Meta:
         model = NewsArticle
@@ -21,6 +44,7 @@ class NewsSerializer(ModelSerializer):
             "creation_date",
             "modification_user",
             "modification_date",
+            "comments",
         )
         read_only_fields = (
             "authors",

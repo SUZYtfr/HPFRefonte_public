@@ -4,7 +4,6 @@ from django.urls import include
 
 from .views import FictionViewSet, ChapterViewSet
 
-
 app_name = "fictions"
 
 fiction_router = SimpleRouter()
@@ -13,7 +12,5 @@ chapter_router = SimpleRouter()
 chapter_router.register(r"", ChapterViewSet, basename="chapter")
 
 urlpatterns = [
-    path(
-        r"<fiction_pk>/chapters/", include(chapter_router.urls),
-    )
+    path(r"<fiction_pk>/chapters/", include(chapter_router.urls)),
 ] + fiction_router.urls

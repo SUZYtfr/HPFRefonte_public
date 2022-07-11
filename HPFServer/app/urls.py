@@ -8,7 +8,7 @@ urlpatterns = [
     path(r"api/", include([
         path(r"users/", include("users.urls", namespace="users")),
         path(r"fictions/", include("fictions.urls", namespace="fictions")),
-        path(r"collections/", include("colls.collections_urls", namespace="collections")),
+        path(r"collections/", include("colls.urls", namespace="collections")),
         path(r"features/", include("features.urls", namespace="features")),
         path(r"reviews/", include("reviews.urls", namespace="reviews")),
         path(r"polls/", include("polls.polls_urls", namespace="polls")),

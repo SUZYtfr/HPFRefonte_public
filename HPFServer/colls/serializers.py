@@ -1,29 +1,32 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework.serializers import *
+from rest_framework import serializers
+
+from core.serializers import ListableModelSerializer
 
 from .models import Collection
 from fictions.models import Chapter
+from users.serializers import UserCardSerializer
 
 
-class CollectionChapterOrderSerializer(ModelSerializer):
+class CollectionChapterOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
         fields = ("order",)
 
-    order = ListField(
-        child=IntegerField(),
+    order = serializers.ListField(
+        child=serializers.IntegerField(),
         write_only=True,
     )
 
     def validate_order(self, value):
 
         if not len(set(value)) == len(value):
-            raise ValidationError("Des ID de chapitres sont manquants ou en double.")
+            raise serializers.ValidationError("Des ID de chapitres sont manquants ou en double.")
 
         if not set(self.instance.chapters.values_list("pk", flat=True)) == set(value):
-            raise ValidationError("Les ID de chapitres passés ne correspondent pas aux ID existants.")
+            raise serializers.ValidationError("Les ID de chapitres passés ne correspondent pas aux ID existants.")
 
         return value
 
@@ -31,7 +34,7 @@ class CollectionChapterOrderSerializer(ModelSerializer):
         self.instance.set_work_order(self.validated_data["get_work_order"])
 
 
-class MyCollectionChapterChoiceRelatedField(PrimaryKeyRelatedField):
+class MyCollectionChapterChoiceRelatedField(serializers.PrimaryKeyRelatedField):
     """Champ de choix de chapitre pour le sérialiseur de série"""
 
     queryset = Chapter.objects.filter(validation_status=7).order_by("fiction", "_order")
@@ -47,17 +50,31 @@ class MyCollectionChapterChoiceRelatedField(PrimaryKeyRelatedField):
         return f"{instance.fiction.title[:25]} : {instance.title}"
 
 
-class CollectionSerializer(ModelSerializer):
+class CollectionCardSerializer(serializers.ModelSerializer):
+    """Sérialiseur de carte de série"""
+
+    class Meta:
+        model = Collection
+        fields = [
+            "id",
+            "title",
+        ]
+
+
+class CollectionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = [
+            "id",
+            "title",
+        ]
+
+
+class CollectionSerializer(ListableModelSerializer):
     """Sérialiseur de série"""
 
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:collections:object-review-list",
-        lookup_field="pk",
-        lookup_url_kwarg="object_pk",
-        read_only=True,
-    )
-
-    chapters = MyCollectionChapterChoiceRelatedField(many=True)
+    creation_user = UserCardSerializer(read_only=True)
+    modification_user = UserCardSerializer(read_only=True)
 
     class Meta:
         model = Collection
@@ -66,27 +83,16 @@ class CollectionSerializer(ModelSerializer):
             "title",
             "summary",
             "status",
+            "review_count",
+            "mean",
+            "fiction_count",
             "creation_user",
             "modification_user",
             "creation_date",
             "modification_date",
-            "authors",
-            "chapters",
-            "reviews_url",
         )
-        read_only_fields = (
-            "authors",
-        )
+        list_serializer_child_class = CollectionListSerializer
 
-
-class CollectionCardSerializer(CollectionSerializer):
-    """Sérialiseur de carte de série"""
-
-    class Meta(CollectionSerializer.Meta):
-        fields = (
-            "id",
-            "title",
-        )
 
     # TODO - Repenser ceci : peut-être ne pas obliger le passage de chapitres lors de la création
     # du modèle Collection ? Mais alors comment garantir l'ordonnement des chapitres si la méthode

@@ -117,7 +117,7 @@ class TestsUserModel(TestCase):
             bio=lorem.get_paragraph(),
             realname=lorem.get_word(),
             gender=User.UserGender.OTHER,
-            birthdate=timezone.now())
+        )
         fiction = sample_fiction(creation_user=user)
         chapter = sample_chapter(creation_user=user)
         review = sample_review(creation_user=user)

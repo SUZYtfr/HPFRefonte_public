@@ -8,8 +8,8 @@ class UserAdminAccess(UserAdmin):
     """Accès d'administration aux utilisateurs"""
 
     ordering = ("-id",)
-    list_display = ("id", "username", "creation_date", "is_active", "is_staff", "is_superuser", "mean",)
-    list_filter = ("creation_date", "is_active",)
+    list_display = ("id", "username", "is_active", "is_staff", "is_superuser",)
+    list_filter = ("is_active",)
     list_per_page = 20
     fieldsets = (
         ("Informations publiques", {"fields": ("nickname",
@@ -34,7 +34,7 @@ class UserAdminAccess(UserAdmin):
                          "fields": (("creation_date", "modification_date",),
                                     "last_login",)}),
     )
-    readonly_fields = ("creation_date", "modification_date", "last_login", "mean", "username",)
+    readonly_fields = ("last_login", "username",)
     search_fields = ("username",)
 
     # Par défaut, la page de création de nouvel utilisateur du panneau d'administration demande "username",

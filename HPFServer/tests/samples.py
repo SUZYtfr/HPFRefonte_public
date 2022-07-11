@@ -30,13 +30,12 @@ def random_date():
 
 # MODÈLES AUTO-GÉNÉRÉS
 
-def sample_user(nickname=None, email=None, password=None, birthdate=None,
+def sample_user(nickname=None, email=None, password=None,
                 **extra_fields):
     user = UserModel.objects.create_user(
         nickname=nickname or lorem.get_word(2),
         email=email or lorem.get_word() + "@" + lorem.get_word() + ".fr",
         password=password or "MotDePasse123",
-        birthdate=birthdate or random_date(),
         **extra_fields
     )
 

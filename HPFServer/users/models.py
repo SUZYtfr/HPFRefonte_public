@@ -1,48 +1,45 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.db import models
-from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from django.db import models, transaction
 from django.core.exceptions import ObjectDoesNotExist
 
-from core.models import DatedModel, ReviewableModel, FullCleanModel
+from core.models import DatedModel, get_user_deleted_sentinel
+from fictions.models import Fiction, Chapter, ChapterTextVersion
+from colls.models import Collection
 
 
-class ActiveUserManager(models.Manager):
-    """Gestionnaire d'utilisateurs actifs"""
-
-    def get_queryset(self):
-        return super().get_queryset().filter(is_active=True)
+class UserQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
 
 
 class UserManager(BaseUserManager):
     """Gestionnaire d'utilisateurs"""
 
-    def create_user(self, nickname, email, birthdate, password, **extra_fields):
+    @transaction.atomic
+    def create_user(self, nickname, email, password, **extra_fields):
         """Crée un utilisateur"""
 
         user = self.model(
             nickname=nickname,
             email=self.normalize_email(email),
-            birthdate=birthdate,
             is_active=True,
-            **extra_fields)
-
-        # Ceci est le moyen sûr de sauvegarder le mdp (cryptage)
+        )
         user.set_password(password)
-
         user.save()
+        UserProfile.objects.create(
+            pk=user.pk,  # TODO - est-ce une bonnée idée ?
+            **extra_fields,
+        )
+        UserPreferences.objects.create(
+            pk=user.pk,  # TODO - est-ce une bonnée idée ?
+        )
 
         return user
 
     def create_superuser(self, nickname, email, password, **extra_fields):
         """Crée un super utilisateur"""
-
-        if not nickname:
-            raise ValueError("Le pseudonyme est obligatoire.")
-        if not email:
-            raise ValueError("L'adresse e-mail est obligatoire.")
-        if not password:
-            raise ValueError("Le mot de passe est obligatoire.")
 
         superuser = self.model(
             nickname=nickname,
@@ -55,30 +52,28 @@ class UserManager(BaseUserManager):
 
         superuser.set_password(password)
 
-        superuser.save_base()  # Échappe le full_clean()
+        superuser.save_base()
 
         return superuser
 
     def create_anonymous_user(self, email, **extra_fields):
         """Crée un utilisateur anonyme"""
 
-        if not email:
-            raise ValueError("L'adresse e-mail est obligatoire.")
-
         anonymous_user = self.model(
             email=self.normalize_email(email),
             nickname=None,
-            password=None,
-            birthdate=None,
             is_active=False,
         )
-
-        anonymous_user.save_base()  # Échappe le full_clean()
+        anonymous_user.set_unusable_password()
+        anonymous_user.save()
 
         return anonymous_user
 
+    def active(self):
+        return UserQuerySet(self.model).active()
 
-class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
+
+class User(AbstractBaseUser, PermissionsMixin):
     """Modèle d'utilisateur"""
 
     class Meta:
@@ -87,63 +82,59 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
             ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
         ]
 
-    class UserGender(models.IntegerChoices):
-        UNDEFINED = (0, "Non renseigné")
-        FEMALE = (1, "Femme")
-        MALE = (2, "Homme")
-        OTHER = (3, "Autre")
-
-    # NOTE : nickname, password et birthdate laissé NULL pour les comptes anonymes
+    # NOTE : nickname laissé NULL pour les comptes anonymes
     # blank=False permet d'obliger l'UI à demander ces infos : seul le moteur peut créer des comptes anonymes
-    nickname = models.CharField(max_length=200, verbose_name="pseudonyme",
-                                unique=True, null=True, blank=False)
-    realname = models.CharField(max_length=200, verbose_name="nom",
-                                null=True, blank=True)
-    email = models.EmailField(max_length=200, verbose_name="adresse e-mail",
-                              unique=True)
-    password = models.CharField(max_length=128, verbose_name="mot de passe",
-                                null=True, blank=False)
-    birthdate = models.DateField(verbose_name="date de naissance",
-                                 null=True, blank=False)
-
-    # Champs et préférences par défaut ultérieurement modifiables par l'utilisateur
-    age_consent = models.BooleanField(verbose_name="accès au contenu +18 ans",
-                                      default=False)
-    bio = models.TextField(verbose_name="biographie",
-                           null=False, blank=True, default="")
-    gender = models.SmallIntegerField(verbose_name="genre",
-                                      null=True, blank=True,
-                                      choices=UserGender.choices)
-    user_pref_font = models.CharField(max_length=50, verbose_name="préférence de police d'écriture",
-                                      null=True, blank=True, default="Tahoma")
-    user_pref_font_size = models.SmallIntegerField(verbose_name="préférence de taille de police",
-                                                   null=True, blank=True, default=7.5)
-    user_pref_line_spacing = models.DecimalField(verbose_name="préférence de taille d'interligne",
-                                                 max_digits=3, decimal_places=2, default=1.0,
-                                                 null=True, blank=True)
-    user_pref_dark_mode = models.BooleanField(verbose_name="préférence de mode sombre",
-                                              null=True, blank=True)
-    user_pref_skin = models.CharField(max_length=50, verbose_name="préférence de thème",
-                                      null=False, blank=True, default="default")
-    user_pref_show_reaction = models.BooleanField(verbose_name="préférence d'affichage des réactions",
-                                                  null=False, default=True)
+    nickname = models.CharField(
+        max_length=200,
+        verbose_name="pseudonyme",
+        unique=True,
+        null=True,
+        blank=False,
+    )
+    email = models.EmailField(
+        max_length=200,
+        verbose_name="adresse e-mail",
+        unique=True,
+        blank=False,
+    )
+    password = models.CharField(
+        max_length=128,
+        verbose_name="mot de passe",
+        blank=False,
+        # editable=False,
+    )
 
     # Champs par défaut restreints modifiables par la modération
-    is_beta = models.BooleanField(verbose_name="bêta",
-                                  default=False)
-    is_active = models.BooleanField(verbose_name="actif",
-                                    default=True)
+    is_beta = models.BooleanField(
+        verbose_name="bêta",
+        default=False,
+    )
+    is_active = models.BooleanField(
+        verbose_name="actif",
+        default=True,
+    )
 
     # Champs par défaut restreints modifiables par l'administration
-    is_staff = models.BooleanField(verbose_name="modérateur",
-                                   default=False)
-    is_superuser = models.BooleanField(verbose_name="administrateur",
-                                       default=False)
-    last_login = models.DateTimeField(verbose_name="dernière connexion",
-                                      blank=True, null=True, editable=False)
+    is_staff = models.BooleanField(
+        verbose_name="modérateur",
+        default=False,
+    )
+    is_superuser = models.BooleanField(
+        verbose_name="administrateur",
+        default=False,
+    )
+    first_seen = models.DateTimeField(
+        verbose_name="première apparition",
+        null=True,
+        auto_now_add=True,
+    )
+    last_login = models.DateTimeField(
+        verbose_name="dernière connexion",
+        null=True,
+        editable=False,
+    )
 
     objects = UserManager()
-    active = ActiveUserManager()
 
     # Il faut définir "à la main" quel champ est utilisé comme identifiant
     # La définition du champ "email" n'est pas nécessaire, mais on n'est jamais trop prudent
@@ -162,60 +153,201 @@ class User(AbstractBaseUser, DatedModel, ReviewableModel, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    def remove_personal_information(self):
-        """Supprime les informations personnelles de l'utilisateur"""
-        self.nickname = None
-        self.bio = ""
-        self.birthdate = None
-        self.gender = self.UserGender.UNDEFINED
-        self.user_links.all().delete()
-        try:
-            self.banner.delete()
-        except ObjectDoesNotExist:
-            pass
-        self.save_base()
+    @property
+    def read_count(self):
+        return sum(self.created_chapters.filter(
+            validation_status=Chapter.ChapterValidationStage.PUBLISHED,
+            read_count__isnull=False,
+        ).values_list("read_count", flat=True))
 
-    def delete_reviews(self):
-        """Supprime les reviews de l'utilisateur"""
-        for review in self.created_reviews.all():
-            review.delete()
+    @property
+    def word_count(self):
+        last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
+        word_count = models.Subquery(last_version.values('word_count')[:1])
+        return sum(self.created_chapters.annotate(
+            word_count=word_count
+        ).filter(
+            word_count__isnull=False,
+        ).values_list("word_count", flat=True))
 
-    def remove_authoring(self, anonymise=False):
-        """Supprime l'autorat de l'utilisateur sur ses fictions
+    @transaction.atomic
+    def ban(self, anonymise=False, keep_reviews=False):
+        """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
 
-        Les fictions dont l'utilisateur est le seul auteur sont supprimées si indiqué."""
+        if not keep_reviews:
+            for review in self.created_reviews.all():
+                review.delete()
+
         for fiction in self.authored_fictions.all():
             fiction.authors.remove(self)
             if not anonymise and fiction.authors.count() == 0:
                 fiction.delete()
 
-    def ban(self, anonymise=False, keep_reviews=False):
-        """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
+        try:
+            self.banner.delete()
+        except ObjectDoesNotExist:
+            pass
 
-        self.remove_personal_information()
-        if not keep_reviews:
-            self.delete_reviews()
-        self.remove_authoring(anonymise=anonymise)
+        self.profile.delete()
+        self.preferences.delete()
+
         self.groups.clear()  # Supprime de tous les groupes / équipes
         self.is_staff = False
         self.is_superuser = False
+        self.nickname = None
+
         self.is_active = False
-        self.modification_date = timezone.now()
-        self.save_base()
+        self.set_unusable_password()
 
-    def save(self, *args, **kwargs):
-        if not self.is_superuser and not self.is_anonymous:
-            self.full_clean()
-        super().save_base(*args, **kwargs)
+        self.save()
 
 
-class UserLink(FullCleanModel):
+class UserProfile(DatedModel):
+    class UserGender(models.IntegerChoices):
+        UNDEFINED = (0, "Non renseigné")
+        FEMALE = (1, "Femme")
+        MALE = (2, "Homme")
+        OTHER = (3, "Autre")
+
+    user = models.OneToOneField(
+        to=User,
+        on_delete=models.CASCADE,
+        verbose_name="utilisateur",
+        related_name="profile",
+        primary_key=True,
+        editable=False,
+    )
+    modification_user = models.ForeignKey(
+        to=User,
+        verbose_name="modificateur",
+        # related_name="modified_%(class)ss",
+        related_name="+",
+        on_delete=models.SET(get_user_deleted_sentinel),
+        null=True,
+        editable=False,
+    )
+    realname = models.CharField(
+        max_length=200,
+        verbose_name="nom",
+        null=True,
+        blank=True,
+    )
+    birthdate = models.DateField(
+        verbose_name="date de naissance",
+        null=True,
+        blank=True,
+    )
+    bio = models.TextField(
+        verbose_name="biographie",
+        null=False,
+        blank=True,
+        default="",
+    )
+    gender = models.SmallIntegerField(
+        verbose_name="genre",
+        choices=UserGender.choices,
+        default=UserGender.UNDEFINED,
+    )
+
+    class Meta:
+        verbose_name = "profil"
+
+
+class UserPreferences(models.Model):
+    class ReviewPolicyChoices(models.IntegerChoices):
+        OFF = 0, "désactivé"
+        WRITE_TEXT = 1, "écriture de review"
+        SEE_TEXT = 2, "affichage de texte"  # + écriture
+        WRITE_GRADING = 3, "notation de review"  # + écriture et visibilité
+        SEE_GRADING = 4, "affichage de notation"  # + écriture et visibilité et notation
+
+    user = models.OneToOneField(
+        to=User,
+        on_delete=models.CASCADE,
+        verbose_name="utilisateur",
+        related_name="preferences",
+        primary_key=True,
+    )
+    age_consent = models.BooleanField(
+        verbose_name="accès au contenu +18 ans",
+        default=False,
+    )
+    font = models.CharField(
+        max_length=50,
+        verbose_name="police d'écriture",
+        null=True,
+        blank=True,
+        default="Tahoma",
+    )
+    font_size = models.SmallIntegerField(
+        verbose_name="taille de police",
+        null=True,
+        blank=True,
+        default=7.5,
+    )
+    line_spacing = models.DecimalField(
+        verbose_name="taille d'interligne",
+        max_digits=3,
+        decimal_places=2,
+        default=1.0,
+        null=True,
+        blank=True,
+    )
+    dark_mode = models.BooleanField(
+        verbose_name="mode sombre",
+        null=True,
+        blank=True,
+    )
+    skin = models.CharField(
+        max_length=50,
+        verbose_name="thème",
+        null=False,
+        blank=True,
+        default="default",
+    )
+    show_reaction = models.BooleanField(
+        verbose_name="affichage des réactions",
+        null=False,
+        default=True,
+    )
+    member_review_policy = models.SmallIntegerField(
+        verbose_name="droits des membres",
+        choices=ReviewPolicyChoices.choices,
+        default=ReviewPolicyChoices.SEE_GRADING,
+    )
+    anonymous_review_policy = models.SmallIntegerField(
+        verbose_name="droits des visiteurs",
+        choices=ReviewPolicyChoices.choices,
+        default=ReviewPolicyChoices.SEE_TEXT,
+    )
+
+    class Meta:
+        verbose_name = "préférences d'utilisateur"
+        verbose_name_plural = "préférences d'utilisateurs"
+        constraints = [
+            models.CheckConstraint(
+                name="CK_users_userpreferences_anonymous_review_policy_lte_member_review_policy",
+                check=models.Q(anonymous_review_policy__lte=models.F("member_review_policy")),
+            ),
+        ]
+
+
+class UserLink(models.Model):
     """Modèle de lien de profil d'utilisateur"""
 
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user_links",
-                             verbose_name="utilisateur")
-    url = models.URLField(verbose_name="URL")
-    display_text = models.CharField(max_length=50, verbose_name="texte du lien")
+    user = models.ForeignKey(
+        to=UserProfile,
+        on_delete=models.CASCADE,
+        related_name="user_links",
+        verbose_name="utilisateur",
+    )
+    url = models.URLField(
+        verbose_name="URL",
+    )
+    display_text = models.CharField(
+        max_length=50,
+        verbose_name="texte du lien",
+    )
 
     class Meta:
         verbose_name = "lien externe"

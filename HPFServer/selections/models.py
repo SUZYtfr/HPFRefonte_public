@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models import DatedModel, CreatedModel, FullCleanModel
+from core.models import DatedModel, CreatedModel
 
 from polls.models import PollGroup, PollQuestion, PollAnswer
 from fictions.models import Fiction

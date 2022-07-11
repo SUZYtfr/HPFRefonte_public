@@ -1,9 +1,7 @@
-from django.utils import timezone
-
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from .serializers import *
+from .serializers import AccountCreationSerializer, AccountManagementSerializer
 
 
 class AccountCreationView(CreateAPIView):
@@ -11,9 +9,6 @@ class AccountCreationView(CreateAPIView):
 
     serializer_class = AccountCreationSerializer
     permission_classes = [AllowAny]
-
-    # def perform_create(self, serializer):
-    #     serializer.save(creation_date=timezone.now())
 
 
 class AccountManagementView(RetrieveUpdateDestroyAPIView):
@@ -26,4 +21,4 @@ class AccountManagementView(RetrieveUpdateDestroyAPIView):
         return self.request.user
 
     def perform_update(self, serializer):
-        serializer.save(modification_time=timezone.now())
+        serializer.save(modification_user=self.request.user)

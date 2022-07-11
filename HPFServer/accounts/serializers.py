@@ -1,10 +1,24 @@
 from rest_framework.serializers import ModelSerializer
 
-from users.models import User
+from users.models import User, UserProfile
+from users.serializers import UserPreferencesSerializer
+
+
+class ProfileSerializer(ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = [
+            "bio",
+            "realname",
+            "birthdate",
+            "gender",
+        ]
 
 
 class AccountCreationSerializer(ModelSerializer):
     """Sérialiseur de création de compte utilisateur"""
+
+    profile = ProfileSerializer(required=False)
 
     class Meta:
         model = User
@@ -13,12 +27,7 @@ class AccountCreationSerializer(ModelSerializer):
             "nickname",
             "email",
             "password",
-            "birthdate",
-            "age_consent",
-            "bio",
-            "gender",
-            "creation_date",
-            "modification_date",
+            "profile",
         ]
         extra_kwargs = {
             "password": {
@@ -26,46 +35,36 @@ class AccountCreationSerializer(ModelSerializer):
                 "allow_null": False,
                 "min_length": 8,
                 "max_length": 20,
-            }
+            },
         }
 
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = self.Meta.model.objects.create_user(**validated_data, password=None)
-        user.set_password(password)
+        profile_validated_data = validated_data.pop("profile", {})
+        user = self.Meta.model.objects.create_user(**validated_data, **profile_validated_data)
         return user
 
 
 class AccountManagementSerializer(ModelSerializer):
     """Sérialiseur de gestion de compte utilisateur"""
 
+    profile = ProfileSerializer(required=False)
+    preferences = UserPreferencesSerializer(required=False)
+
     class Meta:
         model = User
         fields = [
-            "id",
             "nickname",
             "password",
             "email",
-            "birthdate",
-            "age_consent",
-            "bio",
-            "gender",
-            "creation_date",
-            "user_pref_font",
-            "user_pref_font_size",
-            "user_pref_line_spacing",
-            "user_pref_dark_mode",
-            "user_pref_skin",
-            "user_pref_show_reaction",
-            "modification_date",
             "last_login",
             "is_active",
+            "profile",
+            "preferences",
         ]
         read_only_fields = [
             "nickname",
             "last_login",
             "is_active",
-            "mean",
             "banner",
         ]
         extra_kwargs = {
@@ -78,9 +77,15 @@ class AccountManagementSerializer(ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
+        modification_user = validated_data.get("modification_user")
 
-        if password:
+        if password := validated_data.pop("password", None):
             instance.set_password(password)
+
+        if profile_validated_data := validated_data.pop("profile", None):
+            profile_validated_data["modification_user"] = modification_user
+            super().update(instance.profile, profile_validated_data)
+        if preferences_validated_data := validated_data.pop("preferences", None):
+            super().update(instance.preferences, preferences_validated_data)
 
         return super().update(instance, validated_data)
