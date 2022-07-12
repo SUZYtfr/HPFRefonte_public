@@ -188,12 +188,12 @@
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span style="margin-left: 5px">SUZYftr</span>
+                  <span style="margin-left: 5px">{{ userNickname }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'"> </b-icon>
                 </button>
               </template>
               <b-dropdown-item aria-role="listitem">Mon compte</b-dropdown-item>
-              <b-dropdown-item aria-role="listitem"
+              <b-dropdown-item aria-role="listitem" @click="logout"
                 >Se déconnecter</b-dropdown-item
               >
             </b-dropdown>
@@ -239,7 +239,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from "@/utils/store-accessor";
+import { UserModule } from "@/store";
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
@@ -261,9 +261,17 @@ export default class extends Vue {
 
   //#region Computed
   get ConnectedVisibility() {
-    return UserModule.token.length > 0;
+    return this.$auth.loggedIn
+  }
+  get userNickname() {
+    return this.$auth.user.nickname
   }
   //#endregion
+
+  private async logout() {
+    await this.$auth.logout()
+  }
+
 }
 </script>
 

@@ -29,6 +29,7 @@ const config: NuxtConfig = {
   loading: { color: '#0c64c1' },
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
     ['nuxt-buefy', {
       css: false,
       materialDesignIcons: false,
@@ -52,6 +53,44 @@ const config: NuxtConfig = {
   axios: {
     baseURL: process.env.VUE_APP_BASE_API, // Used as fallback if no runtime config is provided,
     credentials: true
+  },
+  auth: {
+    strategies: {
+      local: false,
+      cookie: {
+        scheme: 'refresh',
+        token: {
+          property: 'access',
+          maxAge: 30,
+          global: true,
+          type: 'Bearer'
+        },
+        refreshToken: {
+          property: 'refresh',
+          data: 'refresh',
+          maxAge: 60 * 60 * 24 * 30
+        },
+        endpoints: {
+          login: { url: '/account/token/', method: 'post' },
+          refresh: { url: '/account/refresh/', method: 'post' },
+          logout: false,
+          user: { url: '/account/profile/', method: 'get' },
+        },
+        user: {
+          property: false,
+        },
+        options: {
+//           à activer en production
+//           secure: true
+        }
+      }
+    },
+    redirect: {
+      login: false,
+      logout: false,
+      callback: false,
+      home: false
+    },
   }
 }
 

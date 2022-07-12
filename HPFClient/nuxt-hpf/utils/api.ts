@@ -1,30 +1,31 @@
 import { NuxtAxiosInstance } from '@nuxtjs/axios'
 //import { Message, MessageBox } from 'element-ui'
 import { UserModule } from '@/utils/store-accessor'
+import qs from 'qs'
 
 let $axios: NuxtAxiosInstance
 
 export function initializeAxios(axiosInstance: NuxtAxiosInstance) {
     $axios = axiosInstance
     $axios.create({
-        baseURL: "http://localhost:8585",
+        baseURL: "http://127.0.0.1:8000/api/",
         timeout: 5000,
         withCredentials: false,
     })
     
     // Request interceptors
-    $axios.interceptors.request.use(
-        (config) => {
-            // Add X-Access-Token header to every request, you can add other custom headers here
-            if (UserModule.token) {
-                config.headers['X-Access-Token'] = UserModule.token
-            }
-            return config
-        },
-        (error) => {
-            Promise.reject(error)
-        }
-    )
+//     $axios.interceptors.request.use(
+//         (config) => {
+//             // Add X-Access-Token header to every request, you can add other custom headers here
+//             if (UserModule.token) {
+//                 config.headers['X-Access-Token'] = UserModule.token
+//             }
+//             return config
+//         },
+//         (error) => {
+//             Promise.reject(error)
+//         }
+//     )
 
     // Response interceptors
     $axios.interceptors.response.use(
@@ -61,7 +62,7 @@ export function initializeAxios(axiosInstance: NuxtAxiosInstance) {
             //   return Promise.reject(new Error(res.message || 'Error'))
             // } else {
             //return response.data
-            return response.data
+            return response
             //}
         },
         (error) => {
@@ -73,6 +74,10 @@ export function initializeAxios(axiosInstance: NuxtAxiosInstance) {
             return Promise.reject(error)
         }
     )
+
+    $axios.defaults.paramsSerializer = function (params: any) {
+        return qs.stringify(params, {arrayFormat: 'repeat'})
+    }
 }
 
 export { $axios }
