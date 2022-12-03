@@ -7,7 +7,7 @@ from core.models import DatedModel, CreatedModel, AuthoredModel, FeaturedModel
 class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
     """Modèle de série"""
 
-    class CollectionAccess(models.IntegerChoices):
+    class Access(models.IntegerChoices):
         CLOSED = (1, "Fermée")
         MODERATED = (2, "Modérée")
         OPEN = (3, "Ouverte")
@@ -21,8 +21,8 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
     )
     status = models.SmallIntegerField(
         verbose_name="état",
-        choices=CollectionAccess.choices,
-        default=CollectionAccess.CLOSED,
+        choices=Access.choices,
+        default=Access.CLOSED,
     )
     parent = models.ForeignKey(
         verbose_name="série parente",

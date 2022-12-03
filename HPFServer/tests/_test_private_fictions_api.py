@@ -35,7 +35,7 @@ class TestsMyFictionsAPI(APITestCase):
         # Fiction publiée
         cls.published_fiction = sample_fiction(creation_user=cls.author)
         cls.validated_chapter = sample_chapter(creation_user=cls.author, fiction=cls.published_fiction,
-                                               validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+                                               validation_status=Chapter.ValidationStage.PUBLISHED)
 
         # Crée une liste d'ID dont le nombre correspond au minimum pour chaque catégorie de caractéristique
         cls.features_id_list = [sample_feature(creation_user=category.creation_user, category=category).id

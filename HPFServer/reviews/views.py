@@ -38,11 +38,11 @@ class ChapterReviewViewSet(ReviewViewSet):
             return super().get_queryset()
         if self.request.user.is_authenticated:
             return ChapterReview.objects.filter(
-                chapter__creation_user__preferences__member_review_policy__gte=UserPreferences.ReviewPolicyChoices.SEE_TEXT,
+                chapter__creation_user__preferences__member_review_policy__gte=UserPreferences.ReviewPolicy.SEE_TEXT,
             ).order_by("-creation_date")
         elif self.request.user.is_anonymous:
             return ChapterReview.objects.filter(
-                chapter__creation_user__preferences__anonymous_review_policy__gte=UserPreferences.ReviewPolicyChoices.SEE_TEXT,
+                chapter__creation_user__preferences__anonymous_review_policy__gte=UserPreferences.ReviewPolicy.SEE_TEXT,
             )
 
 
@@ -56,11 +56,11 @@ class FictionReviewViewSet(ReviewViewSet):
             return super().get_queryset()
         if self.request.user.is_authenticated:
             return FictionReview.objects.filter(
-                fiction__creation_user__preferences__member_review_policy__gte=UserPreferences.ReviewPolicyChoices.SEE_TEXT,
+                fiction__creation_user__preferences__member_review_policy__gte=UserPreferences.ReviewPolicy.SEE_TEXT,
             ).order_by("-creation_date")
         elif self.request.user.is_anonymous:
             return FictionReview.objects.filter(
-                fiction__creation_user__preferences__anonymous_review_policy__gte=UserPreferences.ReviewPolicyChoices.SEE_TEXT,
+                fiction__creation_user__preferences__anonymous_review_policy__gte=UserPreferences.ReviewPolicy.SEE_TEXT,
             )
 
 

@@ -12,7 +12,7 @@ class NewsViewSet(ModelViewSet):
     """Ensemble de vues d'actualités"""
 
     permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
-    queryset = NewsArticle.objects.filter(status=NewsArticle.NewsStatus.PUBLISHED).order_by("-post_date")
+    queryset = NewsArticle.objects.filter(status=NewsArticle.Status.PUBLISHED).order_by("-post_date")
     serializer_class = NewsSerializer
 
     def get_queryset(self):
@@ -42,7 +42,7 @@ class NewsCommentViewSet(ModelViewSet):
         else:
             return self.queryset.filter(
                 newsarticle_id=self.kwargs["news_pk"],
-                newsarticle__status=NewsArticle.NewsStatus.PUBLISHED
+                newsarticle__status=NewsArticle.Status.PUBLISHED
             )
 
     def perform_create(self, serializer):

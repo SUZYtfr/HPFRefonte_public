@@ -206,8 +206,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
 
 
-class UserProfile(DatedModel):
-    class UserGender(models.IntegerChoices):
+class UserProfile(DatedModel):  # TODO - renverser le O2O
+    class Gender(models.IntegerChoices):
         UNDEFINED = (0, "Non renseigné")
         FEMALE = (1, "Femme")
         MALE = (2, "Homme")
@@ -249,16 +249,17 @@ class UserProfile(DatedModel):
     )
     gender = models.SmallIntegerField(
         verbose_name="genre",
-        choices=UserGender.choices,
-        default=UserGender.UNDEFINED,
+        choices=Gender.choices,
+        default=Gender.UNDEFINED,
+        blank=True,
     )
 
     class Meta:
         verbose_name = "profil"
 
 
-class UserPreferences(models.Model):
-    class ReviewPolicyChoices(models.IntegerChoices):
+class UserPreferences(models.Model):  # TODO - renverser le O2O
+    class ReviewPolicy(models.IntegerChoices):
         OFF = 0, "désactivé"
         WRITE_TEXT = 1, "écriture de review"
         SEE_TEXT = 2, "affichage de texte"  # + écriture
@@ -316,13 +317,13 @@ class UserPreferences(models.Model):
     )
     member_review_policy = models.SmallIntegerField(
         verbose_name="droits des membres",
-        choices=ReviewPolicyChoices.choices,
-        default=ReviewPolicyChoices.SEE_GRADING,
+        choices=ReviewPolicy.choices,
+        default=ReviewPolicy.SEE_GRADING,
     )
     anonymous_review_policy = models.SmallIntegerField(
         verbose_name="droits des visiteurs",
-        choices=ReviewPolicyChoices.choices,
-        default=ReviewPolicyChoices.SEE_TEXT,
+        choices=ReviewPolicy.choices,
+        default=ReviewPolicy.SEE_TEXT,
     )
 
     class Meta:

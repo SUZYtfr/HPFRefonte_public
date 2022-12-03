@@ -54,7 +54,7 @@ class FeatureQuerySet(models.QuerySet):
     def fiction_counts(self):
         fiction_count = models.Count(
             "fiction",
-            models.Q(fiction__chapters__validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            models.Q(fiction__chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
         )
         return self.annotate(fiction_count=fiction_count)
 

@@ -64,7 +64,7 @@ class Banner(BaseImage):
 
     upload_folder = "banners"
 
-    class BannerType(models.IntegerChoices):
+    class Type(models.IntegerChoices):
         WEBSITE = (1, "Bannière du site")
         PARTNER = (2, "Bannière de partenaire")
         EVENT = (3, "Bannière événementielle")
@@ -73,7 +73,7 @@ class Banner(BaseImage):
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                 null=True, blank=True, editable=False,
                                 verbose_name="utilisateur")
-    category = models.SmallIntegerField(choices=BannerType.choices,
+    category = models.SmallIntegerField(choices=Type.choices,
                                         verbose_name="catégorie")
     is_active = models.BooleanField(default=True,
                                     verbose_name="bannière active")

@@ -177,7 +177,7 @@ class TestsFictionModel(TestCase):
         validated_chapter_1 = sample_chapter(
             creation_user=self.author,
             fiction=fiction,
-            validation_status=Chapter.ChapterValidationStage.PUBLISHED,
+            validation_status=Chapter.ValidationStage.PUBLISHED,
         )
         validated_chapter_1.create_text_version(
             creation_user=self.author,
@@ -186,7 +186,7 @@ class TestsFictionModel(TestCase):
         unvalidated_chapter_2 = sample_chapter(
             creation_user=self.author,
             fiction=fiction,
-            validation_status=Chapter.ChapterValidationStage.DRAFT,
+            validation_status=Chapter.ValidationStage.DRAFT,
         )
         unvalidated_chapter_2.create_text_version(
             creation_user=self.author,
@@ -195,7 +195,7 @@ class TestsFictionModel(TestCase):
         validated_chapter_3 = sample_chapter(
             creation_user=self.author,
             fiction=fiction,
-            validation_status=Chapter.ChapterValidationStage.PUBLISHED,
+            validation_status=Chapter.ValidationStage.PUBLISHED,
         )
         validated_chapter_3.create_text_version(
             creation_user=self.author,
@@ -408,7 +408,7 @@ class TestsBannerModel(TestCase):
 
         banner = Banner.objects.create(
             creation_user=self.user,
-            category=Banner.BannerType.WEBSITE,
+            category=Banner.Type.WEBSITE,
             src_path=self.valid_banner_image,
         )
         file_path = Path(banner.src_path.path)
