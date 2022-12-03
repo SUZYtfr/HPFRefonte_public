@@ -159,20 +159,46 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def read_count(self):
-        return sum(self.created_chapters.filter(
-            validation_status=Chapter.ChapterValidationStage.PUBLISHED,
-            read_count__isnull=False,
-        ).values_list("read_count", flat=True))
+        return (
+            self.created_chapters
+            .published()
+            .aggregate(models.Sum("read_count"))["read_count__sum"]
+        ) or 0
 
     @property
     def word_count(self):
         last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
         word_count = models.Subquery(last_version.values('word_count')[:1])
-        return sum(self.created_chapters.annotate(
-            word_count=word_count
-        ).filter(
-            word_count__isnull=False,
-        ).values_list("word_count", flat=True))
+        return (
+            self.created_chapters
+            .published()
+            .annotate(word_count=word_count)
+            .aggregate(models.Sum("word_count"))["word_count__sum"]
+        ) or 0
+
+    @property
+    def fiction_count(self):
+        return self.created_fictions.published().count()
+
+    @property
+    def chapter_count(self):
+        return self.created_chapters.published().count()
+
+    @property
+    def review_count(self):
+        return self.created_reviews.filter(draft=False).count()
+
+    @property
+    def comment_count(self):
+        return self.created_newscomments.count()
+
+    @property
+    def collection_count(self):
+        return self.created_collections.count()
+
+    @property
+    def review_reply_count(self):
+        return self.created_reviewreplys.count()
 
     @transaction.atomic
     def ban(self, anonymise=False, keep_reviews=False):

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.conf import settings
+
 from .models import User, UserProfile, UserPreferences, UserLink
 from core.serializers import ListableModelSerializer
 
@@ -9,26 +11,28 @@ from random import randint
 class UserStatsSerializer(serializers.ModelSerializer):
     """Sérialiseur de statistiques d'utilisateur"""
 
-    fiction_count = serializers.IntegerField(read_only=True, source="created_fictions.count")
-    chapter_count = serializers.IntegerField(read_only=True, source="created_chapters.count")
-    review_count = serializers.IntegerField(read_only=True, source="created_reviews.count")
-    comment_count = serializers.IntegerField(read_only=True, source="created_comments.count")
-    collection_count = serializers.IntegerField(read_only=True, source="created_collections.count")
-    reviewreply_count = serializers.IntegerField(read_only=True, source="created_reviewreplys.count")
-    # TODO - brouillons restants ?
+    review_drafts_left = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "fiction_count",
             "chapter_count",
+            "collection_count",
             "review_count",
             "read_count",
             "word_count",
             "comment_count",
-            "collection_count",
-            "reviewreply_count",
+            "review_reply_count",
+            "review_drafts_left",
         ]
+
+    def get_review_drafts_left(self, obj):
+        if obj.has_perm("reviews.extra_review_drafts"):
+            base_drafts = settings.PREMIUM_MAX_REVIEW_DRAFTS
+        else:
+            base_drafts = settings.MEMBERS_MAX_REVIEW_DRAFTS
+        return base_drafts - obj.created_reviews.filter(draft=True).count()
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
