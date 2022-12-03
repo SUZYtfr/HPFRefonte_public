@@ -7,7 +7,6 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 django-extensions = "*"
-python-lorem = "*"
 django-sortedm2m = "*"
 django-ordered-model = "*"
 djangorestframework-simplejwt = "*"
@@ -17,8 +16,14 @@ docx2python = "*"
 lxml = "*"
 odfpy = "*"
 gunicorn = "*"
+django-filter = "*"
+django-cors-headers = "*"
 
 [dev-packages]
+python-lorem = "*"
+faker = "*"
+requests = "*"
+drf-spectacular = "*"
 
 [requires]
 python_version = "3.9"

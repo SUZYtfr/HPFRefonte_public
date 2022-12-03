@@ -1,13 +1,15 @@
-from users.models import User as UserModel
-from features.models import Feature as FeatureModel, Category as CategoryModel
-from fictions.models import Fiction as FictionModel, Chapter as ChapterModel
-from colls.models import Collection as CollectionModel
-from reviews.models import Review as ReviewModel
-from polls.models import PollGroup as PollGroupModel, PollQuestion as PollQuestionModel, PollAnswer as PollAnswerModel
-from news.models import NewsArticle as NewsArticleModel, NewsComment
+from users.models import User 
+from features.models import Feature, Category
+from fictions.models import Fiction, Chapter
+from colls.models import Collection 
+from reviews.models import Review 
+from polls.models import PollGroup, PollQuestion, PollAnswer
+from news.models import NewsArticle, NewsComment
 
-# Trouver mieux que lorem, malheureusement django-autofixture n'est plus compatible
-# Lorem risque de donner deux fois le même nickname par exemple...
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
+
+import faker
 import lorem
 import time
 import datetime
@@ -15,10 +17,12 @@ import random
 
 from django.conf import settings
 
+french_faker = faker.Faker("fr_FR")
+
 
 def random_category():
-    if CategoryModel.objects.count() > 0:
-        return random.choices(list(CategoryModel.objects.all()))[0]
+    if Category.objects.count() > 0:
+        return random.choices(list(Category.objects.all()))[0]
     else:
         return sample_category()
 
@@ -28,33 +32,63 @@ def random_date():
     return datetime.datetime.fromtimestamp(d).strftime('%Y-%m-%d')
 
 
+def get_random_user():
+    return User.objects.exclude(pk=0).order_by("?").first()
+
+
 # MODÈLES AUTO-GÉNÉRÉS
 
-def sample_user(nickname=None, email=None, password=None,
-                **extra_fields):
-    user = UserModel.objects.create_user(
-        nickname=nickname or lorem.get_word(2),
-        email=email or lorem.get_word() + "@" + lorem.get_word() + ".fr",
-        password=password or "MotDePasse123",
-        **extra_fields
+def sample_user(**kwargs):
+    user = User.objects.create_user(
+        nickname=kwargs.pop("nickname", None) or french_faker.user_name(),
+        email=kwargs.pop("email", None) or french_faker.email(safe=True),
+        password=kwargs.pop("password", None) or make_password(None),  # mot de passe inutilisable
+        realname=kwargs.pop("realname", None) or french_faker.name(),
+        birthdate=kwargs.pop("birthdate", None) or french_faker.date_of_birth(),
+        bio=kwargs.pop("bio", None) or french_faker.paragraph(3),
+        gender=kwargs.pop("gender", None) or french_faker.random_int(min=0, max=3),
     )
-
     return user
 
 
-def sample_chapter():
-    pass
+def sample_fiction(generate_chapters=None, **kwargs):
+    with transaction.atomic():
+        fiction = Fiction.objects.create(
+            creation_user=kwargs.pop("creation_user", None) or get_random_user(),
+            title=kwargs.pop("title", None) or french_faker.sentence(),
+            summary=kwargs.pop("summary", None) or french_faker.paragraph(10),
+            storynote=kwargs.pop("storynote", None) or french_faker.paragraph(10),
+            status=kwargs.pop("status", None) or french_faker.random_int(1, 4),
+            featured=kwargs.pop("featured", None) or french_faker.boolean(),
+            **kwargs,
+        )
 
+        random_features = []
 
-def sample_fiction(creation_user=None, title=None, generate_chapters=0, **extra_fields):
-    fiction = FictionModel.objects.create(
-        creation_user=creation_user or sample_user(),
-        title=lorem.get_sentence() if title is None else title,
-        **extra_fields
-    )
+        for category in Category.objects.all():
+            min_limit = category.min_limit
+            max_limit = category.max_limit or 5
+            random_category_features = set()
+            while len(random_category_features) < french_faker.random_int(min_limit, max_limit):
+                random_category_features.add(category.features.filter(is_forbidden=False).order_by("?").first())
+            random_features.extend(random_category_features)
 
-    [sample_chapter(creation_user=creation_user, fiction=fiction) for x in range(generate_chapters)]
+        fiction.features.set(random_features)
 
+        for i in range(1, generate_chapters or french_faker.random_int(1, 5)):
+            chapter = Chapter.objects.create(
+                creation_user=fiction.creation_user,
+                fiction=fiction,
+                title=french_faker.sentence(),
+                startnote=french_faker.paragraph(10),
+                endnote=french_faker.paragraph(10),
+                validation_status=Chapter.ValidationStage.PUBLISHED,
+            )
+            chapter.create_text_version(
+                creation_user=chapter.creation_user,
+                text=french_faker.paragraph(100),
+                touch=False,
+            )
     return fiction
 
 
@@ -64,7 +98,7 @@ def sample_chapter(creation_user=None, title=None, fiction=None, text=None,
         creation_user = sample_user()
     if not fiction:
         fiction = sample_fiction(creation_user=creation_user)
-    chapter = ChapterModel.objects.create(
+    chapter = Chapter.objects.create(
         creation_user=creation_user,
         title=lorem.get_sentence() if title is None else title,
         fiction=fiction,
@@ -78,7 +112,7 @@ def sample_chapter(creation_user=None, title=None, fiction=None, text=None,
 def sample_collection(creation_user=None, title=None, summary=None,
                       **extra_fields):
     creation_user = creation_user or sample_user()
-    collection = CollectionModel.objects.create(
+    collection = Collection.objects.create(
         creation_user=creation_user,
         title=lorem.get_sentence() if title is None else title,
         summary=lorem.get_paragraph() if summary is None else summary,
@@ -97,8 +131,8 @@ def sample_category(creation_user=None, name=None, min_limit=None, max_limit=Non
     elif max_limit:
         min_limit = random.randint(0, max_limit)
 
-    category = CategoryModel.objects.create(
-        creation_user=creation_user or UserModel.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
+    category = Category.objects.create(
+        creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
         name=lorem.get_word(3) if name is None else name,
         min_limit=min_limit,
         max_limit=max_limit,
@@ -110,8 +144,8 @@ def sample_category(creation_user=None, name=None, min_limit=None, max_limit=Non
 
 def sample_feature(category=None, creation_user=None, name=None,
                    **extra_fields):
-    feature = FeatureModel.objects.create(
-        creation_user=creation_user or UserModel.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
+    feature = Feature.objects.create(
+        creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
         category=category or sample_category(),
         name=lorem.get_word(3) if name is None else name,
         **extra_fields
@@ -129,7 +163,7 @@ def sample_review(creation_user=None, work=None, object_type=None, text=None, dr
     if not work:
         work = types_to_models.get(object_type or "fiction")()
 
-    review = ReviewModel.objects.create(
+    review = Review.objects.create(
         creation_user=creation_user or sample_user(),
         work=work,
         draft=draft,
@@ -141,7 +175,7 @@ def sample_review(creation_user=None, work=None, object_type=None, text=None, dr
 
 
 def sample_poll_group(**kwargs):
-    poll_group = PollGroupModel.objects.create(
+    poll_group = PollGroup.objects.create(
         creation_user=kwargs.pop("creation_user", sample_user()),
         title=kwargs.pop("title", lorem.get_word(count=5)),
         **kwargs
@@ -153,7 +187,7 @@ def sample_poll_group(**kwargs):
 def sample_poll_question(**kwargs):
     poll_group = kwargs.get("poll_group", None)
 
-    poll_question = PollQuestionModel.objects.create(
+    poll_question = PollQuestion.objects.create(
         creation_user=kwargs.pop("creation_user", getattr(poll_group, "creation_user", sample_user())),
         question_text=kwargs.pop("question_text", lorem.get_sentence()),
         **kwargs,
@@ -165,7 +199,7 @@ def sample_poll_question(**kwargs):
 def sample_poll_answer(**kwargs):
     poll_question = kwargs.pop("poll_question", sample_poll_question())
 
-    poll_answer = PollAnswerModel.objects.create(
+    poll_answer = PollAnswer.objects.create(
         poll_question=poll_question,
         creation_user=kwargs.pop("creation_user", poll_question.creation_user),
         answer_text=kwargs.pop("answer_text", lorem.get_sentence()),
@@ -175,21 +209,17 @@ def sample_poll_answer(**kwargs):
 
 
 def sample_news(**kwargs):
-    status = kwargs.pop("status", None)
-
-    news = NewsArticleModel.objects.create(
-        creation_user=kwargs.pop("creation_user", sample_user()),
-        title=kwargs.pop("title", lorem.get_sentence()),
-        content=kwargs.pop("content", lorem.get_paragraph()),
-        category=kwargs.pop("category", NewsArticleModel.NewsCategory.UNDEFINED),
-        status=status,
+    news_article = NewsArticle.objects.create(
+        creation_user=kwargs.pop("creation_user", None) or get_random_user(),
+        title=kwargs.pop("title", None) or french_faker.paragraph(),
+        content=kwargs.pop("content", None) or french_faker.paragraph(10),
+        category=kwargs.pop("category", None) or french_faker.random_int(min=0, max=6),
+        status=kwargs.pop("status", None) or NewsArticle.Status.PUBLISHED,
         **kwargs,
     )
+    news_article.authors.add(news_article.creation_user)
 
-    if status == NewsArticleModel.NewsStatus.PUBLISHED:
-        news.post(modification_user=news.creation_user)
-
-    return news
+    return news_article
 
 
 def sample_comment(**kwargs):
@@ -235,7 +265,7 @@ def sample_user_edit_payload(realname=None, email=None, password=None, birthdate
 def random_valid_feature_id_list():
     features_id_list = []
 
-    for category in CategoryModel.objects.all():
+    for category in Category.objects.all():
         choices = random.sample(list(category.features.values_list("pk", flat=True)), category.min_limit)
         features_id_list.extend(choices)
 
