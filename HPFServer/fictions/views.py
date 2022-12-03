@@ -38,14 +38,14 @@ logging.basicConfig(level=logging.DEBUG)
 
 class AuthorPreferenceAllowsAnonymousReviews(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if obj.creation_user.preferences.anonymous_review_policy >= UserPreferences.ReviewPolicyChoices.WRITE_TEXT:
+        if obj.creation_user.preferences.anonymous_review_policy >= UserPreferences.ReviewPolicy.WRITE_TEXT:
             return True
         return False
 
 
 class AuthorPreferenceAllowsMemberReviews(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if obj.creation_user.preferences.member_review_policy >= UserPreferences.ReviewPolicyChoices.WRITE_TEXT:
+        if obj.creation_user.preferences.member_review_policy >= UserPreferences.ReviewPolicy.WRITE_TEXT:
             return True
         return False
 
@@ -68,16 +68,14 @@ class FictionViewSet(
     def get_queryset(self):
         """Détermine la liste de fictions à afficher."""
 
-        if self.request.user.has_perm("fictions.view_fiction"):
-            return Fiction.objects.all()
-        elif self.request.user.is_authenticated:
-            self.get_queryset() + Fiction.objects.filter(
-                Q(creation_user=self.request.user) |
-                Q(coauthors=self.request.user)
-            ).distinct()
+        queryset = super().get_queryset()
 
-        # https://github.com/encode/django-rest-framework/blob/101aff6c43f6fa96174683e050988428143d1040/rest_framework/generics.py#L54
-        return super().get_queryset()
+        if self.request.user.has_perm("fictions.view_fiction"):
+            return queryset
+        elif self.request.query_params.get("self"):
+            return queryset.filter(creation_user_id=self.request.user.id)
+        else:
+            return queryset.published()
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user)
@@ -184,22 +182,32 @@ class FictionViewSet(
 class ChapterViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les chapitres"""
 
+    queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     permission_classes = [IsAuthenticated & (IsParentFictionCreationUser | IsParentFictionCoAuthor) | ReadOnly]
 
     def get_queryset(self):
         """Détermine la liste des chapitres à afficher."""
 
-        base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
+        queryset = super().get_queryset()
 
-        if self.request.query_params.get("mine", False) == "True":
-            return base_queryset.filter(creation_user=self.request.user.id)
-        elif self.kwargs.pop("mine", False):
-            return base_queryset.filter(creation_user=self.request.user.id)
-        elif self.request.user.has_perm("fictions.view_chapter"):
-            return base_queryset.exclude(validation_status=Chapter.ChapterValidationStage.DRAFT)
+        if self.request.user.has_perm("fictions.view_chapter"):
+            return queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+        elif self.request.query_params.get("self"):
+            return queryset.filter(creation_user_id=self.request.user.id)
         else:
-            return base_queryset.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            return queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+
+        # base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
+
+        # if self.request.query_params.get("mine", False) == "True":
+        #     return base_queryset.filter(creation_user=self.request.user.id)
+        # elif self.kwargs.pop("mine", False):
+        #     return base_queryset.filter(creation_user=self.request.user.id)
+        # elif self.request.user.has_perm("fictions.view_chapter"):
+        #     return base_queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+        # else:
+        #     return base_queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
 
     def get_object(self):
         """Renvoie le chapitre correspondant à l'ordre, incrémente son compte de lectures."""
@@ -211,7 +219,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
             self.action == "retrieve",
             self.request.user != chapter.fiction.creation_user,
             self.request.user not in chapter.fiction.coauthors.all(),
-            chapter.validation_status == Chapter.ChapterValidationStage.PUBLISHED,
+            chapter.validation_status == Chapter.ValidationStage.PUBLISHED,
         ]):
             chapter.read_count = F("read_count") + 1
             chapter.save_base()

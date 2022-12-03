@@ -145,6 +145,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["email"]
 
     @property
+    def profile(self):
+        return getattr(self, "user_profile", None)
+
+    @property
     def username(self):
         """Renvoie le pseudonyme ou [anonyme] si le compte est anonymisé"""
 
@@ -213,7 +217,7 @@ class UserProfile(DatedModel):
         to=User,
         on_delete=models.CASCADE,
         verbose_name="utilisateur",
-        related_name="profile",
+        related_name="user_profile",
         primary_key=True,
         editable=False,
     )
@@ -229,7 +233,7 @@ class UserProfile(DatedModel):
     realname = models.CharField(
         max_length=200,
         verbose_name="nom",
-        null=True,
+        null=True,  # TODO - False
         blank=True,
     )
     birthdate = models.DateField(

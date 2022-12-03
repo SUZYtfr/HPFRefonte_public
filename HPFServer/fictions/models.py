@@ -8,7 +8,7 @@ from core.text_functions import count_words
 
 class FictionQuerySet(models.QuerySet):
     def published(self):
-        return self.filter(chapters__validation_status=Chapter.ChapterValidationStage.PUBLISHED).distinct()
+        return self.filter(chapters__validation_status=Chapter.ValidationStage.PUBLISHED).distinct()
 
     def means(self):
         mean = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
@@ -17,7 +17,7 @@ class FictionQuerySet(models.QuerySet):
     def read_counts(self):
         read_count = models.Sum(
             "chapters__read_count",
-            filter=models.Q(chapters__validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            filter=models.Q(chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
         )
         return self.annotate(read_count=read_count)
 
@@ -25,7 +25,7 @@ class FictionQuerySet(models.QuerySet):
         last_version = ChapterTextVersion.objects.filter(chapter__fiction=models.OuterRef("pk")).order_by("-pk")
         word_count = models.Sum(
             models.Subquery(last_version.values("word_count")[:1]),
-            filter=models.Q(chapters__validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            filter=models.Q(chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
         )
         return self.alias(word_count=word_count)
 
@@ -74,7 +74,7 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
     coauthors = models.ManyToManyField(
         verbose_name="co-auteurs",
         to="users.User",
-        related_name="coauthors",
+        related_name="coauthored_fictions",
     )
 
     objects = FictionQuerySet.as_manager()
@@ -85,28 +85,28 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
     @property
     def published_chapters(self):
         """Renvoie les chapitres publiés"""
-        return self.chapters.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+        return self.chapters.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
 
     @property
-    def is_published(self):
+    def is_published(self) -> bool:
         """Détermine si la fiction est publiée, c'est-à-dire si elle a au moins un chapitre publié"""
 
         return self.published_chapters.exists()
 
     @property
-    def chapter_count(self):
+    def chapter_count(self) -> int:
         """Renvoie le compte de chapitres publiés"""
 
         return self.published_chapters.count()
 
     @property
-    def collection_count(self):
+    def collection_count(self) -> int:
         """Renvoie le compte de séries"""
 
         return self.collections.count()
 
     @property
-    def word_count(self):
+    def word_count(self) -> int:
         """Renvoie le compte de mots des chapitres publiés"""
 
         last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-pk")
@@ -119,7 +119,7 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
         )
 
     @property
-    def read_count(self):
+    def read_count(self) -> int:
         """Renvoie le compte de lectures des chapitres publiés"""
 
         return sum(
@@ -133,7 +133,7 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self):
+    def mean(self) -> float:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
@@ -142,7 +142,7 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
             return sum(filter(None, all_gradings)) / len(all_gradings)
 
     @property
-    def review_count(self):
+    def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
         return self.published_reviews.count()
 
@@ -172,7 +172,7 @@ class ChapterQuerySet(models.QuerySet):
         return self.annotate(annotated_mean=mean)
 
     def published(self):
-        return self.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+        return self.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
 
 
 class Chapter(DatedModel, CreatedModel, TextDependentModel):
@@ -186,7 +186,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
             ("staff_validation", "A la validation de modérateur des chapitres"),
         ]
 
-    class ChapterValidationStage(models.IntegerChoices):
+    class ValidationStage(models.IntegerChoices):
         DRAFT = (1, "Brouillon")
         BETA_ONGOING = (2, "Bêtatage en cours")
         BETA_COMPLETE = (3, "Bêtatage réalisé")
@@ -228,8 +228,8 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     )
     validation_status = models.SmallIntegerField(
         verbose_name="étape de validation",
-        choices=ChapterValidationStage.choices,
-        default=ChapterValidationStage.DRAFT,
+        choices=ValidationStage.choices,
+        default=ValidationStage.DRAFT,
     )
     poll = models.OneToOneField(
         verbose_name="sondage",
@@ -249,13 +249,21 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self):
+    def mean(self) -> int:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
         if all_gradings:  # pour éviter une division par 0
             return sum(filter(None, all_gradings)) / len(all_gradings)
+
+    @property
+    def text(self) -> str:
+        return getattr(self.versions.first(), "text", None)
+
+    @property
+    def word_count(self) -> int:
+        return getattr(self.versions.first(), "word_count")
 
     @property
     def review_count(self):
@@ -289,24 +297,24 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         self.save()
 
     def submit(self, user=None):
-        if self.validation_status == Chapter.ChapterValidationStage.DRAFT:
+        if self.validation_status == Chapter.ValidationStage.DRAFT:
             if self.fiction.creation_user.has_perm("fictions.automatic_validation"):
                 self.change_status(
-                    Chapter.ChapterValidationStage.PUBLISHED,
+                    Chapter.ValidationStage.PUBLISHED,
                     modification_user=user,
                     modification_time=timezone.now(),
                 )
 
             else:
                 self.change_status(
-                    Chapter.ChapterValidationStage.PENDING,
+                    Chapter.ValidationStage.PENDING,
                     modification_user=user,
                     modification_time=timezone.now(),
                 )
 
-        elif self.validation_status == self.ChapterValidationStage.EDIT_REQUIRED:
+        elif self.validation_status == self.ValidationStage.EDIT_REQUIRED:
             self.change_status(
-                Chapter.ChapterValidationStage.EDITED,
+                Chapter.ValidationStage.EDITED,
                 modification_user=user,
                 modification_time=timezone.now(),
             )
@@ -316,27 +324,27 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
     def validate(self, user=None):
         if self.validation_status not in [
-            Chapter.ChapterValidationStage.PENDING,
-            Chapter.ChapterValidationStage.EDITED,
+            Chapter.ValidationStage.PENDING,
+            Chapter.ValidationStage.EDITED,
         ]:
             raise Chapter.InvalidChapterAction
 
         self.change_status(
-            Chapter.ChapterValidationStage.PUBLISHED,
+            Chapter.ValidationStage.PUBLISHED,
             modification_user=user,
             modification_time=timezone.now(),
         )
 
     def invalidate(self, user=None):
         if self.validation_status not in [
-            Chapter.ChapterValidationStage.PENDING,
-            Chapter.ChapterValidationStage.EDITED,
-            Chapter.ChapterValidationStage.PUBLISHED,
+            Chapter.ValidationStage.PENDING,
+            Chapter.ValidationStage.EDITED,
+            Chapter.ValidationStage.PUBLISHED,
         ]:
             raise Chapter.InvalidChapterAction
 
         self.change_status(
-            Chapter.ChapterValidationStage.EDIT_REQUIRED,
+            Chapter.ValidationStage.EDIT_REQUIRED,
             modification_user=user,
             modification_time=timezone.now(),
         )
@@ -390,19 +398,19 @@ class ChallengeManager(models.Manager):
 class Challenge(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
     """Modèle de challenge"""
 
-    class ChallengeStatus(models.IntegerChoices):
+    class Status(models.IntegerChoices):
         OPEN = (1, "Ouvert")
         CLOSED = (2, "Fermé")
 
-    class ChallengeType(models.IntegerChoices):
+    class Type(models.IntegerChoices):
         CHALLENGE = (1, "Challenge")
         PROJECT = (2, "Projet")
 
     title = models.CharField(verbose_name="titre", max_length=200,
                              blank=False)
     summary = models.TextField(verbose_name="résumé", blank=False)
-    status = models.SmallIntegerField(verbose_name="état", choices=ChallengeStatus.choices)
-    challenge_type = models.SmallIntegerField(verbose_name="type", choices=ChallengeType.choices)
+    status = models.SmallIntegerField(verbose_name="état", choices=Status.choices)
+    challenge_type = models.SmallIntegerField(verbose_name="type", choices=Type.choices)
     official = models.BooleanField(verbose_name="officiel", default=False)
     deadline = models.DateTimeField(verbose_name="clôture", null=True)
     forum_link = models.CharField(verbose_name="lien vers le forum", max_length=400,

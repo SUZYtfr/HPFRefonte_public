@@ -131,9 +131,9 @@ class FictionFilterSet(filters.FilterSet):
 
 
     def filter_min_words(self, queryset, name, value):
-        return queryset.word_counts().filter(word_count__gte=value)
+        return queryset.word_counts().filter(annotated_word_count__gte=value)
 
     def filter_max_words(self, queryset, name, value):
-        return queryset.word_counts().filter(word_count__lte=value)
+        return queryset.word_counts().filter(annotated_word_count__lte=value)
 
 DjangoFilterBackend = filters.DjangoFilterBackend

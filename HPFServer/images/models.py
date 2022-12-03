@@ -131,8 +131,12 @@ class ProfilePicture(BaseUserImage):
 
     upload_folder = "profilepictures"
 
-    user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                verbose_name="utilisateur")
+    user_profile = models.OneToOneField(
+        to="users.UserProfile",
+        on_delete=models.CASCADE,
+        verbose_name="image de profil",
+        related_name="profile_picture",
+    )
 
     class Meta:
         verbose_name = "image de profil"

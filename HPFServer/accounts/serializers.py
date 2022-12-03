@@ -2,9 +2,14 @@ from rest_framework.serializers import ModelSerializer
 
 from users.models import User, UserProfile
 from users.serializers import UserPreferencesSerializer
+from images.serializers import ProfilePictureSerializer
 
 
 class ProfileSerializer(ModelSerializer):
+    avatar = ProfilePictureSerializer(
+        source="profile_picture",
+    )
+
     class Meta:
         model = UserProfile
         fields = [
@@ -12,6 +17,7 @@ class ProfileSerializer(ModelSerializer):
             "realname",
             "birthdate",
             "gender",
+            "avatar",
         ]
 
 

@@ -11,7 +11,7 @@ from features.models import Category, Feature
 from features.serializers import FeatureCardSerializer
 from users.serializers import UserCardSerializer
 from colls.models import Collection
-from core.serializers import ListableModelSerializer
+from core.serializers import ListableModelSerializer, CardSerializer
 from core.text_functions import read_text_file
 from reviews.models import Review
 
@@ -59,7 +59,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 class FictionListSerializer(serializers.ModelSerializer):
     features = FeatureCardSerializer(many=True)
-    creation_user = UserCardSerializer(read_only=True)
+    creation_user = CardSerializer(read_only=True)
     authors = serializers.SerializerMethodField()
     series = CollectionSerializer(read_only=True, many=True, source="collections")
 
@@ -95,9 +95,9 @@ class FictionSerializer(ListableModelSerializer):
     """Sérialiseur privé de fiction"""
 
     features = FeatureCardSerializer(many=True)
-    creation_user = UserCardSerializer(read_only=True)
+    creation_user = CardSerializer(read_only=True)
     authors = serializers.SerializerMethodField()
-    series = CollectionSerializer(read_only=True, many=True, source="collections")
+    series = CardSerializer(read_only=True, many=True, source="collections")
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
 
@@ -146,7 +146,7 @@ class FictionSerializer(ListableModelSerializer):
     # def get_series(self, obj):
     #     collections = Collection.objects.filter(
     #         chapters__fiction=obj,
-    #         chapters__validation_status=Chapter.ChapterValidationStage.PUBLISHED,
+    #         chapters__validation_status=Chapter.ValidationStage.PUBLISHED,
     #     ).distinct()
     #     return CollectionSerializer(collections, many=True).data
 
@@ -249,7 +249,7 @@ class ChapterSerializer(ListableModelSerializer):
         read_only=True,
         source="fiction.creation_user.preferences.member_review_policy",
     )
-    anonymous_review_polcy = serializers.IntegerField(
+    anonymous_review_policy = serializers.IntegerField(
         read_only=True,
         source="fiction.creation_user.preferences.anonymous_review_policy",
     )
@@ -268,7 +268,7 @@ class ChapterSerializer(ListableModelSerializer):
             "endnote",
             "order",
             "validation_status",
-            # "word_count",
+            "word_count",
             "read_count",
             "review_count",
             "mean",
@@ -378,8 +378,8 @@ class BetaSerializer(serializers.ModelSerializer):
             queryset = Chapter.objects.filter(
                 authors=self.context["request"].user,
                 validation_status__in=[
-                    Chapter.ChapterValidationStage.DRAFT,
-                    Chapter.ChapterValidationStage.BETA_COMPLETE,
+                    Chapter.ValidationStage.DRAFT,
+                    Chapter.ValidationStage.BETA_COMPLETE,
                 ]
             ).exclude(
                 beta__stage__in=[
@@ -463,13 +463,13 @@ class BetaActionSerializer(serializers.ModelSerializer):
             if text:
                 instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
             else:
-                instance.chapter.validation_status = Chapter.ChapterValidationStage.BETA_ONGOING
+                instance.chapter.validation_status = Chapter.ValidationStage.BETA_ONGOING
                 instance.chapter.modification_user = self.context["request"].user
         elif stage == Beta.BetaStage.CORRECTED:
             instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
             instance.chapter.modification_user = self.context["request"].user
         elif stage == Beta.BetaStage.COMPLETED:
-            instance.chapter.validation_status = Chapter.ChapterValidationStage.BETA_COMPLETE
+            instance.chapter.validation_status = Chapter.ValidationStage.BETA_COMPLETE
             instance.chapter.modification_user = self.context["request"].user
         instance.chapter.save()
 
