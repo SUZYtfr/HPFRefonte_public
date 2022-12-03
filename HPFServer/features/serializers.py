@@ -1,7 +1,7 @@
 from rest_framework import serializers, exceptions
 
 from .models import Feature, Category
-
+from core.serializers import CardSerializer
 
 class FeatureBaseSerializer(serializers.ModelSerializer):
     """Base pour les sérialiseurs de caractéristiques"""
@@ -11,12 +11,12 @@ class FeatureBaseSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class FeatureCardSerializer(serializers.ModelSerializer):
+class FeatureCardSerializer(CardSerializer, serializers.ModelSerializer):
     class Meta:
         model = Feature
         fields = [
             "id",
-            "name",
+            "string",
             "category_id",
         ]
 
