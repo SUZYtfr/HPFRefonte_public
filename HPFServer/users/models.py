@@ -149,7 +149,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return getattr(self, "user_profile", None)
 
     @property
-    def username(self):
+    def username(self) -> str:
         """Renvoie le pseudonyme ou [anonyme] si le compte est anonymisé"""
 
         return self.get_username() or "[anonyme]"
@@ -158,7 +158,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     @property
-    def read_count(self):
+    def read_count(self) -> int:
         return (
             self.created_chapters
             .published()
@@ -166,7 +166,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ) or 0
 
     @property
-    def word_count(self):
+    def word_count(self) -> int:
         last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
         word_count = models.Subquery(last_version.values('word_count')[:1])
         return (
@@ -177,27 +177,27 @@ class User(AbstractBaseUser, PermissionsMixin):
         ) or 0
 
     @property
-    def fiction_count(self):
+    def fiction_count(self) -> int:
         return self.created_fictions.published().count()
 
     @property
-    def chapter_count(self):
+    def chapter_count(self) -> int:
         return self.created_chapters.published().count()
 
     @property
-    def review_count(self):
+    def review_count(self) -> int:
         return self.created_reviews.filter(draft=False).count()
 
     @property
-    def comment_count(self):
+    def comment_count(self) -> int:
         return self.created_newscomments.count()
 
     @property
-    def collection_count(self):
+    def collection_count(self) -> int:
         return self.created_collections.count()
 
     @property
-    def review_reply_count(self):
+    def review_reply_count(self) -> int:
         return self.created_reviewreplys.count()
 
     @transaction.atomic

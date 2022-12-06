@@ -324,7 +324,7 @@ class ChapterSerializer(ListableModelSerializer):
         )
         return instance
 
-    def get_order(self, obj):
+    def get_order(self, obj) -> int:
         return obj._order + 1  # index 0 -> 1
 
 

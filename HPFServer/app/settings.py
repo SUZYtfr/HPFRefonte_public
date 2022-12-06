@@ -86,6 +86,16 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+SPECTACULAR_SETTINGS = {
+    "ENUM_NAME_OVERRIDES": {
+        "NewsStatusEnum": "news.models.NewsArticle.Status",
+        "FictionStatusEnum": "fictions.models.Fiction.Status",
+        "ChallengeStatusEnum": "fictions.models.Challenge.Status",
+        "ReportStatusEnum": "reports.models.Report.Status",
+        "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
+    }
+}
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365),

@@ -27,7 +27,7 @@ class UserStatsSerializer(serializers.ModelSerializer):
             "review_drafts_left",
         ]
 
-    def get_review_drafts_left(self, obj):
+    def get_review_drafts_left(self, obj) -> int:
         if obj.has_perm("reviews.extra_review_drafts"):
             base_drafts = settings.PREMIUM_MAX_REVIEW_DRAFTS
         else:

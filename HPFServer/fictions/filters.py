@@ -106,9 +106,9 @@ class FictionFilterSet(filters.FilterSet):
 
     def filter_finished(self, queryset, name, value):
         if value == True:
-            return queryset.filter(status=Fiction.FictionStatus.COMPLETED)
+            return queryset.filter(status=Fiction.Status.COMPLETED)
         elif value == False:
-            return queryset.exclude(status=Fiction.FictionStatus.COMPLETED)
+            return queryset.exclude(status=Fiction.Status.COMPLETED)
         return queryset
 
     def filter_authors(self, queryset, name, value):

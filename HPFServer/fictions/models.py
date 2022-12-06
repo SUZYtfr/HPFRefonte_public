@@ -33,7 +33,7 @@ class FictionQuerySet(models.QuerySet):
 class Fiction(DatedModel, CreatedModel, FeaturedModel):
     """Modèle de fiction"""
 
-    class FictionStatus(models.IntegerChoices):
+    class Status(models.IntegerChoices):
         PROGRESS = (1, "En cours")
         PAUSED = (2, "À l'arrêt")
         ABANDONED = (3, "Abandonnée")
@@ -58,8 +58,8 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
     )
     status = models.SmallIntegerField(
         verbose_name="état d'écriture",
-        choices=FictionStatus.choices,
-        default=FictionStatus.PROGRESS,
+        choices=Status.choices,
+        default=Status.PROGRESS,
     )
     featured = models.BooleanField(
         verbose_name="mise en avant",
@@ -266,7 +266,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return getattr(self.versions.first(), "word_count")
 
     @property
-    def review_count(self):
+    def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
         return self.published_reviews.count()
 

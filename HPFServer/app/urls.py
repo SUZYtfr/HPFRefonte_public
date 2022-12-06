@@ -19,7 +19,7 @@ urlpatterns = [
         path(r"account/", include("accounts.urls", namespace="accounts")),
     ])),
     path(r"admin/", admin.site.urls),
-    path(r'schema/', SpectacularAPIView.as_view(), name='schema'),
+    path(r'schema/download/', SpectacularAPIView.as_view(), name='schema'),
     path(r"schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-schema'),
     path(r'schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \

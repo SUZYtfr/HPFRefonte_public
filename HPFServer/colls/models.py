@@ -44,7 +44,7 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self):
+    def mean(self) -> float:
         """Renvoie la moyenne des reviews publiées"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
@@ -53,12 +53,12 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
             return sum(filter(None, all_gradings)) / len(all_gradings)
 
     @property
-    def review_count(self):
+    def review_count(self) -> int:
         """Renvoie le nombre de reviews publiées"""
         return self.published_reviews.count()
 
     @property
-    def fiction_count(self):
+    def fiction_count(self) -> int:
         """Renvoie le compte de fictions"""
 
         return self.fictions.count()
