@@ -16,7 +16,7 @@ urlpatterns = [
         path(r"news/", include("news.urls", namespace="news")),
         path(r"reports/", include("reports.urls", namespace="reports")),
         path(r"images/", include("images.urls", namespace="images")),
-        path(r"account/", include("accounts.urls", namespace="accounts")),
+        path(r"account/", include("account.urls", namespace="account")),
     ])),
     path(r"admin/", admin.site.urls),
     path(r'schema/download/', SpectacularAPIView.as_view(), name='schema'),

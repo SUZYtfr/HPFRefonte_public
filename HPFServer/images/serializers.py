@@ -10,7 +10,23 @@ class BannerSerializer(ModelSerializer):
 
 
 class ProfilePictureSerializer(ModelSerializer):
-
     class Meta:
         model = ProfilePicture
-        fields = "__all__"
+        fields = [
+            "id",
+            "creation_user",
+            "creation_date",
+            "modification_date",
+            "modification_user",
+            "src_path",
+            "src_link",
+            "is_user_property",
+            "is_adult_only",
+            "credits_url",
+        ]
+        read_only_fields = [
+            "creation_user",
+            "creation_date",
+            "modification_date",
+            "modification_user",
+        ]

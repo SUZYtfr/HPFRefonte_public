@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.conf import settings
 
 from .models import User, UserProfile, UserPreferences, UserLink
+from images.serializers import ProfilePictureSerializer, BannerSerializer
 from core.serializers import ListableModelSerializer
 
 from random import randint
@@ -54,7 +55,6 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
 
 
 class UserLinkSerializer(serializers.ModelSerializer):
-
     link_type_id = serializers.SerializerMethodField()
 
     class Meta:
@@ -71,31 +71,23 @@ class UserLinkSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """Sérialiseur de profil d'utilisateur"""
+
     user_links = UserLinkSerializer(many=True, read_only=True)
+    avatar = ProfilePictureSerializer(
+        source="profile_picture",
+        required=False,
+    )
 
     class Meta:
         model = UserProfile
         fields = [
             "bio",
+            "avatar",
             "user_links",
-
-            # realname if pref_showname ?
-            # birthdate if pref_showbirthdate ?
-            # gender if pref_showgender ?
-            # email if pref_showemail?
-        ]
-
-
-class UserProfileStaffSerializer(UserProfileSerializer):
-    email = serializers.CharField(source="user.email")
-
-    class Meta(UserProfileSerializer.Meta):
-        model = UserProfile
-        fields = UserProfileSerializer.Meta.fields + [
-            "realname",
-            "birthdate",
-            "gender",
-            "email",
+            "realname",  # if pref_showname ?
+            "birthdate",  # if pref_showbirthdate ?
+            "gender",  # if pref_showgender ?
+            # "email"# if pref_showemail?
         ]
 
 
@@ -115,7 +107,6 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id",
-            # "url",
             "username",
         ]
 
@@ -123,25 +114,21 @@ class UserListSerializer(serializers.ModelSerializer):
 class UserSerializer(ListableModelSerializer):
     """Sérialiseur d'utilisateur"""
 
-    profile = UserProfileSerializer(read_only=True)
-    stats = UserStatsSerializer(read_only=True, source="*")
+    profile = UserProfileSerializer(required=False)
+    stats = UserStatsSerializer(read_only=True)
+    banner = BannerSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = [
             "id",
             "username",
-            "profile",
-            "stats",
+            "password",
+            "email",
             "first_seen",
             "last_login",
-            "banner",
-        ]
-        read_only_fields = [
+            "profile",
+            "stats",
             "banner",
         ]
         list_serializer_child_class = UserListSerializer
-
-
-class UserStaffSerializer(UserSerializer):
-    profile = UserProfileStaffSerializer(read_only=True)

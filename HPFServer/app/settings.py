@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "core",
     "users",
-    "accounts",
+    "account",
     "features",
     "fictions",
     "colls",
