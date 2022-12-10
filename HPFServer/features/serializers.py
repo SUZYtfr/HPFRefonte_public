@@ -16,7 +16,7 @@ class FeatureCardSerializer(CardSerializer, serializers.ModelSerializer):
         model = Feature
         fields = [
             "id",
-            "string",
+            "name",
             "category_id",
         ]
 

@@ -115,7 +115,7 @@ class UserSerializer(ListableModelSerializer):
     """Sérialiseur d'utilisateur"""
 
     profile = UserProfileSerializer(required=False)
-    stats = UserStatsSerializer(read_only=True)
+    stats = UserStatsSerializer(read_only=True, source="*")
     banner = BannerSerializer(read_only=True)
 
     class Meta:
