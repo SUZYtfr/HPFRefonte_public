@@ -18,6 +18,7 @@ odfpy = "*"
 gunicorn = "*"
 django-filter = "*"
 django-cors-headers = "*"
+drf-extra-fields = "*"
 
 [dev-packages]
 python-lorem = "*"

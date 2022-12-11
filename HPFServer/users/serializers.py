@@ -123,6 +123,7 @@ class UserSerializer(ListableModelSerializer):
         fields = [
             "id",
             "username",
+            "nickname",
             "password",
             "email",
             "first_seen",
@@ -132,3 +133,6 @@ class UserSerializer(ListableModelSerializer):
             "banner",
         ]
         list_serializer_child_class = UserListSerializer
+        extra_kwargs = {
+            "nickname": {"write_only": True},
+        }

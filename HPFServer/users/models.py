@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import Fiction, Chapter, ChapterTextVersion
 from colls.models import Collection
+from images.models import ProfilePicture
 
 
 class UserQuerySet(models.QuerySet):
@@ -232,6 +233,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
 
 
+class UserProfileManager(models.Manager):
+    def create(self, **fields):
+        profile_picture_fields = fields.pop("profile_picture")
+        user_profile = super().create(**fields)
+        if profile_picture_fields:
+            ProfilePicture.objects.create(
+                user_profile=user_profile,
+                creation_user=user_profile.user,
+                **profile_picture_fields,
+            )
+
+        return user_profile
+
+
 class UserProfile(DatedModel):  # TODO - renverser le O2O
     class Gender(models.IntegerChoices):
         UNDEFINED = (0, "Non renseigné")
@@ -279,6 +294,8 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         default=Gender.UNDEFINED,
         blank=True,
     )
+
+    objects = UserProfileManager()
 
     class Meta:
         verbose_name = "profil"
