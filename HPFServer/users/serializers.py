@@ -73,16 +73,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """Sérialiseur de profil d'utilisateur"""
 
     user_links = UserLinkSerializer(many=True, read_only=True)
-    avatar = ProfilePictureSerializer(
-        source="profile_picture",
-        required=False,
-    )
+    profile_picture = ProfilePictureSerializer(required=False)
 
     class Meta:
         model = UserProfile
         fields = [
             "bio",
-            "avatar",
+            "profile_picture",
             "user_links",
             "realname",  # if pref_showname ?
             "birthdate",  # if pref_showbirthdate ?

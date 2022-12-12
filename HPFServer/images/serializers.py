@@ -38,3 +38,6 @@ class ProfilePictureSerializer(serializers.ModelSerializer):
             "modification_date",
             "modification_user",
         ]
+        extra_kwargs = {
+            "src_path": {"read_only": True},
+        }
