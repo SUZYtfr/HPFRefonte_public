@@ -1,15 +1,16 @@
 from rest_framework import serializers
+from drf_extra_fields import relations as extra_relations
 
 from reviews.models import Review, ReviewReply, ReviewTextVersion, FictionReview, ChapterReview, CollectionReview
 from core.serializers import ListableModelSerializer
-from fictions.serializers import ChapterCardSerializer, FictionCardSerializer
-from colls.serializers import CollectionCardSerializer
-from users.serializers import UserCardSerializer
 from core.utils import get_moderation_account
 
 
 class ReviewReplyListSerializer(serializers.ModelSerializer):
-    creation_user = UserCardSerializer()
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
 
     class Meta:
         model = ReviewReply
@@ -24,7 +25,10 @@ class ReviewReplyListSerializer(serializers.ModelSerializer):
 class ReviewReplySerializer(ListableModelSerializer):
     """Sérialiseur de réponse à review"""
 
-    creation_user = UserCardSerializer()
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     as_staff = serializers.HiddenField(default=False, write_only=True)
 
     class Meta:
@@ -47,7 +51,10 @@ class StaffReviewReplySerializer(ReviewReplySerializer):
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
-    creation_user = UserCardSerializer()
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
 
     class Meta:
         model = Review
@@ -67,7 +74,10 @@ class ReviewSerializer(ListableModelSerializer):
     text = serializers.CharField(allow_blank=False, style={'base_template': 'textarea.html'})
     replies = ReviewReplySerializer(read_only=True, many=True)
     as_staff = serializers.HiddenField(default=False, label="Publication par le compte de modération", write_only=True)
-    creation_user = UserCardSerializer()
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
 
     class Meta:
         model = Review
@@ -168,7 +178,10 @@ class CollectionAnonymousReviewSerializer(AnonymousReviewSerializer):
 
 
 class FictionReviewListSerializer(ReviewListSerializer):
-    fiction = FictionCardSerializer()
+    fiction = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.FictionCardSerializer",
+    )
 
     class Meta(ReviewListSerializer.Meta):
 
@@ -178,7 +191,10 @@ class FictionReviewListSerializer(ReviewListSerializer):
 
 
 class FictionReviewSerializer(ReviewSerializer):
-    fiction = FictionCardSerializer()
+    fiction = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.FictionCardSerializer",
+    )
 
     class Meta(ReviewSerializer.Meta):
         model = FictionReview
@@ -189,7 +205,10 @@ class FictionReviewSerializer(ReviewSerializer):
 
 
 class ChapterReviewListSerializer(ReviewListSerializer):
-    chapter = ChapterCardSerializer()
+    chapter = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.ChapterCardSerializer",
+    )
 
     class Meta(ReviewListSerializer.Meta):
         fields = ReviewListSerializer.Meta.fields + [
@@ -198,7 +217,10 @@ class ChapterReviewListSerializer(ReviewListSerializer):
 
 
 class ChapterReviewSerializer(ReviewSerializer):
-    chapter = ChapterCardSerializer()
+    chapter = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.ChapterCardSerializer",
+    )
 
     class Meta(ReviewSerializer.Meta):
         model = ChapterReview
@@ -209,7 +231,10 @@ class ChapterReviewSerializer(ReviewSerializer):
 
 
 class CollectionReviewListSerializer(ReviewListSerializer):
-    collection = CollectionCardSerializer()
+    collection = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="colls.serializers.CollectionCardSerializer",
+    )
 
     class Meta(ReviewListSerializer.Meta):
         fields = ReviewListSerializer.Meta.fields + [
@@ -218,6 +243,11 @@ class CollectionReviewListSerializer(ReviewListSerializer):
 
 
 class CollectionReviewSerializer(ReviewSerializer):
+    collection = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="colls.serializers.CollectionCardSerializer",
+    )
+
     class Meta(ReviewSerializer.Meta):
         model = CollectionReview
         fields = ReviewSerializer.Meta.fields + [

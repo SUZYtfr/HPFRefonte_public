@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
+from drf_extra_fields import relations as extra_relations
 
 from core.serializers import ListableModelSerializer
 
 from .models import Collection
 from fictions.models import Chapter
-from users.serializers import UserCardSerializer
 
 
 class CollectionChapterOrderSerializer(serializers.ModelSerializer):
@@ -73,8 +73,14 @@ class CollectionListSerializer(serializers.ModelSerializer):
 class CollectionSerializer(ListableModelSerializer):
     """Sérialiseur de série"""
 
-    creation_user = UserCardSerializer(read_only=True)
-    modification_user = UserCardSerializer(read_only=True)
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
+    modification_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
 
     class Meta:
         model = Collection

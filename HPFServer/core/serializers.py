@@ -15,8 +15,3 @@ class ListableModelSerializer(serializers.ModelSerializer):
         list_kwargs = {'child': getattr(meta, "list_serializer_child_class", cls)()}  # enfant initialisé dès ici
         list_serializer_class = getattr(meta, 'list_serializer_class', serializers.ListSerializer)
         return list_serializer_class(*args, **list_kwargs)
-
-
-class CardSerializer(serializers.Serializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
-    string = serializers.CharField(source="__str__", read_only=True)

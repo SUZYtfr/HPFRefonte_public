@@ -1,52 +1,18 @@
 from rest_framework import serializers, exceptions
-from django.db import models
-from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import get_object_or_404
+from drf_extra_fields import relations as extra_relations
 
 from users.models import User
-
 from .models import Fiction, Chapter, Beta
 from features.models import Category, Feature
-from features.serializers import FeatureCardSerializer
 from users.serializers import UserCardSerializer
 from colls.models import Collection
-from core.serializers import ListableModelSerializer, CardSerializer
+from core.serializers import ListableModelSerializer
 from core.text_functions import read_text_file
 from reviews.models import Review
 
 # ALLOWED_EXTENSIONS = ["txt", "doc", "docx", "odt"]
 ALLOWED_EXTENSIONS = ["txt", "docx"]
 
-
-# class serializers.FeaturesChoiceRelatedField(serializers.RelatedField):
-#     """Champ de choix de caractéristiques"""
-#
-#     queryset = Feature.allowed.all()
-#
-#     def to_representation(self, value):
-#         """Renvoie l'ID de la caractéristique pour sérialisation"""
-#
-#         return value.pk
-#
-#     def get_choices(self, cutoff=None):
-#         """Renvoie les caractéristiques groupées par catégories"""
-#
-#         return {
-#             category.name:
-#                 {feature.pk: feature.name for feature in category.features.all()}
-#             for category in Category.objects.all()
-#         }
-#
-#     def to_internal_value(self, data):
-#         """Renvoie la caractéristique correspondant à l'ID pour désérialisation"""
-#
-#         try:
-#             feature = self.get_queryset().get(pk=data)
-#         except ObjectDoesNotExist:
-#             raise ValidationError("La caractéristique avec l'ID {} n'a pas été trouvée.".format(data))
-#
-#         return feature
 
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,8 +24,15 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 
 class FictionListSerializer(serializers.ModelSerializer):
-    features = FeatureCardSerializer(many=True)
-    creation_user = CardSerializer(read_only=True)
+    features = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="features.serializers.FeatureCardSerializer",
+    )
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     authors = serializers.SerializerMethodField()
     series = CollectionSerializer(read_only=True, many=True, source="collections")
 
@@ -94,10 +67,22 @@ class FictionListSerializer(serializers.ModelSerializer):
 class FictionSerializer(ListableModelSerializer):
     """Sérialiseur privé de fiction"""
 
-    features = FeatureCardSerializer(many=True)
-    creation_user = CardSerializer(read_only=True)
+    features = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="features.serializers.FeatureCardSerializer",
+    )
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     authors = serializers.SerializerMethodField()
-    series = CardSerializer(read_only=True, many=True, source="collections")
+    series = extra_relations.PresentablePrimaryKeyRelatedField(
+        source="collections",
+        many=True,
+        read_only=True,
+        presentation_serializer="colls.serializers.CollectionCardSerializer",
+    )
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
 
@@ -234,6 +219,10 @@ class ChapterListSerializer(serializers.ModelSerializer):
 class ChapterSerializer(ListableModelSerializer):
     """Sérialiseur de chapitre"""
 
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     order = serializers.SerializerMethodField()
     # mean = serializers.IntegerField(default=None)
 

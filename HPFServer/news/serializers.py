@@ -1,17 +1,9 @@
-from rest_framework.serializers import CreateOnlyDefault, ModelSerializer
+from rest_framework.serializers import ModelSerializer
+from drf_extra_fields import relations as extra_relations
 
 from .models import NewsArticle, NewsComment
 
-from users.models import User
 from django.contrib.auth.models import Group
-
-class NewsAuthorSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "nickname",
-        ]
 
 
 class NewsTeamSerializer(ModelSerializer):
@@ -26,7 +18,11 @@ class NewsTeamSerializer(ModelSerializer):
 class NewsSerializer(ModelSerializer):
     """Sérialiseur d'actualité"""
 
-    authors = NewsAuthorSerializer(read_only=True, many=True)
+    authors = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     teams = NewsTeamSerializer(read_only=True, many=True)
 
     class Meta:
