@@ -1,25 +1,46 @@
 export interface UserData {
-  user_id: number,
-  creation_date: Date,
-  status: number,
-  nickname: string,
+  id: number;
+  first_seen: Date;
+  last_login: Date;
+  username: string;
+  email: string;
+  is_beta: boolean;
+  is_premium: boolean;
+  stats: {
+    fiction_count: number;
+    chapter_count: number;
+    review_count: number;
+    collection_count: number;
+    perso_review_count: number;
+    challenge_count: number;
+    read_count: number;
+    word_count: number;
+    comment_count: number;
+    reviewreply_count: number;
+    favorite_fanfictions: [];
+    favorite_collections: [];
+    favorite_authors: [];
+  };
+  profile: UserProfileData;
+}
+
+export interface UserProfileData {
   realname: string,
   bio: string,
-  is_premium: boolean,
-  is_beta: boolean,
-  avatar: string,
-  stats: {
-    fanfictions: number,
-    chapters: number,
-    words: number,
-    series: number,
-    challenges: number,
-    reviews: number
-    favorites_fanfictions: number
-    favorites_series: number
-    favorites_author: number
-  },
-  links: UserLinkData[],
+  birthdate: string | null,
+  gender: number | null,
+  user_links: UserLinkData[],
+  website: string | null,
+  profile_picture: UserProfileAvatarData,
+}
+
+export interface UserProfileAvatarData {
+  image_data: string | ArrayBuffer | null,
+  src_link: string | null,
+  src_path: string | null,
+  is_user_property: boolean,
+  is_adult_only: boolean,
+  credits_url: string | null,
 }
 
 export interface UserLinkData {

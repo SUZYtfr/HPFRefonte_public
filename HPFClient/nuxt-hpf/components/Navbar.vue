@@ -182,18 +182,18 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    src="https://nsa39.casimages.com/img/2018/02/16/mini_180216012732482019.jpg"
-                    alt="Logo forum HPF"
+                    :src="userAvatar"
+                    alt="Avatar"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span style="margin-left: 5px">SUZYftr</span>
+                  <span style="margin-left: 5px">{{ userNickname }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'"> </b-icon>
                 </button>
               </template>
               <b-dropdown-item aria-role="listitem">Mon compte</b-dropdown-item>
-              <b-dropdown-item aria-role="listitem"
+              <b-dropdown-item aria-role="listitem" @click="logout"
                 >Se déconnecter</b-dropdown-item
               >
             </b-dropdown>
@@ -239,10 +239,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from "@/utils/store-accessor";
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
+import { AccountData } from "@/types/account";
 
 @Component({
   name: "Navbar",
@@ -261,9 +261,36 @@ export default class extends Vue {
 
   //#region Computed
   get ConnectedVisibility() {
-    return UserModule.token.length > 0;
+    return this.$auth.loggedIn
+  }
+  get userNickname() {
+    let user = this.$auth.user
+    if ( user != null ) {
+      return user.username
+    } else {
+      return ""
+    }
   }
   //#endregion
+
+  get userAvatar() {
+    let avatar = undefined;
+    // @ts-ignore
+    let currentUser = this.$auth.user! as UserData;
+    if ( currentUser != undefined ) {
+      avatar = currentUser.profile.profile_picture;
+    }
+    if ( avatar == undefined ) {
+      return 'https://nsa39.casimages.com/img/2018/02/16/mini_180216012732482019.jpg'
+    } else {
+      return avatar
+    }
+  }
+
+  private async logout() {
+    await this.$auth.logout()
+  }
+
 }
 </script>
 

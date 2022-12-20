@@ -10,7 +10,7 @@
           <b-field label="Identifiant">
             <b-input
               type="text"
-              v-model="loginForm.username"
+              v-model="loginForm.nickname"
               placeholder="Votre pseudo"
               required
             >
@@ -45,9 +45,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { login } from "@/api/users";
 import { VForm, OpenToast } from "@/utils/formHelper";
-import { UserLoginData } from "@/types/users";
+import { UserLoginData } from "@/types/account";
 
 @Component({
   name: "Connexion",
@@ -59,7 +58,7 @@ export default class extends Vue {
 
   //#region Data
   private loginForm: UserLoginData = {
-    username: "",
+    nickname: "",
     password: "",
   };
 
@@ -98,14 +97,10 @@ export default class extends Vue {
   // Envoyer le formulaire
   private async login() {
     this.loading = true;
-    try {
-      const { data } = await login(this.loginForm);
-    } catch (exception) {
-      console.log(exception);
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
+    await this.$auth.loginWith('cookie', { data: this.loginForm })
+    .then(() => { this.$emit("change", false) })
+    .catch(() => { OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom" ) })
+    .finally(() => { this.loading = false })
   }
   //#endregion
 }

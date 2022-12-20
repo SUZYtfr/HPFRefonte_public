@@ -36,7 +36,7 @@
                     custom-class="has-text-primary"
                   >
                     <b-input
-                      v-model="signupForm.username"
+                      v-model="signupForm.nickname"
                       type="text"
                       placeholder="Votre pseudo"
                       required
@@ -52,7 +52,7 @@
                     custom-class="has-text-primary"
                   >
                     <b-input
-                      v-model="signupForm.realname"
+                      v-model="signupForm.profile.realname"
                       type="text"
                       placeholder="Votre nom réel"
                       pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\- ]{3,30}$"
@@ -82,7 +82,7 @@
                 custom-class="has-text-primary"
               >
                 <b-input
-                  v-model="signupForm.website"
+                  v-model="signupForm.profile.website"
                   type="url"
                   placeholder="Votre site web"
                 ></b-input>
@@ -136,7 +136,7 @@
                       <div v-if="uploadedFile">
                         <img
                           id="previewPicture"
-                          :src="signupForm.avatar"
+                          :src="signupForm.profile.profile_picture.image_data"
                           :alt="this.uploadedFile.name"
                           width="256"
                           height="256"
@@ -163,7 +163,7 @@
               <TipTapEditor
                 :placeholder="'Votre description'"
                 :showFooter="false"
-                @change="(value) => (signupForm.bio = value)"
+                @change="(value) => (signupForm.profile.bio = value)"
               />
             </div>
           </div>
@@ -186,10 +186,10 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { signup } from "@/api/users";
+import { signup } from "@/api/account";
 import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
 import TipTapEditor from "@/components/TipTapEditor.vue";
-import { UserRegisterData } from "@/types/users";
+import { UserRegisterData, UserLoginData } from "@/types/account";
 
 @Component({
   name: "Inscription",
@@ -210,11 +210,23 @@ export default class extends Vue {
   private signupForm: UserRegisterData = {
     email: "",
     password: "",
-    username: "",
-    realname: "",
-    bio: "",
-    website: "",
-    avatar: null,
+    nickname: "",
+    profile: {
+      bio: "",
+      realname: "",
+      birthdate: null,
+      gender: 0,
+      user_links: [],
+      website: "",
+      profile_picture: {
+        image_data: null,
+        src_path: null,
+        src_link: null,
+        is_user_property: true,
+        credits_url: null,
+        is_adult_only: false,
+      }
+    }
   };
 
   private formIsValid: boolean = false;
@@ -257,14 +269,14 @@ export default class extends Vue {
   @Watch("uploadedFile", { deep: true })
   private onChanged() {
     var reader = new FileReader();
-    reader.onloadend = (e) => (this.signupForm.avatar = reader.result);
+    reader.onloadend = (e) => (this.signupForm.profile.profile_picture.image_data = reader.result);
     if(this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
     // reader.readAsDataURL(
     //   this.uploadedFile != null ? this.uploadedFile : new Blob()
     // );
     console.log(this.uploadedFile);
     console.log(reader);
-    console.log(this.signupForm.avatar);
+    console.log(this.signupForm.profile.profile_picture);
   }
   //#endregion
 
@@ -277,7 +289,7 @@ export default class extends Vue {
   // Supprimer l'avatar uploadé
   private deleteDropFile() {
     this.uploadedFile = null;
-    this.signupForm.avatar = "";
+    this.signupForm.profile.profile_picture.image_data = null;
   }
 
   // Envoyer le formulaire
@@ -293,6 +305,12 @@ export default class extends Vue {
         true,
         "is-bottom"
       );
+      let loginForm: UserLoginData = {
+        nickname: this.signupForm.nickname,
+        password: this.signupForm.password,
+      };
+      await this.$auth.loginWith('cookie', { data: loginForm });
+      this.$emit('change', false);
     } catch (exception) {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {
