@@ -3,7 +3,7 @@
     <div
       @click="expanded = !expanded"
       :class="[
-        getCaracteristicTypeColor(characteristic_type.characteristic_type_id),
+        getCaracteristicTypeColor(characteristic_type.id),
         { 'header-expanded': expanded },
         'is-flex',
         'is-flex-direction-row',
@@ -27,8 +27,8 @@
             class="py-1 pl-1"
             v-for="(carac, index) in characteristics"
             :key="index"
-            :caracteristic="carac"
-            :externalState="stateForCheckbox(carac.characteristic_id)"
+            :characteristic="carac"
+            :externalState="stateForCheckbox(carac.id)"
             @change="threeStateChanged"
           />
         </div>
@@ -77,23 +77,23 @@ export default class extends Vue {
     return getCaracteristicTypeColor(characteristic_type_id);
   }
 
-  private threeStateChanged(caracteristic_id: number, state: number) {
+  private threeStateChanged(characteristic_id: number, state: number) {
     this.includedIds = this.includedIds.filter(
-      (item) => item !== caracteristic_id
+      (item) => item !== characteristic_id
     );
     this.excludedIds = this.excludedIds.filter(
-      (item) => item !== caracteristic_id
+      (item) => item !== characteristic_id
     );
 
-    if (state == -1) this.excludedIds.push(caracteristic_id);
-    else if (state == 1) this.includedIds.push(caracteristic_id);
-    this.$emit("change", new Set(this.characteristics.map(t=>t.characteristic_id)), this.includedIds, this.excludedIds);
+    if (state == -1) this.excludedIds.push(characteristic_id);
+    else if (state == 1) this.includedIds.push(characteristic_id);
+    this.$emit("change", new Set(this.characteristics.map(t=>t.id)), this.includedIds, this.excludedIds);
   }
 
-  private stateForCheckbox(caracteristic_id: number) {
+  private stateForCheckbox(characteristic_id: number) {
     let state = 0;
-    if (this.includedIds.indexOf(caracteristic_id) !== -1) state = 1;
-    else if (this.excludedIds.indexOf(caracteristic_id) !== -1) state = -1;
+    if (this.includedIds.indexOf(characteristic_id) !== -1) state = 1;
+    else if (this.excludedIds.indexOf(characteristic_id) !== -1) state = -1;
     return state;
   }
   //#region

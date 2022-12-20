@@ -1,10 +1,11 @@
 import { $axios } from '~/utils/api'
-import { ICharacteristicFilters } from "@/types/characteristics";
-import qs from 'qs';
+import { PaginatedResponse } from "@/types/basics"
+import { CharacteristicQueryParams, ICharacteristic, ICharacteristicType } from "@/types/characteristics"
+import qs from 'qs'
 
-export const getCharacteristics = (filters : ICharacteristicFilters | null) =>
+export const getCharacteristics = (filters : CharacteristicQueryParams) =>
     $axios.request({
-        url: '/characteristics',
+        url: '/features/features/',
         method: 'get',
         params: filters,
         paramsSerializer: params => {
@@ -12,8 +13,8 @@ export const getCharacteristics = (filters : ICharacteristicFilters | null) =>
           }
     })
 
-export const getCharacteristicsTypes = () =>
+export const getCharacteristicTypes = () =>
     $axios.request({
-        url: '/characteristics_types',
+        url: '/features/categories/',
         method: 'get',
     })

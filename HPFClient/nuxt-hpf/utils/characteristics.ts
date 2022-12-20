@@ -1,7 +1,7 @@
 import { ICharacteristic } from "@/types/characteristics";
 
 export function getClassTypeColor(characteristic: ICharacteristic): string {
-    return getCaracteristicTypeColor(characteristic.characteristic_type_id);
+    return getCaracteristicTypeColor(characteristic.category_id);
 }
 
 export function getCaracteristicTypeColor(characteristic_type_id: number): string {
@@ -33,7 +33,7 @@ export function getFullPath(characteristic: ICharacteristic, characteristics: IC
         const parentCharacteristic: ICharacteristic | undefined =
             characteristics.find(
                 (pCharacteristic: ICharacteristic) =>
-                    pCharacteristic.characteristic_id == characteristic.parent_id
+                    pCharacteristic.id == characteristic.parent_id
             );
         if (parentCharacteristic != null)
             result = getFullPath(parentCharacteristic, characteristics) +

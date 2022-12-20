@@ -6,14 +6,14 @@
     :class="[{ excluded: indeterminate }]"
     @click.native.prevent="checkBoxClicked($event)"
   >
-    <font-awesome-icon v-if="caracteristic.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
+    <font-awesome-icon v-if="characteristic.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
       :class="[
-        caracteristic.parent_id != null
+        characteristic.parent_id != null
           ? 'is-italic has-text-weight-light'
           : 'has-text-weight-medium',
       ]"
-      >{{ caracteristic.name }}</span
+      >{{ characteristic.name }}</span
     >
   </b-checkbox>
 </template>
@@ -27,7 +27,7 @@ import { ICharacteristic } from "@/types/characteristics";
 })
 export default class extends Vue {
   //#region Props
-  @Prop() private caracteristic!: ICharacteristic | undefined;
+  @Prop() private characteristic!: ICharacteristic | undefined;
   @Prop() private externalState!: number | undefined;
   //#endregion
 
@@ -50,7 +50,7 @@ export default class extends Vue {
     } else {
       internalState = 1;
     }
-    this.$emit("change", this.caracteristic?.characteristic_id, internalState);
+    this.$emit("change", this.characteristic?.id, internalState);
   }
   //#endregion
 }

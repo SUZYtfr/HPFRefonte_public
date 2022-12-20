@@ -39,8 +39,8 @@
                 class="column is-4 is-4-desktop is-4-widescreen is-3-fullhd"
               >
                 <TagPanel
-                  :characteristic_type_id="charac.characteristic_type_id"
-                  :characteristic_id="charac.characteristic_id"
+                  :characteristic_type_id="charac.category_id"
+                  :characteristic_id="charac.id"
                   :characteristic_name="charac.name"
                   :characteristic_description="charac.description"
                   :characteristic_count="charac.count"
@@ -51,7 +51,7 @@
             <div v-if="currentCharacs.length == 0">
               <FanfictionList
                 :isCard="false"
-                :fanfictionFilters="fanfictionFilters"
+                :fanfictionQueryParams="fanfictionQueryParams"
               />
             </div>
           </div>
@@ -69,10 +69,10 @@ import { ConfigModule } from "@/utils/store-accessor";
 import {
   ICharacteristic,
   ICharacteristicType,
-  ICharacteristicFilters,
+  CharacteristicQueryParams,
 } from "@/types/characteristics";
-import { getCharacteristics } from "@/api/characteristics";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { getCharacteristics, getCharacteristicTypes } from "@/api/characteristics";
+import { FanfictionQueryParams } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 
 @Component({
@@ -90,34 +90,32 @@ export default class extends Vue {
   private currentCharacs: any[] = [];
 
   // Filtres des charactéristiques
-  private caracteristicFilters: ICharacteristicFilters = {
-    characteristic_type_id: null,
-    parent_id: null,
-    options: {
-      with_stats: true,
-    },
-    limit: 10,
+  private characteristicQueryParams: CharacteristicQueryParams = {
+    category_id: undefined,
+    parent_id: undefined,
+    with_fiction_count: true,
+    page_size: 10,
   };
 
   // Filtres
-  private fanfictionFilters: FanfictionFiltersData = {
-    searchTerm: "",
-    searchAuthor: "",
+  private fanfictionQueryParams: FanfictionQueryParams = {
+    title: "",
+    author: "",
     searchAuthorId: 0,
     sortBy: "most_recent",
-    multipleAuthors: null,
-    status: null,
-    minWords: null,
-    maxWords: null,
+    multipleAuthors: undefined,
+    status: undefined,
+    minWords: undefined,
+    maxWords: undefined,
     includedTags: [],
     excludedTags: [],
     customTags: [],
-    featured: null,
+    featured: undefined,
     inclusive: false,
-    fromDate: null,
-    toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    fromDate: undefined,
+    toDate: undefined,
+    page: 1,
+    page_size: 10,
   };
 
   private listLoading: boolean = false;
@@ -127,7 +125,7 @@ export default class extends Vue {
   async fetch() {
     this.listLoading = true;
     // Récupération des caractéristiques types
-    await this.getCharacteristicsTypes();
+    await this.fetchCharacteristicTypes();
     this.listLoading = false;
   }
   //#endregion
@@ -139,15 +137,14 @@ export default class extends Vue {
     this.listLoading = true;
     if (this.breadcrumbStack.length > 0) {
       let current = this.breadcrumbStack[this.breadcrumbStack.length - 1];
-      this.caracteristicFilters.characteristic_type_id =
-        current.characteristic_type_id;
-      this.caracteristicFilters.parent_id = current.characteristic_id;
+      this.characteristicQueryParams.category_id = current.category_id;
+      this.characteristicQueryParams.parent_id = current.id;
       await this.getCharacteristics();
       // Si pas de nouvelle caractéristique, on est en bas de la pile on déclenche recherche les fictions
       if (this.currentCharacs.length == 0)
-        this.fanfictionFilters.includedTags = [current.characteristic_id];
+        this.fanfictionQueryParams.includedTags = [current.id];
     } else {
-      await this.getCharacteristicsTypes();
+      await this.fetchCharacteristicTypes();
     }
     this.listLoading = false;
   }
@@ -155,7 +152,7 @@ export default class extends Vue {
 
   //#region Methods
   // Récupération des caractéristiques types, depuis la config
-  private async getCharacteristicsTypes() {
+  private async fetchCharacteristicTypes() {
     if (ConfigModule.characteristicTypes.length == 0)
       await ConfigModule.LoadConfig();
     this.currentCharacs = ConfigModule.characteristicTypes;
@@ -164,26 +161,26 @@ export default class extends Vue {
   // Récupération des caractéristiques et de leurs stats
   private async getCharacteristics() {
     this.currentCharacs = (
-      await getCharacteristics(this.caracteristicFilters)
-    ).data.items;
+      await getCharacteristics(this.characteristicQueryParams)
+    ).data.results;
   }
 
   // Descendre dans l'arborescence
   private AddBreadCrumbLevel(
-    caracteristic_type_id: number | undefined,
-    caracteristic_id: number | undefined
+    characteristic_type_id: number | undefined,
+    characteristic_id: number | undefined
   ) {
-    if (caracteristic_id !== undefined)
+    if (characteristic_id !== undefined)
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
-          (t: ICharacteristic) => t.characteristic_id == caracteristic_id
+          (t: ICharacteristic) => t.id == characteristic_id
         )[0]
       );
-    else if (caracteristic_type_id !== undefined)
+    else if (characteristic_type_id !== undefined)
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
           (t: ICharacteristicType) =>
-            t.characteristic_type_id == caracteristic_type_id
+            t.id == characteristic_type_id
         )[0]
       );
   }

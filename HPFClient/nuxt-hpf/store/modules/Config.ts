@@ -1,9 +1,14 @@
-import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { Module, VuexModule, MutationAction } from 'vuex-module-decorators'
 import {
     getCharacteristics,
-    getCharacteristicsTypes,
+    getCharacteristicTypes,
 } from "@/api/characteristics";
-import { ICharacteristic, ICharacteristicType } from '~/types/characteristics'
+import {
+    ICharacteristic,
+    ICharacteristicType,
+    ICharacteristicResponse,
+    ICharacteristicTypeResponse
+} from '~/types/characteristics'
 
 export interface ConfigState {
     characteristics: ICharacteristic[];
@@ -19,25 +24,11 @@ export default class _Config extends VuexModule implements ConfigState {
     public characteristics: ICharacteristic[] = []
     public characteristicTypes: ICharacteristicType[] = []
 
-    @Mutation
-    public SET_CHARACTERISTICS(characteristics: ICharacteristic[]) {
-        this.characteristics = characteristics;
-    }
-
-    @Mutation
-    public SET_CHARACTERISTIC_TYPES(characteristicTypes: ICharacteristicType[]) {
-        this.characteristicTypes = characteristicTypes
-    }
-
-    @Action
+    @MutationAction({ mutate: ['characteristics', 'characteristicTypes'] })
     public async LoadConfig() {
-        this.SET_CHARACTERISTICS((await getCharacteristics(null)).data.items);
-        this.SET_CHARACTERISTIC_TYPES((await getCharacteristicsTypes()).data.items);
+        const characteristicResponse = (await getCharacteristics({page_size: 245})).data as ICharacteristicResponse;
+        const charTypeResponse = (await getCharacteristicTypes()).data as ICharacteristicTypeResponse;
+        return {'characteristics': characteristicResponse.results, 'characteristicTypes': charTypeResponse.results};
     }
 
-    @Action
-    public async ResetConfig() {
-        this.SET_CHARACTERISTICS([]);
-        this.SET_CHARACTERISTIC_TYPES([]);
-    }
 }

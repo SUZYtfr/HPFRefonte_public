@@ -1,32 +1,32 @@
+import { QueryParams, PaginatedResponse } from "@/types/basics";
+
 export interface ICharacteristic {
-    characteristic_id: number,
-    characteristic_type_id: number,
-    parent_id: number,
-    name: string,
-    description: string,
-    in_order: number,
+    id: number;
+    category_id: number;
+    parent_id?: number;
+    name: string;
+    description?: string;
+    order: number;
+    fiction_count?: number;
 }
 
 export interface ICharacteristicType {
-    characteristic_type_id: number,
-    creation_user_id: number,
-    creation_date: Date,
-    modification_user_id: number,
-    modification_date: Date,
-    name: string,
-    min_occurence: number,
-    max_occurence: number,
-    visible: boolean,
-    enabled: boolean
+    id: number;
+    name: string;
+    min_limit: number;
+    max_limit?: number;
 }
 
-export class ICharacteristicGetOptions {
-    with_stats: boolean = false;
+export interface CharacteristicQueryParams extends QueryParams {
+    category_id?: number;
+    parent_id?: number;
+    with_fiction_count?: boolean;
 }
 
-export interface ICharacteristicFilters {
-    characteristic_type_id: number | null,
-    parent_id: number | null,
-    options: ICharacteristicGetOptions | null,
-    limit: number | null
+export interface ICharacteristicResponse extends PaginatedResponse {
+  results: ICharacteristic[];
+}
+
+export interface ICharacteristicTypeResponse extends PaginatedResponse {
+  results: ICharacteristicType[];
 }

@@ -1,11 +1,12 @@
-export interface BasicQuery {
-  page: number,
-  totalPages: number,
-  pageSize: number
+export interface QueryParams {
+  page?: number;
+  page_size?: number;
 }
 
-export interface BasicResponse {
-  currentPage: number,
-  totalPages: number,
-  pageSize: number
+export interface PaginatedResponse {
+  count: number;
+  current: number;
+  previous?: string;
+  next?: string;
+  results: any;
 }
