@@ -1,6 +1,6 @@
 <template>
   <!-- <b-tooltip
-    :label="link.link_url"
+    :label="link.url"
     position="is-bottom"
     :delay="250"
     append-to-body
@@ -16,12 +16,12 @@
           <img
             :class="[{ 'img-hover': hover }, 'is-rounded']"
             :src="linkIdImg"
-            :alt="link.display_name"
+            :alt="link.display_text"
           />
         </figure>
       </div>
       <div class="column is-narrow" v-if="hover">
-        <p :class="[{ 'link-hover': hover }, { 'animate__fadeInLeft': hover}, 'animate__animated']">{{ link.display_name }}</p>
+        <p :class="[{ 'link-hover': hover }, { 'animate__fadeInLeft': hover}, 'animate__animated']">{{ link.display_text }}</p>
       </div>
     </div>
   <!-- </b-tooltip> -->

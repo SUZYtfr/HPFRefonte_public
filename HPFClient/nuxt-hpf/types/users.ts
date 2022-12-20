@@ -1,3 +1,5 @@
+import { PaginatedResponse } from "@/types/basics"
+
 export interface UserData {
   id: number;
   first_seen: Date;
@@ -45,26 +47,15 @@ export interface UserProfileAvatarData {
 
 export interface UserLinkData {
   link_type_id: number;
-  display_name: string;
-  link_url: string;
-}
-
-export interface UserRegisterData {
-  email: string,
-  password: string,
-  username: string,
-  realname: string | null,
-  bio: string | null,
-  website: string | null,
-  avatar: string | ArrayBuffer| null,
-}
-
-export interface UserLoginData {
-  username: string,
-  password: string,
+  display_text: string;
+  url: string;
 }
 
 export interface AuthorData {
-  author_id: number,
-  nickname: string
+  id: number;
+  username: string;
+}
+
+export interface UserResponse extends PaginatedResponse {
+    results: UserData[];
 }

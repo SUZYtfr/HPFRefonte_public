@@ -35,11 +35,11 @@
                 </figure>
               </div>
               <div class="media-content">
-                <p class="title is-5">{{ user.nickname }}</p>
-                <p class="subtitle is-7">{{ user.realname }}</p>
+                <p class="title is-5">{{ user.username }}</p>
+                <p class="subtitle is-7">{{ user.profile.realname }}</p>
                 <p class="subtitle is-7">
                   Inscrit le
-                  <strong>{{ user.creation_date | parseTime }}</strong>
+                  <strong>{{ user.first_seen | parseTime }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -106,11 +106,11 @@
                     pt-2
                     is-fullheight
                   "
-                  v-else-if="user != undefined && user.links.length > 0"
+                  v-else-if="user != undefined && user.profile.user_links.length > 0"
                 >
                   <div
                     class="column is-narrow py-1"
-                    v-for="(link, innerindex) of user.links"
+                    v-for="(link, innerindex) of user.profile.user_links"
                     :key="innerindex"
                   >
                     <UserLink
@@ -223,12 +223,12 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.fanfictions | numberToString }}
+                          {{ user.stats.fiction_count | numberToString }}
                         </p>
                         <p class="heading">
                           {{
                             "Fanfiction" +
-                            (user.stats.fanfictions > 1 ? "s" : "")
+                            (user.stats.fiction_count > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -238,11 +238,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.chapters | numberToString }}
+                          {{ user.stats.chapter_count | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Chapitre" + (user.stats.chapters > 1 ? "s" : "")
+                            "Chapitre" + (user.stats.chapter_count > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -252,10 +252,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.words | numberToString }}
+                          {{ user.stats.word_count | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Mot" + (user.stats.words > 1 ? "s" : "") }}
+                          {{ "Mot" + (user.stats.word_count > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -264,10 +264,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.series | numberToString }}
+                          {{ user.stats.collection_count | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Série" + (user.stats.series > 1 ? "s" : "") }}
+                          {{ "Série" + (user.stats.collection_count > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -276,11 +276,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.challenges | numberToString }}
+                          {{ user.stats.challenge_count | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Challenge" + (user.stats.challenges > 1 ? "s" : "")
+                            "Challenge" + (user.stats.challenge_count > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -290,10 +290,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.reviews | numberToString }}
+                          {{ user.stats.review_count | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Review" + (user.stats.reviews > 1 ? "s" : "") }}
+                          {{ "Review" + (user.stats.review_count > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -327,7 +327,7 @@
                   :model="true"
                   v-if="userLoading || user == undefined"
                 ></b-loading>
-                <span v-else v-html="user.bio"></span>
+                <span v-else v-html="user.profile.bio"></span>
               </div>
             </simplebar>
           </div>
@@ -350,18 +350,18 @@
                       v-if="userLoading || user == undefined"
                     ></b-loading
                     ><b-tag v-else rounded>
-                      {{ user.stats.fanfictions }}
+                      {{ user.stats.fiction_count }}
                     </b-tag>
                   </span>
                 </template>
                 <FanfictionFilters
-                  :fanfictionFilters="fanfictionFilters"
+                  :fanfictionQueryParams="fanfictionQueryParams"
                 />
                 <div class="columns mt-2">
                   <div class="column is-12">
                     <FanfictionList
                       :isCard="false"
-                      :fanfictionFilters="fanfictionFilters"
+                      :fanfictionQueryParams="fanfictionQueryParams"
                     />
                   </div>
                 </div>
@@ -376,7 +376,7 @@
                       :model="true"
                       v-if="userLoading || user == undefined"
                     ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.series }} </b-tag>
+                    ><b-tag v-else rounded> {{ user.stats.collection_count }} </b-tag>
                   </span>
                 </template>
                 2
@@ -390,7 +390,7 @@
                       :model="true"
                       v-if="userLoading || user == undefined"
                     ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.reviews }} </b-tag>
+                    ><b-tag v-else rounded> {{ user.stats.review_count }} </b-tag>
                   </span>
                 </template>
                 3
@@ -404,7 +404,7 @@
                       :model="true"
                       v-if="userLoading || user == undefined"
                     ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.challenges }} </b-tag>
+                    ><b-tag v-else rounded> {{ user.stats.challenge_count }} </b-tag>
                   </span>
                 </template>
                 4
@@ -419,7 +419,7 @@
                       v-if="userLoading || user == undefined"
                     ></b-loading
                     ><b-tag v-else rounded>
-                      {{ user.stats.favorites_fanfictions }}
+                      {{ user.stats.favorite_fanfictions }}
                     </b-tag>
                   </span>
                 </template>
@@ -435,7 +435,7 @@
                       v-if="userLoading || user == undefined"
                     ></b-loading
                     ><b-tag v-else rounded>
-                      {{ user.stats.favorites_series }}
+                      {{ user.stats.favorite_collections }}
                     </b-tag>
                   </span>
                 </template>
@@ -451,7 +451,7 @@
                       v-if="userLoading || user == undefined"
                     ></b-loading
                     ><b-tag v-else rounded>
-                      {{ user.stats.favorites_author }}
+                      {{ user.stats.favorite_authors }}
                     </b-tag>
                   </span>
                 </template>
@@ -473,8 +473,8 @@ import "simplebar/dist/simplebar.min.js";
 import SimpleBar from "simplebar";
 import UserLink from "@/components/UserLink.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
-import { UserData } from "@/types/users";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { UserData, UserResponse } from "@/types/users";
+import { FanfictionQueryParams } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 
@@ -491,8 +491,13 @@ import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
       return new Date(timestamp).toLocaleDateString();
     },
     numberToString: (number: number) => {
-      if (number > 9999) return (number / 1000).toString() + " K";
-      else return number.toString();
+      if (number > 9999) {
+        return (number / 1000).toString() + " K";
+      } else if (number >= 9999) {
+        return number.toString();
+      } else {
+        return number;
+      }
     },
   },
 })
@@ -502,24 +507,24 @@ export default class extends Vue {
   private userLoading = false;
 
   // Filtres de recherche
-  private fanfictionFilters: FanfictionFiltersData = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: 0,
+  private fanfictionQueryParams: FanfictionQueryParams = {
+    title: "",
+    author: "",
+    searchAuthorId: undefined,
     sortBy: "most_recent",
-    multipleAuthors: null,
-    status: null,
-    minWords: null,
-    maxWords: null,
+    multipleAuthors: undefined,
+    status: undefined,
+    minWords: undefined,
+    maxWords: undefined,
     includedTags: [],
     excludedTags: [],
     customTags: [],
-    featured: false,
+    featured: undefined,
     inclusive: false,
-    fromDate: null,
-    toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    fromDate: undefined,
+    toDate: undefined,
+    page: 1,
+    page_size: 5,
   };
 
   //#endregion
@@ -559,8 +564,7 @@ export default class extends Vue {
     this.userLoading = true;
     console.log("fetch");
     try {
-      this.user = (await getUser(this.$route.params.id)).data.items.user;
-      console.log(this.user);
+      this.user = (await getUser(this.$route.params.id)).data as UserData;
     } catch (error) {
       console.log(error);
     } finally {
@@ -570,10 +574,9 @@ export default class extends Vue {
   }
   //#endregion
 
-  //#region Computed
-  //#endregion
-
-  
+  async beforeMount() {
+    this.fanfictionQueryParams.searchAuthorId = parseInt(this.$route.params.id);
+  }
   //#region Methods
   //#endregion
 }
