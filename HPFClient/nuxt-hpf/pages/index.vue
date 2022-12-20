@@ -25,12 +25,12 @@
               <div
                 class="column is-half py-2"
                 v-for="(fanfiction, innerindex) of fanfictions"
-                :key="'ff_recent_' + fanfiction.fanfiction_id.toString()"
+                :key="fanfiction.id"
               >
                 <FanfictionThumbnail
                   :fanfiction="fanfiction"
                   v-bind:index="innerindex"
-                  v-bind:key="fanfiction.fanfiction_id"
+                  v-bind:key="fanfiction.id"
                 ></FanfictionThumbnail>
               </div>
             </div>
@@ -66,12 +66,12 @@
               <div
                 class="column is-half py-2"
                 v-for="(fanfiction, innerindex) of fanfictions"
-                :key="'ff_selection_' + fanfiction.fanfiction_id.toString()"
+                :key="'ff_selection_' + fanfiction.id.toString()"
               >
                 <FanfictionThumbnail
                   :fanfiction="fanfiction"
                   v-bind:index="innerindex"
-                  v-bind:key="fanfiction.fanfiction_id"
+                  v-bind:key="fanfiction.id"
                 ></FanfictionThumbnail>
               </div>
             </div>
@@ -99,7 +99,7 @@
           <div class="card-content">
             <News_2
               v-for="(item, innerindex) of news"
-              :key="'news_' + item.news_id.toString()"
+              :key="'news_' + item.id.toString()"
               :news="item"
               :activeColor="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
               :class="[{ 'is-hidden-mobile': innerindex > 0 }]"
@@ -125,9 +125,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { NewsData, getNews } from "@/api/news";
+import { getNews } from "@/api/news";
+import { NewsData, NewsResponse } from "@/types/news";
+import { QueryParams } from "@/types/basics";
 import { getFanfictions } from "@/api/fanfictions";
-import { FanfictionData } from "@/types/fanfictions";
+import { FanfictionData, FanfictionQueryParams, FanfictionResponse } from "@/types/fanfictions";
 import News_2 from "@/components/News_2.vue";
 import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
 
@@ -143,9 +145,13 @@ export default class extends Vue {
   private news: NewsData[] = [];
   private fanfictions: FanfictionData[] = [];
   private listLoading = false;
-  private listQuery = {
+  private fanfictionQueryParams: QueryParams = {
     page: 1,
-    limit: 20,
+    page_size: 10,
+  };
+  private newsQueryParams: QueryParams = {
+    page: 1,
+    page_size: 1,
   };
   //#endregion
 
@@ -155,36 +161,25 @@ export default class extends Vue {
   async asyncData() {}
 
   async fetch() {
-    this.news = (await getNews(this.listQuery)).data.items;
-    this.fanfictions = (await getFanfictions(this.listQuery)).data.items;
+    console.log("fetch");
+    const newsResponse = (await getNews(this.newsQueryParams)).data as NewsResponse;
+    this.news = newsResponse.results;
+    const fanfictionResponse = (await getFanfictions(this.fanfictionQueryParams)).data as FanfictionResponse;
+    this.fanfictions = fanfictionResponse.results;
   }
 
   beforeMount() {}
 
-  mouted() {}
+  mounted() {}
   //#endregion
 
   //#region Methods
   private async getNews() {
     this.listLoading = true;
-    try {
-      const { data } = await getNews(this.listQuery);
-      this.news = data.items;
-    } catch {
-    } finally {
-      this.listLoading = false;
-    }
   }
 
   private async getFanfictions() {
     this.listLoading = true;
-    try {
-      const { data } = await getFanfictions(this.listQuery);
-      this.fanfictions = data.items;
-    } catch {
-    } finally {
-      this.listLoading = false;
-    }
   }
   //#endregion
 }
