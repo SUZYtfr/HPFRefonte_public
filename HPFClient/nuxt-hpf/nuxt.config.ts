@@ -7,6 +7,7 @@ const config: NuxtConfig = {
     extractCSS: process.env.NODE_ENV === 'production',
     optimizeCSS: process.env.NODE_ENV === 'production',
   },
+  target: "static",
   buildModules: [
     '@nuxt/typescript-build',
   ],
@@ -22,7 +23,7 @@ const config: NuxtConfig = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'A boilerplate to start a Nuxt+TS project quickly' }
+      { hid: 'description', name: 'description', content: 'Harry Potter Fanfiction :: Harry Potter selon ses fans' }
     ],
     link: []
   },

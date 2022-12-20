@@ -1,6 +1,6 @@
 {
-  "name": "nuxt-community-typescript-template",
-  "description": "A boilerplate to start a Nuxt+TS project quickly",
+  "name": "harry-potter-fanfiction",
+  "description": "Harry Potter Fanfiction :: Harry Potter selon ses fans",
   "version": "2.14.12",
   "private": true,
   "dependencies": {
