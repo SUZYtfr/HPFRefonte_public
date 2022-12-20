@@ -33,7 +33,7 @@ def random_date():
 
 
 def get_random_user():
-    return User.objects.exclude(pk=0).order_by("?").first()
+    return User.objects.exclude(pk__lte=0).order_by("?").first()
 
 
 # MODÈLES AUTO-GÉNÉRÉS
