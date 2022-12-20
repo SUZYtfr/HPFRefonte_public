@@ -1,18 +1,20 @@
-import { ICharacteristic } from "./characteristics";
-import { AuthorData } from "./users";
-import { CommentData } from "./comments";
+import { QueryParams, PaginatedResponse } from "@/types/basics"
+import { ICharacteristic } from "@/types/characteristics"
+import { AuthorData } from "@/types/users"
+import { CommentData } from "@/types/comments"
 
 export class FanfictionData {
-  fanfiction_id: number | null = null;
+  id: number | null = null;
   last_update_date: Date | null = null;
   creation_date: Date | null = null;
   title: string | null = null;
   summary: string | null = null;
   authors: AuthorData[] | null = null;
-  comments: CommentData[] | null = null;
-  characteristics: ICharacteristic[] | null = null;
+  creation_user: AuthorData | null = null;
+  review_count: number | null = null;
+  features: ICharacteristic[] | null = null;
   series: SerieData[] | null = null;
-  rating: number | null = null;
+  mean: number | null = null;
   chapter_count: number | null = null;
   word_count: number | null = null;
   read_count: number | null = null;
@@ -20,24 +22,26 @@ export class FanfictionData {
   featured: boolean | null = null;
 }
 
-export interface FanfictionFiltersData {
-  searchTerm: string,
-  searchAuthor: string,
-  searchAuthorId: number,
-  sortBy: string,
-  multipleAuthors: boolean | null,
-  status: boolean | null,
-  minWords: number | null,
-  maxWords: number | null,
-  includedTags: number[],
-  excludedTags: number[],
-  customTags: number[],
-  featured: boolean | null,
-  inclusive: boolean,
-  fromDate: Date | null,
-  toDate: Date | null,
-  currentPage: number,
-  perPage: number,
+export interface FanfictionQueryParams extends QueryParams {
+  title?: string;
+  author?: string;
+  searchAuthorId?: number;
+  sortBy?: string;
+  multipleAuthors?: boolean;
+  status?: boolean;
+  minWords?: number;
+  maxWords?: number;
+  includedTags?: number[];
+  excludedTags?: number[];
+  customTags?: number[];
+  featured?: boolean;
+  inclusive?: boolean;
+  fromDate?: Date;
+  toDate?: Date;
+}
+
+export interface FanfictionResponse extends PaginatedResponse {
+  results: FanfictionData[];
 }
 
 interface SerieData {

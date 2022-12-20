@@ -17,7 +17,7 @@
           type="is-primary"
           icon="award"
         />
-        <span class="has-text-weight-bold">{{ ratinga }}</span>
+        <span class="has-text-weight-bold">{{ fanfiction.mean }}</span>
         <b-rate
           class="is-align-items-start"
           icon-pack="fas"
@@ -39,18 +39,18 @@
           <template v-if="index > 0">,</template>
           <a
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="'author_' + author.author_id.toString()"
-            v-bind:href="'auteurs/' + author.author_id"
-            >{{ author.nickname }}
+            v-bind:key="'author_' + author.id.toString()"
+            v-bind:href="'auteurs/' + author.id"
+            >{{ author.username }}
           </a>
         </template>
       </div>
       <div class="">
         <a class="is-size-6 has-text-weight-normal"
           >{{
-            fanfiction.comments.length +
+            fanfiction.review_count +
             " review" +
-            (fanfiction.comments.length > 1 ? "s" : "")
+            (fanfiction.review_count > 1 ? "s" : "")
           }}<font-awesome-icon class="ml-1" icon="comments" />
         </a>
       </div>
@@ -69,8 +69,8 @@
           <template v-if="index > 0">,</template>
           <a
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="'serie_' + serie.serie_id.toString()"
-            v-bind:href="'series/' + serie.serie_id"
+            v-bind:key="'serie_' + serie.id.toString()"
+            v-bind:href="'series/' + serie.id"
             >{{ serie.title }}
           </a>
         </template>
@@ -78,9 +78,9 @@
     </div>
     <b-taglist class="mb-0">
       <a
-        v-for="characteristic in fanfiction.characteristics"
-        v-bind:key="'tag_' + characteristic.characteristic_id.toString()"
-        v-bind:href="'auteurs/' + characteristic.characteristic_id"
+        v-for="characteristic in fanfiction.features"
+        v-bind:key="'tag_' + characteristic.id.toString()"
+        v-bind:href="'auteurs/' + characteristic.id"
         ><b-tag
           :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
           type="is-info"

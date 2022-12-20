@@ -11,7 +11,7 @@
             placeholder="Rechercher..."
             type="search"
             icon="search"
-            v-model="fanfictionFilters.searchTerm"
+            v-model="fanfictionQueryParams.title"
           >
           </b-input>
         </b-field>
@@ -19,23 +19,23 @@
       <div class="column is-6 pt-0">
         <ThreeStateCheckbox
             class="py-1 pl-1"
-            :externalValue="fanfictionFilters.status"
+            :externalValue="fanfictionQueryParams.status"
             :checkedValue="4"
             :excludedValue="1"
             :uncheckedValue="null"
-            @change="fanfictionFilters.status = $event"
+            @change="fanfictionQueryParams.status = $event"
             title="Histoires terminées"
           />
           <ThreeStateCheckbox
             class="py-1 pl-1"
-            :externalValue="fanfictionFilters.multipleAuthors"
-            @change="fanfictionFilters.multipleAuthors = $event"
+            :externalValue="fanfictionQueryParams.multipleAuthors"
+            @change="fanfictionQueryParams.multipleAuthors = $event"
             title="Histoires co-écrites"
           />
           <ThreeStateCheckbox
             class="py-1 pl-1"
-            :externalValue="fanfictionFilters.featured"
-            @change="fanfictionFilters.featured = $event"
+            :externalValue="fanfictionQueryParams.featured"
+            @change="fanfictionQueryParams.featured = $event"
             title="Histoires médaillés"
           />
       </div>
@@ -48,7 +48,7 @@
           custom-class="has-text-primary"
         >
           <b-taginput
-            v-model="fanfictionFilters.includedTags"
+            v-model="fanfictionQueryParams.includedTags"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
@@ -92,7 +92,7 @@
           custom-class="has-text-primary"
         >
           <b-taginput
-            v-model="fanfictionFilters.excludedTags"
+            v-model="fanfictionQueryParams.excludedTags"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
@@ -136,11 +136,12 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { FanfictionQueryParams } from "@/types/fanfictions";
 import { ICharacteristic, ICharacteristicType } from "@/types/characteristics";
 import { ConfigModule } from "@/utils/store-accessor";
 import { groupBy } from "@/utils/es6-utils";
 import { getClassTypeColor, getFullPath } from "@/utils/characteristics";
+import { getCharacteristics, getCharacteristicTypes } from "@/api/characteristics";
 import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 
 @Component({
@@ -152,12 +153,13 @@ import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 export default class extends Vue {
   //#region Props
   @Prop() private authorFieldVisible!: boolean;
-  @Prop() private fanfictionFilters!: FanfictionFiltersData;
+  @Prop() private fanfictionQueryParams!: FanfictionQueryParams;
   //#endregion
 
   //#region Data
   private characteristics: any[] = [];
   private filteredCharacteristics: any[] = [];
+  private characteristic_types: ICharacteristicType[] = [];
   //#endregion
 
   //#region Hooks
@@ -173,7 +175,7 @@ export default class extends Vue {
   //#region Watchers
   @Watch("fanfictionFilters", { deep: true })
   private onFiltersChanged() {
-    this.$emit("change", this.fanfictionFilters);
+    this.$emit("change", this.fanfictionQueryParams);
   }
   //#endregion
 
@@ -195,22 +197,22 @@ export default class extends Vue {
       }
       items = items.filter(
         (item: ICharacteristic) =>
-          !this.fanfictionFilters.includedTags.includes(
-            item.characteristic_id
-          ) &&
-          !this.fanfictionFilters.excludedTags.includes(item.characteristic_id)
+          // @ts-ignore
+          this.fanfictionQueryParams.includedTags!.includes(item.id) &&
+          // @ts-ignore
+          this.fanfictionQueryParams.excludedTags!.includes(item.id)
       );
 
       let itemsSorted: ICharacteristic[] = items
         .filter((t) => t.parent_id == null)
         .sort((a: ICharacteristic, b: ICharacteristic) => {
-          return a.in_order - b.in_order;
+          return a.order! - b.order!;
         });
       groupBy(items, (g: ICharacteristic) => g.parent_id).forEach(
         (value: ICharacteristic[], key: number) => {
           if (key != null) {
             let index = itemsSorted.findIndex(
-              (c) => c.characteristic_id === key
+              (c) => c.id === key
             );
             if (index == -1) itemsSorted.splice(0, 0, ...value);
             else itemsSorted.splice(index + 1, 0, ...value);
@@ -240,11 +242,11 @@ export default class extends Vue {
 
     const grouped = groupBy(
       ConfigModule.characteristics,
-      (characteristic: ICharacteristic) => characteristic.characteristic_type_id
+      (characteristic: ICharacteristic) => characteristic.category_id
     );
     ConfigModule.characteristicTypes.forEach((element: ICharacteristicType) => {
       const items = grouped
-        .get(element.characteristic_type_id)
+        .get(element.id)
         .map((groupedCharacteristic: ICharacteristic) => {
           return groupedCharacteristic;
         });
@@ -252,13 +254,13 @@ export default class extends Vue {
       let itemsSorted: ICharacteristic[] = items
         .filter((t: ICharacteristic) => t.parent_id == null)
         .sort((a: ICharacteristic, b: ICharacteristic) => {
-          return a.in_order - b.in_order;
+          return a.order! - b.order!;
         });
       groupBy(items, (g: ICharacteristic) => g.parent_id).forEach(
         (value: ICharacteristic[], key: number) => {
           if (key != null) {
             let index = itemsSorted.findIndex(
-              (c) => c.characteristic_id === key
+              (c) => c.id === key
             );
             if (index == -1) itemsSorted.splice(0, 0, ...value);
             else itemsSorted.splice(index + 1, 0, ...value);

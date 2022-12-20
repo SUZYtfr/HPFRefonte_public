@@ -21,7 +21,7 @@
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="fanfictionFilters.searchTerm"
+          v-model="fanfictionQueryParams.title"
         >
         </b-input>
       </b-field>
@@ -34,7 +34,7 @@
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="fanfictionFilters.searchAuthor"
+          v-model="fanfictionQueryParams.author"
         >
         </b-input>
       </b-field>
@@ -67,31 +67,31 @@
       </b-field>
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :externalValue="fanfictionFilters.status"
+        :externalValue="fanfictionQueryParams.status"
         :checkedValue="4"
         :excludedValue="1"
         :uncheckedValue="null"
-        @change="fanfictionFilters.status = $event"
+        @change="fanfictionQueryParams.status = $event"
         title="Histoires terminées"
       />
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :externalValue="fanfictionFilters.multipleAuthors"
-        @change="fanfictionFilters.multipleAuthors = $event"
+        :externalValue="fanfictionQueryParams.multipleAuthors"
+        @change="fanfictionQueryParams.multipleAuthors = $event"
         title="Histoires co-écrites"
       />
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :externalValue="fanfictionFilters.featured"
-        @change="fanfictionFilters.featured = $event"
+        :externalValue="fanfictionQueryParams.featured"
+        @change="fanfictionQueryParams.featured = $event"
         title="Histoires médaillés"
       />
       <CharacteristicPanel
         class="my-2"
-        v-for="(type, index) in characteristics_types"
+        v-for="(type, index) in characteristic_types"
         :key="'tag_' + index.toString()"
         :characteristic_type="type"
-        :characteristics="filteredCharacteristics(type.characteristic_type_id)"
+        :characteristics="filteredCharacteristics(type.id)"
         @change="characteristicsChanged"
       />
       <b-field
@@ -100,7 +100,7 @@
         custom-class="has-text-primary"
       >
         <b-taginput
-          v-model="fanfictionFilters.customTags"
+          v-model="fanfictionQueryParams.customTags"
           :data="filteredTags"
           autocomplete
           :allow-new="false"
@@ -118,15 +118,15 @@
         custom-class="has-text-primary"
       >
         <b-datepicker
-          v-model="fanfictionFilters.fromDate"
+          v-model="fanfictionQueryParams.fromDate"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="fanfictionFilters.fromDate ? 'times-circle' : ''"
+          :icon-right="fanfictionQueryParams.fromDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="fanfictionFilters.fromDate = null"
+          @icon-right-click="fanfictionQueryParams.fromDate = null"
         >
         </b-datepicker>
       </b-field>
@@ -136,22 +136,22 @@
         custom-class="has-text-primary"
       >
         <b-datepicker
-          v-model="fanfictionFilters.toDate"
+          v-model="fanfictionQueryParams.toDate"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="fanfictionFilters.toDate ? 'times-circle' : ''"
+          :icon-right="fanfictionQueryParams.toDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="fanfictionFilters.toDate = null"
+          @icon-right-click="fanfictionQueryParams.toDate = null"
         >
         </b-datepicker>
       </b-field>
       <b-switch
         class="ml-1"
         :rounded="false"
-        v-model="fanfictionFilters.inclusive"
+        v-model="fanfictionQueryParams.inclusive"
         >Recherche inclusive</b-switch
       >
       <b-tooltip
@@ -197,9 +197,10 @@
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
 import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 import CharacteristicPanel from "@/components/CharacteristicPanel.vue";
-import { FanfictionFiltersData } from "~/types/fanfictions";
+import { FanfictionQueryParams } from "~/types/fanfictions";
 import { groupBy } from "@/utils/es6-utils";
 import { ICharacteristic, ICharacteristicType } from "@/types/characteristics";
+import { getCharacteristics, getCharacteristicTypes } from "@/api/characteristics";
 import { ConfigModule } from "@/utils/store-accessor";
 
 @Component({
@@ -211,7 +212,7 @@ import { ConfigModule } from "@/utils/store-accessor";
 })
 export default class extends Vue {
   //#region Props
-  @Prop() private fanfictionFilters!: FanfictionFiltersData;
+  @Prop() private fanfictionQueryParams!: FanfictionQueryParams;
   @Prop({ default: false }) private loading!: boolean;
   @Prop({ default: false }) private isFixedHeightCard!: boolean;
   @Prop({ default: "is-right" }) private tooltipPosition!: string;
@@ -229,7 +230,7 @@ export default class extends Vue {
 
   private filteredTags: ICharacteristic[] = [];
   private characteristics: ICharacteristic[] = [];
-  private characteristics_types: ICharacteristicType[] = [];
+  private characteristic_types: ICharacteristicType[] = [];
 
   private sliderWords: number[] = [1,6];
   //#endregion
@@ -244,11 +245,11 @@ export default class extends Vue {
   //#region Watchers
   @Watch("sliderWords")
   private onSliderChanged() {
-    this.fanfictionFilters.minWords = this.sliderTicks[this.sliderWords[0] - 1].realValue;
-    this.fanfictionFilters.maxWords = this.sliderTicks[this.sliderWords[1] - 1].realValue;
+    this.fanfictionQueryParams.minWords = this.sliderTicks[this.sliderWords[0] - 1].realValue;
+    this.fanfictionQueryParams.maxWords = this.sliderTicks[this.sliderWords[1] - 1].realValue;
     // Valeurs min et max -> null
-    if(this.fanfictionFilters.minWords == 500) this.fanfictionFilters.minWords = null;
-    if(this.fanfictionFilters.maxWords == 100000) this.fanfictionFilters.maxWords = null;
+    if(this.fanfictionQueryParams.minWords == 500) this.fanfictionQueryParams.minWords = undefined;
+    if(this.fanfictionQueryParams.maxWords == 100000) this.fanfictionQueryParams.maxWords = undefined;
   }
   //#endregion
 
@@ -261,7 +262,7 @@ export default class extends Vue {
       await ConfigModule.LoadConfig();
     }
     this.characteristics = ConfigModule.characteristics;
-    this.characteristics_types = ConfigModule.characteristicTypes;
+    this.characteristic_types = ConfigModule.characteristicTypes;
   }
 
   private sliderCustomFormatter(sliderValue: number) {
@@ -272,25 +273,25 @@ export default class extends Vue {
     return result + " mots";
   }
 
-  private filteredCharacteristics(characteristic_type_id: number) {
+  private filteredCharacteristics(category_id: number) {
     let itemsSorted: ICharacteristic[] = this.characteristics
       .filter(
         (t: ICharacteristic) =>
-          t.characteristic_type_id == characteristic_type_id &&
+          t.category_id == category_id &&
           t.parent_id == null
       )
       .sort((a: ICharacteristic, b: ICharacteristic) => {
-        return a.in_order - b.in_order;
+        return a.order! - b.order!;
       });
     groupBy(
       this.characteristics.filter(
         (t: ICharacteristic) =>
-          t.characteristic_type_id == characteristic_type_id
+          t.category_id == category_id
       ),
       (g: ICharacteristic) => g.parent_id
     ).forEach((value: ICharacteristic[], key: number) => {
       if (key != null) {
-        let index = itemsSorted.findIndex((c) => c.characteristic_id === key);
+        let index = itemsSorted.findIndex((c) => c.id === key);
         if (index == -1) itemsSorted.splice(0, 0, ...value);
         else itemsSorted.splice(index + 1, 0, ...value);
       }
@@ -309,24 +310,24 @@ export default class extends Vue {
     includedIds: number[],
     excludedIds: number[]
   ) {
-    this.fanfictionFilters.excludedTags =
-      this.fanfictionFilters.excludedTags.filter(
+    this.fanfictionQueryParams.excludedTags =
+      this.fanfictionQueryParams.excludedTags!.filter(
         (excludedId) => !allIds.has(excludedId)
       );
-    this.fanfictionFilters.excludedTags =
-      this.fanfictionFilters.excludedTags.concat(excludedIds);
-    this.fanfictionFilters.includedTags =
-      this.fanfictionFilters.includedTags.filter(
+    this.fanfictionQueryParams.excludedTags =
+      this.fanfictionQueryParams.excludedTags.concat(excludedIds);
+    this.fanfictionQueryParams.includedTags =
+      this.fanfictionQueryParams.includedTags!.filter(
         (includedId) => !allIds.has(includedId)
       );
-    this.fanfictionFilters.includedTags =
-      this.fanfictionFilters.includedTags.concat(includedIds);
+    this.fanfictionQueryParams.includedTags =
+      this.fanfictionQueryParams.includedTags.concat(includedIds);
   }
 
   // Déclencher le Watcher des filtres sur le clique recherche
   private toggleFilterChanged() {
-    this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm + " ";
-    this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm.slice(
+    this.fanfictionQueryParams.title = this.fanfictionQueryParams.title + " ";
+    this.fanfictionQueryParams.title = this.fanfictionQueryParams.title.slice(
       0,
       -1
     );

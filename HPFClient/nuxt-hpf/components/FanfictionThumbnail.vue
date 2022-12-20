@@ -18,7 +18,7 @@
           <a href="viewstory.php?sid=37709">{{ fanfiction.title }}</a>
         </h3>
       </div>
-      <span class="has-text-weight-bold">{{ ratinga }}</span>
+      <span class="has-text-weight-bold">{{ fanfiction.mean }}</span>
       <b-rate
         icon-pack="fas"
         :value="1"
@@ -41,22 +41,22 @@
           <template v-if="index > 0">,</template>
           <NuxtLink
             class="is-size-7 has-text-weight-normal"
-            v-bind:key="'author_' + author.author_id.toString()"
-            :to="{ name: 'auteurs-id', params: { id: author.author_id } }"
-            >{{ author.nickname }}</NuxtLink
+            v-bind:key="'author_' + author.id.toString()"
+            :to="{ name: 'auteurs-id', params: { id: author.id } }"
+            >{{ author.username }}</NuxtLink
           >
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">
         <a
-          v-for="characteristic in fanfiction.characteristics"
+          v-for="characteristic in fanfiction.features"
           v-bind:key="
             'ff_' +
-            fanfiction.fanfiction_id +
+            fanfiction.id +
             '_characteristic_' +
-            characteristic.characteristic_id.toString()
+            characteristic.id.toString()
           "
-          v-bind:href="'auteurs/' + characteristic.characteristic_id"
+          v-bind:href="'auteurs/' + characteristic.id"
           ><b-tag
             :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
             type="is-info"

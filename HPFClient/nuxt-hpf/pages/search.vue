@@ -9,7 +9,7 @@
       has-modal-card
     >
       <FanfictionFilters
-        :fanfictionFilters="fanfictionFilters"
+        :fanfictionQueryParams="fanfictionQueryParams"
         :loading="listLoading"
         :isFixedHeightCard="true"
         :tooltipPosition="'is-top'"
@@ -22,14 +22,14 @@
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <FanfictionFilters
-          :fanfictionFilters="fanfictionFilters"
+          :fanfictionQueryParams="fanfictionQueryParams"
           :loading="listLoading"
         />
       </div>
       <!-- Liste des fictions -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <FanfictionList
-          :fanfictionFilters="fanfictionFilters"
+          :fanfictionQueryParams="fanfictionQueryParams"
           :isLoading="listLoading"
           @loadingChange="(value) => (listLoading = value)"
         />
@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { FanfictionQueryParams } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilters.vue";
 
@@ -67,37 +67,28 @@ export default class extends Vue {
   //#region Data
   public filtersOpened: boolean = false;
 
-  private fanfictionFilters: FanfictionFiltersData = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: 0,
+  private fanfictionQueryParams: FanfictionQueryParams = {
+    title: undefined,
+    author: undefined,
+    searchAuthorId: undefined,
     sortBy: "most_recent",
-    multipleAuthors: null,
-    status: null,
-    minWords: null,
-    maxWords: null,
+    multipleAuthors: undefined,
+    status: undefined,
+    minWords: undefined,
+    maxWords: undefined,
     includedTags: [],
     excludedTags: [],
     customTags: [],
-    featured: null,
+    featured: undefined,
     inclusive: false,
-    fromDate: null,
-    toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    fromDate: undefined,
+    toDate: undefined,
+    page_size: 20,
+    page: 1,
   };
 
   private listLoading: boolean = false;
 
-  //#endregion
-
-  //#region Hooks
-
-  //#endregion
-
-  //#region Methods
-
-  //#endregion
 }
 </script>
 

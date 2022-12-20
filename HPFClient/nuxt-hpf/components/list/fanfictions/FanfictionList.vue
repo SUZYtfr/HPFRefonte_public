@@ -30,7 +30,7 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            v-model="fanfictionFilters.sortBy"
+            v-model="fanfictionQueryParams.sortBy"
           >
             <option value="alpha">Ordre alphabétique</option>
             <option value="most_recent">Plus récent au plus ancien</option>
@@ -60,7 +60,7 @@
           v-for="(fanfiction, innerindex) of fanfictions"
           :fanfiction="fanfiction"
           v-bind:index="innerindex"
-          v-bind:key="'ff_' + fanfiction.fanfiction_id.toString()"
+          v-bind:key="'ff_' + fanfiction.id.toString()"
         ></Fanfiction>
       </div>
     </div>
@@ -68,11 +68,11 @@
       <b-pagination
         :class="[{'card-footer-item': isCard}, 'py-2']"
         :total="fanfictions.length"
-        v-model="fanfictionFilters.currentPage"
+        v-model="fanfictionQueryParams.page"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="fanfictionFilters.perPage"
+        :per-page="fanfictionQueryParams.page_size"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
@@ -88,7 +88,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import Fanfiction from "~/components/Fanfiction.vue";
-import { FanfictionFiltersData, FanfictionData } from "@/types/fanfictions";
+import { FanfictionQueryParams, FanfictionData, FanfictionResponse } from "@/types/fanfictions";
 import { getFanfictions } from "@/api/fanfictions";
 
 @Component({
@@ -102,11 +102,12 @@ export default class FanfictionList extends Vue {
   @Prop({ default: true }) private isCard!: boolean;
   @Prop({ default: true }) private showRefreshButton!: boolean;
   @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() private fanfictionFilters!: FanfictionFiltersData;
+  @Prop() private fanfictionQueryParams!: FanfictionQueryParams;
   //#endregion
 
   //#region Data
   private fanfictions: FanfictionData[] = [];
+  private fanfictionCount: number = 0;
   private timerId: number = 0;
   //#endregion
 
@@ -114,11 +115,11 @@ export default class FanfictionList extends Vue {
   get fanfictionResultLabel() {
     let result = "";
     result +=
-      this.fanfictions.length > 0
-        ? this.fanfictions.length.toString()
+      this.fanfictionCount > 0
+        ? this.fanfictionCount.toString()
         : "Aucun";
     result += " résultat";
-    result += this.fanfictions.length > 1 ? "s" : "";
+    result += this.fanfictionCount > 1 ? "s" : "";
     return result;
   }
 
@@ -132,7 +133,7 @@ export default class FanfictionList extends Vue {
   //#endregion
 
   //#region Watchers
-  @Watch("fanfictionFilters", { deep: true })
+  @Watch("fanfictionQueryParams", { deep: true })
   private onFiltersChanged() {
     clearTimeout(this.timerId);
     this.timerId = window.setTimeout(this.getFanfictions, 500);
@@ -151,8 +152,9 @@ export default class FanfictionList extends Vue {
   private async getFanfictions() {
     this.listLoading = true;
     try {
-      const { data } = await getFanfictions(this.fanfictionFilters);
-      this.fanfictions = data.items;
+      let fanfictionResponse = (await getFanfictions(this.fanfictionQueryParams)).data as FanfictionResponse;
+      this.fanfictions = fanfictionResponse.results
+      this.fanfictionCount = fanfictionResponse.count;
     } catch {
     } finally {
       this.listLoading = false;
