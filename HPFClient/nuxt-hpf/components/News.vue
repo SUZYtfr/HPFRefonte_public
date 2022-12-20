@@ -39,7 +39,7 @@
       >
         <span
           class="max-lines"
-          v-bind:id="'news-' + news.news_id"
+          v-bind:id="'news-' + news.id"
           v-html="news.content"
         ></span>
       </div>
@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { NewsData } from "@/api/news";
+import { NewsData } from "@/types/news";
 
 @Component({
   name: "News",
@@ -111,7 +111,7 @@ export default class News extends Vue {
 
   mounted() {
     let news_content = document.getElementById(
-      "news-" + this.news.news_id.toString()
+      "news-" + this.news.id!.toString()
     );
     this.visibility = news_content != null && news_content.offsetHeight >= 168;
   }

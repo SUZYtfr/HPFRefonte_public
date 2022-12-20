@@ -20,7 +20,7 @@
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="newsFilters.searchTerm"
+          v-model="newsQueryParams.searchTerm"
         >
         </b-input>
       </b-field>
@@ -33,7 +33,7 @@
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="newsFilters.searchAuthor"
+          v-model="newsQueryParams.searchAuthor"
         >
         </b-input>
       </b-field>
@@ -43,15 +43,15 @@
         custom-class="has-text-primary"
       >
         <b-datepicker
-          v-model="newsFilters.fromDate"
+          v-model="newsQueryParams.fromDate"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="newsFilters.fromDate ? 'times-circle' : ''"
+          :icon-right="newsQueryParams.fromDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="newsFilters.fromDate = null"
+          @icon-right-click="newsQueryParams.fromDate = null"
         >
         </b-datepicker>
       </b-field>
@@ -61,15 +61,15 @@
         custom-class="has-text-primary"
       >
         <b-datepicker
-          v-model="newsFilters.toDate"
+          v-model="newsQueryParams.toDate"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="newsFilters.toDate ? 'times-circle' : ''"
+          :icon-right="newsQueryParams.toDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="newsFilters.toDate = null"
+          @icon-right-click="newsQueryParams.toDate = null"
         >
         </b-datepicker>
       </b-field>
@@ -86,14 +86,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { NewsFiltersData } from "~/types/news";
+import { NewsQueryParams } from "~/types/news";
 
 @Component({
   name: "NewsFilters",
 })
 export default class extends Vue {
   //#region Props
-  @Prop() private newsFilters!: NewsFiltersData;
+  @Prop() private newsQueryParams!: NewsQueryParams;
   @Prop({ default: false }) private loading!: boolean;
   //#endregion
 

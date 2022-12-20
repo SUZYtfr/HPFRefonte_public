@@ -6,7 +6,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { getNews, NewsData } from "~/api/news";
+import { getNew, getNews } from "~/api/news";
+import { NewsData, NewsResponse } from "@/types/news";
 import News_2 from "~/components/News_2.vue";
 
 @Component({
@@ -36,7 +37,7 @@ export default class extends Vue {
     this.newsLoading = true;
     console.log("fetch");
     try {
-      this.news = (await getNews(this.$route.params.id)).data.items.user;
+      this.news = (await getNew(this.$route.params.id)).data as NewsData;
     } catch (error) {
       console.log(error);
     } finally {

@@ -9,7 +9,7 @@
         <h3 class="h3 is-inline">
           <NuxtLink
             class="pl-0"
-            :to="{ name: 'actualités-id', params: { id: news.news_id } }"
+            :to="{ name: 'actualités-id', params: { id: news.id } }"
             >{{ news.title }}</NuxtLink
           >
         </h3>
@@ -29,7 +29,7 @@
       <div id="content-container" class="column is-full py-0">
         <span
           class="max-lines"
-          v-bind:id="'news-' + news.news_id"
+          v-bind:id="'news-' + news.id"
           v-html="news.content"
         ></span>
       </div>
@@ -41,13 +41,23 @@
         <span class="has-text-weight-semibold">
           {{ news.post_date | parseTime }}
         </span>
-        <span> par </span>
-        <template v-for="(author, index) in news.authors">
-          <template v-if="index > 0">,</template>
-          <span class="has-text-weight-semibold" v-bind:key="author.id">{{
-            author.nickname
-          }}</span>
-        </template>
+        <span v-if="news.authors.length + news.teams.length > 0">
+          <span> par </span>
+          <span
+            class="has-text-weight-semibold"
+            v-for="author in news.authors"
+            v-bind:key="author.id"
+          >
+            {{ author.nickname }}
+          </span>
+          <span
+            class="has-text-weight-semibold"
+            v-for="team in news.teams"
+            v-bind:key="team.id"
+          >
+            {{ team.name }}
+          </span>
+        </span>
       </div>
     </div>
   </div>
@@ -55,7 +65,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { NewsData } from "@/api/news";
+import { NewsData } from "@/types/news";
 
 @Component({
   name: "News_2",

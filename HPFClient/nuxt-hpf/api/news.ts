@@ -1,17 +1,17 @@
 import { $axios } from '~/utils/api'
+import { QueryParams, PaginatedResponse } from "@/types/basics"
+import { NewsData } from '~/types/news'
 
-export interface NewsData {
-  news_id: number;
-  post_date: number;
-  title: string;
-  content: string;
-  authors: string;
-  comments: string;
-}
-
-export const getNews = (params: any) =>
+export const getNews = (params: QueryParams) =>
   $axios.request({
-    url: '/news',
+    url: '/news/',
     method: 'get',
     params
+  })
+
+
+export const getNew = (newsId: string) =>
+  $axios.request({
+    url: '/news/' + newsId + "/",
+    method: 'get'
   })

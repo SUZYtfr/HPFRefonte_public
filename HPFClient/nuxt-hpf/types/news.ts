@@ -1,24 +1,34 @@
 import { AuthorData } from "./users";
 import { CommentData } from "./comments";
+import { QueryParams, PaginatedResponse } from "@/types/basics"
 
-export class NewsData {
-    news_id: number | null = null;
-    title: string | null = null;
-    content: string | null = null;
-    status: number | null = null;
-    post_date: Date | null = null;
-    authors: AuthorData[] | null = null;
-    comments: CommentData[] | null = null;
-  }
+export interface TeamData {
+  id: number;
+  name: string;
+}
 
-  export interface NewsFiltersData {
-    searchTerm: string,
-    searchAuthor: string,
-    searchAuthorId: number,
-    sortBy: string,
-    status: boolean | null,
-    fromDate: Date | null,
-    toDate: Date | null,
-    currentPage: number,
-    perPage: number,
-  }
+export interface NewsData {
+  id: number;
+  title: string;
+  content: string;
+  status: number;
+  post_date: Date;
+  authors?: AuthorData[];
+  teams?: TeamData[];
+  comments?: CommentData[];
+  category: string;
+}
+
+export interface NewsQueryParams extends QueryParams {
+  searchTerm?: string;
+  searchAuthor?: string;
+  searchAuthorId?: number;
+  sortBy?: string;
+  status?: boolean;
+  fromDate?: Date;
+  toDate?: Date;
+}
+
+export interface NewsResponse extends PaginatedResponse {
+  results: NewsData[];
+}

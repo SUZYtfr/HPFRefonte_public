@@ -9,7 +9,7 @@
       has-modal-card
     >
       <NewsFilters
-        :newsFilters="newsFilters"
+        :newsQueryParams="newsQueryParams"
         :loading="listLoading"
       />
     </b-modal>
@@ -20,14 +20,14 @@
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <NewsFilters
-          :newsFilters="newsFilters"
+          :newsQueryParams="newsQueryParams"
           :loading="listLoading"
         />
       </div>
       <!-- Liste des news -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <NewsList
-          :newsFilters="newsFilters"
+          :newsQueryParams="newsQueryParams"
           :isLoading="listLoading"
           @loadingChange="(value) => (listLoading = value)"
         />
@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { NewsFiltersData } from "@/types/news";
+import { NewsQueryParams } from "@/types/news";
 import NewsList from "~/components/list/news/NewsList.vue";
 import NewsFilters from "~/components/filters/news/NewsFilters.vue";
 
@@ -65,16 +65,16 @@ export default class extends Vue {
   //#region Data
   public filtersOpened: boolean = false;
 
-  private newsFilters: NewsFiltersData = {
+  private newsQueryParams: NewsQueryParams = {
     searchTerm: "",
     searchAuthor: "",
     searchAuthorId: 0,
     sortBy: "most_recent",
-    status: null,
-    fromDate: null,
-    toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    status: undefined,
+    fromDate: undefined,
+    toDate: undefined,
+    page: 1,
+    page_size: 10,
   };
 
   private listLoading: boolean = false;

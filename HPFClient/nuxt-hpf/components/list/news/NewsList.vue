@@ -40,7 +40,7 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            v-model="newsFilters.sortBy"
+            v-model="newsQueryParams.sortBy"
           >
             <option value="alpha">Ordre alphabétique</option>
             <option value="most_recent">Plus récent au plus ancien</option>
@@ -67,7 +67,7 @@
         <div>
           <News_2
               v-for="(item, innerindex) of news"
-              :key="'news_' + item.news_id.toString()"
+              :key="'news_' + item.id.toString()"
               :news="item"
               :activeColor="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
               :class="[{ 'is-hidden-mobile': innerindex > 0 }]"
@@ -79,12 +79,12 @@
     <footer :class="[{ 'card-footer': isCard }]">
       <b-pagination
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="news.length"
-        v-model="newsFilters.currentPage"
+        :total="newsCount"
+        v-model="newsQueryParams.page"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="newsFilters.perPage"
+        :per-page="newsQueryParams.page_size"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
@@ -100,7 +100,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import News_2 from "~/components/News_2.vue";
-import { NewsData, NewsFiltersData } from "@/types/news";
+import { NewsData, NewsQueryParams, NewsResponse } from "@/types/news";
 import { getNews } from "@/api/news";
 
 @Component({
@@ -114,11 +114,12 @@ export default class NewsList extends Vue {
   @Prop({ default: true }) private isCard!: boolean;
   @Prop({ default: true }) private showRefreshButton!: boolean;
   @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() private newsFilters!: NewsFiltersData;
+  @Prop() private newsQueryParams!: NewsQueryParams;
   //#endregion
 
   //#region Data
   private news: NewsData[] = [];
+  private newsCount: number = 0;
   private timerId: number = 0;
 
   // Pagination
@@ -128,9 +129,9 @@ export default class NewsList extends Vue {
   //#region Computed
   get newsResultLabel() {
     let result = "";
-    result += this.news.length > 0 ? this.news.length.toString() : "Aucun";
+    result += this.newsCount > 0 ? this.newsCount.toString() : "Aucun";
     result += " résultat";
-    result += this.news.length > 1 ? "s" : "";
+    result += this.newsCount > 1 ? "s" : "";
     return result;
   }
 
@@ -144,7 +145,7 @@ export default class NewsList extends Vue {
   //#endregion
 
   //#region Watchers
-  @Watch("newsFilters", { deep: true })
+  @Watch("newsQueryParams", { deep: true })
   private onFiltersChanged() {
     clearTimeout(this.timerId);
     this.timerId = window.setTimeout(this.getNews, 500);
@@ -163,8 +164,9 @@ export default class NewsList extends Vue {
   private async getNews() {
     this.listLoading = true;
     try {
-      const { data } = await getNews(this.newsFilters);
-      this.news = data.items;
+      let response = (await getNews(this.newsQueryParams)).data as NewsResponse;
+      this.news = response.results;
+      this.newsCount = response.count;
     } catch {
     } finally {
       this.listLoading = false;
