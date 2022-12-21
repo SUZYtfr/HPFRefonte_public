@@ -1,14 +1,3 @@
-from users.models import User 
-from features.models import Feature, Category
-from fictions.models import Fiction, Chapter
-from colls.models import Collection 
-from reviews.models import Review 
-from polls.models import PollGroup, PollQuestion, PollAnswer
-from news.models import NewsArticle, NewsComment
-
-from django.contrib.auth.hashers import make_password
-from django.db import transaction
-
 import faker
 import lorem
 import time
@@ -16,6 +5,18 @@ import datetime
 import random
 
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
+from django.apps import apps
+
+from users.models import User
+from features.models import Feature, Category
+from fictions.models import Fiction, Chapter
+from colls.models import Collection 
+from reviews.models import FictionReview, ChapterReview, CollectionReview
+from polls.models import PollGroup, PollQuestion, PollAnswer
+from news.models import NewsArticle, NewsComment
+
 
 french_faker = faker.Faker("fr_FR")
 
@@ -153,25 +154,26 @@ def sample_feature(category=None, creation_user=None, name=None,
     return feature
 
 
-def sample_review(creation_user=None, work=None, object_type=None, text=None, draft=False,
-                  **extra_fields):
-    types_to_models = {"fiction": sample_fiction,
-                       "chapter": sample_chapter,
-                       "collection": sample_collection,
-                       "author": sample_user}
+def sample_fiction_review(**kwargs):
+    if fiction_id := kwargs.pop("fiction_id", None):
+        pass
+    else:
+        fiction_id = sample_fiction().id
 
-    if not work:
-        work = types_to_models.get(object_type or "fiction")()
+    if creation_user_id := kwargs.pop("creation_user_id", None):
+        creation_user = User.objects.get(id=creation_user_id)
+    else:
+        creation_user = get_random_user()
 
-    review = Review.objects.create(
-        creation_user=creation_user or sample_user(),
-        work=work,
-        draft=draft,
-        **extra_fields
+    fiction_review = FictionReview.objects.create(
+        fiction_id=fiction_id,
+        creation_user=creation_user,
+        draft=kwargs.pop("draft", False),
+        grading=kwargs.pop("grading", None) or french_faker.random_int(min=1, max=10),
+        text=kwargs.pop("text", None) or french_faker.paragraph(2),
+        **kwargs,
     )
-    review.create_text_version(text=text or lorem.get_paragraph(2), creation_user=review.creation_user)
-
-    return review
+    return fiction_review
 
 
 def sample_poll_group(**kwargs):
@@ -224,9 +226,9 @@ def sample_news(**kwargs):
 
 def sample_comment(**kwargs):
     comment = NewsComment.objects.create(
-        creation_user=kwargs.pop("creation_user", sample_user()),
-        text=kwargs.pop("text", lorem.get_paragraph()),
-        newsarticle=kwargs.pop("newsarticle", sample_news()),
+        creation_user_id=kwargs.pop("creation_user_id", None) or get_random_user().id,
+        text=kwargs.pop("text", None) or french_faker.paragraph(5),
+        newsarticle_id=kwargs.pop("newsarticle_id", sample_news().id),
         **kwargs,
     )
 
