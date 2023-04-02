@@ -1,6 +1,6 @@
 {
-  "name": "nuxt-community-typescript-template",
-  "description": "A boilerplate to start a Nuxt+TS project quickly",
+  "name": "harry-potter-fanfiction",
+  "description": "Harry Potter Fanfiction: Harry Potter selon ses fans",
   "version": "2.14.12",
   "private": true,
   "dependencies": {
@@ -28,19 +28,23 @@
     "@tiptap/vue-2": "^2.0.0-beta.79",
     "@types/simplebar": "^5.3.3",
     "@types/webpack-env": "^1.17.0",
+    "@vue/compiler-dom": "^3.2.45",
+    "@vue/runtime-dom": "^3.2.45",
     "animate.css": "^4.1.1",
     "class-transformer": "^0.5.1",
+    "eslint": "^8.31.0",
     "fibers": "^5.0.1",
     "node-sass": "^7.0.1",
     "nuxt": "^2.15.8",
     "nuxt-buefy": "^0.4.23",
     "nuxt-facebook-pixel-module": "^1.5.0",
     "nuxt-property-decorator": "^2.9.1",
-    "nuxt-ssr-class-serialiser": "^1.0.1",
+    "qs": "^6.11.0",
     "reflect-metadata": "^0.1.13",
     "sass": "^1.52.1",
     "sass-loader": "10.1.1",
     "simplebar-vue": "^1.6.9",
+    "vue-template-babel-compiler": "^2.0.0",
     "vuex-module-decorators": "^2.0.0"
   },
   "scripts": {
@@ -52,10 +56,15 @@
     "dev:host": "nuxt --hostname 0.0.0.0 --port 8000"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@fortawesome/free-brands-svg-icons": "5.15.4",
     "@fortawesome/free-solid-svg-icons": "5.15.4",
+    "@nuxt/eslint-config": "^0.1.1",
     "@nuxt/types": "^2.15.8",
     "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
+    "@vue/compiler-dom": "^3.2.45",
+    "@vue/runtime-dom": "latest",
     "yarn-upgrade-all": "^0.7.1"
   }
 }

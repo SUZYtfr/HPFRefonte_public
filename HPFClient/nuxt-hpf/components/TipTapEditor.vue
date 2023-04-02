@@ -523,19 +523,19 @@ import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
   },
 })
 export default class extends Vue {
-  //#region Props
+  // #region Props
   @Prop({ default: true }) private showFooter!: boolean;
   @Prop({ default: "" }) private placeholder!: string;
-  //#endregion
+  // #endregion
 
-  //#region Datas
+  // #region Datas
 
   private editor: Editor | null = null;
   private images: ImageHPFData[] = [];
   // Timer Editor update
   private timerThrottleId: number = 0;
 
-  //#region Toolbar
+  // #region Toolbar
   private menusStyle: any = [
     { icon: "heading", text: "Titre 1", action: "h1" },
     { icon: "heading", text: "Titre 2", action: "h2" },
@@ -552,15 +552,15 @@ export default class extends Vue {
     "Tahoma",
     "Times new roman",
   ];
-  //#endregion
+  // #endregion
 
-  //#region Editor Link Modal
+  // #region Editor Link Modal
   private linkEditorModalActive: boolean = false;
   private linkEditorTextHolder: string = "";
   private linkEditorLinkHolder: string = "";
-  //#endregion
+  // #endregion
 
-  //#region Editor status
+  // #region Editor status
   // Cache des status de l'éditeur (actives)
   private editorFunctionsActiveSettings: { [key: string]: Function } = {
     h1: (editor: Editor): boolean => editor.isActive("heading", { level: 1 }),
@@ -721,11 +721,11 @@ export default class extends Vue {
     characterCount: 0,
   };
 
-  //#endregion
+  // #endregion
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
+  // #region Hooks
   mounted() {
     this.editor = new Editor({
       content: "",
@@ -833,9 +833,9 @@ export default class extends Vue {
   beforeDestroy() {
     this.editor?.destroy();
   }
-  //#endregion
+  // #endregion
 
-  //#region Computed
+  // #region Computed
   get currentStyle() {
     if (this.editorFunctionsActiveStatuses.h1)
       return { icon: "heading", text: "Titre 1", action: "h1" };
@@ -851,9 +851,9 @@ export default class extends Vue {
       return { icon: "heading", text: "Titre 6", action: "h6" };
     else return { icon: "paragraph", text: "Paragraphe", action: "p" };
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   // Ouverture de la modal-homemade
   @Watch("linkEditorModalActive")
   private async onlinkEditorModalActiveChanged() {
@@ -868,9 +868,9 @@ export default class extends Vue {
       }
     }
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Toggle Alert Drop interdit
   private toggleForbiddenDropAlert() {
     this.$buefy.toast.open({
@@ -1062,7 +1062,7 @@ export default class extends Vue {
       );
     }
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

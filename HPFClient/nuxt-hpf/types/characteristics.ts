@@ -1,32 +1,41 @@
-export interface ICharacteristic {
-    characteristic_id: number,
-    characteristic_type_id: number,
-    parent_id: number,
-    name: string,
-    description: string,
-    in_order: number,
+import { Exclude } from "class-transformer";
+import { BasicClass } from "@/types/basics";
+
+export class CharacteristicData extends BasicClass<CharacteristicData> {
+  @Exclude()
+  public get characteristic_id(): number {
+    return this.id;
+  }
+
+  public characteristic_type_id: number = 0;
+  public parent_id: number | null = null;
+  public name: string = "";
+  public description: string | null = null;
+  public in_order: number = 0;
+  public visible: boolean = true;
+  public enabled: boolean = true;
 }
 
-export interface ICharacteristicType {
-    characteristic_type_id: number,
-    creation_user_id: number,
-    creation_date: Date,
-    modification_user_id: number,
-    modification_date: Date,
-    name: string,
-    min_occurence: number,
-    max_occurence: number,
-    visible: boolean,
-    enabled: boolean
+export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
+  @Exclude()
+  public get characteristic_type_id(): number {
+    return this.id;
+  }
+
+  public name: string = "";
+  public min_occurence: number = 0;
+  public max_occurence: number | null = null;
+  public visible: boolean = true;
+  public enabled: boolean = true;
 }
 
 export class ICharacteristicGetOptions {
-    with_stats: boolean = false;
+  with_stats: boolean = false;
 }
 
 export interface ICharacteristicFilters {
-    characteristic_type_id: number | null,
-    parent_id: number | null,
-    options: ICharacteristicGetOptions | null,
-    limit: number | null
+  characteristic_type_id: number | null,
+  parent_id: number | null,
+  options: ICharacteristicGetOptions | null,
+  limit: number | null
 }

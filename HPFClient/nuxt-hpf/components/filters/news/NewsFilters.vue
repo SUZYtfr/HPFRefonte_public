@@ -1,8 +1,9 @@
 <template>
   <div class="card is-relative">
-    <b-loading :is-full-page="false" v-model="loading"></b-loading>
     <header class="card-header sub-title">
-      <p class="card-header-title is-centered">Filtres</p>
+      <p class="card-header-title is-centered">
+        Filtres
+      </p>
     </header>
     <div
       :class="[
@@ -17,12 +18,11 @@
         custom-class="has-text-primary"
       >
         <b-input
+          v-model="newsFilters.searchTerm"
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="newsFilters.searchTerm"
-        >
-        </b-input>
+        />
       </b-field>
       <b-field
         label="Rechercher un auteur"
@@ -30,12 +30,11 @@
         custom-class="has-text-primary"
       >
         <b-input
+          v-model="newsFilters.searchAuthor"
           placeholder="Rechercher..."
           type="search"
           icon="search"
-          v-model="newsFilters.searchAuthor"
-        >
-        </b-input>
+        />
       </b-field>
       <b-field
         label="Publiée après le"
@@ -52,8 +51,7 @@
           :icon-right="newsFilters.fromDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
           @icon-right-click="newsFilters.fromDate = null"
-        >
-        </b-datepicker>
+        />
       </b-field>
       <b-field
         label="Publiée avant le"
@@ -70,8 +68,7 @@
           :icon-right="newsFilters.toDate ? 'times-circle' : ''"
           :icon-right-clickable="true"
           @icon-right-click="newsFilters.toDate = null"
-        >
-        </b-datepicker>
+        />
       </b-field>
     </div>
     <footer class="card-footer">
@@ -86,28 +83,34 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { NewsFiltersData } from "~/types/news";
+import { INewsFilters } from "~/types/news";
 
 @Component({
-  name: "NewsFilters",
+  name: "NewsFilters"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private newsFilters!: NewsFiltersData;
-  @Prop({ default: false }) private loading!: boolean;
-  //#endregion
+  // #region Props
+  @Prop() public newsFilters!: INewsFilters;
+  // #endregion
 
-  //#region Datas
+  // #region Datas
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
+  // #region Hooks
 
-  //#endregion
+  // #endregion
 
-  //#region Methods
-
-  //#endregion
+  // #region Methods
+  // Déclencher le Watcher des filtres sur le clique recherche
+  public toggleFilterChanged(): void {
+    this.newsFilters.searchTerm = this.newsFilters.searchTerm + " ";
+    this.newsFilters.searchTerm = this.newsFilters.searchTerm.slice(
+      0,
+      -1
+    );
+  }
+  // #endregion
 }
 </script>
 
@@ -127,7 +130,6 @@ export default class extends Vue {
 .card-content {
   padding: 0px;
 }
-
 
 .z-index-zero {
   z-index: 0 !important;

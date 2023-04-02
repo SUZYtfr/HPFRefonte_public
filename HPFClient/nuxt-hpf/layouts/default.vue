@@ -23,13 +23,13 @@ import SidebarDebug from "@/components/SidebarDebug.vue";
   components: {
     Navbar,
     Footer,
-    SidebarDebug,
-  },
+    SidebarDebug
+  }
 })
 export default class extends Vue {}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import "~/assets/scss/custom.scss";
 
 #container {

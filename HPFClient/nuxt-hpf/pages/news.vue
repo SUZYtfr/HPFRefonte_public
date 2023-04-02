@@ -9,26 +9,26 @@
       has-modal-card
     >
       <NewsFilters
-        :newsFilters="newsFilters"
+        :news-filters="newsFilters"
         :loading="listLoading"
       />
     </b-modal>
-    <br />
+    <br>
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <NewsFilters
-          :newsFilters="newsFilters"
+          :news-filters="newsFilters"
           :loading="listLoading"
         />
       </div>
       <!-- Liste des news -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <NewsList
-          :newsFilters="newsFilters"
-          :isLoading="listLoading"
+          :news-filters="newsFilters"
+          :is-loading="listLoading"
           @loadingChange="(value) => (listLoading = value)"
         />
       </div>
@@ -41,55 +41,59 @@
         icon-right="filter"
         class="btn-filters mb-2"
         @click="filtersOpened = true"
-        >Afficher les filtres</b-button
       >
+        Afficher les filtres
+      </b-button>
     </div>
-    <br />
+    <br>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { NewsFiltersData } from "@/types/news";
+import { INewsFilters } from "@/types/news";
 import NewsList from "~/components/list/news/NewsList.vue";
 import NewsFilters from "~/components/filters/news/NewsFilters.vue";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "Nouveautés",
   components: {
     NewsList,
-    NewsFilters,
-  },
+    NewsFilters
+  }
 })
 export default class extends Vue {
-  //#region Data
+  // #region Data
   public filtersOpened: boolean = false;
 
-  private newsFilters: NewsFiltersData = {
+  public newsFilters: INewsFilters = {
     searchTerm: "",
     searchAuthor: "",
     searchAuthorId: 0,
-    sortBy: "most_recent",
     status: null,
     fromDate: null,
     toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    page: 1,
+    pageSize: 10,
+    totalPages: false,
+    sortBy: SortByEnum.Descending,
+    sortOn: "post_date"
   };
 
-  private listLoading: boolean = false;
+  public listLoading: boolean = false;
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  mounted(){
+  // #region Hooks
+  mounted(): void {
     console.log("mounted");
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
 
-  //#endregion
+  // #endregion
 }
 </script>
 

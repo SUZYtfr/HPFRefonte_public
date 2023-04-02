@@ -5,25 +5,27 @@
     :delay="250"
     append-to-body
   > -->
-    <div
-      id="user-link-content"
-      class="columns is-mobile is-vcentered is-gapless"
-      @mouseover="hover = true"
-      @mouseleave="hover = false"
-    >
-      <div id="user-link-image" class="column is-narrow" style="z-index: 9999">
-        <figure class="image is-32x32 is-clickable">
-          <img
-            :class="[{ 'img-hover': hover }, 'is-rounded']"
-            :src="linkIdImg"
-            :alt="link.display_name"
-          />
-        </figure>
-      </div>
-      <div class="column is-narrow" v-if="hover">
-        <p :class="[{ 'link-hover': hover }, { 'animate__fadeInLeft': hover}, 'animate__animated']">{{ link.display_name }}</p>
-      </div>
+  <div
+    id="user-link-content"
+    class="is-flex"
+    @mouseover="hover = true"
+    @mouseleave="hover = false"
+  >
+    <div id="user-link-image" class="" style="z-index: 9999">
+      <figure class="image is-32x32 is-clickable">
+        <img
+          :class="[{ 'img-hover': hover }, 'is-rounded']"
+          :src="linkIdImg"
+          :alt="link.display_name"
+        >
+      </figure>
     </div>
+    <div v-if="hover" class="">
+      <p :class="[{ 'link-hover': hover }, { 'animate__fadeInLeft': hover}, 'animate__animated']">
+        {{ link.display_name }}
+      </p>
+    </div>
+  </div>
   <!-- </b-tooltip> -->
 </template>
 
@@ -32,20 +34,20 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 import { UserLinkData } from "@/types/users";
 
 @Component({
-  name: "UserLink",
+  name: "UserLink"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private link!: UserLinkData;
+  // #region Props
+  @Prop() public link!: UserLinkData;
   @Prop() private fullLength!: boolean;
-  //#endregion
+  // #endregion
 
-  //#region Datas
-  private hover: boolean = false;
-  //#endregion
+  // #region Datas
+  public hover: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get linkIdImg() {
+  // #region Computed
+  get linkIdImg(): string {
     const imgDir = require.context("@/assets/img/");
     let s = "placeholders/32x32.png";
     switch (this.link.link_type_id) {
@@ -70,7 +72,7 @@ export default class extends Vue {
     }
     return imgDir("./" + s);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

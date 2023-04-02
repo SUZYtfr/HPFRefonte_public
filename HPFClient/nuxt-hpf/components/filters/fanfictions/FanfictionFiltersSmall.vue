@@ -8,36 +8,35 @@
           custom-class="has-text-primary"
         >
           <b-input
+            v-model="fanfictionFilters.searchTerm"
             placeholder="Rechercher..."
             type="search"
             icon="search"
-            v-model="fanfictionFilters.searchTerm"
-          >
-          </b-input>
+          />
         </b-field>
       </div>
       <div class="column is-6 pt-0">
         <ThreeStateCheckbox
-            class="py-1 pl-1"
-            :externalValue="fanfictionFilters.status"
-            :checkedValue="4"
-            :excludedValue="1"
-            :uncheckedValue="null"
-            @change="fanfictionFilters.status = $event"
-            title="Histoires terminées"
-          />
-          <ThreeStateCheckbox
-            class="py-1 pl-1"
-            :externalValue="fanfictionFilters.multipleAuthors"
-            @change="fanfictionFilters.multipleAuthors = $event"
-            title="Histoires co-écrites"
-          />
-          <ThreeStateCheckbox
-            class="py-1 pl-1"
-            :externalValue="fanfictionFilters.featured"
-            @change="fanfictionFilters.featured = $event"
-            title="Histoires médaillés"
-          />
+          class="py-1 pl-1"
+          :external-value="fanfictionFilters.status"
+          :checked-value="4"
+          :excluded-value="1"
+          :unchecked-value="null"
+          title="Histoires terminées"
+          @change="fanfictionFilters.status = $event"
+        />
+        <ThreeStateCheckbox
+          class="py-1 pl-1"
+          :external-value="fanfictionFilters.multipleAuthors"
+          title="Histoires co-écrites"
+          @change="fanfictionFilters.multipleAuthors = $event"
+        />
+        <ThreeStateCheckbox
+          class="py-1 pl-1"
+          :external-value="fanfictionFilters.featured"
+          title="Histoires médaillés"
+          @change="fanfictionFilters.featured = $event"
+        />
       </div>
     </div>
     <div class="columns mt-0">
@@ -48,11 +47,11 @@
           custom-class="has-text-primary"
         >
           <b-taginput
+            ref="includedTags"
             v-model="fanfictionFilters.includedTags"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
-            ref="includedTags"
             field="name"
             icon="plus-square"
             placeholder="Inclure des personnages, catégories, genres, époques..."
@@ -61,15 +60,16 @@
             @typing="getFilteredTags"
             @input="tagInput"
           >
-            <template v-slot="props">
+            <template #default="props">
               <span class="is-italic has-text-weight-light">{{
                 getFullPath(props.option)
-              }}</span
-              ><span class="has-text-weight-semibold">{{
+              }}</span><span class="has-text-weight-semibold">{{
                 props.option.name
               }}</span>
             </template>
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
             <template #selected="props">
               <b-tag
                 v-for="(tag, index) in props.tags"
@@ -77,7 +77,7 @@
                 :class="getClassTypeColor(tag)"
                 :tabstop="false"
                 closable
-                @close="$refs.includedTags.removeTag(index, $event)"
+                @close="$refs.includedTags?.removeTag(index, $event)"
               >
                 {{ tag.name }}
               </b-tag>
@@ -92,11 +92,11 @@
           custom-class="has-text-primary"
         >
           <b-taginput
+            ref="excludedTags"
             v-model="fanfictionFilters.excludedTags"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
-            ref="excludedTags"
             field="name"
             icon="minus-square"
             placeholder="Exclure des personnages, catégories, genres, époques..."
@@ -105,15 +105,16 @@
             @typing="getFilteredTags"
             @input="tagInput"
           >
-            <template v-slot="props">
+            <template #default="props">
               <span class="is-italic has-text-weight-light">{{
                 getFullPath(props.option)
-              }}</span
-              ><span class="has-text-weight-semibold">{{
+              }}</span><span class="has-text-weight-semibold">{{
                 props.option.name
               }}</span>
             </template>
-            <template #empty> Aucun résultat </template>
+            <template #empty>
+              Aucun résultat
+            </template>
             <template #selected="props">
               <b-tag
                 v-for="(tag, index) in props.tags"
@@ -122,7 +123,7 @@
                 :tabstop="false"
                 ellipsis
                 closable
-                @close="$refs.excludedTags.removeTag(index, $event)"
+                @close="$refs.excludedTags?.removeTag(index, $event)"
               >
                 {{ tag.name }}
               </b-tag>
@@ -136,8 +137,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
-import { FanfictionFiltersData } from "@/types/fanfictions";
-import { ICharacteristic, ICharacteristicType } from "@/types/characteristics";
+import { IFanfictionFilters } from "@/types/fanfictions";
+import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 import { ConfigModule } from "@/utils/store-accessor";
 import { groupBy } from "@/utils/es6-utils";
 import { getClassTypeColor, getFullPath } from "@/utils/characteristics";
@@ -145,74 +146,74 @@ import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 
 @Component({
   name: "FanfictionFiltersSmall",
-  components:{
-    ThreeStateCheckbox,
+  components: {
+    ThreeStateCheckbox
   }
 })
 export default class extends Vue {
-  //#region Props
+  // #region Props
   @Prop() private authorFieldVisible!: boolean;
-  @Prop() private fanfictionFilters!: FanfictionFiltersData;
-  //#endregion
+  @Prop() public fanfictionFilters!: IFanfictionFilters;
+  // #endregion
 
-  //#region Data
+  // #region Data
   private characteristics: any[] = [];
-  private filteredCharacteristics: any[] = [];
-  //#endregion
+  public filteredCharacteristics: any[] = [];
+  // #endregion
 
-  //#region Hooks
-  async fetch() {
+  // #region Hooks
+  async fetch(): Promise<void> {
     // Récupération des caractéristiques
     await this.getCharacteristics();
   }
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  //#endregion
+  // #region Computed
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("fanfictionFilters", { deep: true })
-  private onFiltersChanged() {
+  private onFiltersChanged(): void {
     this.$emit("change", this.fanfictionFilters);
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
-  private getFilteredTags(text: string) {
+  // #region Methods
+  public getFilteredTags(text: string): void {
     this.filteredCharacteristics = [];
     this.characteristics.forEach((element) => {
-      let items: ICharacteristic[] = [];
-      if (element.type.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+      let items: CharacteristicData[] = [];
+      if (element.type.toLowerCase().includes(text.toLowerCase())) {
         items = element.items;
       } else {
         items = element.items.filter(
-          (item: ICharacteristic) =>
+          (item: CharacteristicData) =>
             (this.getFullPath(item) + item.name)
               .replace(/[\\\- ]/gi, "")
               .toLowerCase()
-              .indexOf(text.replace(/[\\\- ]/gi, "").toLowerCase()) >= 0
+              .includes(text.replace(/[\\\- ]/gi, "").toLowerCase())
         );
       }
       items = items.filter(
-        (item: ICharacteristic) =>
+        (item: CharacteristicData) =>
           !this.fanfictionFilters.includedTags.includes(
-            item.characteristic_id
+            item.id
           ) &&
-          !this.fanfictionFilters.excludedTags.includes(item.characteristic_id)
+          !this.fanfictionFilters.excludedTags.includes(item.id)
       );
 
-      let itemsSorted: ICharacteristic[] = items
-        .filter((t) => t.parent_id == null)
-        .sort((a: ICharacteristic, b: ICharacteristic) => {
+      const itemsSorted: CharacteristicData[] = items
+        .filter(t => t.parent_id == null)
+        .sort((a: CharacteristicData, b: CharacteristicData) => {
           return a.in_order - b.in_order;
         });
-      groupBy(items, (g: ICharacteristic) => g.parent_id).forEach(
-        (value: ICharacteristic[], key: number) => {
+      groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
+        (value: CharacteristicData[], key: number) => {
           if (key != null) {
-            let index = itemsSorted.findIndex(
-              (c) => c.characteristic_id === key
+            const index = itemsSorted.findIndex(
+              c => c.id === key
             );
-            if (index == -1) itemsSorted.splice(0, 0, ...value);
+            if (index === -1) itemsSorted.splice(0, 0, ...value);
             else itemsSorted.splice(index + 1, 0, ...value);
           }
         }
@@ -220,67 +221,67 @@ export default class extends Vue {
       if (itemsSorted.length) {
         this.filteredCharacteristics.push({
           type: element.type,
-          items: itemsSorted,
+          items: itemsSorted
         });
       }
     });
   }
 
-  private tagInput(tag: any) {
+  public tagInput(tag: any): void {
     this.getFilteredTags("");
   }
 
-  private async getCharacteristics() {
+  public async getCharacteristics(): Promise<void> {
     if (
-      ConfigModule.characteristicTypes.length == 0 ||
-      ConfigModule.characteristics.length == 0
+      ConfigModule.characteristicTypes.length === 0 ||
+      ConfigModule.characteristics.length === 0
     ) {
       await ConfigModule.LoadConfig();
     }
 
     const grouped = groupBy(
       ConfigModule.characteristics,
-      (characteristic: ICharacteristic) => characteristic.characteristic_type_id
+      (characteristic: CharacteristicData) => characteristic.characteristic_type_id
     );
-    ConfigModule.characteristicTypes.forEach((element: ICharacteristicType) => {
+    ConfigModule.characteristicTypes.forEach((element: CharacteristicTypeData) => {
       const items = grouped
-        .get(element.characteristic_type_id)
-        .map((groupedCharacteristic: ICharacteristic) => {
+        .get(element.id)
+        .map((groupedCharacteristic: CharacteristicData) => {
           return groupedCharacteristic;
         });
 
-      let itemsSorted: ICharacteristic[] = items
-        .filter((t: ICharacteristic) => t.parent_id == null)
-        .sort((a: ICharacteristic, b: ICharacteristic) => {
+      const itemsSorted: CharacteristicData[] = items
+        .filter((t: CharacteristicData) => t.parent_id == null)
+        .sort((a: CharacteristicData, b: CharacteristicData) => {
           return a.in_order - b.in_order;
         });
-      groupBy(items, (g: ICharacteristic) => g.parent_id).forEach(
-        (value: ICharacteristic[], key: number) => {
+      groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
+        (value: CharacteristicData[], key: number) => {
           if (key != null) {
-            let index = itemsSorted.findIndex(
-              (c) => c.characteristic_id === key
+            const index = itemsSorted.findIndex(
+              c => c.id === key
             );
-            if (index == -1) itemsSorted.splice(0, 0, ...value);
+            if (index === -1) itemsSorted.splice(0, 0, ...value);
             else itemsSorted.splice(index + 1, 0, ...value);
           }
         }
       );
       this.characteristics.push({
         type: element.name,
-        items: itemsSorted,
+        items: itemsSorted
       });
     });
     this.filteredCharacteristics = this.characteristics;
   }
 
-  private getClassTypeColor(characteristic: ICharacteristic) {
+  public getClassTypeColor(characteristic: CharacteristicData): string {
     return getClassTypeColor(characteristic);
   }
 
-  private getFullPath(characteristic: ICharacteristic) {
+  public getFullPath(characteristic: CharacteristicData): string {
     return getFullPath(characteristic, ConfigModule.characteristics);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

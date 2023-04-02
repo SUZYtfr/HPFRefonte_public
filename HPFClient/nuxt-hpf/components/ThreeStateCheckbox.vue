@@ -14,28 +14,29 @@
 import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  name: "ThreeStateCheckbox",
+  name: "ThreeStateCheckbox"
 })
 export default class extends Vue {
-  //#region Props
+  // #region Props
   @Prop() private externalValue!: any | undefined;
-  @Prop() private title: string | undefined;
+  @Prop() public title: string | undefined;
   @Prop({ default: true }) private checkedValue: any;
   @Prop({ default: false }) private excludedValue: any;
   @Prop({ default: null }) private uncheckedValue: any;
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  get checkboxStatus() {
-    return this.externalValue == this.checkedValue;
+  // #region Computed
+  get checkboxStatus(): boolean {
+    return this.externalValue === this.checkedValue;
   }
-  get indeterminate() {
-    return this.externalValue == this.excludedValue;
-  }
-  //#endregion
 
-  //#region Methods
-  private checkBoxClicked(event: any) {
+  get indeterminate(): boolean {
+    return this.externalValue === this.excludedValue;
+  }
+  // #endregion
+
+  // #region Methods
+  public checkBoxClicked(event: any): void {
     let internalState;
     if (this.indeterminate) {
       internalState = this.uncheckedValue;
@@ -46,7 +47,7 @@ export default class extends Vue {
     }
     this.$emit("change", internalState);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

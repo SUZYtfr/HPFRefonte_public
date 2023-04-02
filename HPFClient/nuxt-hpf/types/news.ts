@@ -1,24 +1,52 @@
-import { AuthorData } from "./users";
-import { CommentData } from "./comments";
 
-export class NewsData {
-    news_id: number | null = null;
-    title: string | null = null;
-    content: string | null = null;
-    status: number | null = null;
-    post_date: Date | null = null;
-    authors: AuthorData[] | null = null;
-    comments: CommentData[] | null = null;
+import { Exclude, Transform } from "class-transformer";
+import { BasicClass, IBasicQuery } from "./basics";
+
+// #region News
+enum NewsStatus {
+  Pending = 1,
+  Posted = 2,
+  ToPost = 3,
+}
+
+export class NewsData extends BasicClass<NewsData> {
+  @Exclude()
+  public get news_id(): number {
+    return this.id;
   }
 
-  export interface NewsFiltersData {
-    searchTerm: string,
-    searchAuthor: string,
-    searchAuthorId: number,
-    sortBy: string,
-    status: boolean | null,
-    fromDate: Date | null,
-    toDate: Date | null,
-    currentPage: number,
-    perPage: number,
+  public title: string = "";
+  public content: string = "";
+  public status: NewsStatus = NewsStatus.Pending;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public post_date: Date | null = null;
+}
+
+export interface INewsFilters extends IBasicQuery {
+  searchTerm: string,
+  searchAuthor: string,
+  searchAuthorId: number,
+  status: boolean | null,
+  fromDate: Date | null,
+  toDate: Date | null,
+}
+// #endregion
+
+// #region Comment
+export class CommentData extends BasicClass<CommentData> {
+  @Exclude()
+  public get comment_id(): number {
+    return this.id;
   }
+
+  public news_id: number = 0;
+  public author_id: number = 0;
+  public content: string = "";
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public post_date: Date | null = null;
+}
+// #endregion

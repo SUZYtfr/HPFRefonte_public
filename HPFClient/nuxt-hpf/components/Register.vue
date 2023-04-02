@@ -3,7 +3,9 @@
     <form ref="signupForm" class="fullheight">
       <div id="registerCard" class="modal-card mx-5 fullheight">
         <header class="modal-card-head">
-          <p class="modal-card-title">Inscription</p>
+          <p class="modal-card-title">
+            Inscription
+          </p>
           <button type="button" class="delete" @click="modalActive = false" />
         </header>
         <section class="modal-card-body pt-2 fixed-height-card">
@@ -14,8 +16,7 @@
           </p>
           <p>
             Vous trouverez plus d'informations dans le
-            <a><u>règlement du site</u></a
-            >, que vous consentez avoir lu par cette inscription.
+            <a><u>règlement du site</u></a>, que vous consentez avoir lu par cette inscription.
           </p>
           <p>
             <strong>A l'intention des mineurs :</strong>
@@ -24,7 +25,7 @@
             fanfictions à caractère érotique et sont invités à prendre
             connaissance des règles du site avant de donner ou non leur accord.
           </p>
-          <hr class="mt-2 mb-4" />
+          <hr class="mt-2 mb-4">
           <div class="columns">
             <!-- Nom, Mail, Site web, Mot de passe, Avatar -->
             <div class="column is-6">
@@ -42,7 +43,7 @@
                       required
                       pattern="^[A-Za-z0-9_\- ]{3,30}$"
                       validation-message="Veuillez saisir un nom d'utilisateur compris entre 3 et 30 caractères"
-                    ></b-input>
+                    />
                   </b-field>
                 </div>
                 <div class="column is-6">
@@ -56,7 +57,7 @@
                       type="text"
                       placeholder="Votre nom réel"
                       pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\- ]{3,30}$"
-                    ></b-input>
+                    />
                   </b-field>
                 </div>
               </div>
@@ -72,7 +73,7 @@
                   placeholder="Votre adresse mail"
                   required
                   validation-message="L'adresse mail est invalide"
-                ></b-input>
+                />
               </b-field>
 
               <b-field
@@ -85,7 +86,7 @@
                   v-model="signupForm.website"
                   type="url"
                   placeholder="Votre site web"
-                ></b-input>
+                />
               </b-field>
               <b-field
                 class="mb-5"
@@ -101,7 +102,7 @@
                   required
                   :pattern="regexPasswordPattern"
                   validation-message="Une majuscule, une miniscule, un chiffre, un caractère spécial, minimum 8 caractères requis, maximum 32."
-                ></b-input>
+                />
               </b-field>
 
               <b-field
@@ -118,7 +119,7 @@
                   required
                   :pattern="rgxConfirmPassword"
                   validation-message="Les mots de passe doivent correspondre."
-                ></b-input>
+                />
               </b-field>
               <b-field
                 label="Avatar"
@@ -137,19 +138,19 @@
                         <img
                           id="previewPicture"
                           :src="signupForm.avatar"
-                          :alt="this.uploadedFile.name"
+                          :alt="uploadedFile.name"
                           width="256"
                           height="256"
-                        />
+                        >
                         <button
                           class="delete is-small"
                           type="button"
                           @click="deleteDropFile()"
-                        ></button>
+                        />
                       </div>
                       <div v-else>
                         <p>
-                          <b-icon icon="upload" size="is-large"> </b-icon>
+                          <b-icon icon="upload" size="is-large" />
                         </p>
                         <p>Cliquez ou faites glisser votre avatar ici</p>
                       </div>
@@ -162,7 +163,7 @@
             <div class="column is-6">
               <TipTapEditor
                 :placeholder="'Votre description'"
-                :showFooter="false"
+                :show-footer="false"
                 @change="(value) => (signupForm.bio = value)"
               />
             </div>
@@ -176,8 +177,7 @@
             type="is-primary"
             :loading="loading"
             @click="checkAndSubmitForm()"
-          >
-          </b-button>
+          />
         </footer>
       </div>
     </form>
@@ -194,36 +194,36 @@ import { UserRegisterData } from "@/types/users";
 @Component({
   name: "Inscription",
   components: {
-    TipTapEditor,
-  },
+    TipTapEditor
+  }
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private active!: boolean;
-  //#endregion
+  // #region Props
+  @Prop() public active!: boolean;
+  // #endregion
 
-  //#region Data
-  private uploadedFile: Blob | null = null;
-  //private previewAvatar!: Blob;
-  private checkPass: string = "";
+  // #region Data
+  public uploadedFile: Blob | null = null;
+  // private previewAvatar!: Blob;
+  public checkPass: string = "";
 
-  private signupForm: UserRegisterData = {
+  public signupForm: UserRegisterData = {
     email: "",
     password: "",
     username: "",
     realname: "",
     bio: "",
     website: "",
-    avatar: null,
+    avatar: null
   };
 
-  private formIsValid: boolean = false;
+  public formIsValid: boolean = false;
 
-  private loading: boolean = false;
-  //#endregion
+  public loading: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get rgxConfirmPassword() {
+  // #region Computed
+  get rgxConfirmPassword(): string {
     return (
       "^" +
       this.signupForm.password.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
@@ -231,34 +231,35 @@ export default class extends Vue {
     );
   }
 
-  get regexPasswordPattern() {
+  get regexPasswordPattern(): string {
     return regexPasswordPattern.source;
   }
 
-  get modalActive() {
+  get modalActive(): boolean {
     return this.active;
   }
+
   set modalActive(value) {
     this.$emit("change", value);
   }
 
   get form(): VForm {
-    return this.$refs["signupForm"] as VForm;
+    return this.$refs.signupForm as VForm;
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("signupForm", { deep: true })
   @Watch("checkPass", { deep: true })
-  private onFormChanged() {
+  public onFormChanged(): void {
     this.formIsValid = this.form.checkValidity();
   }
 
   @Watch("uploadedFile", { deep: true })
-  private onChanged() {
-    var reader = new FileReader();
-    reader.onloadend = (e) => (this.signupForm.avatar = reader.result);
-    if(this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
+  public onChanged(): void {
+    const reader = new FileReader();
+    reader.onloadend = e => (this.signupForm.avatar = reader.result);
+    if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
     // reader.readAsDataURL(
     //   this.uploadedFile != null ? this.uploadedFile : new Blob()
     // );
@@ -266,22 +267,22 @@ export default class extends Vue {
     console.log(reader);
     console.log(this.signupForm.avatar);
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Vérifier le formulaire avant l'envoi
-  private checkAndSubmitForm() {
+  public checkAndSubmitForm(): void {
     if (this.form.checkValidity()) this.signup();
   }
 
   // Supprimer l'avatar uploadé
-  private deleteDropFile() {
+  public deleteDropFile(): void {
     this.uploadedFile = null;
     this.signupForm.avatar = "";
   }
 
   // Envoyer le formulaire
-  private async signup() {
+  private async signup(): Promise<void> {
     try {
       this.loading = true;
       const data = await signup(this.signupForm);
@@ -299,7 +300,7 @@ export default class extends Vue {
       this.loading = false;
     }
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

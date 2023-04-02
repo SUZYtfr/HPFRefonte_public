@@ -6,37 +6,41 @@
         <div class="card">
           <header class="card-header">
             <!-- Infos auteur skeleton -->
-            <div class="media" v-if="userLoading || user == undefined">
+            <div v-if="userLoading || user == undefined" class="media">
               <div class="media-left">
                 <figure class="image is-48x48">
-                  <b-skeleton width="48px" height="48px"></b-skeleton>
+                  <b-skeleton width="48px" height="48px" />
                 </figure>
               </div>
               <div class="media-content">
                 <p class="title is-5">
-                  <b-skeleton size="is-large"></b-skeleton>
+                  <b-skeleton size="is-large" />
                 </p>
                 <p class="subtitle is-7">
-                  <b-skeleton width="40%"></b-skeleton>
+                  <b-skeleton width="40%" />
                 </p>
                 <p class="subtitle is-7">
-                  <b-skeleton width="55%"></b-skeleton>
+                  <b-skeleton width="55%" />
                 </p>
               </div>
             </div>
             <!-- Infos auteur -->
-            <div class="media" v-else>
+            <div v-else class="media">
               <div class="media-left">
                 <figure class="image is-48x48">
                   <img
                     src="https://bulma.io/images/placeholders/96x96.png"
                     alt="Placeholder image"
-                  />
+                  >
                 </figure>
               </div>
               <div class="media-content">
-                <p class="title is-5">{{ user.nickname }}</p>
-                <p class="subtitle is-7">{{ user.realname }}</p>
+                <p class="title is-5">
+                  {{ user.nickname }}
+                </p>
+                <p class="subtitle is-7">
+                  {{ user.realname }}
+                </p>
                 <p class="subtitle is-7">
                   Inscrit le
                   <strong>{{ user.creation_date | parseTime }}</strong>
@@ -57,8 +61,7 @@
                       locale="fr-FR"
                       :show-score="false"
                       :show-text="false"
-                    >
-                    </b-rate>
+                    />
                   </b-tooltip>
                 </div>
               </div>
@@ -76,30 +79,46 @@
               <section>
                 <!-- Tag list auteur skeleton -->
                 <b-taglist v-if="userLoading || user == undefined">
-                  <b-skeleton></b-skeleton>
+                  <b-skeleton />
                 </b-taglist>
                 <!-- Tag list auteur -->
                 <b-taglist v-else>
-                  <b-tag type="is-primary" v-if="user.is_premium"
-                    ><strong class="has-text-light">Adhérent</strong></b-tag
-                  >
-                  <b-tag type="is-info" v-if="user.is_beta"
-                    ><strong class="has-text-light">Betareader</strong></b-tag
-                  >
+                  <b-tag v-if="user.is_premium" type="is-primary">
+                    <strong class="has-text-light">Adhérent</strong>
+                  </b-tag>
+                  <b-tag v-if="user.is_beta" type="is-info">
+                    <strong class="has-text-light">Betareader</strong>
+                  </b-tag>
                 </b-taglist>
               </section>
               <section class="author-contact-link">
                 <!-- Contact link auteur skeleton -->
                 <div
-                  class="columns is-mobile is-multiline pt-2"
                   v-if="userLoading || user == undefined"
+                  class="columns is-mobile is-multiline pt-2"
                 >
-                  <div class="column is-4 py-1" v-for="t in 6" v-bind:key="t">
-                    <b-skeleton circle width="32px" height="32px"></b-skeleton>
+                  <div v-for="t in 6" :key="t" class="column is-4 py-1">
+                    <b-skeleton circle width="32px" height="32px" />
                   </div>
                 </div>
                 <!-- Contact link auteur -->
                 <div
+                  v-else-if="user != undefined && (user?.links?.length ?? 0) > 0"
+                  class="
+                    is-flex
+                    is-flex-direction-row
+                    is-align-content-space-around
+                    is-align-items-center
+                  "
+                >
+                  <UserLink
+                    v-for="(link, innerindex) of user.links"
+                    :key="innerindex"
+                    :link="link"
+                    :full-length="innerindex < 2"
+                  />
+                </div>
+                <!-- <div
                   class="
                     columns
                     is-mobile is-multiline is-centered is-vcentered
@@ -109,7 +128,7 @@
                   v-else-if="user != undefined && user.links.length > 0"
                 >
                   <div
-                    class="column is-narrow py-1"
+                    class="column is-4 py-1"
                     v-for="(link, innerindex) of user.links"
                     :key="innerindex"
                   >
@@ -118,13 +137,13 @@
                       :fullLength="innerindex < 2"
                     ></UserLink>
                   </div>
-                </div>
+                </div> -->
               </section>
               <section class="author-stats mt-2">
                 <!-- Stats auteur skeleton -->
                 <div
-                  class="columns is-mobile is-multiline is-centered"
                   v-if="userLoading || user == undefined"
+                  class="columns is-mobile is-multiline is-centered"
                 >
                   <div class="column is-4">
                     <div class="level-item has-text-centered">
@@ -133,10 +152,10 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
@@ -148,10 +167,10 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
@@ -163,10 +182,10 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
@@ -178,10 +197,10 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
@@ -193,10 +212,10 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
@@ -208,27 +227,27 @@
                           <b-skeleton
                             position="is-centered"
                             width="35px"
-                          ></b-skeleton>
+                          />
                         </p>
                         <p class="heading">
-                          <b-skeleton width="70px"></b-skeleton>
+                          <b-skeleton width="70px" />
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <!-- Stats auteur -->
-                <div class="columns is-mobile is-multiline is-centered" v-else>
+                <div v-else class="columns is-mobile is-multiline is-centered">
                   <div class="column is-4">
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.fanfictions | numberToString }}
+                          {{ (user?.stats?.fanfictions ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
                             "Fanfiction" +
-                            (user.stats.fanfictions > 1 ? "s" : "")
+                              ((user?.stats?.fanfictions ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -238,11 +257,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.chapters | numberToString }}
+                          {{ (user?.stats?.chapters ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Chapitre" + (user.stats.chapters > 1 ? "s" : "")
+                            "Chapitre" + ((user?.stats?.chapters ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -252,10 +271,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.words | numberToString }}
+                          {{ (user?.stats?.words ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Mot" + (user.stats.words > 1 ? "s" : "") }}
+                          {{ "Mot" + ((user?.stats?.words ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -264,10 +283,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.series | numberToString }}
+                          {{ (user?.stats?.series ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Série" + (user.stats.series > 1 ? "s" : "") }}
+                          {{ "Série" + ((user?.stats?.series ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -276,11 +295,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.challenges | numberToString }}
+                          {{ (user?.stats?.challenges ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Challenge" + (user.stats.challenges > 1 ? "s" : "")
+                            "Challenge" + ((user?.stats?.challenges ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -290,10 +309,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ user.stats.reviews | numberToString }}
+                          {{ (user?.stats?.reviews ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Review" + (user.stats.reviews > 1 ? "s" : "") }}
+                          {{ "Review" + ((user?.stats?.reviews ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -303,14 +322,14 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a href="#" class="card-footer-item"
-              ><b-icon icon="envelope" type="is-dark"></b-icon
-              ><span>Contacter</span></a
-            >
-            <a href="#" class="card-footer-item"
-              ><b-icon icon="exclamation-triangle" type="is-dark"></b-icon
-              ><span>Signaler</span></a
-            >
+            <a
+              href="#"
+              class="card-footer-item"
+            ><b-icon icon="envelope" type="is-dark" /><span>Contacter</span></a>
+            <a
+              href="#"
+              class="card-footer-item"
+            ><b-icon icon="exclamation-triangle" type="is-dark" /><span>Signaler</span></a>
           </footer>
         </div>
       </div>
@@ -323,11 +342,11 @@
             >
               <div class="content">
                 <b-loading
+                  v-if="userLoading || user == undefined"
                   :is-full-page="false"
                   :model="true"
-                  v-if="userLoading || user == undefined"
-                ></b-loading>
-                <span v-else v-html="user.bio"></span>
+                />
+                <span v-else v-html="user.bio" />
               </div>
             </simplebar>
           </div>
@@ -342,84 +361,77 @@
             <b-tabs type="is-boxed">
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="broom"></b-icon>
+                  <b-icon icon="broom" />
                   <span>
                     Fanfictions<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded>
-                      {{ user.stats.fanfictions }}
+                    /><b-tag v-else rounded>
+                      {{ user?.stats?.fanfictions }}
                     </b-tag>
                   </span>
                 </template>
-                <FanfictionFilters
-                  :fanfictionFilters="fanfictionFilters"
-                />
+                <FanfictionFilters :fanfiction-filters="fanfictionFilters" />
                 <div class="columns mt-2">
                   <div class="column is-12">
                     <FanfictionList
-                      :isCard="false"
-                      :fanfictionFilters="fanfictionFilters"
+                      :is-card="false"
+                      :fanfiction-filters="fanfictionFilters"
                     />
                   </div>
                 </div>
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="book"></b-icon>
+                  <b-icon icon="book" />
                   <span>
                     Séries
                     <b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.series }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.series }} </b-tag>
                   </span>
                 </template>
                 2
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="feather"></b-icon>
+                  <b-icon icon="feather" />
                   <span>
                     Reviews<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.reviews }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.reviews }} </b-tag>
                   </span>
                 </template>
                 3
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="trophy"></b-icon>
+                  <b-icon icon="trophy" />
                   <span>
                     Challenges<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded> {{ user.stats.challenges }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.challenges }} </b-tag>
                   </span>
                 </template>
                 4
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="star"></b-icon>
+                  <b-icon icon="star" />
                   <span>
                     Fanfictions favorites<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded>
-                      {{ user.stats.favorites_fanfictions }}
+                    /><b-tag v-else rounded>
+                      {{ user?.stats?.favorites_fanfictions }}
                     </b-tag>
                   </span>
                 </template>
@@ -427,15 +439,14 @@
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="star"></b-icon>
+                  <b-icon icon="star" />
                   <span>
                     Séries favorites<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded>
-                      {{ user.stats.favorites_series }}
+                    /><b-tag v-else rounded>
+                      {{ user?.stats?.favorites_series }}
                     </b-tag>
                   </span>
                 </template>
@@ -443,15 +454,14 @@
               </b-tab-item>
               <b-tab-item>
                 <template #header>
-                  <b-icon icon="star"></b-icon>
+                  <b-icon icon="star" />
                   <span>
                     Auteurs favoris<b-loading
+                      v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                      v-if="userLoading || user == undefined"
-                    ></b-loading
-                    ><b-tag v-else rounded>
-                      {{ user.stats.favorites_author }}
+                    /><b-tag v-else rounded>
+                      {{ user?.stats?.favorites_author }}
                     </b-tag>
                   </span>
                 </template>
@@ -473,10 +483,11 @@ import "simplebar/dist/simplebar.min.js";
 import SimpleBar from "simplebar";
 import UserLink from "@/components/UserLink.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
-import { UserData } from "@/types/users";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { UserModel } from "@/models/users";
+import { IFanfictionFilters } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "Author",
@@ -484,7 +495,7 @@ import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
     simplebar,
     UserLink,
     FanfictionFilters,
-    FanfictionList,
+    FanfictionList
   },
   filters: {
     parseTime: (timestamp: string) => {
@@ -493,20 +504,19 @@ import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
     numberToString: (number: number) => {
       if (number > 9999) return (number / 1000).toString() + " K";
       else return number.toString();
-    },
-  },
+    }
+  }
 })
 export default class extends Vue {
-  //#region  Data
-  private user!: UserData;
-  private userLoading = false;
+  // #region  Data
+  public user: UserModel | null = null;
+  public userLoading = false;
 
   // Filtres de recherche
-  private fanfictionFilters: FanfictionFiltersData = {
+  public fanfictionFilters: IFanfictionFilters = {
     searchTerm: "",
     searchAuthor: "",
     searchAuthorId: 0,
-    sortBy: "most_recent",
     multipleAuthors: null,
     status: null,
     minWords: null,
@@ -518,25 +528,28 @@ export default class extends Vue {
     inclusive: false,
     fromDate: null,
     toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    page: 1,
+    pageSize: 10,
+    totalPages: true,
+    sortOn: "last_update_date",
+    sortBy: SortByEnum.Descending
   };
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  created() {
+  // #region Hooks
+  created(): void {
     this.user = null!;
   }
 
-  mounted() {
-    let tabs = document.getElementsByClassName("tabs is-boxed")[0];
+  mounted(): void {
+    const tabs = document.getElementsByClassName("tabs is-boxed")[0];
     console.log(tabs);
     tabs.insertAdjacentHTML(
       "beforebegin",
       '<div class="custom-scrollbar-tabs"></div>'
     );
-    let scrollbarTabs = document.getElementsByClassName(
+    const scrollbarTabs = document.getElementsByClassName(
       "custom-scrollbar-tabs"
     )[0];
     scrollbarTabs.appendChild(tabs);
@@ -546,36 +559,29 @@ export default class extends Vue {
       )[0] as HTMLElement,
       {
         autoHide: false,
-        forceVisible: true,
+        forceVisible: true
       }
     );
   }
 
-  async asyncData() {
-    console.log("asyncData");
-  }
+  async asyncData(): Promise<void> {}
 
-  async fetch() {
+  async fetch(): Promise<void> {
     this.userLoading = true;
-    console.log("fetch");
     try {
       this.user = (await getUser(this.$route.params.id)).data.items.user;
-      console.log(this.user);
     } catch (error) {
-      console.log(error);
     } finally {
-      console.log("finally");
       this.userLoading = false;
     }
   }
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  //#endregion
+  // #region Computed
+  // #endregion
 
-  
-  //#region Methods
-  //#endregion
+  // #region Methods
+  // #endregion
 }
 </script>
 

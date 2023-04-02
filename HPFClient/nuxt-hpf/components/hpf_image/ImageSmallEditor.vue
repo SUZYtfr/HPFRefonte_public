@@ -5,8 +5,8 @@
     @mouseleave="hover = false"
   >
     <div
-      id="image-editor"
       v-if="image"
+      id="image-editor"
       class="is-flex is-flex-direction-column is-justify-content-flex-start"
       style="gap: 10px"
     >
@@ -14,7 +14,7 @@
         class="is-flex is-flex-direction-row is-justify-content-flex-start"
         style="gap: 10px"
       >
-        <img :src="image.url" />
+        <img :src="image.url">
         <div
           class="
             is-flex-grow-5
@@ -24,22 +24,19 @@
           "
           style="gap: 5px"
         >
-          <b-input placeholder="Url" size="is-small" v-model="image.url">
-          </b-input>
-          <b-checkbox size="is-small" v-model="image.age_restricted"
-            >Contenu sensible</b-checkbox
-          >
+          <b-input v-model="image.url" placeholder="Url" size="is-small" />
+          <b-checkbox v-model="image.age_restricted" size="is-small">
+            Contenu sensible
+          </b-checkbox>
         </div>
       </div>
 
-      <b-input placeholder="Crédits" size="is-small" v-model="image.credit">
-      </b-input>
-      <b-input placeholder="Attribut alt" size="is-small" v-model="image.alt">
-      </b-input>
+      <b-input v-model="image.credit" placeholder="Crédits" size="is-small" />
+      <b-input v-model="image.alt" placeholder="Attribut alt" size="is-small" />
     </div>
     <font-awesome-icon
-      id="close-button"
       v-if="hover"
+      id="close-button"
       icon="window-close"
       @click="$emit('remove', image.id_in_text)"
     />
@@ -56,31 +53,31 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 import { ImageHPFData } from "@/types/images";
 @Component({
-  name: "ImageSmallEditor",
+  name: "ImageSmallEditor"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private image!: ImageHPFData;
-  //#endregion
+  // #region Props
+  @Prop() public image!: ImageHPFData;
+  // #endregion
 
-  //#region Datas
-  private hover: boolean = false;
-  //#endregion
+  // #region Datas
+  public hover: boolean = false;
+  // #endregion
 
-  //#region Computed
+  // #region Computed
 
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
 
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
 
-  //#endregion
+  // #endregion
 }
 </script>
 

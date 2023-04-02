@@ -8,7 +8,7 @@
       'fullheight',
     ]"
   >
-    <b-loading :is-full-page="false" v-model="listLoading"></b-loading>
+    <b-loading v-model="listLoading" :is-full-page="false" />
     <header
       :class="[
         { 'card-header': isCard },
@@ -40,93 +40,93 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            v-model="newsFilters.sortBy"
+            @input="SelectSortBy_OnInputChanged"
           >
-            <option value="alpha">Ordre alphabétique</option>
-            <option value="most_recent">Plus récent au plus ancien</option>
-            <option value="less_recent">Plus ancien au plus récent</option>
-            <option value="most_reviews">Nombre de reviews - croissant</option>
-            <option value="less_reviews">
-              Nombre de reviews - décroissant
+            <option value="most_recent">
+              Plus récent au plus ancien
             </option>
-            <option value="most_rating">Rating - croissant</option>
-            <option value="less_rating">Rating - décroissant</option>
+            <option value="less_recent">
+              Plus ancien au plus récent
+            </option>
           </b-select>
         </b-field>
       </div>
     </header>
     <div
-      :class="[{ 'card-content': isCard }, 'px-0', 'py-3', 'is-flex-grow-5']"
+      :class="[{ 'card-content': isCard }, 'px-0', 'pt-1', 'pb-0', 'is-flex-grow-5']"
     >
       <div v-if="news.length == 0" class="mx-auto my-auto has-text-centered">
-        <span class="is-italic mt-3"
-          >Aucun résultat, essayer d'ajuster les filtres de recherche.</span
-        >
+        <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
         <div>
           <News_2
-              v-for="(item, innerindex) of news"
-              :key="'news_' + item.news_id.toString()"
-              :news="item"
-              :activeColor="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
-              :class="[{ 'is-hidden-mobile': innerindex > 0 }]"
-              v-bind:index="innerindex"
-            ></News_2>
+            v-for="(item, innerindex) of news"
+            :key="'news_' + item.news_id.toString()"
+            :news="item"
+            :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
+            :index="innerindex"
+          />
         </div>
       </div>
     </div>
     <footer :class="[{ 'card-footer': isCard }]">
       <b-pagination
+        v-model="newsFilters.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
         :total="news.length"
-        v-model="newsFilters.currentPage"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="newsFilters.perPage"
+        :per-page="newsFilters.pageSize"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
         aria-previous-label="Page précedente"
         aria-page-label="Page"
         aria-current-label="Page actuelle"
-      >
-      </b-pagination>
+      />
     </footer>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { SerialiseClass } from "@/serialiser-decorator";
 import News_2 from "~/components/News_2.vue";
-import { NewsData, NewsFiltersData } from "@/types/news";
-import { getNews } from "@/api/news";
+import { INewsFilters } from "@/types/news";
+import { NewsModel } from "@/models/news";
+import { searchNews } from "@/api/news";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "NewsList",
   components: {
-    News_2,
+    News_2
   },
+  fetchOnServer: true,
+  fetchKey: "news-list"
 })
 export default class NewsList extends Vue {
-  //#region Props
-  @Prop({ default: true }) private isCard!: boolean;
-  @Prop({ default: true }) private showRefreshButton!: boolean;
+  // #region Props
+  @Prop({ default: true }) public isCard!: boolean;
+  @Prop({ default: true }) public showRefreshButton!: boolean;
   @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() private newsFilters!: NewsFiltersData;
-  //#endregion
+  @Prop() public newsFilters!: INewsFilters;
+  // #endregion
 
-  //#region Data
-  private news: NewsData[] = [];
+  // #region Data
+  @SerialiseClass(NewsModel)
+  public news: NewsModel[] = [];
+
   private timerId: number = 0;
 
   // Pagination
 
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  get newsResultLabel() {
+  // #region Computed
+  get newsResultLabel(): string {
     let result = "";
     result += this.news.length > 0 ? this.news.length.toString() : "Aucun";
     result += " résultat";
@@ -134,43 +134,57 @@ export default class NewsList extends Vue {
     return result;
   }
 
-  get listLoading() {
+  get listLoading(): boolean {
     return this.isLoading;
   }
 
   set listLoading(value) {
     this.$emit("loadingChange", value);
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("newsFilters", { deep: true })
-  private onFiltersChanged() {
+  public onFiltersChanged(): void {
     clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.getNews, 500);
+    this.timerId = window.setTimeout(this.$fetch, 500);
   }
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  mounted(){
-    // Déclenche une recherche à l'affichage
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.getNews, 500);
-  }
-  //#endregion
-
-  //#region Methods
-  private async getNews() {
+  // #region Hooks
+  private async fetch(): Promise<void> {
     this.listLoading = true;
+    // Récupération des fictions
+    await this.searchNews();
+    this.listLoading = false;
+  }
+  // #endregion
+
+  // #region Methods
+  private async searchNews(): Promise<void> {
+    // this.listLoading = true;
     try {
-      const { data } = await getNews(this.newsFilters);
-      this.news = data.items;
-    } catch {
+      this.news = (await searchNews(this.newsFilters)).items;
+    } catch (error) {
+      console.log(error);
     } finally {
-      this.listLoading = false;
+      // this.listLoading = false;
     }
   }
-  //#endregion
+
+  public SelectSortBy_OnInputChanged(value: string): void {
+    switch (value) {
+      case "most_recent":
+        this.newsFilters.sortBy = SortByEnum.Descending;
+        this.newsFilters.sortOn = "last_update_date";
+        break;
+      case "less_recent":
+        this.newsFilters.sortBy = SortByEnum.Ascending;
+        this.newsFilters.sortOn = "last_update_date";
+        break;
+    }
+  }
+  // #endregion
 }
 </script>
 

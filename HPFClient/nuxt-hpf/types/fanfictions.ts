@@ -1,32 +1,68 @@
-import { ICharacteristic } from "./characteristics";
-import { AuthorData } from "./users";
-import { CommentData } from "./comments";
+import { Transform, Exclude } from "class-transformer";
+import { BasicClass, IBasicQuery } from "./basics";
 
-export class FanfictionData {
-  fanfiction_id: number | null = null;
-  last_update_date: Date | null = null;
-  creation_date: Date | null = null;
-  title: string | null = null;
-  summary: string | null = null;
-  authors: AuthorData[] | null = null;
-  comments: CommentData[] | null = null;
-  characteristics: ICharacteristic[] | null = null;
-  series: SerieData[] | null = null;
-  rating: number | null = null;
-  chapter_count: number | null = null;
-  word_count: number | null = null;
-  read_count: number | null = null;
-  status: number | null = null;
-  featured: boolean | null = null;
+// #region Fanfiction
+export enum FanfictionStatus {
+  OnGoing = 1,
+  Paused = 2,
+  Abandoned = 3,
+  Finished = 4,
 }
 
-export interface FanfictionFiltersData {
-  searchTerm: string,
-  searchAuthor: string,
-  searchAuthorId: number,
-  sortBy: string,
+export enum ValidationStatus {
+  Unvalidated = 0,
+  AwaitingCorrection = 2,
+  Validated = 3,
+}
+
+export class FanfictionData extends BasicClass<FanfictionData> {
+  @Exclude()
+  public get fanfiction_id(): number {
+    return this.id;
+  }
+
+  public title: string = "";
+  public summary: string | null = null;
+  public image: string | null = null;
+  public rating: number | null = null;
+  public storynote: string | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public last_update_date: Date = new Date();
+
+  public read_count: number | null = null;
+  public status: FanfictionStatus = FanfictionStatus.OnGoing;
+  public featured: boolean = false;
+  public validation_status: ValidationStatus = ValidationStatus.Unvalidated;
+
+  @Exclude()
+  public get statusAsText(): string {
+    let result: string = "";
+    switch (this.status) {
+      case 1:
+        result = "Mise à jour";
+        break;
+      case 2:
+        result = "Arrêtée";
+        break;
+      case 3:
+        result = "Abandonnée";
+        break;
+      case 4:
+        result = "Terminée";
+        break;
+    }
+    return result;
+  }
+}
+
+export interface IFanfictionFilters extends IBasicQuery {
+  searchTerm: string | null,
+  searchAuthor: string | null,
+  searchAuthorId: number | null,
   multipleAuthors: boolean | null,
-  status: boolean | null,
+  status: FanfictionStatus | null,
   minWords: number | null,
   maxWords: number | null,
   includedTags: number[],
@@ -36,11 +72,53 @@ export interface FanfictionFiltersData {
   inclusive: boolean,
   fromDate: Date | null,
   toDate: Date | null,
-  currentPage: number,
-  perPage: number,
+}
+// #endregion
+
+// #region Reviews
+enum ReviewItemTypeEnum {
+  Fanfiction = 1,
+  Chapter = 2,
+  Serie = 3,
+  Author = 4,
 }
 
-interface SerieData {
-  serie_id: number,
-  title: string
+export class ReviewData extends BasicClass<ReviewData> {
+  @Exclude()
+  public get review_id(): number {
+    return this.id;
+  }
+
+  public item_id: number = 0;
+  public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
+  public author_id: number | null = null;
+  public group_id: number | null = null;
+  public rating: number | null = null;
+  public content: string = "";
+  public parent_id: number | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public post_date: Date | null = null;
 }
+// #endregion
+
+// #region  Serie
+enum SerieStatusEnum {
+  Closed = 1,
+  Moderated = 2,
+  Opened = 3,
+}
+
+export class SerieData extends BasicClass<SerieData> {
+  @Exclude()
+  public get serie_id(): number {
+    return this.id;
+  }
+
+  public title: string = "";
+  public summary: string | null = null;
+  public parent_id: number | null = null;
+  public status: SerieStatusEnum = SerieStatusEnum.Closed;
+}
+// #endregion

@@ -1,15 +1,15 @@
-import { Module, VuexModule, Mutation } from 'vuex-module-decorators'
+import { Module, VuexModule, Mutation } from "vuex-module-decorators";
 
 @Module({
-  name: 'modules/MyStoreModule',
+  name: "modules/MyStoreModule",
   namespaced: true,
-  stateFactory: true,
+  stateFactory: true
 })
 export default class MyStoreModule extends VuexModule {
-  public test: string = 'initial'
+  public test: string = "initial";
 
   @Mutation
-  public setTest(val: string) {
-    this.test = val
+  public setTest(val: string): void {
+    this.test = val;
   }
 }

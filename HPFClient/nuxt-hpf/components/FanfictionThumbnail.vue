@@ -25,7 +25,7 @@
         :disabled="true"
         :max="1"
         :rtl="true"
-      ></b-rate>
+      />
     </div>
     <div
       class="
@@ -38,77 +38,78 @@
     >
       <div class="mr-3 white-space-nowrap">
         <template v-for="(author, index) in fanfiction.authors">
-          <template v-if="index > 0">,</template>
+          <template v-if="index > 0">
+            ,
+          </template>
           <NuxtLink
+            :key="'author_' + author.author_id.toString()"
             class="is-size-7 has-text-weight-normal"
-            v-bind:key="'author_' + author.author_id.toString()"
             :to="{ name: 'auteurs-id', params: { id: author.author_id } }"
-            >{{ author.nickname }}</NuxtLink
           >
+            {{ author.nickname }}
+          </NuxtLink>
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">
         <a
           v-for="characteristic in fanfiction.characteristics"
-          v-bind:key="
+          :key="
             'ff_' +
-            fanfiction.fanfiction_id +
-            '_characteristic_' +
-            characteristic.characteristic_id.toString()
+              fanfiction.fanfiction_id +
+              '_characteristic_' +
+              characteristic.id.toString()
           "
-          v-bind:href="'auteurs/' + characteristic.characteristic_id"
-          ><b-tag
-            :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
-            type="is-info"
-            >{{ characteristic.name }}</b-tag
-          ></a
-        >
+          :href="'auteurs/' + characteristic.id"
+        ><b-tag
+          :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
+          type="is-info"
+        >{{ characteristic.name }}</b-tag></a>
       </div>
     </div>
     <p
-      v-html="fanfiction.summary"
       v-plaintext
       class="text-ellipsis-three-line"
-    ></p>
+      v-html="fanfiction.summary"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { FanfictionData } from "@/types/fanfictions";
+import { FanfictionModel } from "@/models/fanfictions";
 import { getClassTypeColor } from "@/utils/characteristics";
-import { ICharacteristic } from "@/types/characteristics";
+import { CharacteristicData } from "@/types/characteristics";
 
 @Component({
   name: "FanfictionThumbnail",
   filters: {
     parseTime: (timestamp: string) => {
       return new Date(timestamp).toLocaleDateString();
-    },
+    }
   },
   directives: {
     plaintext: {
       bind: function (el, binding, vnode) {
         el.innerHTML = el.innerText.trimStart();
-      },
-    },
-  },
+      }
+    }
+  }
 })
 export default class FanfictionThumbnail extends Vue {
-  //#region Props
-  @Prop() private fanfiction!: FanfictionData;
-  //#endregion
+  // #region Props
+  @Prop() public fanfiction!: FanfictionModel;
+  // #endregion
 
-  //#region Datas
-  private ratinga = 10;
-  private hover: boolean = false;
-  //#endregion
+  // #region Datas
+  public ratinga = 10;
+  public hover: boolean = false;
+  // #endregion
 
-  //#region Methods
-  private getClassType(characteristic: ICharacteristic) {
+  // #region Methods
+  public getClassType(characteristic: CharacteristicData): string {
     return getClassTypeColor(characteristic);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

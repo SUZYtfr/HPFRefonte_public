@@ -6,42 +6,42 @@
     :class="[{ excluded: indeterminate }]"
     @click.native.prevent="checkBoxClicked($event)"
   >
-    <font-awesome-icon v-if="caracteristic.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
+    <font-awesome-icon v-if="characteristic?.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
       :class="[
-        caracteristic.parent_id != null
+        characteristic?.parent_id != null
           ? 'is-italic has-text-weight-light'
           : 'has-text-weight-medium',
       ]"
-      >{{ caracteristic.name }}</span
-    >
+    >{{ characteristic?.name }}</span>
   </b-checkbox>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "nuxt-property-decorator";
-import { ICharacteristic } from "@/types/characteristics";
+import { CharacteristicData } from "@/types/characteristics";
 
 @Component({
-  name: "CharThreeStateCheckbox",
+  name: "CharThreeStateCheckbox"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private caracteristic!: ICharacteristic | undefined;
+  // #region Props
+  @Prop() public characteristic!: CharacteristicData | undefined;
   @Prop() private externalState!: number | undefined;
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  get checkboxStatus() {
-    return this.externalState == 1;
+  // #region Computed
+  get checkboxStatus(): boolean {
+    return this.externalState === 1;
   }
-  get indeterminate() {
-    return this.externalState == -1;
-  }
-  //#endregion
 
-  //#region Methods
-  private checkBoxClicked(event: any) {
+  get indeterminate(): boolean {
+    return this.externalState === -1;
+  }
+  // #endregion
+
+  // #region Methods
+  public checkBoxClicked(event: any): void {
     let internalState;
     if (this.indeterminate) {
       internalState = 0;
@@ -50,9 +50,9 @@ export default class extends Vue {
     } else {
       internalState = 1;
     }
-    this.$emit("change", this.caracteristic?.characteristic_id, internalState);
+    this.$emit("change", this.characteristic?.id, internalState);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

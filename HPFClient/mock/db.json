@@ -13,7 +13,7 @@
   ],
   "fanfictions": [
     {
-      "fanfiction_id": 22011,
+      "id": 22011,
       "last_update_date": "2019-06-10 21:52:26",
       "creation_date": "2019-06-10 21:52:26",
       "title": "«Le coeur n'est jamais si bien en équilibre que sur un tranchant d'acier.» Pierre Reverdy",
@@ -44,17 +44,17 @@
       ],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -136,42 +136,42 @@
       ],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -216,17 +216,17 @@
       ],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -254,17 +254,17 @@
       "comments": [],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -304,17 +304,17 @@
       ],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -354,17 +354,17 @@
       ],
       "characteristics": [
         {
-          "characteristic_id": 243,
+          "id": 243,
           "characteristic_type_id": 5,
           "name": "Interdit -18"
         },
         {
-          "characteristic_id": 215,
+          "id": 215,
           "characteristic_type_id": 2,
           "name": "Aventure/Action"
         },
         {
-          "characteristic_id": 229,
+          "id": 229,
           "characteristic_type_id": 4,
           "name": "Lemon Hard"
         }
@@ -700,14 +700,14 @@
   ],
   "characteristics": [
     {
-      "characteristic_id": 93,
+      "id": 93,
       "characteristic_type_id": 1,
       "parent_id": 9,
       "name": "Fics-cadeau",
       "in_order": 1
     },
     {
-      "characteristic_id": 1,
+      "id": 1,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Biographies",
@@ -715,14 +715,14 @@
       "description": "Fanfictions centrées sur l'histoire et la vie d'un seul personnage en particulier"
     },
     {
-      "characteristic_id": 9,
+      "id": 9,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Autres fics HP",
       "in_order": 15
     },
     {
-      "characteristic_id": 10,
+      "id": 10,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Voyages temporels",
@@ -730,189 +730,189 @@
       "description": "Fanfictions où les personnages voyagent dans le temps."
     },
     {
-      "characteristic_id": 12,
+      "id": 12,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Résistance",
       "in_order": 11
     },
     {
-      "characteristic_id": 13,
+      "id": 13,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Quidditch",
       "in_order": 12
     },
     {
-      "characteristic_id": 14,
+      "id": 14,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Les Animaux Fantastiques",
       "in_order": 13
     },
     {
-      "characteristic_id": 15,
+      "id": 15,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Fêtes / Célébrations",
       "in_order": 14
     },
     {
-      "characteristic_id": 16,
+      "id": 16,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Albus Dumbledore",
       "in_order": 15
     },
     {
-      "characteristic_id": 17,
+      "id": 17,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Lucius Malfoy",
       "in_order": 16
     },
     {
-      "characteristic_id": 18,
+      "id": 18,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Remus Lupin",
       "in_order": 17
     },
     {
-      "characteristic_id": 19,
+      "id": 19,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Severus Rogue",
       "in_order": 18
     },
     {
-      "characteristic_id": 20,
+      "id": 20,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Sirius Black",
       "in_order": 19
     },
     {
-      "characteristic_id": 21,
+      "id": 21,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Autres portraits de personnages",
       "in_order": 20
     },
     {
-      "characteristic_id": 22,
+      "id": 22,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Drago Malefoy",
       "in_order": 14
     },
     {
-      "characteristic_id": 23,
+      "id": 23,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Personnage original (OC)",
       "in_order": 13
     },
     {
-      "characteristic_id": 24,
+      "id": 24,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Bellatrix Lestrange",
       "in_order": 12
     },
     {
-      "characteristic_id": 25,
+      "id": 25,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Jedusor/Voldemort",
       "in_order": 11
     },
     {
-      "characteristic_id": 26,
+      "id": 26,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Harry Potter",
       "in_order": 8
     },
     {
-      "characteristic_id": 27,
+      "id": 27,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Hermione Granger",
       "in_order": 9
     },
     {
-      "characteristic_id": 28,
+      "id": 28,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Nymphadora Tonks",
       "in_order": 10
     },
     {
-      "characteristic_id": 29,
+      "id": 29,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Neville Londubat",
       "in_order": 5
     },
     {
-      "characteristic_id": 30,
+      "id": 30,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Ron Weasley",
       "in_order": 4
     },
     {
-      "characteristic_id": 31,
+      "id": 31,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Luna Lovegood",
       "in_order": 7
     },
     {
-      "characteristic_id": 32,
+      "id": 32,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Ginny Weasley",
       "in_order": 6
     },
     {
-      "characteristic_id": 33,
+      "id": 33,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Albus Dumbledore",
       "in_order": 3
     },
     {
-      "characteristic_id": 34,
+      "id": 34,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Minerva McGonagall",
       "in_order": 2
     },
     {
-      "characteristic_id": 35,
+      "id": 35,
       "characteristic_type_id": 1,
       "parent_id": 1,
       "name": "Tranches de vie",
       "in_order": 1
     },
     {
-      "characteristic_id": 95,
+      "id": 95,
       "characteristic_type_id": 1,
       "parent_id": 9,
       "name": "Divertissement",
       "in_order": 3
     },
     {
-      "characteristic_id": 94,
+      "id": 94,
       "characteristic_type_id": 1,
       "parent_id": 9,
       "name": "Réponse aux défis",
       "in_order": 2
     },
     {
-      "characteristic_id": 4,
+      "id": 4,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "Univers Alternatifs",
@@ -920,7 +920,7 @@
       "description": "Fanfictions où les personnages évoluent dans un univers différent du leur."
     },
     {
-      "characteristic_id": 6,
+      "id": 6,
       "characteristic_type_id": 1,
       "parent_id": null,
       "name": "CrossOver",
@@ -928,203 +928,203 @@
       "description": "Fanfictions mélangeant l'univers d'Harry Potter à celui d'une ou plusieurs autres séries."
     },
     {
-      "characteristic_id": 227,
+      "id": 227,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Tragédie/Drame",
       "in_order": 16
     },
     {
-      "characteristic_id": 226,
+      "id": 226,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Songfic",
       "in_order": 15
     },
     {
-      "characteristic_id": 225,
+      "id": 225,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Romance/Amour",
       "in_order": 14
     },
     {
-      "characteristic_id": 224,
+      "id": 224,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Polar/enquête",
       "in_order": 13
     },
     {
-      "characteristic_id": 223,
+      "id": 223,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Poésie",
       "in_order": 12
     },
     {
-      "characteristic_id": 222,
+      "id": 222,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Parodie",
       "in_order": 11
     },
     {
-      "characteristic_id": 221,
+      "id": 221,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Missing Moments",
       "in_order": 10
     },
     {
-      "characteristic_id": 213,
+      "id": 213,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Angoisse/Suspense",
       "in_order": 2
     },
     {
-      "characteristic_id": 216,
+      "id": 216,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Comédie/Humour",
       "in_order": 5
     },
     {
-      "characteristic_id": 212,
+      "id": 212,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Amitié",
       "in_order": 1
     },
     {
-      "characteristic_id": 215,
+      "id": 215,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Aventure/Action",
       "in_order": 4
     },
     {
-      "characteristic_id": 214,
+      "id": 214,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Autres genres",
       "in_order": 3
     },
     {
-      "characteristic_id": 217,
+      "id": 217,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Epistolaire",
       "in_order": 6
     },
     {
-      "characteristic_id": 218,
+      "id": 218,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Famille",
       "in_order": 7
     },
     {
-      "characteristic_id": 219,
+      "id": 219,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Guerre",
       "in_order": 8
     },
     {
-      "characteristic_id": 220,
+      "id": 220,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Horreur",
       "in_order": 9
     },
     {
-      "characteristic_id": 228,
+      "id": 228,
       "characteristic_type_id": 2,
       "parent_id": null,
       "name": "Yaoi/Yuri",
       "in_order": 17
     },
     {
-      "characteristic_id": 239,
+      "id": 239,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Picard",
       "in_order": 28
     },
     {
-      "characteristic_id": 238,
+      "id": 238,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Latin",
       "in_order": 27
     },
     {
-      "characteristic_id": 237,
+      "id": 237,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Français",
       "in_order": 26
     },
     {
-      "characteristic_id": 236,
+      "id": 236,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Espagnol",
       "in_order": 25
     },
     {
-      "characteristic_id": 235,
+      "id": 235,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Breton",
       "in_order": 24
     },
     {
-      "characteristic_id": 234,
+      "id": 234,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Anglais",
       "in_order": 23
     },
     {
-      "characteristic_id": 233,
+      "id": 233,
       "characteristic_type_id": 3,
       "parent_id": null,
       "name": "Allemand",
       "in_order": 22
     },
     {
-      "characteristic_id": 229,
+      "id": 229,
       "characteristic_type_id": 4,
       "parent_id": null,
       "name": "Lemon Hard",
       "in_order": 18
     },
     {
-      "characteristic_id": 230,
+      "id": 230,
       "characteristic_type_id": 4,
       "parent_id": null,
       "name": "Lemon soft",
       "in_order": 19
     },
     {
-      "characteristic_id": 231,
+      "id": 231,
       "characteristic_type_id": 4,
       "parent_id": null,
       "name": "Lime",
       "in_order": 20
     },
     {
-      "characteristic_id": 232,
+      "id": 232,
       "characteristic_type_id": 4,
       "parent_id": null,
       "name": "Scène(s) gore(s)",
       "in_order": 21
     },
     {
-      "characteristic_id": 243,
+      "id": 243,
       "characteristic_type_id": 5,
       "parent_id": null,
       "name": "Interdit -18",
@@ -1132,28 +1132,28 @@
       "description": "Attention, cette fanfiction est strictement interdite aux moins de 18 ans"
     },
     {
-      "characteristic_id": 240,
+      "id": 240,
       "characteristic_type_id": 5,
       "parent_id": null,
       "name": "Tout public",
       "in_order": 1
     },
     {
-      "characteristic_id": 241,
+      "id": 241,
       "characteristic_type_id": 5,
       "parent_id": null,
       "name": "Déconseillé -12",
       "in_order": 2
     },
     {
-      "characteristic_id": 242,
+      "id": 242,
       "characteristic_type_id": 5,
       "parent_id": null,
       "name": "Déconseillé -16",
       "in_order": 3
     },
     {
-      "characteristic_id": 97,
+      "id": 97,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque de Jedusor",
@@ -1161,7 +1161,7 @@
       "description": "Fanfictions racontant la scolarité de personnages contemporains à l'époque de Tom Jedusor"
     },
     {
-      "characteristic_id": 98,
+      "id": 98,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque de Harry",
@@ -1169,7 +1169,7 @@
       "description": "Fanfictions se déroulant durant les sept années de Harry à Poudlard"
     },
     {
-      "characteristic_id": 11,
+      "id": 11,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Durant Poudlard",
@@ -1177,14 +1177,14 @@
       "description": "Récits se déroulant entre les murs de la célèbre école de sorcellerie"
     },
     {
-      "characteristic_id": 8,
+      "id": 8,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Les Fondateurs",
       "in_order": 9
     },
     {
-      "characteristic_id": 7,
+      "id": 7,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Après Poudlard",
@@ -1192,7 +1192,7 @@
       "description": "Fanfictions dont l'intrigue se déroule après la scolarité de Harry à Poudlard."
     },
     {
-      "characteristic_id": 99,
+      "id": 99,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "\"19 ans plus tard\"",
@@ -1200,7 +1200,7 @@
       "description": "Fanfictions racontant la scolarité des enfants de nos héros."
     },
     {
-      "characteristic_id": 96,
+      "id": 96,
       "characteristic_type_id": 6,
       "parent_id": 11,
       "name": "Epoque Maraudeurs",
@@ -1208,7 +1208,7 @@
       "description": "Fanfictions se déroulant à l'époque des Maraudeurs."
     },
     {
-      "characteristic_id": 2,
+      "id": 2,
       "characteristic_type_id": 6,
       "parent_id": null,
       "name": "Enfances",
@@ -1216,532 +1216,532 @@
       "description": "Fanfictions racontant l'enfance des personnages, avant leur entrée à Poudlard."
     },
     {
-      "characteristic_id": 193,
+      "id": 193,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Remus Lupin",
       "in_order": 94
     },
     {
-      "characteristic_id": 194,
+      "id": 194,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Rolf Scamander",
       "in_order": 95
     },
     {
-      "characteristic_id": 195,
+      "id": 195,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Ron Weasley",
       "in_order": 96
     },
     {
-      "characteristic_id": 196,
+      "id": 196,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Rose Weasley",
       "in_order": 97
     },
     {
-      "characteristic_id": 197,
+      "id": 197,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Rowena Serdaigle",
       "in_order": 98
     },
     {
-      "characteristic_id": 198,
+      "id": 198,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Roxanne Weasley",
       "in_order": 99
     },
     {
-      "characteristic_id": 199,
+      "id": 199,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Rubeus Hagrid",
       "in_order": 100
     },
     {
-      "characteristic_id": 200,
+      "id": 200,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Salazar Serpentard",
       "in_order": 101
     },
     {
-      "characteristic_id": 201,
+      "id": 201,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Scorpius Malefoy",
       "in_order": 102
     },
     {
-      "characteristic_id": 202,
+      "id": 202,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Seamus Finnigan",
       "in_order": 103
     },
     {
-      "characteristic_id": 203,
+      "id": 203,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Severus Rogue",
       "in_order": 104
     },
     {
-      "characteristic_id": 204,
+      "id": 204,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Sirius Black",
       "in_order": 105
     },
     {
-      "characteristic_id": 205,
+      "id": 205,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Susan Bones",
       "in_order": 106
     },
     {
-      "characteristic_id": 206,
+      "id": 206,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Ted Tonks",
       "in_order": 107
     },
     {
-      "characteristic_id": 207,
+      "id": 207,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Teddy Lupin",
       "in_order": 108
     },
     {
-      "characteristic_id": 208,
+      "id": 208,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Theodore Nott",
       "in_order": 109
     },
     {
-      "characteristic_id": 209,
+      "id": 209,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Vernon Dursley",
       "in_order": 110
     },
     {
-      "characteristic_id": 210,
+      "id": 210,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Victoire Weasley",
       "in_order": 111
     },
     {
-      "characteristic_id": 211,
+      "id": 211,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Viktor Krum",
       "in_order": 112
     },
     {
-      "characteristic_id": 100,
+      "id": 100,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Albus Dumbledore",
       "in_order": 1
     },
     {
-      "characteristic_id": 101,
+      "id": 101,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Albus Potter",
       "in_order": 2
     },
     {
-      "characteristic_id": 102,
+      "id": 102,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Alice Londubat",
       "in_order": 3
     },
     {
-      "characteristic_id": 103,
+      "id": 103,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Alicia Spinnet",
       "in_order": 4
     },
     {
-      "characteristic_id": 104,
+      "id": 104,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Andromeda Tonks",
       "in_order": 5
     },
     {
-      "characteristic_id": 105,
+      "id": 105,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Angelina Johnson",
       "in_order": 6
     },
     {
-      "characteristic_id": 106,
+      "id": 106,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Armée de Dumbledore",
       "in_order": 7
     },
     {
-      "characteristic_id": 107,
+      "id": 107,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Arthur Weasley",
       "in_order": 8
     },
     {
-      "characteristic_id": 108,
+      "id": 108,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Astoria Greengrass",
       "in_order": 9
     },
     {
-      "characteristic_id": 109,
+      "id": 109,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Audrey Weasley",
       "in_order": 10
     },
     {
-      "characteristic_id": 110,
+      "id": 110,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Autre personnage",
       "in_order": 11
     },
     {
-      "characteristic_id": 111,
+      "id": 111,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Bellatrix Lestrange",
       "in_order": 12
     },
     {
-      "characteristic_id": 112,
+      "id": 112,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Bill Weasley",
       "in_order": 13
     },
     {
-      "characteristic_id": 113,
+      "id": 113,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Blaise Zabini",
       "in_order": 14
     },
     {
-      "characteristic_id": 114,
+      "id": 114,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Cedric Diggory",
       "in_order": 15
     },
     {
-      "characteristic_id": 115,
+      "id": 115,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Charlie Weasley",
       "in_order": 16
     },
     {
-      "characteristic_id": 116,
+      "id": 116,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Cho Chang",
       "in_order": 17
     },
     {
-      "characteristic_id": 117,
+      "id": 117,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Colin Crivey",
       "in_order": 18
     },
     {
-      "characteristic_id": 118,
+      "id": 118,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Croyance Bellebosse",
       "in_order": 19
     },
     {
-      "characteristic_id": 119,
+      "id": 119,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Daphné Greengrass",
       "in_order": 20
     },
     {
-      "characteristic_id": 120,
+      "id": 120,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dean Thomas",
       "in_order": 21
     },
     {
-      "characteristic_id": 121,
+      "id": 121,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dennis Crivey",
       "in_order": 22
     },
     {
-      "characteristic_id": 122,
+      "id": 122,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dobby",
       "in_order": 23
     },
     {
-      "characteristic_id": 123,
+      "id": 123,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dominique Weasley",
       "in_order": 24
     },
     {
-      "characteristic_id": 124,
+      "id": 124,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dorcas Meadowes",
       "in_order": 25
     },
     {
-      "characteristic_id": 125,
+      "id": 125,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Drago Malefoy",
       "in_order": 26
     },
     {
-      "characteristic_id": 126,
+      "id": 126,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Dudley Dursley",
       "in_order": 27
     },
     {
-      "characteristic_id": 127,
+      "id": 127,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Ernie McMillan",
       "in_order": 28
     },
     {
-      "characteristic_id": 128,
+      "id": 128,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Famille Black",
       "in_order": 29
     },
     {
-      "characteristic_id": 129,
+      "id": 129,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Famille Dumbledore",
       "in_order": 30
     },
     {
-      "characteristic_id": 130,
+      "id": 130,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Famille Malefoy",
       "in_order": 31
     },
     {
-      "characteristic_id": 131,
+      "id": 131,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Famille Potter",
       "in_order": 32
     },
     {
-      "characteristic_id": 132,
+      "id": 132,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Famille Weasley",
       "in_order": 33
     },
     {
-      "characteristic_id": 133,
+      "id": 133,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Fenrir Greyback",
       "in_order": 34
     },
     {
-      "characteristic_id": 134,
+      "id": 134,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Filius Flitwick",
       "in_order": 35
     },
     {
-      "characteristic_id": 135,
+      "id": 135,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Fleur Delacour",
       "in_order": 36
     },
     {
-      "characteristic_id": 136,
+      "id": 136,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Frank Londubat",
       "in_order": 37
     },
     {
-      "characteristic_id": 137,
+      "id": 137,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Fred II Weasley",
       "in_order": 38
     },
     {
-      "characteristic_id": 138,
+      "id": 138,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Fred Weasley",
       "in_order": 39
     },
     {
-      "characteristic_id": 139,
+      "id": 139,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Gabrielle Delacour",
       "in_order": 40
     },
     {
-      "characteristic_id": 140,
+      "id": 140,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Gellert Grindelwald",
       "in_order": 41
     },
     {
-      "characteristic_id": 141,
+      "id": 141,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "George Weasley",
       "in_order": 42
     },
     {
-      "characteristic_id": 142,
+      "id": 142,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Ginny Weasley",
       "in_order": 43
     },
     {
-      "characteristic_id": 143,
+      "id": 143,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Godric Gryffondor",
       "in_order": 44
     },
     {
-      "characteristic_id": 144,
+      "id": 144,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Hannah Abbot",
       "in_order": 45
     },
     {
-      "characteristic_id": 145,
+      "id": 145,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Harry Potter",
       "in_order": 46
     },
     {
-      "characteristic_id": 146,
+      "id": 146,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Helga Poufsouffle",
       "in_order": 47
     },
     {
-      "characteristic_id": 147,
+      "id": 147,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Hermione Granger",
       "in_order": 48
     },
     {
-      "characteristic_id": 148,
+      "id": 148,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Hugo Weasley",
       "in_order": 49
     },
     {
-      "characteristic_id": 149,
+      "id": 149,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Jacob Kowalski",
       "in_order": 50
     },
     {
-      "characteristic_id": 150,
+      "id": 150,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "James Potter",
       "in_order": 51
     },
     {
-      "characteristic_id": 151,
+      "id": 151,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "James S. Potter",
       "in_order": 52
     },
     {
-      "characteristic_id": 152,
+      "id": 152,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Jedusor/Voldemort",
       "in_order": 53
     },
     {
-      "characteristic_id": 153,
+      "id": 153,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Jumeaux Weasley",
       "in_order": 54
     },
     {
-      "characteristic_id": 154,
+      "id": 154,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Katie Bell",
       "in_order": 55
     },
     {
-      "characteristic_id": 155,
+      "id": 155,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lavande Brown",
       "in_order": 56
     },
     {
-      "characteristic_id": 156,
+      "id": 156,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Le Trio",
@@ -1749,14 +1749,14 @@
       "description": "Harry potter, Hermione Granger, Ron Weasley"
     },
     {
-      "characteristic_id": 157,
+      "id": 157,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lee Jordan",
       "in_order": 58
     },
     {
-      "characteristic_id": 158,
+      "id": 158,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Les Fondateurs",
@@ -1764,623 +1764,623 @@
       "description" : "Fanfictions se déroulant à l'époque des Fondateurs."
     },
     {
-      "characteristic_id": 159,
+      "id": 159,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Les Mangemorts",
       "in_order": 60
     },
     {
-      "characteristic_id": 160,
+      "id": 160,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Les Maraudeurs",
       "in_order": 61
     },
     {
-      "characteristic_id": 161,
+      "id": 161,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lily Evans",
       "in_order": 62
     },
     {
-      "characteristic_id": 162,
+      "id": 162,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lily L. Potter",
       "in_order": 63
     },
     {
-      "characteristic_id": 163,
+      "id": 163,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lorcan Scamander",
       "in_order": 64
     },
     {
-      "characteristic_id": 164,
+      "id": 164,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Louis Weasley",
       "in_order": 65
     },
     {
-      "characteristic_id": 165,
+      "id": 165,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lucius Malefoy",
       "in_order": 66
     },
     {
-      "characteristic_id": 166,
+      "id": 166,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lucy Weasley",
       "in_order": 67
     },
     {
-      "characteristic_id": 167,
+      "id": 167,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Luna Lovegood",
       "in_order": 68
     },
     {
-      "characteristic_id": 168,
+      "id": 168,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Lysander Scamander",
       "in_order": 69
     },
     {
-      "characteristic_id": 169,
+      "id": 169,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Marcus Flint",
       "in_order": 70
     },
     {
-      "characteristic_id": 170,
+      "id": 170,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Marlene McKinnon",
       "in_order": 71
     },
     {
-      "characteristic_id": 171,
+      "id": 171,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Membre d'HPF",
       "in_order": 72
     },
     {
-      "characteristic_id": 172,
+      "id": 172,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Minerva McGonagall",
       "in_order": 73
     },
     {
-      "characteristic_id": 173,
+      "id": 173,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Molly II Weasley",
       "in_order": 74
     },
     {
-      "characteristic_id": 174,
+      "id": 174,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Molly Weasley",
       "in_order": 75
     },
     {
-      "characteristic_id": 175,
+      "id": 175,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Narcissa Malefoy",
       "in_order": 76
     },
     {
-      "characteristic_id": 176,
+      "id": 176,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Neville Londubat",
       "in_order": 77
     },
     {
-      "characteristic_id": 177,
+      "id": 177,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Newt Scamander",
       "in_order": 78
     },
     {
-      "characteristic_id": 178,
+      "id": 178,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Nymphadora Tonks",
       "in_order": 79
     },
     {
-      "characteristic_id": 179,
+      "id": 179,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Olivier Dubois",
       "in_order": 80
     },
     {
-      "characteristic_id": 180,
+      "id": 180,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Ordre du Phénix",
       "in_order": 81
     },
     {
-      "characteristic_id": 181,
+      "id": 181,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Padma Patil",
       "in_order": 82
     },
     {
-      "characteristic_id": 182,
+      "id": 182,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Pansy Parkinson",
       "in_order": 83
     },
     {
-      "characteristic_id": 183,
+      "id": 183,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Parvati Patil",
       "in_order": 84
     },
     {
-      "characteristic_id": 185,
+      "id": 185,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Personnage original (OC)",
       "in_order": 86
     },
     {
-      "characteristic_id": 184,
+      "id": 184,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Percy Weasley",
       "in_order": 85
     },
     {
-      "characteristic_id": 186,
+      "id": 186,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Peter Pettigrow",
       "in_order": 87
     },
     {
-      "characteristic_id": 187,
+      "id": 187,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Pétunia Dursley",
       "in_order": 88
     },
     {
-      "characteristic_id": 188,
+      "id": 188,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Pomona Chourave",
       "in_order": 89
     },
     {
-      "characteristic_id": 189,
+      "id": 189,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Porpentina Goldstein",
       "in_order": 90
     },
     {
-      "characteristic_id": 190,
+      "id": 190,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Professeurs de Poudlard",
       "in_order": 91
     },
     {
-      "characteristic_id": 191,
+      "id": 191,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Queenie Goldstein",
       "in_order": 92
     },
     {
-      "characteristic_id": 192,
+      "id": 192,
       "characteristic_type_id": 7,
       "parent_id": null,
       "name": "Regulus Black",
       "in_order": 93
     },
     {
-      "characteristic_id": 64,
+      "id": 64,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Autres couples (Het)",
       "in_order": 40
     },
     {
-      "characteristic_id": 66,
+      "id": 66,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Remus/Tonks",
       "in_order": 25
     },
     {
-      "characteristic_id": 67,
+      "id": 67,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Drago/Pansy",
       "in_order": 10
     },
     {
-      "characteristic_id": 68,
+      "id": 68,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Harry/Pansy",
       "in_order": 16
     },
     {
-      "characteristic_id": 69,
+      "id": 69,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Severus/Lily",
       "in_order": 34
     },
     {
-      "characteristic_id": 70,
+      "id": 70,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Scorpius/Rose",
       "in_order": 33
     },
     {
-      "characteristic_id": 71,
+      "id": 71,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Remus/Hermione",
       "in_order": 24
     },
     {
-      "characteristic_id": 72,
+      "id": 72,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Drago/Astoria",
       "in_order": 7
     },
     {
-      "characteristic_id": 73,
+      "id": 73,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Teddy/Victoire",
       "in_order": 38
     },
     {
-      "characteristic_id": 74,
+      "id": 74,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Lucius/Narcissa",
       "in_order": 20
     },
     {
-      "characteristic_id": 75,
+      "id": 75,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Fred/Hermione",
       "in_order": 11
     },
     {
-      "characteristic_id": 76,
+      "id": 76,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Bill/Fleur",
       "in_order": 3
     },
     {
-      "characteristic_id": 77,
+      "id": 77,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Neville/Luna",
       "in_order": 22
     },
     {
-      "characteristic_id": 78,
+      "id": 78,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Charlie/Hermione",
       "in_order": 5
     },
     {
-      "characteristic_id": 79,
+      "id": 79,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "George/Angelina",
       "in_order": 12
     },
     {
-      "characteristic_id": 80,
+      "id": 80,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Viktor/Hermione",
       "in_order": 39
     },
     {
-      "characteristic_id": 81,
+      "id": 81,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Scorpius/Lily",
       "in_order": 32
     },
     {
-      "characteristic_id": 82,
+      "id": 82,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Arthur/Molly",
       "in_order": 2
     },
     {
-      "characteristic_id": 83,
+      "id": 83,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Neville/Hannah",
       "in_order": 21
     },
     {
-      "characteristic_id": 84,
+      "id": 84,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Dean/Luna",
       "in_order": 6
     },
     {
-      "characteristic_id": 85,
+      "id": 85,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Alice/Frank",
       "in_order": 1
     },
     {
-      "characteristic_id": 86,
+      "id": 86,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Rolf/Luna",
       "in_order": 26
     },
     {
-      "characteristic_id": 87,
+      "id": 87,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Percy/Audrey",
       "in_order": 23
     },
     {
-      "characteristic_id": 88,
+      "id": 88,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Seamus/Lavande",
       "in_order": 30
     },
     {
-      "characteristic_id": 89,
+      "id": 89,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Blaise/Daphné",
       "in_order": 4
     },
     {
-      "characteristic_id": 90,
+      "id": 90,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Ted/Andromeda",
       "in_order": 37
     },
     {
-      "characteristic_id": 91,
+      "id": 91,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Sirius/Lily",
       "in_order": 36
     },
     {
-      "characteristic_id": 92,
+      "id": 92,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Rusard/Mme Pince",
       "in_order": 29
     },
     {
-      "characteristic_id": 61,
+      "id": 61,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Ron/Hermione",
       "in_order": 27
     },
     {
-      "characteristic_id": 60,
+      "id": 60,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Harry/Luna",
       "in_order": 15
     },
     {
-      "characteristic_id": 59,
+      "id": 59,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Ron/Luna",
       "in_order": 28
     },
     {
-      "characteristic_id": 58,
+      "id": 58,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Drago/Ginny",
       "in_order": 8
     },
     {
-      "characteristic_id": 57,
+      "id": 57,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Sirius/Hermione",
       "in_order": 35
     },
     {
-      "characteristic_id": 56,
+      "id": 56,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Drago/Hermione",
       "in_order": 9
     },
     {
-      "characteristic_id": 55,
+      "id": 55,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Harry/Ginny",
       "in_order": 13
     },
     {
-      "characteristic_id": 54,
+      "id": 54,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Severus/Hermione",
       "in_order": 31
     },
     {
-      "characteristic_id": 53,
+      "id": 53,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "James/Lily",
       "in_order": 17
     },
     {
-      "characteristic_id": 52,
+      "id": 52,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Albus S./Scorpius",
       "in_order": 1
     },
     {
-      "characteristic_id": 51,
+      "id": 51,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Dumbledore/Grindelwald",
       "in_order": 3
     },
     {
-      "characteristic_id": 50,
+      "id": 50,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Sirius/Harry",
       "in_order": 14
     },
     {
-      "characteristic_id": 49,
+      "id": 49,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Ginny/Hermione",
       "in_order": 4
     },
     {
-      "characteristic_id": 48,
+      "id": 48,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Ron/Harry",
       "in_order": 11
     },
     {
-      "characteristic_id": 47,
+      "id": 47,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Drago/Ron",
       "in_order": 2
     },
     {
-      "characteristic_id": 46,
+      "id": 46,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Harry/Jedusor",
       "in_order": 7
     },
     {
-      "characteristic_id": 45,
+      "id": 45,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Pansy/Hermione",
       "in_order": 9
     },
     {
-      "characteristic_id": 44,
+      "id": 44,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Sirius/Severus",
       "in_order": 16
     },
     {
-      "characteristic_id": 43,
+      "id": 43,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Lucius/Severus",
       "in_order": 8
     },
     {
-      "characteristic_id": 42,
+      "id": 42,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Remus/Severus",
       "in_order": 10
     },
     {
-      "characteristic_id": 41,
+      "id": 41,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Sirius/Remus",
       "in_order": 15
     },
     {
-      "characteristic_id": 40,
+      "id": 40,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Severus/Harry",
       "in_order": 12
     },
     {
-      "characteristic_id": 39,
+      "id": 39,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Harry/Drago",
       "in_order": 5
     },
     {
-      "characteristic_id": 38,
+      "id": 38,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Harry/Lucius",
       "in_order": 6
     },
     {
-      "characteristic_id": 37,
+      "id": 37,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Severus/Drago",
       "in_order": 13
     },
     {
-      "characteristic_id": 36,
+      "id": 36,
       "characteristic_type_id": 8,
       "parent_id": 3,
       "name": "Autres couples (Slash)",
       "in_order": 17
     },
     {
-      "characteristic_id": 5,
+      "id": 5,
       "characteristic_type_id": 8,
       "parent_id": null,
       "name": "Romance (Het)",
@@ -2388,7 +2388,7 @@
       "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages."
     },
     {
-      "characteristic_id": 3,
+      "id": 3,
       "characteristic_type_id": 8,
       "parent_id": null,
       "name": "Romance (Slash)",
@@ -2396,21 +2396,21 @@
       "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages de même sexe."
     },
     {
-      "characteristic_id": 62,
+      "id": 62,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Jedusor/Hermione",
       "in_order": 19
     },
     {
-      "characteristic_id": 63,
+      "id": 63,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Jedusor/Ginny",
       "in_order": 18
     },
     {
-      "characteristic_id": 65,
+      "id": 65,
       "characteristic_type_id": 8,
       "parent_id": 5,
       "name": "Harry/Hermione",
@@ -2419,35 +2419,35 @@
   ],
   "characteristics_types": [
     {
-      "characteristic_type_id": 1,
+      "id": 1,
       "name": "Genre littéraire"
     },
     {
-      "characteristic_type_id": 2,
+      "id": 2,
       "name": "Genre"
     },
     {
-      "characteristic_type_id": 3,
+      "id": 3,
       "name": "Langue"
     },
     {
-      "characteristic_type_id": 4,
+      "id": 4,
       "name": "Avertissement"
     },
     {
-      "characteristic_type_id": 5,
+      "id": 5,
       "name": "Rating"
     },
     {
-      "characteristic_type_id": 6,
+      "id": 6,
       "name": "Epoque"
     },
     {
-      "characteristic_type_id": 7,
+      "id": 7,
       "name": "Personnage"
     },
     {
-      "characteristic_type_id": 8,
+      "id": 8,
       "name": "Relation"
     }
   ]

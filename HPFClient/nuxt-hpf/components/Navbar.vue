@@ -9,10 +9,10 @@
             width="56"
             height="36"
             alt="Logo forum HPF"
-          />
+          >
         </b-navbar-item>
         <div class="is-hidden-desktop" style="margin-left: auto">
-          <b-navbar-item tag="div" v-if="ConnectedVisibility">
+          <b-navbar-item v-if="ConnectedVisibility" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -31,7 +31,7 @@
                         fill="currentColor"
                         d="M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"
                         class=""
-                      ></path>
+                      />
                     </svg>
                   </span>
                   <span><span class="badge">8</span></span>
@@ -69,19 +69,22 @@
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span class="username-visibility" style="margin-left: 5px"
-                    >SUZYftr</span
-                  >
-                  <b-icon :icon="active ? 'angle-up' : 'angle-down'"> </b-icon>
+                  <span
+                    class="username-visibility"
+                    style="margin-left: 5px"
+                  >SUZYftr</span>
+                  <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem">Mon compte</b-dropdown-item>
-              <b-dropdown-item aria-role="listitem"
-                >Se déconnecter</b-dropdown-item
-              >
+              <b-dropdown-item aria-role="listitem">
+                Mon compte
+              </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem">
+                Se déconnecter
+              </b-dropdown-item>
             </b-dropdown>
           </b-navbar-item>
-          <b-navbar-item tag="div" v-else>
+          <b-navbar-item v-else tag="div">
             <div class="buttons">
               <a class="button is-light" @click="loginModalActive = true">
                 Se connecter
@@ -98,40 +101,76 @@
           Accueil
         </b-navbar-item>
         <b-navbar-dropdown :collapsible="true" label="Association HPF">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 1
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 2
+          </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Lecture">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 1
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 2
+          </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Ecriture">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 1
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 2
+          </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Top fanfictions">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 1
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 2
+          </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Nos sites">
-          <b-navbar-item href="#"> L'appli HPF </b-navbar-item>
-          <b-navbar-item href="#"> Le Héron </b-navbar-item>
-          <b-navbar-item href="#"> Les éditions HPF </b-navbar-item>
-          <b-navbar-item href="#"> L'association </b-navbar-item>
-          <b-navbar-item href="#"> Le blog HPF </b-navbar-item>
-          <b-navbar-item href="#"> Le forum </b-navbar-item>
+          <b-navbar-item href="#">
+            L'appli HPF
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Le Héron
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Les éditions HPF
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            L'association
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Le blog HPF
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Le forum
+          </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Boutique">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 1
+          </b-navbar-item>
+          <b-navbar-item href="#">
+            Link 2
+          </b-navbar-item>
         </b-navbar-dropdown>
-        <b-navbar-item href="#"> Partenaires </b-navbar-item>
-        <b-navbar-item href="#" @click="contactModalActive = true"> Contact </b-navbar-item>
+        <b-navbar-item href="#">
+          Partenaires
+        </b-navbar-item>
+        <b-navbar-item href="#" @click="contactModalActive = true">
+          Contact
+        </b-navbar-item>
       </template>
 
       <template #end>
         <div class="is-hidden-touch">
-          <b-navbar-item tag="div" v-if="ConnectedVisibility">
+          <b-navbar-item v-if="ConnectedVisibility" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -150,7 +189,7 @@
                         fill="currentColor"
                         d="M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"
                         class=""
-                      ></path>
+                      />
                     </svg>
                   </span>
                   <span><span class="badge">8</span></span>
@@ -172,7 +211,7 @@
                     style="width: 22px; height: 22px"
                     :rounded="true"
                     :responsive="true"
-                  /> 
+                  />
                 </div>-->
                 <!-- SUZYtfr -->
                 <!--</b-button>-->
@@ -189,16 +228,18 @@
                     :responsive="true"
                   />
                   <span style="margin-left: 5px">SUZYftr</span>
-                  <b-icon :icon="active ? 'angle-up' : 'angle-down'"> </b-icon>
+                  <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem">Mon compte</b-dropdown-item>
-              <b-dropdown-item aria-role="listitem"
-                >Se déconnecter</b-dropdown-item
-              >
+              <b-dropdown-item aria-role="listitem">
+                Mon compte
+              </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem">
+                Se déconnecter
+              </b-dropdown-item>
             </b-dropdown>
           </b-navbar-item>
-          <b-navbar-item tag="div" v-else>
+          <b-navbar-item v-else tag="div">
             <div class="buttons">
               <a class="button is-light" @click="loginModalActive = true">
                 Se connecter
@@ -250,20 +291,20 @@ import Contact from "~/components/Contact.vue";
     Login,
     Register,
     Contact
-  },
+  }
 })
 export default class extends Vue {
-  //#region Data
-  private loginModalActive: boolean = false;
-  private registerModalActive: boolean = false;
-  private contactModalActive: boolean = false;
-  //#endregion
+  // #region Data
+  public loginModalActive: boolean = false;
+  public registerModalActive: boolean = false;
+  public contactModalActive: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get ConnectedVisibility() {
+  // #region Computed
+  get ConnectedVisibility(): boolean {
     return UserModule.token.length > 0;
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

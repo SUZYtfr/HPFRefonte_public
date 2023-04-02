@@ -136,6 +136,12 @@ $badge-font-size: 0.7rem;
   transition: flex-grow 1s ease;
 }
 
+// Card Header Rounded
+.card-header {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
 // Characteristic colors
 $characteristic-litteraire: #e6ccb2;
 $characteristic-genre: #fec5bb;

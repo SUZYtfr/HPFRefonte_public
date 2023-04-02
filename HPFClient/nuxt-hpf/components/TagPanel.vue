@@ -28,8 +28,7 @@
             { 'has-text-weight-bold': hover },
             { 'has-text-weight-semibold': !hover },
           ]"
-          >{{ characteristic_name }}</label
-        >
+        >{{ characteristic_name }}</label>
       </div>
       <div
         class="has-text-centered"
@@ -42,16 +41,15 @@
         "
       >
         <label
-          ref="lblCharDescription"
           v-if="characteristic_description !== undefined"
+          ref="lblCharDescription"
           :class="[
             'is-block',
             'has-text-centered',
             'is-clickable',
             'has-text-weight-semibold',
           ]"
-          >{{ characteristic_description }}</label
-        >
+        >{{ characteristic_description }}</label>
       </div>
     </div>
     <label
@@ -65,8 +63,7 @@
         { 'has-text-weight-bold': hover },
         { 'has-text-weight-semibold': !hover },
       ]"
-      >{{ characteristic_count }}</label
-    >
+    >{{ characteristic_count }}</label>
   </a>
 </template>
 
@@ -74,45 +71,46 @@
 import { Component, Vue, Prop } from "nuxt-property-decorator";
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
 @Component({
-  name: "TagPanel",
+  name: "TagPanel"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private characteristic_type_id!: number | undefined;
-  @Prop() private characteristic_id!: number | undefined;
-  @Prop() private characteristic_name!: string | undefined;
-  @Prop() private characteristic_description!: string | undefined;
-  @Prop() private characteristic_count!: number | undefined;
-  //#endregion
+  // #region Props
+  @Prop() public characteristic_type_id!: number | undefined;
+  @Prop() public characteristic_id!: number | undefined;
+  @Prop() public characteristic_name!: string | undefined;
+  @Prop() public characteristic_description!: string | undefined;
+  @Prop() public characteristic_count!: number | undefined;
+  // #endregion
 
-  //#region Datas
-  private hover: boolean = false;
+  // #region Datas
+  public hover: boolean = false;
   private transform: string = "";
   private fontSize: string = "";
   private ro: ResizeObserver | null = null;
   private timerResize: number = -1;
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  mounted() {
+  // #region Hooks
+  mounted(): void {
     this.resizeTag();
     this.ro = new ResizeObserver(this.onResize);
     this.ro.observe(this.$refs.mainElement as HTMLElement);
   }
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.ro?.unobserve(this.$refs.mainElement as HTMLElement);
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Récupération couleur du tag
-  private getCaracteristicTypeColor(characteristic_type_id: number) {
+  public getCaracteristicTypeColor(characteristic_type_id: number | undefined): string {
+    if (characteristic_type_id === undefined) return "";
     return getCaracteristicTypeColor(characteristic_type_id);
   }
 
   // Lors du resize de l'élément
-  private onResize() {
+  private onResize(): void {
     clearTimeout(this.timerResize);
     this.timerResize = window.setTimeout(this.resizeTag, 100);
   }
@@ -123,7 +121,7 @@ export default class extends Vue {
     scrollWidth: number,
     clientHeight: number,
     scrollHeight: number
-  ) {
+  ): boolean {
     return scrollWidth > clientWidth || scrollHeight > clientHeight;
   }
 
@@ -134,7 +132,7 @@ export default class extends Vue {
     maxSize: number = 20,
     step: number = 1,
     unit: string = "px"
-  ) {
+  ): void {
     if (element === null || element === undefined) return;
     let i = minSize;
     let overflow = false;
@@ -155,11 +153,11 @@ export default class extends Vue {
   }
 
   // Resize Name + Description
-  private resizeTag() {
+  private resizeTag(): void {
     this.resizeText(this.$refs.lblCharName as HTMLElement);
     this.resizeText(this.$refs.lblCharDescription as HTMLElement, 6, 12);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

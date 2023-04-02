@@ -5,7 +5,7 @@
         <img
           :src="require('@/assets/img/logo_forum_horizontal_300.png')"
           alt="Logo forum HPF"
-        />
+        >
       </div>
       <div id="footer-content" class="outlined">
         <div
@@ -16,15 +16,18 @@
             is-flex-wrap-wrap
           "
         >
-          <a class="mr-auto" href="#"
-            >Harry Potter Fanfiction</a
+          <a
+            class="mr-auto"
+            href="#"
+          >Harry Potter Fanfiction</a>
+          <div
+            class="is-flex
+            is-flex-direction-row is-flex-wrap-wrap"
           >
-          <div class="is-flex
-            is-flex-direction-row is-flex-wrap-wrap">
-          <a href="#">Administration</a>
-          <a href="#">Modération</a>
-          <a href="#">Mentions légales</a>
-        </div>
+            <a href="#">Administration</a>
+            <a href="#">Modération</a>
+            <a href="#">Mentions légales</a>
+          </div>
         </div>
         <div class="is-flex is-justify-content-center has-text-centered pb-1">
           <p>
@@ -41,7 +44,7 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-  name: "Footer",
+  name: "Footer"
 })
 export default class extends Vue {}
 </script>

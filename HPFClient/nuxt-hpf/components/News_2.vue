@@ -1,7 +1,7 @@
 <template>
   <div
-    :class="['news', 'px-3']"
-    v-bind:style="{ backgroundColor: activeColor }"
+    :class="['news', 'px-3', 'm-2']"
+    :style="{ backgroundColor: activeColor }"
   >
     <!-- Header -->
     <div class="columns is-vcentered is-mobile mb-1">
@@ -10,8 +10,9 @@
           <NuxtLink
             class="pl-0"
             :to="{ name: 'actualités-id', params: { id: news.news_id } }"
-            >{{ news.title }}</NuxtLink
           >
+            {{ news.title }}
+          </NuxtLink>
         </h3>
         <b-button
           class="news_comment_button"
@@ -19,19 +20,20 @@
           size="is-small"
           icon-pack="fas"
           icon-left="comment-alt"
-          ><span class="badge">{{ news.comments.length }}</span></b-button
         >
-        <hr />
+          <span class="badge">{{ news.comments?.length ?? 0 }}</span>
+        </b-button>
+        <hr>
       </div>
     </div>
     <!-- Content -->
     <div class="columns mb-0">
       <div id="content-container" class="column is-full py-0">
         <span
+          :id="'news-' + news.news_id"
           class="max-lines"
-          v-bind:id="'news-' + news.news_id"
           v-html="news.content"
-        ></span>
+        />
       </div>
     </div>
     <!-- Footer -->
@@ -39,15 +41,12 @@
       <div class="column pt-2 pb-1">
         <span>Le </span>
         <span class="has-text-weight-semibold">
-          {{ news.post_date | parseTime }}
+          {{ news.post_date != null ? (news.post_date.toLocaleDateString() + " à " + news.post_date.getHours() + ":" + news.post_date.getMinutes()) : "" }}
         </span>
         <span> par </span>
-        <template v-for="(author, index) in news.authors">
-          <template v-if="index > 0">,</template>
-          <span class="has-text-weight-semibold" v-bind:key="author.id">{{
-            author.nickname
-          }}</span>
-        </template>
+        <span v-for="(author, index) in news.authors" :key="author.id" class="has-text-weight-semibold">
+          {{ author.nickname + (index != ((news.authors?.length ?? 0) - 1) ? ", " : "") }}
+        </span>
       </div>
     </div>
   </div>
@@ -55,24 +54,25 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { NewsData } from "@/api/news";
+import { NewsModel } from "~/models/news";
 
 @Component({
-  name: "News_2",
-  filters: {
-    parseTime: (timestamp: string) => {
-      const dt = new Date(timestamp);
-      return (
-        dt.toLocaleDateString() + " à " + dt.getHours() + ":" + dt.getMinutes()
-      );
-    },
-  },
+  name: "News_2"
 })
 export default class News_2 extends Vue {
-  //#region Props
-  @Prop() private news!: NewsData;
-  @Prop() private activeColor!: string;
-  //#endregion
+  // #region Props
+  @Prop() public news!: NewsModel;
+  @Prop() public activeColor!: string;
+  // #endregion
+
+  public mounted(): void {
+    console.log("News type: " + (this.news instanceof NewsModel));
+    console.log("Date type: " + ((new Date()) instanceof Date));
+    console.log("Creation date type: " + (this.news?.creation_date instanceof Date));
+    console.log("Last update date type: " + (this.news?.post_date instanceof Date));
+    console.log(this.news);
+    console.log(this.news?.post_date?.toLocaleDateString());
+  }
 }
 </script>
 
@@ -92,12 +92,13 @@ hr {
 .news {
   //background-color: #ffffff;
   padding: 10px 5px 5px 5px;
+  border-radius: 10px !important;
 }
 
 .news-hover {
-  /*background-color: #f6f6f6 !important;
+  /*background-color: #f6f6f6 !important;*/
   //border: 1px solid #f6f6f6 !important;
-  border-radius: 10px 10px 0px 0px !important;*/
+  // border-radius: 10px 10px 0px 0px !important;
 }
 
 .fanfiction {

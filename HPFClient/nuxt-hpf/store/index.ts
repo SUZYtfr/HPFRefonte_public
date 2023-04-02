@@ -26,11 +26,11 @@
 //     commit(MutationType.CHANGE_DESCRIPTION, "I'm defined by server side")
 //   }
 // }
-import { Store } from 'vuex'
-import { initialiseStores } from '~/utils/store-accessor'
-const initializer = (store: Store<any>) => initialiseStores(store)
-export const plugins = [initializer]
-export * from '~/utils/store-accessor'
+import { Store } from "vuex";
+import { initialiseStores } from "~/utils/store-accessor";
+const initializer = (store: Store<any>): any => initialiseStores(store);
+export const plugins = [initializer];
+export * from "~/utils/store-accessor";
 
 // import Vuex from 'vuex'
 // import MyStoreModule from '~/store/modules/MyStoreModule'

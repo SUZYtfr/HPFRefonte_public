@@ -1,7 +1,6 @@
 <template>
   <div class="container-div">
     <div
-      @click="expanded = !expanded"
       :class="[
         getCaracteristicTypeColor(characteristic_type.characteristic_type_id),
         { 'header-expanded': expanded },
@@ -10,25 +9,26 @@
         'is-align-items-center',
         'header',
       ]"
+      @click="expanded = !expanded"
     >
       <span class="is-6 is-clickable py-1 pl-1 is-flex-grow-5">{{
         characteristic_type.name
       }}</span>
-      <span v-if="totalIds > 0" class="is-size-6"
-        ><strong> {{ "(" + totalIds + ")" }} </strong></span
-      >
-      <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'">
-      </b-icon>
+      <span
+        v-if="totalIds > 0"
+        class="is-size-6"
+      ><strong> {{ "(" + totalIds + ")" }} </strong></span>
+      <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
       <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
         <div class="is-flex is-flex-direction-column">
           <CharThreeStateCheckbox
-            class="py-1 pl-1"
-            v-for="(carac, index) in characteristics"
+            v-for="(charac, index) in characteristics"
             :key="index"
-            :caracteristic="carac"
-            :externalState="stateForCheckbox(carac.characteristic_id)"
+            class="py-1 pl-1"
+            :characteristic="charac"
+            :external-state="stateForCheckbox(charac.characteristic_id)"
             @change="threeStateChanged"
           />
         </div>
@@ -39,64 +39,72 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "nuxt-property-decorator";
-import { ICharacteristic, ICharacteristicType } from "@/types/characteristics";
+import simplebar from "simplebar-vue";
+// import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
 import CharThreeStateCheckbox from "~/components/CharThreeStateCheckbox.vue";
-import simplebar from "simplebar-vue";
 import "simplebar/dist/simplebar.min.css";
 import "simplebar/dist/simplebar.min.js";
-import SimpleBar from "simplebar";
+import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
+// import SimpleBar from "simplebar";
 
 @Component({
   name: "CharacteristicPanel",
   components: {
     CharThreeStateCheckbox,
-    simplebar,
-  },
+    simplebar
+  }
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private characteristic_type!: ICharacteristicType;
-  @Prop() private characteristics!: ICharacteristic[];
-  //#endregion
+  // #region Props
+  @Prop() public characteristic_type!: CharacteristicTypeModel;
+  @Prop() public characteristics!: CharacteristicModel[];
+  // #endregion
 
-  //#region Datas
+  mounted(): void {
+    // console.log(this.characteristic_type);
+    // console.log(this.characteristic_type instanceof CharacteristicTypeModel);
+    // console.log(this.characteristics);
+    // console.log(this.characteristics[0] instanceof CharacteristicModel);
+  }
+
+  // #region Datas
   private includedIds: number[] = [];
   private excludedIds: number[] = [];
-  private expanded: boolean = false;
-  //#endregion
+  public expanded: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get totalIds() {
+  // #region Computed
+  get totalIds(): number {
     return this.includedIds.length + this.excludedIds.length;
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
-  private getCaracteristicTypeColor(characteristic_type_id: number) {
+  // #region Methods
+  public getCaracteristicTypeColor(characteristic_type_id: number): string {
     return getCaracteristicTypeColor(characteristic_type_id);
   }
 
-  private threeStateChanged(caracteristic_id: number, state: number) {
+  public threeStateChanged(caracteristic_id: number, state: number): void {
     this.includedIds = this.includedIds.filter(
-      (item) => item !== caracteristic_id
+      item => item !== caracteristic_id
     );
     this.excludedIds = this.excludedIds.filter(
-      (item) => item !== caracteristic_id
+      item => item !== caracteristic_id
     );
 
-    if (state == -1) this.excludedIds.push(caracteristic_id);
-    else if (state == 1) this.includedIds.push(caracteristic_id);
-    this.$emit("change", new Set(this.characteristics.map(t=>t.characteristic_id)), this.includedIds, this.excludedIds);
+    if (state === -1) this.excludedIds.push(caracteristic_id);
+    else if (state === 1) this.includedIds.push(caracteristic_id);
+    this.$emit("change", new Set(this.characteristics.map(t => t.id)), this.includedIds, this.excludedIds);
   }
 
-  private stateForCheckbox(caracteristic_id: number) {
+  public stateForCheckbox(caracteristic_id: number): number {
     let state = 0;
-    if (this.includedIds.indexOf(caracteristic_id) !== -1) state = 1;
-    else if (this.excludedIds.indexOf(caracteristic_id) !== -1) state = -1;
+    if (this.includedIds.includes(caracteristic_id)) state = 1;
+    else if (this.excludedIds.includes(caracteristic_id)) state = -1;
     return state;
   }
-  //#region
+  // #region
 }
 </script>
 

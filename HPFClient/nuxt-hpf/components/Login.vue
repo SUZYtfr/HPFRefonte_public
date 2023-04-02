@@ -3,28 +3,28 @@
     <form ref="loginForm">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-          <p class="modal-card-title">Connexion</p>
+          <p class="modal-card-title">
+            Connexion
+          </p>
           <button type="button" class="delete" @click="modalActive = false" />
         </header>
         <section class="modal-card-body">
           <b-field label="Identifiant">
             <b-input
-              type="text"
               v-model="loginForm.username"
+              type="text"
               placeholder="Votre pseudo"
               required
-            >
-            </b-input>
+            />
           </b-field>
           <b-field label="Mot de passe">
             <b-input
-              type="password"
               v-model="loginForm.password"
+              type="password"
               password-reveal
               placeholder="Votre mot de passe"
               required
-            >
-            </b-input>
+            />
           </b-field>
           <b-checkbox>Se souvenir de moi</b-checkbox>
         </section>
@@ -50,26 +50,26 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import { UserLoginData } from "@/types/users";
 
 @Component({
-  name: "Connexion",
+  name: "Connexion"
 })
 export default class extends Vue {
-  //#region Props
+  // #region Props
   @Prop() private active!: boolean;
-  //#endregion
+  // #endregion
 
-  //#region Data
-  private loginForm: UserLoginData = {
+  // #region Data
+  public loginForm: UserLoginData = {
     username: "",
-    password: "",
+    password: ""
   };
 
-  private formIsValid: boolean = false;
+  public formIsValid: boolean = false;
 
-  private loading: boolean = false;
-  //#endregion
+  public loading: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get modalActive() {
+  // #region Computed
+  get modalActive(): boolean {
     return this.active;
   }
 
@@ -78,25 +78,25 @@ export default class extends Vue {
   }
 
   get form(): VForm {
-    return this.$refs["loginForm"] as VForm;
+    return this.$refs.loginForm as VForm;
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("loginForm", { deep: true })
-  private onFormChanged() {
+  private onFormChanged(): void {
     this.formIsValid = this.form.checkValidity();
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Vérifier le formulaire avant l'envoi
-  private checkAndSubmitForm() {
+  public checkAndSubmitForm():void {
     if (this.form.checkValidity()) this.login();
   }
 
   // Envoyer le formulaire
-  private async login() {
+  private async login(): Promise<void> {
     this.loading = true;
     try {
       const { data } = await login(this.loginForm);
@@ -107,7 +107,7 @@ export default class extends Vue {
       this.loading = false;
     }
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

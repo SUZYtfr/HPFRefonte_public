@@ -39,8 +39,10 @@
               maxHeight: editing ? 250 + 'px' : 1200 + 'px',
               maxWidth: editing ? 90 + '%' : 600 + 'px',
             }"
-          />
-          <p class="is-italic has-text-centered">Crédits: {{ image.credit }}</p>
+          >
+          <p class="is-italic has-text-centered">
+            Crédits: {{ image.credit }}
+          </p>
         </div>
         <div
           v-if="editing"
@@ -61,8 +63,7 @@
             custom-class="has-text-primary"
             style="width: 100%"
           >
-            <b-input placeholder="Url" size="is-small" v-model="image.url">
-            </b-input>
+            <b-input v-model="image.url" placeholder="Url" size="is-small" />
           </b-field>
           <div
             class="
@@ -73,9 +74,9 @@
             "
             style="gap: 5px"
           >
-            <b-checkbox size="is-small" v-model="preserveRatio"
-              >Préserver ratio</b-checkbox
-            >
+            <b-checkbox v-model="preserveRatio" size="is-small">
+              Préserver ratio
+            </b-checkbox>
             <b-field
               label="Largeur"
               label-position="on-border"
@@ -88,7 +89,7 @@
                 placeholder="Largeur en pixel"
                 pattern="^\d+$"
                 @input="onWidthChanged"
-              ></b-input>
+              />
             </b-field>
             <b-field
               label="Hauteur"
@@ -102,7 +103,7 @@
                 placeholder="Hauteur en pixel"
                 pattern="^\d+$"
                 @input="onHeightChanged"
-              ></b-input>
+              />
             </b-field>
           </div>
           <div
@@ -121,16 +122,15 @@
                 custom-class="has-text-primary"
               >
                 <b-input
+                  v-model="image.alt"
                   placeholder="Description de l'image pour les personnes en situation de handicap"
                   size="is-small"
-                  v-model="image.alt"
-                >
-                </b-input>
+                />
               </b-field>
             </div>
-            <b-checkbox size="is-small" v-model="image.age_restricted"
-              >Contenu sensible</b-checkbox
-            >
+            <b-checkbox v-model="image.age_restricted" size="is-small">
+              Contenu sensible
+            </b-checkbox>
           </div>
           <div class="mt-3" style="width: 100%">
             <b-field
@@ -139,15 +139,14 @@
               custom-class="has-text-primary"
             >
               <b-input
+                v-model="image.credit"
                 type="textarea"
                 :has-counter="false"
                 minlength="10"
                 maxlength="100"
                 placeholder="Crédits"
                 size="is-small"
-                v-model="image.credit"
-              >
-              </b-input>
+              />
             </b-field>
           </div>
         </div>
@@ -166,7 +165,7 @@
           icon-left="edit"
           :class="{ 'is-hovered': editing }"
           @click="editing = !editing"
-        ></b-button>
+        />
         <b-button
           type="is-primary"
           outlined
@@ -174,7 +173,7 @@
           icon-pack="fas"
           icon-left="trash-alt"
           @click="deleteImage()"
-        ></b-button>
+        />
       </div>
       <font-awesome-icon
         v-if="hover"
@@ -190,42 +189,42 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
-import { ImageHPFData } from "@/types/images";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-2";
+import { ImageHPFData } from "@/types/images";
 
 @Component({
   name: "ImageEditor",
   components: {
     NodeViewWrapper,
-    NodeViewContent,
-  },
+    NodeViewContent
+  }
 })
 export default class extends Vue {
-  //#region Props
+  // #region Props
   @Prop() private deleteNode!: Function;
   @Prop() private editor!: any;
   @Prop() private node!: any;
   @Prop() private extension!: any;
   @Prop() private updateAttributes!: Function;
-  //#endregion
+  // #endregion
 
-  //#region Datas
-  private image: ImageHPFData | null = null;
-  private hover: boolean = false;
-  private editing: boolean = true;
-  private preserveRatio: boolean = true;
-  private defaultWidth: number = 32;
-  private defaultHeight: number = 32;
-  private currentWidth: number = 32;
-  private currentHeight: number = 32;
-  //#endregion
+  // #region Datas
+  public image: ImageHPFData | null = null;
+  public hover: boolean = false;
+  public editing: boolean = true;
+  public preserveRatio: boolean = true;
+  public defaultWidth: number = 32;
+  public defaultHeight: number = 32;
+  public currentWidth: number = 32;
+  public currentHeight: number = 32;
+  // #endregion
 
-  //#region Computed
+  // #region Computed
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  created() {
+  // #region Hooks
+  created(): void {
     if (this.extension.storage.images === undefined)
       this.extension.storage.images = new Array<ImageHPFData>();
     this.image = this.editor.extensionStorage.hpfImage.images.filter(
@@ -246,8 +245,7 @@ export default class extends Vue {
       this.node.attrs.id_in_text = this.image.id_in_text;
       // Ajouter l'image au storage
       this.extension.storage.images.push(this.image);
-    }
-    {
+    } else {
       // Restaurer les valeurs de tailles / les préférences
       this.editing = this.node.attrs.editing;
       this.preserveRatio = this.node.attrs.preserveRatio;
@@ -258,12 +256,12 @@ export default class extends Vue {
     }
   }
 
-  updated() {
+  updated(): void {
     // Fix bug draggable sur Firefox
     this.$el.setAttribute("draggable", "false");
   }
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     // Sauvegarder les choix actuels du component
     this.node.attrs.editing = this.editing;
     this.node.attrs.preserveRatio = this.preserveRatio;
@@ -272,14 +270,14 @@ export default class extends Vue {
     this.node.attrs.currentWidth = this.currentWidth;
     this.node.attrs.currentHeight = this.currentHeight;
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("image.url")
-  private async onUrlChanged() {
+  private onUrlChanged(): void {
     const img = new Image();
     img.addEventListener("load", () => {
-      if (this.node.attrs.url != this.image?.url) {
+      if (this.node.attrs.url !== this.image?.url) {
         this.defaultWidth = img.naturalWidth;
         this.currentWidth = this.defaultWidth;
         this.defaultHeight = img.naturalHeight;
@@ -292,10 +290,10 @@ export default class extends Vue {
         ? this.image?.url
         : "https://bulma.io/images/placeholders/32x32.png";
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
-  private onWidthChanged() {
+  // #region Methods
+  public onWidthChanged(): void {
     if (this.preserveRatio) {
       this.currentHeight = Math.ceil(
         (this.defaultHeight * this.currentWidth) / this.defaultWidth
@@ -305,7 +303,7 @@ export default class extends Vue {
     this.node.attrs.currentHeight = this.currentHeight;
   }
 
-  private onHeightChanged() {
+  public onHeightChanged(): void {
     if (this.preserveRatio) {
       this.currentWidth = Math.ceil(
         (this.defaultWidth * this.currentHeight) / this.defaultHeight
@@ -315,7 +313,7 @@ export default class extends Vue {
     this.node.attrs.currentHeight = this.currentHeight;
   }
 
-  private deleteImage() {
+  public deleteImage(): void {
     this.editor.extensionStorage.hpfImage.images.splice(
       this.editor.extensionStorage.hpfImage.images.findIndex(
         (item: ImageHPFData) => item.id_in_text === this.image?.id_in_text
@@ -324,7 +322,7 @@ export default class extends Vue {
     );
     this.deleteNode();
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

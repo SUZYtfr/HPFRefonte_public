@@ -3,7 +3,9 @@
     <form ref="contactForm">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-          <p class="modal-card-title">Nous contacter</p>
+          <p class="modal-card-title">
+            Nous contacter
+          </p>
           <button type="button" class="delete" @click="modalActive = false" />
         </header>
         <section class="modal-card-body pt-2 pb-1">
@@ -30,7 +32,7 @@
               placeholder="Votre adresse mail"
               required
               validation-message="L'adresse mail est invalide"
-            ></b-input>
+            />
           </b-field>
           <b-field
             class="mb-4"
@@ -56,7 +58,9 @@
               <option value="3">
                 Je souhaite contacter la maison d'édition Héros de Papier Froissé.
               </option>
-              <option value="4">Autre raison</option>
+              <option value="4">
+                Autre raison
+              </option>
             </b-select>
           </b-field>
           <b-field
@@ -71,7 +75,7 @@
               type="textarea"
               required
               custom-class="contact-textarea"
-            ></b-input>
+            />
           </b-field>
         </section>
         <footer class="modal-card-foot">
@@ -96,27 +100,27 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import { ContactFormData } from "@/types/other";
 
 @Component({
-  name: "NousContacter",
+  name: "NousContacter"
 })
 export default class extends Vue {
-  //#region Props
-  @Prop() private active!: boolean;
-  //#endregion
+  // #region Props
+  @Prop() public active!: boolean;
+  // #endregion
 
-  //#region Data
-  private contactForm: ContactFormData = {
+  // #region Data
+  public contactForm: ContactFormData = {
     email: "",
     subject_id: "",
-    content: "",
+    content: ""
   };
 
-  private formIsValid: boolean = false;
+  public formIsValid: boolean = false;
 
-  private loading: boolean = false;
-  //#endregion
+  public loading: boolean = false;
+  // #endregion
 
-  //#region Computed
-  get modalActive() {
+  // #region Computed
+  get modalActive(): boolean {
     return this.active;
   }
 
@@ -125,25 +129,25 @@ export default class extends Vue {
   }
 
   get form(): VForm {
-    return this.$refs["contactForm"] as VForm;
+    return this.$refs.contactForm as VForm;
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("contactForm", { deep: true })
-  private onFormChanged() {
+  public onFormChanged(): void {
     this.formIsValid = this.form.checkValidity();
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Vérifier le formulaire avant l'envoi
-  private checkAndSubmitForm() {
+  public checkAndSubmitForm(): void {
     if (this.form.checkValidity()) this.contact();
   }
 
   // Envoyer le formulaire
-  private async contact() {
+  private async contact(): Promise<void> {
     this.loading = true;
     try {
       const { data } = await contact(this.contactForm);
@@ -155,7 +159,7 @@ export default class extends Vue {
       this.loading = false;
     }
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

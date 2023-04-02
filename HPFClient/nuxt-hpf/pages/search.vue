@@ -9,69 +9,70 @@
       has-modal-card
     >
       <FanfictionFilters
-        :fanfictionFilters="fanfictionFilters"
+        :fanfiction-filters="fanfictionFilters"
         :loading="listLoading"
-        :isFixedHeightCard="true"
-        :tooltipPosition="'is-top'"
+        :is-fixed-height-card="true"
+        :tooltip-position="'is-top'"
       />
     </b-modal>
-    <br />
+    <br>
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <FanfictionFilters
-          :fanfictionFilters="fanfictionFilters"
+          :fanfiction-filters="fanfictionFilters"
           :loading="listLoading"
         />
       </div>
       <!-- Liste des fictions -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <FanfictionList
-          :fanfictionFilters="fanfictionFilters"
-          :isLoading="listLoading"
+          :fanfiction-filters="fanfictionFilters"
+          :is-loading="listLoading"
           @loadingChange="(value) => (listLoading = value)"
         />
       </div>
+      <!-- Bouton filtres (seulement en tablet et inférieur) -->
+      <div class="stick-bottom is-hidden-desktop">
+        <b-button
+          v-if="!filtersOpened"
+          type="is-primary"
+          icon-right="filter"
+          class="btn-filters mb-2"
+          @click="filtersOpened = true"
+        >
+          Afficher les filtres
+        </b-button>
+      </div>
+      <br>
     </div>
-    <!-- Bouton filtres (seulement en tablet et inférieur) -->
-    <div class="stick-bottom is-hidden-desktop">
-      <b-button
-        v-if="!filtersOpened"
-        type="is-primary"
-        icon-right="filter"
-        class="btn-filters mb-2"
-        @click="filtersOpened = true"
-        >Afficher les filtres</b-button
-      >
-    </div>
-    <br />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilters.vue";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "Recherche",
   components: {
     FanfictionList,
-    FanfictionFilters,
-  },
+    FanfictionFilters
+  }
 })
 export default class extends Vue {
-  //#region Data
+  // #region Data
   public filtersOpened: boolean = false;
 
-  private fanfictionFilters: FanfictionFiltersData = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: 0,
-    sortBy: "most_recent",
+  public fanfictionFilters: IFanfictionFilters = {
+    searchTerm: null,
+    searchAuthor: null,
+    searchAuthorId: null,
     multipleAuthors: null,
     status: null,
     minWords: null,
@@ -83,21 +84,24 @@ export default class extends Vue {
     inclusive: false,
     fromDate: null,
     toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    page: 1,
+    pageSize: 10,
+    totalPages: true,
+    sortBy: SortByEnum.Descending,
+    sortOn: "last_update_date"
   };
 
-  private listLoading: boolean = false;
+  public listLoading: boolean = false;
 
-  //#endregion
+  // #endregion
 
-  //#region Hooks
+  // #region Hooks
 
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
 
-  //#endregion
+  // #endregion
 }
 </script>
 

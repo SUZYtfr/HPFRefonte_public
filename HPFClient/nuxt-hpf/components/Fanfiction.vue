@@ -7,12 +7,12 @@
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <a href="viewstory.php?sid=37709">{{ fanfiction.title }}</a>
+          <a href="viewstory.php?sid=37709">{{ fanfiction?.title }}</a>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
         <b-icon
-          v-if="fanfiction.featured"
+          v-if="fanfiction?.featured"
           pack="fas"
           type="is-primary"
           icon="award"
@@ -25,87 +25,78 @@
           :disabled="true"
           :max="1"
           :rtl="true"
-        ></b-rate>
+        />
       </div>
     </div>
     <div class="is-flex is-flex-direction-row is-align-items-center">
       <div class="is-flex-grow-5">
-        <span class="is-size-6"
-          ><strong>{{
-            "Auteur" + (fanfiction.authors.length > 1 ? "s" : "") + " : "
-          }}</strong></span
-        >
-        <template v-for="(author, index) in fanfiction.authors">
-          <template v-if="index > 0">,</template>
+        <span class="is-size-6"><strong>{{
+          "Auteur" + ((fanfiction?.authors?.length ?? 0) > 1 ? "s" : "") + " : "
+        }}</strong></span>
+        <template v-for="(author, index) in fanfiction?.authors">
+          <template v-if="index > 0">
+            ,
+          </template>
           <a
+            :key="'author_' + author.author_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="'author_' + author.author_id.toString()"
-            v-bind:href="'auteurs/' + author.author_id"
-            >{{ author.nickname }}
+            :href="'auteurs/' + author.author_id"
+          >{{ author.nickname }}
           </a>
         </template>
       </div>
       <div class="">
-        <a class="is-size-6 has-text-weight-normal"
-          >{{
-            fanfiction.comments.length +
+        <a class="is-size-6 has-text-weight-normal">{{
+          (fanfiction?.reviews != null ? (fanfiction?.reviews.length +
             " review" +
-            (fanfiction.comments.length > 1 ? "s" : "")
-          }}<font-awesome-icon class="ml-1" icon="comments" />
+            (fanfiction?.reviews.length > 1 ? "s" : "")) : "aucune review")
+        }}<font-awesome-icon class="ml-1" icon="comments" />
         </a>
       </div>
     </div>
     <div
-      v-if="fanfiction.series != null && fanfiction.series.length > 0"
+      v-if="fanfiction?.series != null && fanfiction?.series.length > 0"
       class="is-flex is-flex-direction-row"
     >
       <div class="is-flex-grow-5">
-        <span
-          ><strong>{{
-            "Série" + (fanfiction.series.length > 1 ? "s" : "") + " : "
-          }}</strong></span
-        >
-        <template v-for="(serie, index) in fanfiction.series">
-          <template v-if="index > 0">,</template>
+        <span><strong>{{
+          "Série" + (fanfiction?.series.length > 1 ? "s" : "") + " : "
+        }}</strong></span>
+        <template v-for="(serie, index) in fanfiction?.series">
+          <template v-if="index > 0">
+            ,
+          </template>
           <a
+            :key="'serie_' + serie.serie_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
-            v-bind:key="'serie_' + serie.serie_id.toString()"
-            v-bind:href="'series/' + serie.serie_id"
-            >{{ serie.title }}
+            :href="'series/' + serie.serie_id"
+          >{{ serie.title }}
           </a>
         </template>
       </div>
     </div>
     <b-taglist class="mb-0">
       <a
-        v-for="characteristic in fanfiction.characteristics"
-        v-bind:key="'tag_' + characteristic.characteristic_id.toString()"
-        v-bind:href="'auteurs/' + characteristic.characteristic_id"
-        ><b-tag
-          :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
-          type="is-info"
-          >{{ characteristic.name }}</b-tag
-        ></a
-      >
+        v-for="characteristic in fanfiction?.characteristics"
+        :key="'tag_' + characteristic.id.toString()"
+        :href="'auteurs/' + characteristic.id"
+      ><b-tag
+        :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
+        type="is-info"
+      >{{ characteristic.name }}</b-tag></a>
     </b-taglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
-        <p v-html="fanfiction.summary"></p>
+        <p v-html="fanfiction?.summary" />
       </div>
     </div>
     <div class="is-flex is-flex-direction-row is-justify-content-space-evenly">
-      <span
-        ><strong>{{ fanfiction.chapter_count }}</strong>
-        {{ " chapitre" + (fanfiction.chapter_count > 1 ? "s" : "") }}</span
-      >
-      <span
-        ><strong>{{ fanfiction.word_count }}</strong>
-        {{ " mot" + (fanfiction.word_count > 1 ? "s" : "") }}</span
-      >
-      <span
-        ><strong>{{ fanfiction.read_count }}</strong>
-        {{ " lecture" + (fanfiction.read_count > 1 ? "s" : "") }}</span
-      >
+      <span><strong>{{ fanfiction?.chapter_count }}</strong>
+        {{ " chapitre" + ((fanfiction?.chapter_count ?? 0) > 1 ? "s" : "") }}</span>
+      <span><strong>{{ fanfiction?.word_count }}</strong>
+        {{ " mot" + ((fanfiction?.word_count ?? 0)> 1 ? "s" : "") }}</span>
+      <span><strong>{{ fanfiction?.read_count }}</strong>
+        {{ " lecture" + ((fanfiction?.read_count ?? 0) > 1 ? "s" : "") }}</span>
     </div>
     <div
       class="
@@ -118,16 +109,12 @@
     >
       <div>
         <span class="has-text-weight-semibold has-text-primary">{{
-          fanfiction.status | fanfictionStatus
+          fanfiction?.statusAsText
         }}</span>
         <span class="is-size-6">le </span>
-        <span class="is-size-6"
-          ><strong>{{ fanfiction.last_update_date | parseTime }}</strong></span
-        >
+        <span v-if="(fanfiction?.last_update_date instanceof Date)" class="is-size-6"><strong>{{ (fanfiction?.last_update_date ?? new Date()).toLocaleDateString() }}</strong></span>
         <span class="is-size-6-5 is-hidden-mobile">(publiée depuis le </span>
-        <span class="is-size-6-5 is-hidden-mobile"
-          ><strong>{{ fanfiction.creation_date | parseTime }}</strong></span
-        ><span class="is-size-6-5 is-hidden-mobile">)</span>
+        <span v-if="(fanfiction?.creation_date instanceof Date)" class="is-size-6-5 is-hidden-mobile"><strong>{{ (fanfiction?.creation_date ?? new Date()).toLocaleDateString() }}</strong></span><span class="is-size-6-5 is-hidden-mobile">)</span>
       </div>
       <div class="is-block">
         <b-tooltip label="Ajouter à la pile à lire" type="is-primary">
@@ -137,8 +124,7 @@
             size="is-small"
             outlined
             class="is-inline"
-          >
-          </b-button>
+          />
         </b-tooltip>
         <b-tooltip label="Signaler" type="is-danger">
           <b-button
@@ -147,8 +133,7 @@
             size="is-small"
             outlined
             class="is-inline"
-          >
-          </b-button>
+          />
         </b-tooltip>
       </div>
     </div>
@@ -157,45 +142,38 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { FanfictionData } from "@/types/fanfictions";
+import { FanfictionModel } from "@/models/fanfictions";
 import { getClassTypeColor } from "@/utils/characteristics";
-import { ICharacteristic } from "@/types/characteristics";
+import { CharacteristicData } from "@/types/characteristics";
 
 @Component({
-  name: "Fanfiction",
-  filters: {
-    parseTime: (timestamp: string) => {
-      return new Date(timestamp).toLocaleDateString();
-    },
-    fanfictionStatus: (status: number) => {
-      switch (status) {
-        case 1:
-          return "Mise à jour";
-        case 2:
-          return "Arrêtée";
-        case 3:
-          return "Abandonnée";
-        case 4:
-          return "Terminée";
-      }
-    },
-  },
+  name: "Fanfiction"
 })
 export default class Fanfiction extends Vue {
-  //#region Props
-  @Prop() private fanfiction!: FanfictionData;
-  //#endregion
+  // #region Props
+  @Prop() public fanfiction!: FanfictionModel;
+  // #endregion
 
-  //#region Datas
-  private ratinga = 10;
-  private hover: boolean = false;
-  //#endregion
+  // #region Datas
+  public ratinga = 10;
+  public hover: boolean = false;
+  // #endregion
 
-  //#region Methods
-  private getClassType(characteristic: ICharacteristic) {
+  public mounted(): void {
+    console.log("Fanfiction type: " + (this.fanfiction instanceof FanfictionModel));
+    console.log("Date type: " + ((new Date()) instanceof Date));
+    console.log("Creation date type: " + (this.fanfiction?.creation_date instanceof Date));
+    console.log("Last update date type: " + (this.fanfiction?.last_update_date instanceof Date));
+    // console.log("Characteristic type: " + (this.fanfiction.characteristics[0] instanceof CharacteristicData));
+    console.log(this.fanfiction?.creation_date);
+    console.log(this.fanfiction?.creation_date?.toLocaleDateString());
+  }
+
+  // #region Methods
+  public getClassType(characteristic: CharacteristicData): string {
     return getClassTypeColor(characteristic);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

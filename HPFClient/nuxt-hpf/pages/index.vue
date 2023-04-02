@@ -1,192 +1,159 @@
 <template>
   <div class="container px-5">
-    <br />
+    <br>
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <div class="card">
-          <header class="card-header sub-title">
-            <p class="card-header-title is-centered">Nouveautés</p>
-          </header>
-          <div class="card-content">
-            <div
-              class="
-                p-2
-                columns
-                is-variable
-                is-1-mobile
-                is-2-tablet
-                is-3-desktop
-                is-3-widescreen
-                is-2-fullhd
-                is-multiline
-              "
-            >
-              <div
-                class="column is-half py-2"
-                v-for="(fanfiction, innerindex) of fanfictions"
-                :key="'ff_recent_' + fanfiction.fanfiction_id.toString()"
-              >
-                <FanfictionThumbnail
-                  :fanfiction="fanfiction"
-                  v-bind:index="innerindex"
-                  v-bind:key="fanfiction.fanfiction_id"
-                ></FanfictionThumbnail>
-              </div>
-            </div>
-          </div>
-          <footer class="card-footer">
-            <p class="card-footer-item py-2">
-              <span>
-                <a href="">Plus de nouveautés</a>
-              </span>
-            </p>
-          </footer>
-        </div>
-        <br />
+        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" />
+        <br>
         <!-- Sélections fanfictions -->
-        <div class="card">
-          <header class="card-header sub-title">
-            <p class="card-header-title is-centered">Sélections du mois</p>
-          </header>
-          <div class="card-content">
-            <div
-              class="
-                p-2
-                columns
-                is-variable
-                is-1-mobile
-                is-2-tablet
-                is-3-desktop
-                is-3-widescreen
-                is-2-fullhd
-                is-multiline
-              "
-            >
-              <div
-                class="column is-half py-2"
-                v-for="(fanfiction, innerindex) of fanfictions"
-                :key="'ff_selection_' + fanfiction.fanfiction_id.toString()"
-              >
-                <FanfictionThumbnail
-                  :fanfiction="fanfiction"
-                  v-bind:index="innerindex"
-                  v-bind:key="fanfiction.fanfiction_id"
-                ></FanfictionThumbnail>
-              </div>
-            </div>
-          </div>
-          <footer class="card-footer">
-            <p class="card-footer-item py-2">
-              <span>
-                <a href="">Plus de sélections</a>
-              </span>
-            </p>
-            <p class="card-footer-item py-2">
-              <span>
-                <a href="">Votez pour les sélections</a>
-              </span>
-            </p>
-          </footer>
-        </div>
+        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionsFanfictions" />
+        <br>
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <div class="card">
-          <header class="card-header sub-title">
-            <p class="card-header-title is-centered">Actualités</p>
-          </header>
-          <div class="card-content">
-            <News_2
-              v-for="(item, innerindex) of news"
-              :key="'news_' + item.news_id.toString()"
-              :news="item"
-              :activeColor="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
-              :class="[{ 'is-hidden-mobile': innerindex > 0 }]"
-              v-bind:index="innerindex"
-            ></News_2>
-          </div>
-          <footer class="card-footer">
-            <p class="card-footer-item py-2">
-              <span>
-                <NuxtLink to="/news"> Plus d'actualités </NuxtLink>
-              </span>
-            </p>
-          </footer>
-        </div>
+        <NewsThumbnailList :is-loading="listLoading" :news="recentNews" />
       </div>
     </div>
-
-    <br />
-
-    <br />
+    <br>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { NewsData, getNews } from "@/api/news";
-import { getFanfictions } from "@/api/fanfictions";
-import { FanfictionData } from "@/types/fanfictions";
+import { SerialiseClass } from "@/serialiser-decorator";
+import { searchNews } from "@/api/news";
+import { NewsModel } from "@/models/news";
+import { searchFanfictions } from "@/api/fanfictions";
+import { FanfictionModel } from "@/models/fanfictions";
+import { IBasicQuery, SortByEnum } from "@/types/basics";
+import { IFanfictionFilters } from "@/types/fanfictions";
 import News_2 from "@/components/News_2.vue";
 import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
+import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
+import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
 
 @Component({
   components: {
     News_2,
     FanfictionThumbnail,
+    FanfictionThumbnailList,
+    NewsThumbnailList
   },
+  fetchOnServer: true,
+  fetchKey: "index"
 })
 export default class extends Vue {
-  //#region  Datas
-  private fFByRow = 2;
-  private news: NewsData[] = [];
-  private fanfictions: FanfictionData[] = [];
-  private listLoading = false;
-  private listQuery = {
+  // #region  Datas
+
+  @SerialiseClass(NewsModel)
+  public recentNews: NewsModel[] = [];
+
+  @SerialiseClass(FanfictionModel)
+  public recentFanfictions: FanfictionModel[] = [];
+
+  @SerialiseClass(FanfictionModel)
+  public selectionsFanfictions: FanfictionModel[] = [];
+
+  public listLoading = false;
+  private recentFanfictionFilters : IFanfictionFilters = {
     page: 1,
-    limit: 20,
+    pageSize: 20,
+    totalPages: false,
+    sortOn: "last_update_date",
+    sortBy: SortByEnum.Descending,
+    searchTerm: null,
+    searchAuthor: null,
+    searchAuthorId: null,
+    multipleAuthors: null,
+    status: null,
+    minWords: null,
+    maxWords: null,
+    includedTags: [],
+    excludedTags: [],
+    customTags: [],
+    featured: null,
+    inclusive: false,
+    fromDate: null,
+    toDate: null
   };
-  //#endregion
 
-  //#region Hooks
-  created() {}
+  private selectionsFanfictionFilters : IFanfictionFilters = {
+    page: 1,
+    pageSize: 20,
+    totalPages: false,
+    sortOn: "last_update_date",
+    sortBy: SortByEnum.Descending,
+    searchTerm: null,
+    searchAuthor: null,
+    searchAuthorId: null,
+    multipleAuthors: null,
+    status: null,
+    minWords: null,
+    maxWords: null,
+    includedTags: [],
+    excludedTags: [],
+    customTags: [],
+    featured: true,
+    inclusive: false,
+    fromDate: null,
+    toDate: null
+  };
 
-  async asyncData() {}
+  private newsFilters : IBasicQuery = {
+    page: 1,
+    pageSize: 20,
+    totalPages: true,
+    sortOn: "post_date",
+    sortBy: SortByEnum.Descending
+  };
+  // #endregion
 
-  async fetch() {
-    this.news = (await getNews(this.listQuery)).data.items;
-    this.fanfictions = (await getFanfictions(this.listQuery)).data.items;
-  }
+  // #region Hooks
+  created(): void {}
 
-  beforeMount() {}
-
-  mouted() {}
-  //#endregion
-
-  //#region Methods
-  private async getNews() {
+  async fetch(): Promise<void> {
     this.listLoading = true;
-    try {
-      const { data } = await getNews(this.listQuery);
-      this.news = data.items;
-    } catch {
-    } finally {
-      this.listLoading = false;
-    }
+    this.recentNews = (await searchNews(this.newsFilters)).items;
+    this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).items;
+    this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).items;
+    // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
+    console.log("Date type: " + ((new Date()) instanceof Date));
+    // console.log("Creation date type: " + (this.fanfictions[0]?.creation_date instanceof Date));
+    // console.log("Last update date type: " + (this.fanfictions[0]?.last_update_date instanceof Date));
+    // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
+    // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
+    this.listLoading = false;
   }
 
-  private async getFanfictions() {
-    this.listLoading = true;
-    try {
-      const { data } = await getFanfictions(this.listQuery);
-      this.fanfictions = data.items;
-    } catch {
-    } finally {
-      this.listLoading = false;
-    }
-  }
-  //#endregion
+  beforeMount(): void {}
+
+  mouted(): void {}
+  // #endregion
+
+  // #region Methods
+  // private async searchNews(): Promise<void> {
+  //   this.listLoading = true;
+  //   try {
+  //     const { data } = await searchNews(this.newsFilters);
+  //     this.news = data.items;
+  //   } catch {
+  //   } finally {
+  //     this.listLoading = false;
+  //   }
+  // }
+
+  // private async getFanfictions(): Promise<void> {
+  //   this.listLoading = true;
+  //   try {
+  //     const { data } = await getFanfictions(this.fanfictionFilters);
+  //     this.fanfictions = data.items;
+  //   } catch {
+  //   } finally {
+  //     this.listLoading = false;
+  //   }
+  // }
+  // #endregion
 }
 </script>
 

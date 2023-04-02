@@ -1,6 +1,6 @@
 <template>
   <div class="container px-5">
-    <br />
+    <br>
     <div class="columns">
       <div class="column">
         <div class="card">
@@ -12,21 +12,22 @@
           </header>
           <!-- Contenu -->
           <div class="card-content px-4 pt-2 pb-4">
-            <b-loading :is-full-page="false" v-model="listLoading"></b-loading>
+            <b-loading v-model="listLoading" :is-full-page="false" />
             <!-- Breadcrumb -->
             <b-breadcrumb align="is-left" class="mb-0">
-              <b-breadcrumb-item @click.native="MoveToBreadCrumb(undefined)"
-                >Accueil</b-breadcrumb-item
-              >
+              <b-breadcrumb-item @click.native="MoveToBreadCrumb(undefined)">
+                Accueil
+              </b-breadcrumb-item>
               <b-breadcrumb-item
                 v-for="(charac, innerindex) of breadcrumbStack"
-                v-bind:index="innerindex"
-                v-bind:key="innerindex"
+                :key="innerindex"
+                :index="innerindex"
                 @click.native="MoveToBreadCrumb(innerindex)"
-                >{{ charac.name }}</b-breadcrumb-item
               >
+                {{ charac.name }}
+              </b-breadcrumb-item>
             </b-breadcrumb>
-            <hr class="mt-1 mb-3" />
+            <hr class="mt-1 mb-3">
             <!-- Liste -->
             <div
               v-if="currentCharacs.length > 0"
@@ -34,31 +35,37 @@
             >
               <div
                 v-for="(charac, innerindex) of currentCharacs"
-                v-bind:index="innerindex"
-                v-bind:key="innerindex"
+                :key="innerindex"
+                :index="innerindex"
                 class="column is-4 is-4-desktop is-4-widescreen is-3-fullhd"
               >
                 <TagPanel
-                  :characteristic_type_id="charac.characteristic_type_id"
-                  :characteristic_id="charac.characteristic_id"
+                  :characteristic_type_id="
+                    charac instanceof CharacteristicModel
+                      ? charac.characteristic_type_id
+                      : charac.characteristic_type_id
+                  "
+                  :characteristic_id="
+                    charac instanceof CharacteristicModel ? charac.characteristic_id : null
+                  "
                   :characteristic_name="charac.name"
                   :characteristic_description="charac.description"
-                  :characteristic_count="charac.count"
+                  :characteristic_count="charac.storiesCount"
                   @click="AddBreadCrumbLevel"
                 />
               </div>
             </div>
             <div v-if="currentCharacs.length == 0">
               <FanfictionList
-                :isCard="false"
-                :fanfictionFilters="fanfictionFilters"
+                :is-card="false"
+                :fanfiction-filters="fanfictionFilters"
               />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <br />
+    <br>
   </div>
 </template>
 
@@ -66,45 +73,46 @@
 import { Component, Vue, Watch } from "nuxt-property-decorator";
 import TagPanel from "~/components/TagPanel.vue";
 import { ConfigModule } from "@/utils/store-accessor";
+import { ICharacteristicFilters } from "@/types/characteristics";
 import {
-  ICharacteristic,
-  ICharacteristicType,
-  ICharacteristicFilters,
-} from "@/types/characteristics";
+  CharacteristicModel,
+  CharacteristicTypeModel
+} from "@/models/characteristics";
 import { getCharacteristics } from "@/api/characteristics";
-import { FanfictionFiltersData } from "@/types/fanfictions";
+import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "Category",
   components: {
     TagPanel,
-    FanfictionList,
+    FanfictionList
   },
+  fetchOnServer: true
 })
 export default class extends Vue {
-  //#region Data
-  private breadcrumbStack: any[] = [];
+  // #region Data
+  public breadcrumbStack: any[] = [];
 
   // Caractérisitiques affichés
-  private currentCharacs: any[] = [];
+  public currentCharacs: any[] = [];
 
   // Filtres des charactéristiques
-  private caracteristicFilters: ICharacteristicFilters = {
+  public caracteristicFilters: ICharacteristicFilters = {
     characteristic_type_id: null,
     parent_id: null,
     options: {
-      with_stats: true,
+      with_stats: true
     },
-    limit: 10,
+    limit: 10
   };
 
   // Filtres
-  private fanfictionFilters: FanfictionFiltersData = {
+  public fanfictionFilters: IFanfictionFilters = {
     searchTerm: "",
     searchAuthor: "",
     searchAuthorId: 0,
-    sortBy: "most_recent",
     multipleAuthors: null,
     status: null,
     minWords: null,
@@ -116,84 +124,107 @@ export default class extends Vue {
     inclusive: false,
     fromDate: null,
     toDate: null,
-    currentPage: 1,
-    perPage: 10,
+    page: 1,
+    pageSize: 10,
+    totalPages: false,
+    sortBy: SortByEnum.Descending,
+    sortOn: "last_update_date"
   };
 
-  private listLoading: boolean = false;
-  //#endregion
+  public listLoading: boolean = false;
+  // #endregion
 
-  //#region Hooks
-  async fetch() {
+  // #region Hooks
+  private async fetch(): Promise<void> {
     this.listLoading = true;
     // Récupération des caractéristiques types
     await this.getCharacteristicsTypes();
     this.listLoading = false;
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
+  // @Watch("$fetchState.pending", { immediate: true, deep: false })
+  // private onFetchChanged(): void {
+  //   console.log("fetchstate:");
+  //   console.log(this.$fetchState);
+  //   if (this.$fetchState?.pending === false) {
+  //   // Création des CharacteristicData instanciées
+  //     this.currentCharacs = plainToInstance(
+  //       CharacteristicTypeModel,
+  //       this.currentCharacs
+  //     );
+  //     console.log(this.currentCharacs[0]);
+  //     console.log(this.currentCharacs[0] instanceof CharacteristicTypeModel);
+  //   }
+  // }
+
   // Actualisation des résultats
   @Watch("breadcrumbStack")
-  private async onPileChanged() {
+  private async onPileChanged(): Promise<void> {
     this.listLoading = true;
     if (this.breadcrumbStack.length > 0) {
-      let current = this.breadcrumbStack[this.breadcrumbStack.length - 1];
-      this.caracteristicFilters.characteristic_type_id =
-        current.characteristic_type_id;
-      this.caracteristicFilters.parent_id = current.characteristic_id;
+      const current = this.breadcrumbStack[this.breadcrumbStack.length - 1];
+      if (current instanceof CharacteristicModel) {
+        this.caracteristicFilters.characteristic_type_id =
+          current.characteristic_type_id;
+        this.caracteristicFilters.parent_id = current.characteristic_id;
+      } else if (current instanceof CharacteristicTypeModel) {
+        this.caracteristicFilters.characteristic_type_id = current.characteristic_type_id;
+        this.caracteristicFilters.parent_id = null;
+      }
       await this.getCharacteristics();
       // Si pas de nouvelle caractéristique, on est en bas de la pile on déclenche recherche les fictions
-      if (this.currentCharacs.length == 0)
+      if (this.currentCharacs.length === 0)
         this.fanfictionFilters.includedTags = [current.characteristic_id];
     } else {
       await this.getCharacteristicsTypes();
     }
     this.listLoading = false;
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
+  // #region Methods
   // Récupération des caractéristiques types, depuis la config
-  private async getCharacteristicsTypes() {
-    if (ConfigModule.characteristicTypes.length == 0)
+  private async getCharacteristicsTypes(): Promise<void> {
+    if (ConfigModule.characteristicTypes.length === 0)
       await ConfigModule.LoadConfig();
     this.currentCharacs = ConfigModule.characteristicTypes;
   }
 
   // Récupération des caractéristiques et de leurs stats
-  private async getCharacteristics() {
+  private async getCharacteristics(): Promise<void> {
     this.currentCharacs = (
       await getCharacteristics(this.caracteristicFilters)
-    ).data.items;
+    ).items;
   }
 
   // Descendre dans l'arborescence
-  private AddBreadCrumbLevel(
+  public AddBreadCrumbLevel(
     caracteristic_type_id: number | undefined,
     caracteristic_id: number | undefined
-  ) {
-    if (caracteristic_id !== undefined)
+  ): void {
+    if (caracteristic_id !== null) {
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
-          (t: ICharacteristic) => t.characteristic_id == caracteristic_id
+          (t: CharacteristicModel) => t.characteristic_id === caracteristic_id
         )[0]
       );
-    else if (caracteristic_type_id !== undefined)
+    } else if (caracteristic_type_id !== null) {
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
-          (t: ICharacteristicType) =>
-            t.characteristic_type_id == caracteristic_type_id
+          (t: CharacteristicTypeModel) => t.characteristic_type_id === caracteristic_type_id
         )[0]
       );
+    }
   }
 
   //  Remonter dans l'arborescence
-  private MoveToBreadCrumb(index: number | undefined) {
+  public MoveToBreadCrumb(index: number | undefined): void {
     if (index === undefined) this.breadcrumbStack = [];
     else this.breadcrumbStack.splice(index + 1);
   }
-  //#endregion
+  // #endregion
 }
 </script>
 

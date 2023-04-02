@@ -1,17 +1,10 @@
-import { $axios } from '~/utils/api'
+import $AxiosWrapper from "~/utils/api";
+import { IBasicQuery } from "@/types/basics";
+import { NewsModel } from "~/models/news";
+import { NewsData } from "@/types/news";
 
-export interface NewsData {
-  news_id: number;
-  post_date: number;
-  title: string;
-  content: string;
-  authors: string;
-  comments: string;
-}
-
-export const getNews = (params: any) =>
-  $axios.request({
-    url: '/news',
-    method: 'get',
-    params
-  })
+export const searchNews = (filters: IBasicQuery | null): Promise<any> => $AxiosWrapper.get<NewsModel>("/news", filters, NewsModel);
+export const getNews = (id: number): Promise<any> => $AxiosWrapper.get<NewsModel>("/news/" + id.toString(), NewsModel);
+export const postNews = (news: NewsData): Promise<any> => $AxiosWrapper.post<NewsModel>("/news", news, NewsModel);
+export const putNews = (id: number, news: NewsData): Promise<any> => $AxiosWrapper.put<NewsModel>("/news/" + id.toString(), news, NewsModel);
+export const deleteNews = (id: number): Promise<any> => $AxiosWrapper.delete<NewsModel>("/news/" + id.toString(), NewsModel);

@@ -16,8 +16,12 @@
     "baseUrl": ".",
     "importsNotUsedAsValues": "preserve",
     "paths": {
-      "~/*": ["./*"],
-      "@/*": ["./*"]
+      "~/*": [
+        "./*"
+      ],
+      "@/*": [
+        "./*"
+      ]
     },
     "types": [
       "@types/node",
@@ -26,6 +30,12 @@
       "buefy/types",
       "webpack-env"
     ]
+  },
+  "vueCompilerOptions": {
+    "extensions": [
+      ".vue"
+    ],
+    "target": 2
   },
   "exclude": [
     "node_modules"

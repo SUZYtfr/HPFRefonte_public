@@ -1,6 +1,6 @@
 <template>
   <div :class="[{'card': isCard }, 'is-flex', 'is-flex-direction-column', 'is-relative', 'fullheight']">
-    <b-loading :is-full-page="false" v-model="listLoading"></b-loading>
+    <b-loading v-model="listLoading" :is-full-page="false" />
     <header
       :class="[
         {'card-header': isCard },
@@ -30,17 +30,29 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            v-model="fanfictionFilters.sortBy"
+            @input="SelectSortBy_OnInputChanged"
           >
-            <option value="alpha">Ordre alphabétique</option>
-            <option value="most_recent">Plus récent au plus ancien</option>
-            <option value="less_recent">Plus ancien au plus récent</option>
-            <option value="most_reviews">Nombre de reviews - croissant</option>
+            <option value="alpha">
+              Ordre alphabétique
+            </option>
+            <option value="most_recent">
+              Plus récent au plus ancien
+            </option>
+            <option value="less_recent">
+              Plus ancien au plus récent
+            </option>
+            <option value="most_reviews">
+              Nombre de reviews - croissant
+            </option>
             <option value="less_reviews">
               Nombre de reviews - décroissant
             </option>
-            <option value="most_rating">Rating - croissant</option>
-            <option value="less_rating">Rating - décroissant</option>
+            <option value="most_rating">
+              Rating - croissant
+            </option>
+            <option value="less_rating">
+              Rating - décroissant
+            </option>
           </b-select>
         </b-field>
       </div>
@@ -50,68 +62,81 @@
         v-if="fanfictions.length == 0"
         class="mx-auto my-auto has-text-centered"
       >
-        <span class="is-italic mt-3"
-          >Aucun résultat, essayer d'ajuster les filtres de recherche.</span
-        >
+        <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
         <Fanfiction
-          class="my-2"
           v-for="(fanfiction, innerindex) of fanfictions"
+          :key="'ff_' + fanfiction.fanfiction_id.toString()"
+          class="my-2"
           :fanfiction="fanfiction"
-          v-bind:index="innerindex"
-          v-bind:key="'ff_' + fanfiction.fanfiction_id.toString()"
-        ></Fanfiction>
+          :index="innerindex"
+        />
       </div>
     </div>
     <footer :class="[{'card-footer':isCard}]">
       <b-pagination
+        v-model="fanfictionFilters.page"
         :class="[{'card-footer-item': isCard}, 'py-2']"
         :total="fanfictions.length"
-        v-model="fanfictionFilters.currentPage"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="fanfictionFilters.perPage"
+        :per-page="fanfictionFilters.pageSize"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
         aria-previous-label="Page précedente"
         aria-page-label="Page"
         aria-current-label="Page actuelle"
-      >
-      </b-pagination>
+      />
     </footer>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { SerialiseClass } from "@/serialiser-decorator";
 import Fanfiction from "~/components/Fanfiction.vue";
-import { FanfictionFiltersData, FanfictionData } from "@/types/fanfictions";
-import { getFanfictions } from "@/api/fanfictions";
+import { IFanfictionFilters } from "@/types/fanfictions";
+import { FanfictionModel } from "@/models/fanfictions";
+import { searchFanfictions } from "@/api/fanfictions";
+import { SortByEnum } from "~/types/basics";
 
 @Component({
   name: "FanfictionList",
   components: {
-    Fanfiction,
+    Fanfiction
   },
+  fetchOnServer: true,
+  fetchKey: "fanfiction-list"
 })
 export default class FanfictionList extends Vue {
-  //#region Props
-  @Prop({ default: true }) private isCard!: boolean;
-  @Prop({ default: true }) private showRefreshButton!: boolean;
+  // #region Props
+  @Prop({ default: true }) public isCard!: boolean;
+  @Prop({ default: true }) public showRefreshButton!: boolean;
   @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() private fanfictionFilters!: FanfictionFiltersData;
-  //#endregion
+  @Prop() public fanfictionFilters!: IFanfictionFilters;
+  // #endregion
 
-  //#region Data
-  private fanfictions: FanfictionData[] = [];
+  // #region Data
+  @SerialiseClass(FanfictionModel)
+  public fanfictions: FanfictionModel[] = [];
+
   private timerId: number = 0;
-  //#endregion
+  // #endregion
 
-  //#region Computed
-  get fanfictionResultLabel() {
+  // #region Hooks
+  private async fetch(): Promise<void> {
+    this.listLoading = true;
+    // Récupération des fictions
+    await this.getFanfictions();
+    this.listLoading = false;
+  }
+  // #endregion
+
+  // #region Computed
+  get fanfictionResultLabel(): string {
     let result = "";
     result +=
       this.fanfictions.length > 0
@@ -122,43 +147,85 @@ export default class FanfictionList extends Vue {
     return result;
   }
 
-  get listLoading() {
+  get listLoading(): boolean {
     return this.isLoading;
   }
 
   set listLoading(value) {
     this.$emit("loadingChange", value);
   }
-  //#endregion
+  // #endregion
 
-  //#region Watchers
+  // #region Watchers
   @Watch("fanfictionFilters", { deep: true })
-  private onFiltersChanged() {
+  public onFiltersChanged(): void {
     clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.getFanfictions, 500);
+    this.timerId = window.setTimeout(this.$fetch, 500);
   }
-  //#endregion
+  // #endregion
 
-  //#region Hooks
-  mounted(){
+  // #region Hooks
+  mounted(): void {
     // Déclenche une recherche à l'affichage
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.getFanfictions, 500);
+    // clearTimeout(this.timerId);
+    // this.timerId = window.setTimeout(this.$fetch, 500);
   }
-  //#endregion
+  // #endregion
 
-  //#region Methods
-  private async getFanfictions() {
-    this.listLoading = true;
+  // #region Methods
+  private async getFanfictions(): Promise<void> {
+    // this.listLoading = true;
     try {
-      const { data } = await getFanfictions(this.fanfictionFilters);
-      this.fanfictions = data.items;
-    } catch {
+      this.fanfictions = (await searchFanfictions(this.fanfictionFilters)).items;
+      console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
+      console.log("Date type: " + ((new Date()) instanceof Date));
+      console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
+      console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
+      // console.log("Characteristic type: " + (this.fanfictions[0].characteristics[0] instanceof CharacteristicData));
+      console.log(this.fanfictions[0]?.creation_date);
+      // console.log(new Date(this.fanfictions[0]?.creation_date));
+      // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString());
+      console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
+    } catch (error) {
+      console.log(error);
     } finally {
-      this.listLoading = false;
+      // this.listLoading = false;
     }
   }
-  //#endregion
+
+  public SelectSortBy_OnInputChanged(value: string): void {
+    switch (value) {
+      case "alpha":
+        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        this.fanfictionFilters.sortOn = "title";
+        break;
+      case "most_recent":
+        this.fanfictionFilters.sortBy = SortByEnum.Descending;
+        this.fanfictionFilters.sortOn = "last_update_date";
+        break;
+      case "less_recent":
+        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        this.fanfictionFilters.sortOn = "last_update_date";
+        break;
+      case "most_reviews":
+        this.fanfictionFilters.sortBy = SortByEnum.Descending;
+        this.fanfictionFilters.sortOn = "comments";
+        break;
+      case "less_reviews":
+        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        this.fanfictionFilters.sortOn = "comments";
+        break;
+      case "most_rating":
+        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        this.fanfictionFilters.sortOn = "rating";
+        break;
+      case "less_rating":
+        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        this.fanfictionFilters.sortOn = "rating";
+        break;
+    }
+  }
+  // #endregion
 }
 </script>
 
