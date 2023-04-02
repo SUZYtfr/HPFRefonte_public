@@ -65,7 +65,7 @@ class PollQuestionSerializer(ModelSerializer):
             return Chapter.objects.filter(
                 authors=self.context["request"].user,
                 poll__isnull=True,
-                validation_status=Chapter.ChapterValidationStage.PUBLISHED
+                validation_status=Chapter.ValidationStage.PUBLISHED
             )
 
     chapter = ChapterField()

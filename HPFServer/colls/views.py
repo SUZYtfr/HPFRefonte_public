@@ -1,42 +1,29 @@
-from django.utils import timezone
+from rest_framework import permissions, decorators, response, viewsets
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import permissions
-
-from .serializers import CollectionCardSerializer, CollectionSerializer, CollectionChapterOrderSerializer
-
+from .serializers import CollectionSerializer, CollectionChapterOrderSerializer
 from .models import Collection
-from core.permissions import IsObjectAuthorOrReadOnly
+from core.permissions import IsObjectAuthorOrReadOnly, IsAuthenticated, ReadOnly
+from fictions.serializers import FictionCardSerializer
+from reviews.serializers import CollectionReviewSerializer, CollectionAnonymousReviewSerializer
+from reviews.utils import can_post_reviews, can_see_reviews
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
-class PublicCollectionViewSet(ModelViewSet):
+class CollectionViewSet(viewsets.ModelViewSet):
     """Ensemble de vues pour les séries"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly]
     serializer_class = CollectionSerializer
-    queryset = Collection.objects.all()
-
-    def get_queryset(self):
-        """Détermine la liste de séries à afficher."""
-
-        if self.request.query_params.get("mine", False) == "True":
-            return self.queryset.filter(authors__id=self.request.user.id)
-        return self.queryset
-
-    def get_serializer_class(self):
-        """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
-
-        if self.action == "list":
-            return CollectionCardSerializer
-        return self.serializer_class
+    queryset = Collection.objects.order_by("-creation_date")
+    search_fields = ["title", "fictions__title", "summary", "fictions__summary"]
 
     def perform_create(self, serializer):
-        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+        serializer.save(creation_user=self.request.user)
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        serializer.save(modification_user=self.request.user)
 
     def perform_destroy(self, instance):
         """Finalise le retrait de l'autorat du membre authentifié sur la série, la supprime si plus aucun autorat"""
@@ -45,13 +32,69 @@ class PublicCollectionViewSet(ModelViewSet):
         if instance.authors.count() <= 0:
             instance.delete()
 
-    @action(methods=["GET", "PUT"], detail=True, serializer_class=CollectionChapterOrderSerializer,
-            url_name="chapter-order")
+    @decorators.action(
+        detail=True,
+        url_path="fictions",
+        url_name="fictions",
+        methods=["GET"],
+        serializer_class=FictionCardSerializer,
+    )
+    def get_fictions(self, request, *args, **kwargs):
+        collection = self.get_object()
+        fictions = collection.fictions.all()
+        paginated_fictions = self.paginate_queryset(fictions)
+        serializer = self.get_serializer(instance=paginated_fictions, many=True)
+        return response.Response(data=serializer.data)
+
+    @decorators.action(
+        detail=True,
+        methods=["GET", "POST"],
+        url_path="reviews",
+        serializer_class=CollectionReviewSerializer,
+        permission_classes=[IsAuthenticated | ReadOnly],
+    )
+    def manage_reviews(self, request, *args, **kwargs):
+        collection = self.get_object()
+        if request.method == "POST":
+            if not can_post_reviews(collection, request.user):
+                raise
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(creation_user=self.request.user, fiction=collection)
+            return response.Response(data=serializer.validated_data)
+        else:
+            reviews = collection.published_reviews.all() if can_see_reviews(collection, request.user) else collection.reviews.none()
+            paginated_reviews = self.paginate_queryset(reviews)
+            serializer = self.get_serializer(paginated_reviews, many=True)
+            return response.Response(data=serializer.data)
+
+    @decorators.action(
+        detail=True,
+        methods=["POST"],
+        url_path="anonymous-review",
+        serializer_class=CollectionAnonymousReviewSerializer,
+        permission_classes=[permissions.AllowAny],
+    )
+    def create_anonymous_review(self, request, *args, **kwargs):
+        collection = self.get_object()
+        if not can_post_reviews(collection, request.user):
+            raise
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(collection=collection)
+        return response.Response(data=serializer.validated_data)
+
+    @decorators.action(
+        methods=["GET", "PUT"],
+        detail=True,
+        serializer_class=CollectionChapterOrderSerializer,
+        url_name="chapter-order",
+    )
     def order(self, request, *args, **kwargs):
         if request.method == "GET":
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return response.Response(serializer.data)
 
         elif request.method == "PUT":
             partial = kwargs.pop('partial', False)
@@ -65,4 +108,4 @@ class PublicCollectionViewSet(ModelViewSet):
                 # forcibly invalidate the prefetch cache on the instance.
                 instance._prefetched_objects_cache = {}
 
-            return Response(serializer.data)
+            return response.Response(serializer.data)

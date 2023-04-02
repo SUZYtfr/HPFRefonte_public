@@ -1,24 +1,35 @@
 from django.db import models
 from django.utils import timezone
 from core.models import DatedModel, CreatedModel
+from fictions.models import Chapter
 
 
-class OpenCategoryManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_closed=False)
+class CategoryQuerySet(models.QuerySet):
+    def open(self):
+        return self.filter(is_closed=False)
 
 
 class Category(DatedModel, CreatedModel):
     """Modèle de catégorie de caractéristiques"""
 
-    name = models.CharField(verbose_name="nom", max_length=50,
-                            blank=False)
-    min_limit = models.PositiveSmallIntegerField(verbose_name="minimum")
-    max_limit = models.PositiveSmallIntegerField(verbose_name="maximum", null=True, blank=True)
-    is_closed = models.BooleanField(verbose_name="restreinte")
+    name = models.CharField(
+        verbose_name="nom",
+        max_length=50,
+        blank=False,
+    )
+    min_limit = models.PositiveSmallIntegerField(
+        verbose_name="minimum",
+    )
+    max_limit = models.PositiveSmallIntegerField(
+        verbose_name="maximum",
+        null=True,
+        blank=True,
+    )
+    is_closed = models.BooleanField(
+        verbose_name="restreinte",
+    )
 
-    objects = models.Manager()
-    open = OpenCategoryManager()
+    objects = CategoryQuerySet.as_manager()
 
     class Meta:
         verbose_name = "catégorie"
@@ -33,31 +44,74 @@ class Category(DatedModel, CreatedModel):
         return self.name
 
 
-class AllowedFeatureManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_forbidden=False)
+class FeatureQuerySet(models.QuerySet):
+    def allowed(self):
+        return self.filter(is_forbidden=False)
+
+    def forbidden(self):
+        return self.filter(is_forbidden=True)
+
+    def fiction_counts(self):
+        fiction_count = models.Count(
+            "fiction",
+            models.Q(fiction__chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
+        )
+        return self.annotate(fiction_count=fiction_count)
 
 
 class Feature(DatedModel, CreatedModel):
     """Modèle de caractéristique"""
 
-    name = models.CharField(verbose_name="nom", max_length=50)
-    description = models.TextField(verbose_name="description", null=True, blank=True)
-    category = models.ForeignKey(verbose_name="catégorie", to=Category,
-                                 related_name="features", on_delete=models.CASCADE,
-                                 help_text="Si un parent est indiqué, sa catégorie prévaut.")
-    parent = models.ForeignKey(to="self", on_delete=models.CASCADE, null=True, blank=True, default=None,
-                               verbose_name="parent", related_name="children",
-                               limit_choices_to={"parent": None})  # s'applique aux formulaires seulement
-    is_highlighted = models.BooleanField(verbose_name="mise en avant", default=False)
-    is_personal = models.BooleanField(verbose_name="personnelle", default=False)
-    is_forbidden = models.BooleanField(verbose_name="interdite", default=False)
-    replace_with = models.ForeignKey(to="self", on_delete=models.SET_NULL, null=True, blank=True, default=None,
-                                     verbose_name="remplacer par", related_name="remplace",
-                                     limit_choices_to={"is_forbidden": False})  # idem
+    name = models.CharField(
+        verbose_name="nom",
+        max_length=50,
+    )
+    description = models.TextField(
+        verbose_name="description",
+        null=True,
+        blank=True,
+    )
+    category = models.ForeignKey(
+        verbose_name="catégorie",
+        to=Category,
+        related_name="features",
+        on_delete=models.CASCADE,
+        help_text="Si un parent est indiqué, sa catégorie prévaut.",
+    )
+    parent = models.ForeignKey(
+        to="self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        default=None,
+        verbose_name="parent",
+        related_name="children",
+        limit_choices_to={"parent": None},
+    )  # s'applique aux formulaires seulement
+    is_highlighted = models.BooleanField(
+        verbose_name="mise en avant",
+        default=False,
+    )
+    is_personal = models.BooleanField(
+        verbose_name="personnelle",
+        default=False,
+    )
+    is_forbidden = models.BooleanField(
+        verbose_name="interdite",
+        default=False,
+    )
+    replace_with = models.ForeignKey(
+        to="self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        default=None,
+        verbose_name="remplacer par",
+        related_name="remplace",
+        limit_choices_to={"is_forbidden": False},
+    )  # idem
 
-    objects = models.Manager()
-    allowed = AllowedFeatureManager()
+    objects = FeatureQuerySet.as_manager()
 
     class Meta:
         verbose_name = "caractéristique"

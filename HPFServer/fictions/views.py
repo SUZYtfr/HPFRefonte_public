@@ -1,55 +1,135 @@
+from django.utils import timezone
 from django.db.models import Q, F
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework import viewsets, response, decorators, exceptions, mixins, permissions
 
-from core.permissions import HasBetaTurnOrReadOnly, IsObjectAuthorOrReadOnly
+from users.models import UserPreferences
+from reviews.utils import can_post_reviews, can_see_reviews
+# from core.permissions import HasBetaTurnOrReadOnly
 
-from .serializers import *
-from .permissions import *
-from .models import Fiction, Chapter, Beta
+from .models import Fiction, Chapter
+from .serializers import (
+    FictionSerializer,
+    FictionExtraAuthorSerializer,
+    ChapterSerializer,
+    ChapterCardSerializer,
+    FictionChapterOrderSerializer,
+)
+from .permissions import (
+    IsAuthenticated,
+    ReadOnly,
+    IsCreationUser,
+    IsFictionCoAuthor,
+    IsParentFictionCreationUser,
+    IsParentFictionCoAuthor,
+    HasStaffValidation,
+)
+from .filters import DjangoFilterBackend, FictionFilterSet
+from reviews.serializers import (
+    ChapterReviewSerializer,
+    ChapterAnonymousReviewSerializer,
+    FictionReviewSerializer,
+    FictionAnonymousReviewSerializer,
+)
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
-class FictionViewSet(ModelViewSet):
+class AuthorPreferenceAllowsAnonymousReviews(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.creation_user.preferences.anonymous_review_policy >= UserPreferences.ReviewPolicy.WRITE_TEXT:
+            return True
+        return False
+
+
+class AuthorPreferenceAllowsMemberReviews(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.creation_user.preferences.member_review_policy >= UserPreferences.ReviewPolicy.WRITE_TEXT:
+            return True
+        return False
+
+
+class FictionViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+):
     """Ensemble de vues pour les fictions"""
-
+    queryset = Fiction.objects.means().order_by("-creation_date")
+    # queryset = Fiction.objects.order_by("-creation_date")
     serializer_class = FictionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsObjectAuthorOrReadOnly]
+    permission_classes = [IsAuthenticated & (IsCreationUser | IsFictionCoAuthor) | ReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = FictionFilterSet
 
     def get_queryset(self):
         """Détermine la liste de fictions à afficher."""
 
-        if self.request.query_params.get("mine", False) == "True":
-            return Fiction.objects.filter(authors__id=self.request.user.id)
-        elif self.request.user.has_perm("fictions.view_fiction"):
-            return Fiction.objects.all()
+        queryset = super().get_queryset()
+
+        if self.request.user.has_perm("fictions.view_fiction"):
+            return queryset
+        elif self.request.query_params.get("self"):
+            return queryset.filter(creation_user_id=self.request.user.id)
         else:
-            return Fiction.published.all()
-
-    def get_serializer_class(self):
-        """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
-
-        if self.action == "list":
-            return FictionCardSerializer
-        return self.serializer_class
+            return queryset.published()
 
     def perform_create(self, serializer):
-        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+        serializer.save(creation_user=self.request.user)
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        serializer.save(modification_user=self.request.user)
 
-    def perform_destroy(self, instance):
-        """Finalise le retrait de l'autorat du membre authentifié sur la fiction, la supprime si plus aucun autorat"""
+    @decorators.action(
+        detail=True,
+        methods=["GET", "POST"],
+        url_path="reviews",
+        serializer_class=FictionReviewSerializer,
+        permission_classes=[IsAuthenticated | ReadOnly],
+    )
+    def manage_reviews(self, request, *args, **kwargs):
+        fiction = self.get_object()
+        if request.method == "POST":
+            if not can_post_reviews(fiction, request.user):
+                raise
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(creation_user=self.request.user, fiction=fiction)
+            return response.Response(data=serializer.validated_data)
+        else:
+            reviews = fiction.reviews.published() if can_see_reviews(fiction, request.user) else fiction.reviews.none()
+            paginated_reviews = self.paginate_queryset(reviews)
+            serializer = self.get_serializer(paginated_reviews, many=True)
+            return response.Response(data=serializer.data)
 
-        instance.authors.remove(self.request.user)
-        if instance.authors.count() <= 0:
-            instance.delete()
+    @decorators.action(
+        detail=True,
+        methods=["POST"],
+        url_path="anonymous-review",
+        serializer_class=FictionAnonymousReviewSerializer,
+        permission_classes=[permissions.AllowAny],
+    )
+    def create_anonymous_review(self, request, *args, **kwargs):
+        fiction = self.get_object()
+        if not can_post_reviews(fiction, request.user):
+            raise
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(fiction=fiction)
+        return response.Response(data=serializer.validated_data)
 
-    @action(methods=["GET", "PUT"], detail=True, url_name="authors", url_path="authors", name="Ajouter un co-auteur",
-            serializer_class=FictionExtraAuthorSerializer, permission_classes=[IsFictionFirstAuthor])
+    @decorators.action(
+        detail=True,
+        methods=["GET", "PUT"],
+        url_name="authors",
+        url_path="authors",
+        name="Ajouter un co-auteur",
+        serializer_class=FictionExtraAuthorSerializer,
+        permission_classes=[IsCreationUser],
+    )
     def manage_authors(self, request, pk, **kwargs):
         """Ajoute """
 
@@ -57,8 +137,10 @@ class FictionViewSet(ModelViewSet):
 
         if self.request.method == "PUT":
             if self.request.user != fiction.authors.first():
-                return self.permission_denied(request,
-                                              message="Seul l'auteur principal peut ajouter des co-auteurs.")
+                return self.permission_denied(
+                    request,
+                    message="Seul l'auteur principal peut ajouter des co-auteurs."
+                )
 
             serializer = self.serializer_class(instance=fiction, data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -70,12 +152,17 @@ class FictionViewSet(ModelViewSet):
 
         return self.retrieve(request)
 
-    @action(methods=["GET", "PUT"], detail=True, serializer_class=FictionChapterOrderSerializer, url_name="chapter-order")
+    @decorators.action(
+        detail=True,
+        methods=["GET", "PUT"],
+        url_name="chapter-order",
+        serializer_class=FictionChapterOrderSerializer,
+    )
     def order(self, request, *args, **kwargs):
         if request.method == "GET":
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return response.Response(serializer.data)
 
         elif request.method == "PUT":
             partial = kwargs.pop('partial', False)
@@ -89,28 +176,38 @@ class FictionViewSet(ModelViewSet):
                 # forcibly invalidate the prefetch cache on the instance.
                 instance._prefetched_objects_cache = {}
 
-            return Response(serializer.data)
+            return response.Response(serializer.data)
 
 
-class ChapterViewSet(ModelViewSet):
+class ChapterViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les chapitres"""
 
+    queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsParentFictionAuthorOReadOnly]
+    permission_classes = [IsAuthenticated & (IsParentFictionCreationUser | IsParentFictionCoAuthor) | ReadOnly]
 
     def get_queryset(self):
         """Détermine la liste des chapitres à afficher."""
 
-        base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
+        queryset = super().get_queryset()
 
-        if self.request.query_params.get("mine", False) == "True":
-            return base_queryset.filter(creation_user=self.request.user.id)
-        elif self.kwargs.pop("mine", False):
-            return base_queryset.filter(creation_user=self.request.user.id)
-        elif self.request.user.has_perm("fictions.view_chapter"):
-            return base_queryset.exclude(validation_status=Chapter.ChapterValidationStage.DRAFT)
+        if self.request.user.has_perm("fictions.view_chapter"):
+            return queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+        elif self.request.query_params.get("self"):
+            return queryset.filter(creation_user_id=self.request.user.id)
         else:
-            return base_queryset.filter(validation_status=Chapter.ChapterValidationStage.PUBLISHED)
+            return queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+
+        # base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
+
+        # if self.request.query_params.get("mine", False) == "True":
+        #     return base_queryset.filter(creation_user=self.request.user.id)
+        # elif self.kwargs.pop("mine", False):
+        #     return base_queryset.filter(creation_user=self.request.user.id)
+        # elif self.request.user.has_perm("fictions.view_chapter"):
+        #     return base_queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+        # else:
+        #     return base_queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
 
     def get_object(self):
         """Renvoie le chapitre correspondant à l'ordre, incrémente son compte de lectures."""
@@ -118,9 +215,12 @@ class ChapterViewSet(ModelViewSet):
         chapter = super().get_object()
 
         # https://docs.djangoproject.com/en/4.0/ref/models/expressions/#avoiding-race-conditions-using-f
-        if all([(self.action == "retrieve"),
-                (self.request.user not in chapter.fiction.authors.all()),
-                (chapter.validation_status == Chapter.ChapterValidationStage.PUBLISHED)]):
+        if all([
+            self.action == "retrieve",
+            self.request.user != chapter.fiction.creation_user,
+            self.request.user not in chapter.fiction.coauthors.all(),
+            chapter.validation_status == Chapter.ValidationStage.PUBLISHED,
+        ]):
             chapter.read_count = F("read_count") + 1
             chapter.save_base()
             chapter.refresh_from_db(fields=["read_count"])
@@ -130,19 +230,22 @@ class ChapterViewSet(ModelViewSet):
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur."""
 
-        if self.action == "list":
-            return ChapterCardSerializer
+        # if self.action == "list":
+        #     return ChapterCardSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(
             fiction_id=self.kwargs["fiction_pk"],
             creation_user=self.request.user,
-            creation_date=timezone.now()
+            creation_date=timezone.now(),
         )
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        serializer.save(
+            modification_user=self.request.user,
+            modification_date=timezone.now(),
+        )
 
     def initialize_request(self, request, *args, **kwargs):
         """Force la requête à écrire les fichiers téléchargés dans un fichier temporaire."""
@@ -151,90 +254,125 @@ class ChapterViewSet(ModelViewSet):
         request.upload_handlers = [TemporaryFileUploadHandler(request=request)]
         return request
 
-    @action(["PUT"], detail=True, url_path="submit", name="Envoyer", permission_classes=[IsFictionAuthor])
+    @decorators.action(
+        detail=True,
+        methods=["GET", "POST"],
+        url_path="reviews",
+        serializer_class=ChapterReviewSerializer,
+        permission_classes=[(IsAuthenticated & AuthorPreferenceAllowsMemberReviews) | ReadOnly],
+    )
+    def manage_reviews(self, request, *args, **kwargs):
+        chapter = self.get_object()
+        if request.method == "POST":
+            if not can_post_reviews(chapter, request.user):
+                raise
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(creation_user=self.request.user, chapter=chapter)
+            return response.Response(data=serializer.validated_data)
+        else:
+            reviews = chapter.reviews.published() if can_see_reviews(chapter, request.user) else chapter.reviews.none()
+            paginated_reviews = self.paginate_queryset(reviews)
+            serializer = self.get_serializer(paginated_reviews, many=True)
+            return response.Response(data=serializer.data)
+
+    @decorators.action(
+        detail=True,
+        methods=["POST"],
+        url_path="anonymous-review",
+        serializer_class=ChapterAnonymousReviewSerializer,
+        permission_classes=[permissions.AllowAny & AuthorPreferenceAllowsAnonymousReviews],
+    )
+    def create_anonymous_review(self, request, *args, **kwargs):
+        chapter = self.get_object()
+        if not can_post_reviews(chapter, request.user):
+            raise
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(creation_user=self.request.user, chapter=chapter)
+        return response.Response(data=serializer.validated_data)
+
+    @decorators.action(
+        detail=True,
+        methods=["PUT"],
+        url_path="submit",
+        name="Envoyer",
+        # permission_classes=[IsCreationUser | IsParenT],
+    )
     def submit(self, request, pk, **kwargs):
         """Envoie le chapitre à la modération"""
 
         chapter = Chapter.objects.get(pk=pk)
 
-        if chapter.validation_status == Chapter.ChapterValidationStage.DRAFT:
-            if request.user.has_perm("fictions.automatic_validation"):
-                chapter.change_status(Chapter.ChapterValidationStage.PUBLISHED,
-                                      modification_user=self.request.user, modification_time=timezone.now())
-            else:
-                chapter.change_status(Chapter.ChapterValidationStage.PENDING,
-                                      modification_user=self.request.user, modification_time=timezone.now())
-
-        elif chapter.validation_status == chapter.ChapterValidationStage.EDIT_REQUIRED:
-            chapter.change_status(Chapter.ChapterValidationStage.EDITED,
-                                  modification_user=self.request.user, modification_time=timezone.now())
-
-        else:
-            return self.permission_denied(
-                request,
-                message="Ce chapitre ne peut pas être envoyé à la modération pour l'instant."
-            )
+        try:
+            chapter.submit()
+        except Chapter.InvalidChapterAction as e:
+            raise exceptions.APIException(detail=e.message)
 
         return self.retrieve(request)
 
-    @action(["PUT"], detail=True, url_path="validate", name="Valider", permission_classes=[HasStaffValidation])
+    @decorators.action(
+        detail=True,
+        methods=["PUT"],
+        url_path="validate",
+        name="Valider",
+        permission_classes=[HasStaffValidation],
+    )
     def validate(self, request, pk, **kwargs):
         """Valide le chapitre"""
 
         chapter = Chapter.objects.get(pk=pk)
 
-        if chapter.validation_status not in [Chapter.ChapterValidationStage.PENDING,
-                                             Chapter.ChapterValidationStage.EDITED]:
-            return self.permission_denied(request, "Ce chapitre ne peut pas être validé pour l'instant.")
-
-        chapter.change_status(Chapter.ChapterValidationStage.PUBLISHED,
-                              modification_user=self.request.user,
-                              modification_time=timezone.now())
+        try:
+            chapter.validate()
+        except Chapter.InvalidChapterAction as e:
+            raise exceptions.APIException(detail=e.message)
 
         return self.retrieve(request)
 
-    @action(["PUT"], detail=True, url_path="invalidate", name="Invalider", permission_classes=[HasStaffValidation])
+    @decorators.action(
+        methods=["PUT"],
+        detail=True,
+        url_path="invalidate",
+        name="Invalider",
+        permission_classes=[HasStaffValidation],
+    )
     def invalidate(self, request, pk, **kwargs):
         """Invalide le chapitre"""
 
         chapter = Chapter.objects.get(pk=pk)
-
-        if chapter.validation_status not in [Chapter.ChapterValidationStage.PENDING,
-                                             Chapter.ChapterValidationStage.EDITED,
-                                             Chapter.ChapterValidationStage.PUBLISHED]:
-            return self.permission_denied(request, "Ce chapitre ne peut pas être invalidé pour l'instant.")
-
-        chapter.change_status(Chapter.ChapterValidationStage.EDIT_REQUIRED,
-                              modification_user=self.request.user,
-                              modification_time=timezone.now())
+        try:
+            chapter.invalidate()
+        except Chapter.InvalidChapterAction as e:
+            raise exceptions.APIException(detail=e.message)
 
         return self.retrieve(request)
 
 
-class BetaViewSet(ModelViewSet):
-    """Ensemble de vues pour les bêtatages"""
-
-    permission_classes = (IsAuthenticated, HasBetaTurnOrReadOnly,)
-    serializer_class = BetaSerializer
-
-    def get_queryset(self):
-        """Renvoie la liste des chapitres sujets à des bêtatages actifs pour l'utilisateur authentifié
-
-            Cette liste contient les chapitres en bêtatages actifs demandés par et à l'utilisateur.
-            Exclut les chapitres avec un bêtatage refusé ou clos."""
-
-        return Beta.objects.filter(
-            Q(user=self.request.user) |
-            Q(chapter__authors=self.request.user)
-        ).exclude(
-            stage__in=[
-                Beta.BetaStage.REFUSED,
-                Beta.BetaStage.COMPLETED,
-            ]
-        )
-
-    def get_serializer_class(self):
-        if self.action == "update":
-            return BetaActionSerializer
-
-        return self.serializer_class
+# class BetaViewSet(ModelViewSet):
+#     """Ensemble de vues pour les bêtatages"""
+#
+#     permission_classes = (IsAuthenticated, HasBetaTurnOrReadOnly,)
+#     serializer_class = BetaSerializer
+#
+#     def get_queryset(self):
+#         """Renvoie la liste des chapitres sujets à des bêtatages actifs pour l'utilisateur authentifié
+#
+#             Cette liste contient les chapitres en bêtatages actifs demandés par et à l'utilisateur.
+#             Exclut les chapitres avec un bêtatage refusé ou clos."""
+#
+#         return Beta.objects.filter(
+#             Q(user=self.request.user) |
+#             Q(chapter__authors=self.request.user)
+#         ).exclude(
+#             stage__in=[
+#                 Beta.BetaStage.REFUSED,
+#                 Beta.BetaStage.COMPLETED,
+#             ]
+#         )
+#
+#     def get_serializer_class(self):
+#         if self.action == "update":
+#             return BetaActionSerializer
+#
+#         return self.serializer_class

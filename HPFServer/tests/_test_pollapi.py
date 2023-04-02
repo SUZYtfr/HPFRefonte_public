@@ -45,7 +45,7 @@ class TestsChapterPollCreationAPI(APITestCase):
     def test_chapter_must_be_published_before_poll_creation(self):
         """Teste que le chapitre doit avoir été publié avant de pouvoir ajouter un sondage"""
 
-        self.chapter.validation_status = Chapter.ChapterValidationStage.DRAFT
+        self.chapter.validation_status = Chapter.ValidationStage.DRAFT
         self.chapter.save()
 
         payload = {
@@ -106,7 +106,7 @@ class TestsChapterPollCreationAPI(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def tearDown(self) -> None:
-        self.chapter.validation_status = Chapter.ChapterValidationStage.PUBLISHED
+        self.chapter.validation_status = Chapter.ValidationStage.PUBLISHED
         self.chapter.save()
         if poll := self.chapter.poll:
             poll.delete()

@@ -13,6 +13,6 @@ newscomments_router.register(r"", NewsCommentViewSet, basename="comment")
 
 urlpatterns = [
     path(
-        r"<news_pk>/comments/", include(newscomments_router.urls),
+        r"<int:news_pk>/comments/", include(newscomments_router.urls),
     )
 ] + news_router.urls

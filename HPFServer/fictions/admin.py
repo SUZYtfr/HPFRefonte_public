@@ -19,7 +19,7 @@ class FictionAdminAccess(BaseAdminAccess):
                                 "status",
                                 "featured",)}),
         ("Autorat", {"classes": ("collapse",),
-                     "fields": ("authors",)}),
+                     "fields": ("coauthors",)}),
         ("Métadonnées", {"description": "Ces informations sont protégées.",
                          "fields": (("creation_user", "creation_date",),
                                     ("modification_user", "modification_date",),
@@ -28,7 +28,7 @@ class FictionAdminAccess(BaseAdminAccess):
                                     "word_count",
                                     "last_update_date",)}),
     )
-    filter_horizontal = ("authors",)
+    filter_horizontal = ("coauthors",)
     readonly_fields = ("creation_user", "creation_date", "modification_user", "modification_date",
                        "read_count", "last_update_date", "published", "mean", "word_count",)
 
@@ -74,6 +74,10 @@ class ChapterAdminAccess(BaseAdminAccess):
     def mean(self, obj):
         return obj.mean
     mean.short_description = "moyenne"
+
+    def word_count(self, obj):
+        return obj.word_count
+    word_count.short_description = "mots"
 
 
 class BetaAdminAccess(BaseAdminAccess):

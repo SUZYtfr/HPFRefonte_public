@@ -73,3 +73,27 @@ class IsObjectCreatorOrReadOnly(DjangoPermissionOrReadOnly):
         elif request.user == obj.creation_user:
             return True
         return True
+
+
+class ReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)
+
+
+class IsAuthenticated(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)
+
+
+class HasPermission(permissions.DjangoModelPermissions):
+    def has_permission(self, request, view):
+        queryset = self._queryset(view)
+        perms = self.get_required_permissions(request.method, queryset.model)
+        return request.user.has_perms(perms)
+
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)

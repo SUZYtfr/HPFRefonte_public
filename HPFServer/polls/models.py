@@ -83,7 +83,7 @@ class PollQuestion(DatedModel, CreatedModel):
             return self.answers.annotate(total_points=models.Sum("votes__points")).order_by("-total_points")[:number_of_top_choices]
 
     @property
-    def is_open(self):
+    def is_open(self) -> bool:
         return self.closing_datetime or timezone.now() < timezone.now()
 
     def close_poll(self, **kwargs):
@@ -115,7 +115,7 @@ class PollAnswer(DatedModel, CreatedModel):
         return self.answer_text
 
     @property
-    def points(self):
+    def points(self) -> int:
         return sum(self.votes.values_list("points", flat=True))
 
 

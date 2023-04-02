@@ -22,13 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "1") == "1"  # astuce pour "parser" un boolean d'.env
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.getenv("SERVER_HOST", "*")]
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 
 # Application definition
@@ -43,14 +46,15 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django_extensions",
+    "django_filters",
+    "drf_spectacular",
     "core",
     "users",
-    "accounts",
+    "account",
     "features",
     "fictions",
     "colls",
     "reviews",
-    "texts",
     "polls",
     "selections",
     "news",
@@ -63,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -70,14 +75,25 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 20,
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CurrentPagePagination',
+    'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    "ENUM_NAME_OVERRIDES": {
+        "NewsStatusEnum": "news.models.NewsArticle.Status",
+        "FictionStatusEnum": "fictions.models.Fiction.Status",
+        "ChallengeStatusEnum": "fictions.models.Challenge.Status",
+        "ReportStatusEnum": "reports.models.Report.Status",
+        "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
+    }
 }
 
 SIMPLE_JWT = {
@@ -106,7 +122,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'  # Django 3.2
 
 
@@ -115,8 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'  # Django 3.2
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
+        'NAME': os.getenv("DB_NAME", BASE_DIR / "db.sqlite3"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
     },
 }
 
@@ -139,11 +158,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    "asyncio": {
+        "handers": None,
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
 TIME_ZONE = 'UTC'
 
@@ -160,12 +194,23 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_ROOT = os.getenv("MEDIA_ROOT", BASE_DIR / 'media/')
+STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 AUTH_USER_MODEL = 'users.User'
 
-# IDs hardcodées
-MODERATION_ACCOUNT_ID = 0
+# HARDCODAGE
+MODERATION_ACCOUNT = {
+    "pk": 0,
+    "nickname": "La modération",
+    "email": "moderation@hpf.fr",
+}
+ANONYMOUS_ACCOUNT = {
+    "pk": -1,
+    "nickname": "",
+    "email": "anonyme@hpf.fr",
+}
+
 BANNER_MAX_SIZE = (468, 60)  # (largeur, hauteur)
 MAX_POLL_ANSWERS = 5
 MEMBERS_MAX_REVIEW_DRAFTS = 2

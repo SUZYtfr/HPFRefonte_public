@@ -8,12 +8,12 @@ from core.models import DatedModel, CreatedModel, AuthoredModel
 class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     """Modèle d'actualité"""
 
-    class NewsStatus(models.IntegerChoices):
+    class Status(models.IntegerChoices):
         PENDING = (1, "En attente")
         DRAFT = (2, "À publier")
         PUBLISHED = (3, "Publiée")
 
-    class NewsCategory(models.IntegerChoices):
+    class Category(models.IntegerChoices):
         UNDEFINED = (0, "Actualité")
         ASSEMBLY = (1, "Assemblée générale")
         ASSOCIATION = (2, "Association")
@@ -25,9 +25,9 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     post_date = models.DateTimeField(verbose_name="parution", default=None, null=True, blank=True)
     title = models.CharField(verbose_name="titre", max_length=255)
     content = models.TextField(verbose_name="contenu")
-    category = models.SmallIntegerField(verbose_name="catégorie", choices=NewsCategory.choices)
-    status = models.SmallIntegerField(verbose_name="état", choices=NewsStatus.choices,
-                                      default=NewsStatus.PENDING)
+    category = models.SmallIntegerField(verbose_name="catégorie", choices=Category.choices)
+    status = models.SmallIntegerField(verbose_name="état", choices=Status.choices,
+                                      default=Status.PENDING)
 
     teams = models.ManyToManyField(to=Group, related_name="authored_newsarticles")
 
@@ -38,7 +38,7 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
         return self.title
 
     def post(self, modification_user):
-        self.status = self.NewsStatus.PUBLISHED
+        self.status = self.Status.PUBLISHED
         self.post_date = timezone.now()
         self.modification_user = modification_user
         self.save()
@@ -50,7 +50,7 @@ class NewsComment(DatedModel, CreatedModel):
     text = models.TextField(verbose_name="texte")
     newsarticle = models.ForeignKey(to=NewsArticle, verbose_name="actualité", related_name="comments",
                                     on_delete=models.CASCADE,
-                                    limit_choices_to={"status": NewsArticle.NewsStatus.PUBLISHED},)
+                                    limit_choices_to={"status": NewsArticle.Status.PUBLISHED}, )
 
     class Meta:
         verbose_name = "commentaire"

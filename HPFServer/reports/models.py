@@ -10,7 +10,7 @@ class Report(models.Model):
     class Meta:
         verbose_name = "signalement"
 
-    class ReportStatusChoices(models.TextChoices):
+    class Status(models.TextChoices):
         OPEN = ("ouvert", "Ouvert",)
         PENDING = ("traité", "En cours de traitement",)
         CLOSE = ("clôt", "Clôt",)
@@ -24,6 +24,6 @@ class Report(models.Model):
     datetime = models.DateTimeField(verbose_name="horodatage", editable=False)
     argument = models.TextField(verbose_name="justification")
 
-    status = models.CharField(max_length=10, verbose_name="statut", choices=ReportStatusChoices.choices, default=ReportStatusChoices.OPEN)
+    status = models.CharField(max_length=10, verbose_name="statut", choices=Status.choices, default=Status.OPEN)
     comment = models.TextField(verbose_name="commentaire", blank=True)
 

@@ -1,12 +1,9 @@
-from rest_framework.serializers import *
-from rest_framework.exceptions import ValidationError
-
-from django.utils import timezone
+from rest_framework import serializers, exceptions
 
 from .models import Feature, Category
 
 
-class FeatureBaseSerializer(ModelSerializer):
+class FeatureBaseSerializer(serializers.ModelSerializer):
     """Base pour les sérialiseurs de caractéristiques"""
 
     class Meta:
@@ -14,29 +11,44 @@ class FeatureBaseSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class FeatureCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = [
+            "id",
+            "name",
+            "category_id",
+        ]
+
+
 class FeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique"""
 
-    is_personal = HiddenField(default=True)
+    is_personal = serializers.HiddenField(default=True)
+    fiction_count = serializers.IntegerField(default=None)
 
     class Meta(FeatureBaseSerializer.Meta):
-        fields = (
+        fields = [
             "id",
             "name",
-            "url",
-            "category",
-            "parent",
+            "category_id",
+            "parent_id",
             "description",
             "is_personal",
-        )
+            "order",
+            "fiction_count",
+        ]
         extra_kwargs = {
             "description": {"read_only": True},
-            "category": {"queryset": Category.open.all()},
-            "parent": {"queryset": Feature.allowed.all(),
+            "category": {"queryset": Category.objects.open()},
+            "parent": {"queryset": Feature.objects.allowed(),
                        "allow_null": True,
                        "initial": ""},
-            "url": {"view_name": "features:feature-detail"},
+            "order": {"source": "_order"},
         }
+
+    def get_fiction_count(self, obj):
+        return obj.fiction_set.count()
 
     def get_or_create(self, validated_data):
         """Crée ou retourne la caractéristique correspondant à un nom
@@ -68,7 +80,7 @@ class FeatureSerializer(FeatureBaseSerializer):
 class StaffFeatureSerializer(FeatureBaseSerializer):
     """Sérialiseur de caractéristique pour les modérateurs"""
 
-    url = HyperlinkedIdentityField(view_name="features:feature-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="features:feature-detail")
 
     class Meta(FeatureBaseSerializer.Meta):
         pass
@@ -89,40 +101,45 @@ class StaffFeatureSerializer(FeatureBaseSerializer):
         return super().save(**kwargs)
 
 
-class StaffCategorySerializer(ModelSerializer):
+class StaffCategorySerializer(serializers.ModelSerializer):
     """Sérialiseur de catégorie pour les modérateurs"""
 
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "min_limit",
+            "max_limit",
+        ]
 
     def validate(self, attrs):
         if attrs["max_limit"] and (attrs["min_limit"] > attrs["max_limit"]):
-            raise ValidationError({
+            raise exceptions.ValidationError({
                 "min_limit": "Le minimum ne peut pas être plus grand que le maximum.",
                 "max_limit": "Le minimum ne peut pas être plus grand que le maximum."
             })
         return attrs
 
 
-class StaffFeatureOrderSerializer(ModelSerializer):
+class StaffFeatureOrderSerializer(serializers.ModelSerializer):
     """Sérialiseur d'ordre de caractéristiques pour les modérateurs"""
 
     class Meta:
         model = Category
         fields = ("order",)
 
-    order = ListField(
-        child=IntegerField(),
+    order = serializers.ListField(
+        child=serializers.IntegerField(),
         source="get_feature_order",
     )
 
     def validate_order(self, value):
         if not len(set(value)) == len(value):
-            raise ValidationError("Des ID de caractéristiques sont en double.")
+            raise serializers.ValidationError("Des ID de caractéristiques sont en double.")
 
         if not set(self.instance.get_feature_order()) == set(value):
-            raise ValidationError("Les ID de caractéristiques passés ne correspondent pas aux ID existants.")
+            raise serializers.ValidationError("Les ID de caractéristiques passés ne correspondent pas aux ID existants.")
 
         return value
 

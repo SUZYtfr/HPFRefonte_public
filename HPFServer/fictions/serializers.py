@@ -1,80 +1,150 @@
-from rest_framework.serializers import *
-from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import get_object_or_404
+from rest_framework import serializers, exceptions
+from drf_extra_fields import relations as extra_relations
 
 from users.models import User
-
 from .models import Fiction, Chapter, Beta
 from features.models import Category, Feature
-
+from users.serializers import UserCardSerializer
+from colls.models import Collection
+from core.serializers import ListableModelSerializer
 from core.text_functions import read_text_file
-
+from reviews.models import Review
 
 # ALLOWED_EXTENSIONS = ["txt", "doc", "docx", "odt"]
 ALLOWED_EXTENSIONS = ["txt", "docx"]
 
 
-class FeaturesChoiceRelatedField(RelatedField):
-    """Champ de choix de caractéristiques"""
-
-    queryset = Feature.allowed.all()
-
-    def to_representation(self, value):
-        """Renvoie l'ID de la caractéristique pour sérialisation"""
-
-        return value.pk
-
-    def get_choices(self, cutoff=None):
-        """Renvoie les caractéristiques groupées par catégories"""
-
-        return {
-            category.name:
-                {feature.pk: feature.name for feature in category.features.all()}
-            for category in Category.objects.all()
-        }
-
-    def to_internal_value(self, data):
-        """Renvoie la caractéristique correspondant à l'ID pour désérialisation"""
-
-        try:
-            feature = self.get_queryset().get(pk=data)
-        except ObjectDoesNotExist:
-            raise ValidationError("La caractéristique avec l'ID {} n'a pas été trouvée.".format(data))
-
-        return feature
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = [
+            "id",
+            "title",
+        ]
 
 
-class FictionSerializer(ModelSerializer):
-    """Sérialiseur privé de fiction"""
-
-    read_count = IntegerField(read_only=True)
-    word_count = IntegerField(read_only=True)
+class FictionListSerializer(serializers.ModelSerializer):
+    features = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="features.serializers.FeatureCardSerializer",
+    )
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
+    authors = serializers.SerializerMethodField()
+    series = CollectionSerializer(read_only=True, many=True, source="collections")
 
     class Meta:
         model = Fiction
-        fields = "__all__"
-        read_only_fields = (
+        fields = [
+            "id",
+            "title",
+            "creation_user",
+            "creation_date",
+            "last_update_date",
+            "mean",
+            "summary",
+            "storynote",
+            "status",
+            "read_count",
+            "word_count",
+            "collection_count",
+            "featured",
+            "features",
             "authors",
+            "series",
+            "chapter_count",
+            "review_count",
+        ]
+
+    def get_authors(self, obj):
+        author = obj.creation_user
+        return [UserCardSerializer(instance=author).data]
+
+
+class FictionSerializer(ListableModelSerializer):
+    """Sérialiseur privé de fiction"""
+
+    features = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="features.serializers.FeatureCardSerializer",
+    )
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
+    authors = serializers.SerializerMethodField()
+    series = extra_relations.PresentablePrimaryKeyRelatedField(
+        source="collections",
+        many=True,
+        read_only=True,
+        presentation_serializer="colls.serializers.CollectionCardSerializer",
+    )
+    member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
+    anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
+
+    class Meta:
+        model = Fiction
+        fields = [
+            "id",
+            "title",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+            "coauthors",
+            "last_update_date",
+            "mean",
+            "summary",
+            "storynote",
+            "status",
+            "read_count",
+            "word_count",
+            "collection_count",
+            "featured",
+            "features",
+            "authors",
+            "series",
+            "chapter_count",
+            "review_count",
+            "member_review_policy",
+            "anonymous_review_policy",
+        ]
+        read_only_fields = (
+            "coauthors",
             "word_count",
             "mean",
             "status",
             "read_count",
             "chapters",
+            "featured",
         )
-        extra_kwargs = {
-            "featured": {"read_only": True}
-        }
+        list_serializer_child_class = FictionListSerializer
 
-    features = FeaturesChoiceRelatedField(
-        many=True,
-    )
+    def get_authors(self, obj):
+        author = obj.creation_user
+        return [UserCardSerializer(instance=author).data]
 
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:fictions:object-review-list",
-        lookup_field="pk",
-        lookup_url_kwarg="object_pk",
-    )
+    # def get_series(self, obj):
+    #     collections = Collection.objects.filter(
+    #         chapters__fiction=obj,
+    #         chapters__validation_status=Chapter.ValidationStage.PUBLISHED,
+    #     ).distinct()
+    #     return CollectionSerializer(collections, many=True).data
+
+
+    # features = serializers.FeaturesChoiceRelatedField(
+    #     many=True,
+    # )
+
+    # reviews_url = serializers.HyperlinkedIdentityField(
+    #     view_name="reviews:fictions:object-review-list",
+    #     lookup_field="pk",
+    #     lookup_url_kwarg="object_pk",
+    # )
 
     def validate_features(self, value):
         """Valide le nombre de caractéristiques pour chaque catégorie"""
@@ -101,63 +171,101 @@ class FictionSerializer(ModelSerializer):
             above = f"Sélectionner {', '.join(result['above_maximum'])} en moins."
 
         if below or above:
-            raise ValidationError(" ".join([below, above]))
+            raise exceptions.ValidationError(" ".join([below, above]))
 
         return value
 
 
-class FictionCardSerializer(FictionSerializer):
+class FictionCardSerializer(serializers.ModelSerializer):
     """Sérialiseur de carte de fiction"""
 
-    class Meta(FictionSerializer.Meta):
-        fields = (
+    class Meta:
+        model = Fiction
+        fields = [
             "id",
             "title",
-        )
+        ]
 
 
-class FictionExtraAuthorSerializer(Serializer):
+class FictionExtraAuthorSerializer(serializers.Serializer):
     """Sérialiseur d'ajout d'auteur à une fiction"""
 
-    class AuthorNicknameField(CharField):
+    class AuthorNicknameField(serializers.CharField):
         def to_internal_value(self, data):
             try:
                 user = User.objects.get(nickname=data)
             except User.DoesNotExist:
-                raise ValidationError(f"L'utilisateur {data} n'a pas été trouvé.")
+                raise exceptions.ValidationError(f"L'utilisateur {data} n'a pas été trouvé.")
 
             return user
 
     author_nickname = AuthorNicknameField(write_only=True)
-    authors = StringRelatedField(many=True, read_only=True)
+    authors = serializers.StringRelatedField(many=True, read_only=True)
 
     def update(self, instance, validated_data):
         instance.authors.add(validated_data["author_nickname"])
         return instance
 
 
-class ChapterSerializer(ModelSerializer):
+class ChapterListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = [
+            "id",
+            "title",
+        ]
+
+
+class ChapterSerializer(ListableModelSerializer):
     """Sérialiseur de chapitre"""
 
-    order = SerializerMethodField()
-
-    reviews_url = HyperlinkedIdentityField(
-        view_name="reviews:chapters:object-review-list",
-        lookup_field="pk",
-        lookup_url_kwarg="object_pk",
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
     )
+    order = serializers.SerializerMethodField()
+    # mean = serializers.IntegerField(default=None)
 
-    text_file_upload = FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
-        FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
-                               message="L'extension de fichier %(extension)s n'est pas pris en charge. "
-                                       "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
-    ])
+    # text_file_upload = serializers.FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
+    #     FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
+    #                            message="L'extension de fichier %(extension)s n'est pas pris en charge. "
+    #                                    "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
+    # ])
 
-    text = CharField(allow_blank=True, style={'base_template': 'textarea.html'})
+    # text = serializers.CharField(allow_blank=True, style={'base_template': 'textarea.html'})
+
+    member_review_policy = serializers.IntegerField(
+        read_only=True,
+        source="fiction.creation_user.preferences.member_review_policy",
+    )
+    anonymous_review_policy = serializers.IntegerField(
+        read_only=True,
+        source="fiction.creation_user.preferences.anonymous_review_policy",
+    )
 
     class Meta:
         model = Chapter
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "fiction",
+            "creation_user",
+            "creation_date",
+            "modification_user",
+            "modification_date",
+            "startnote",
+            "endnote",
+            "order",
+            "validation_status",
+            "word_count",
+            "read_count",
+            "review_count",
+            "mean",
+            "poll",
+            # "reviews_url",
+            "member_review_policy",
+            "anonymous_review_policy",
+        ]
         read_only_fields = (
             "order",
             "validation_status",
@@ -165,21 +273,22 @@ class ChapterSerializer(ModelSerializer):
             "read_count",
             "mean",
             "poll",
-            "reviews_url",
+            # "reviews_url",
             "fiction",
         )
+        list_serializer_child_class = ChapterListSerializer
 
     def validate_text_file_upload(self, value):
         if value:
             try:
                 return read_text_file(value)
             except Exception as e:
-                raise ValidationError(e)
+                raise exceptions.ValidationError(e)
 
     def validate(self, attrs):
         if not attrs.get("text"):
             if not attrs.get("text_file_upload"):
-                raise ValidationError("Le texte du chapitre doit être passé.")
+                raise exceptions.ValidationError("Le texte du chapitre doit être passé.")
             attrs.update({"text": attrs.get("text_file_upload")})
         attrs.pop("text_file_upload")
         return attrs
@@ -204,7 +313,7 @@ class ChapterSerializer(ModelSerializer):
         )
         return instance
 
-    def get_order(self, obj):
+    def get_order(self, obj) -> int:
         return obj._order + 1  # index 0 -> 1
 
 
@@ -212,31 +321,31 @@ class ChapterCardSerializer(ChapterSerializer):
     """Sérialiseur de carte de chapitre"""
 
     class Meta(ChapterSerializer.Meta):
-        fields = (
+        fields = [
             "id",
             "title",
             "order",
-        )
+        ]
 
 
-class FictionChapterOrderSerializer(ModelSerializer):
+class FictionChapterOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Fiction
         fields = ("order",)
 
-    order = ListField(
-        child=IntegerField(),
+    order = serializers.ListField(
+        child=serializers.IntegerField(),
         source="get_chapter_order",
     )
 
     def validate_order(self, value):
 
         if not len(set(value)) == len(value):
-            raise ValidationError("Des ID de chapitres sont en double.")
+            raise exceptions.ValidationError("Des ID de chapitres sont en double.")
 
         if not set(self.instance.get_chapter_order()) == set(value):
-            raise ValidationError("Les ID de chapitres passés ne correspondent pas aux ID existants.")
+            raise exceptions.ValidationError("Les ID de chapitres passés ne correspondent pas aux ID existants.")
 
         return value
 
@@ -244,10 +353,10 @@ class FictionChapterOrderSerializer(ModelSerializer):
         self.instance.set_chapter_order(self.validated_data["get_chapter_order"])
 
 
-class BetaSerializer(ModelSerializer):
+class BetaSerializer(serializers.ModelSerializer):
     """Sérialiseur de bêtatage"""
 
-    class ChapterField(PrimaryKeyRelatedField):
+    class ChapterField(serializers.PrimaryKeyRelatedField):
         """Champ de choix de chapitres pour le bêtatage"""
 
         def get_queryset(self):
@@ -258,8 +367,8 @@ class BetaSerializer(ModelSerializer):
             queryset = Chapter.objects.filter(
                 authors=self.context["request"].user,
                 validation_status__in=[
-                    Chapter.ChapterValidationStage.DRAFT,
-                    Chapter.ChapterValidationStage.BETA_COMPLETE,
+                    Chapter.ValidationStage.DRAFT,
+                    Chapter.ValidationStage.BETA_COMPLETE,
                 ]
             ).exclude(
                 beta__stage__in=[
@@ -304,7 +413,7 @@ STAGE_TO_CHOICES_AND_INITIAL_DICT = {
 }
 
 
-class BetaActionSerializer(ModelSerializer):
+class BetaActionSerializer(serializers.ModelSerializer):
     """Sérialiseur d'actions de bêtatage"""
 
     def __init__(self, *args, **kwargs):
@@ -314,7 +423,7 @@ class BetaActionSerializer(ModelSerializer):
             on laisse le sérialiseur s'initialiser normalement, puis une fois l'instance passée, on modifie
             les choix (et la valeur initiale) selon cette instance."""
 
-        super(ModelSerializer, self).__init__(*args, **kwargs)
+        super(serializers.ModelSerializer, self).__init__(*args, **kwargs)
         if self.instance:
             corres = STAGE_TO_CHOICES_AND_INITIAL_DICT.get(self.instance.stage, None)
             if corres:
@@ -323,7 +432,7 @@ class BetaActionSerializer(ModelSerializer):
             if self.instance.stage == Beta.BetaStage.REQUESTED:
                 self.fields["text"].read_only = True
 
-    class TextField(CharField):
+    class TextField(serializers.CharField):
         def to_internal_value(self, data):
             return data
 
@@ -343,13 +452,13 @@ class BetaActionSerializer(ModelSerializer):
             if text:
                 instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
             else:
-                instance.chapter.validation_status = Chapter.ChapterValidationStage.BETA_ONGOING
+                instance.chapter.validation_status = Chapter.ValidationStage.BETA_ONGOING
                 instance.chapter.modification_user = self.context["request"].user
         elif stage == Beta.BetaStage.CORRECTED:
             instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
             instance.chapter.modification_user = self.context["request"].user
         elif stage == Beta.BetaStage.COMPLETED:
-            instance.chapter.validation_status = Chapter.ChapterValidationStage.BETA_COMPLETE
+            instance.chapter.validation_status = Chapter.ValidationStage.BETA_COMPLETE
             instance.chapter.modification_user = self.context["request"].user
         instance.chapter.save()
 

@@ -47,7 +47,7 @@ class TestsBetaActions(APITestCase):
         self.chapter.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.chapter.validation_status, Chapter.ChapterValidationStage.BETA_ONGOING.value)
+        self.assertEqual(self.chapter.validation_status, Chapter.ValidationStage.BETA_ONGOING.value)
 
     def test_beta_complete_changes_chapter_status_to_beta_complete(self):
         """Teste que la complétion du bêtatage par l'auteur modifie le statut du chapitre"""
@@ -70,7 +70,7 @@ class TestsBetaActions(APITestCase):
         self.chapter.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.chapter.validation_status, Chapter.ChapterValidationStage.BETA_COMPLETE.value)
+        self.assertEqual(self.chapter.validation_status, Chapter.ValidationStage.BETA_COMPLETE.value)
 
     def test_saved_text_version_during_beta_updates_chapter_wordcount(self):
         """Teste que le compte de mot du chapitre est mis à jour à la sauvegarde d'une nouvelle version du texte"""
@@ -151,12 +151,12 @@ class TestsBetaSerializers(APITestCase):
 
         beta_ongoing_chapter = sample_chapter(
             creation_user=self.author,
-            validation_status=Chapter.ChapterValidationStage.BETA_ONGOING,
+            validation_status=Chapter.ValidationStage.BETA_ONGOING,
         )
 
         published_chapter = sample_chapter(
             creation_user=self.author,
-            validation_status=Chapter.ChapterValidationStage.PUBLISHED,
+            validation_status=Chapter.ValidationStage.PUBLISHED,
         )
 
         self.client.force_authenticate(self.author)

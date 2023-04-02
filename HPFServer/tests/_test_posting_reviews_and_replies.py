@@ -7,7 +7,7 @@ from reviews.models import Review, ReviewReply
 
 from reviews.models import MIN_GRADING_VALUE, MAX_GRADING_VALUE
 
-from core.models import get_moderation_account
+from core.utils import get_moderation_account
 
 from tests.samples import *
 

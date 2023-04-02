@@ -1,46 +1,67 @@
 from django.db import models
 from ordered_model.models import OrderedModel
 
-from core.models import DatedModel, CreatedModel, AuthoredModel, FeaturedModel, ReviewableModel, FullCleanModel
+from core.models import DatedModel, CreatedModel, AuthoredModel, FeaturedModel
 
 
-class CollectionManager(models.Manager):
-    """Gestionnaire de séries"""
-
-    def create(self, creation_user, **extra_fields):
-
-        collection = self.model(
-            creation_user=creation_user,
-            **extra_fields
-        )
-
-        collection.save()
-
-        # Sauvegarde > ID Série > Possibilité d'assignation d'autorat
-        collection.authors.add(creation_user)
-
-        return collection
-
-
-class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, ReviewableModel, FullCleanModel):
+class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
     """Modèle de série"""
 
-    class CollectionAccess(models.IntegerChoices):
+    class Access(models.IntegerChoices):
         CLOSED = (1, "Fermée")
         MODERATED = (2, "Modérée")
         OPEN = (3, "Ouverte")
 
-    title = models.CharField(verbose_name="titre", max_length=200)
-    summary = models.TextField(verbose_name="résumé")
-    status = models.SmallIntegerField(verbose_name="état",
-                                      choices=CollectionAccess.choices,
-                                      default=CollectionAccess.CLOSED)
+    title = models.CharField(
+        verbose_name="titre",
+        max_length=200,
+    )
+    summary = models.TextField(
+        verbose_name="résumé",
+    )
+    status = models.SmallIntegerField(
+        verbose_name="état",
+        choices=Access.choices,
+        default=Access.CLOSED,
+    )
+    parent = models.ForeignKey(
+        verbose_name="série parente",
+        to="self",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="subcollections",
+    )
 
-    chapters = models.ManyToManyField(to="fictions.Chapter", verbose_name="chapitres",
-                                      through="ChapterCollectionPosition",
-                                      related_name="collections")
+    fictions = models.ManyToManyField(
+        verbose_name="fictions",
+        to="fictions.Fiction",
+        through="FictionCollectionPosition",
+        related_name="collections",
+    )
 
-    objects = CollectionManager()
+    @property
+    def published_reviews(self):
+        return self.reviews.filter(draft=False)
+
+    @property
+    def mean(self) -> float:
+        """Renvoie la moyenne des reviews publiées"""
+
+        all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
+
+        if all_gradings:  # pour éviter une division par 0
+            return sum(filter(None, all_gradings)) / len(all_gradings)
+
+    @property
+    def review_count(self) -> int:
+        """Renvoie le nombre de reviews publiées"""
+        return self.published_reviews.count()
+
+    @property
+    def fiction_count(self) -> int:
+        """Renvoie le compte de fictions"""
+
+        return self.fictions.count()
 
     class Meta:
         verbose_name = "série"
@@ -49,18 +70,34 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, FeaturedModel, Reviewa
         return self.title
 
 
-class ChapterCollectionPosition(OrderedModel):
+class FictionCollectionPosition(OrderedModel):
 
-    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
-    chapter = models.ForeignKey("fictions.Chapter", on_delete=models.CASCADE)
+    collection = models.ForeignKey(
+        to=Collection,
+        on_delete=models.CASCADE,
+    )
+    fiction = models.ForeignKey(
+        to="fictions.Fiction",
+        on_delete=models.CASCADE,
+    )
 
     order_with_respect_to = "collection"
 
     class Meta:
         ordering = ["collection", "order"]
+        constraints = [
+            models.UniqueConstraint(
+                name="UQ_colls_fictioncollectionposition_collection_fiction",
+                fields=["collection", "fiction"],
+            ),
+            models.UniqueConstraint(
+                name="UQ_colls_fictioncollectionposition_collection_order",
+                fields=["collection", "fiction"],
+            )
+        ]
 
     def __repr__(self):
-        return self.collection.title[:15] + " <-> " + self.chapter.title[:15]
+        return self.collection.title[:15] + " <-> " + self.fiction.title[:15]
 
     def __str__(self):
         return self.__repr__()

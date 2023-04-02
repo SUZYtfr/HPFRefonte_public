@@ -1,11 +1,13 @@
 from django.utils import timezone
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import viewsets, decorators, response, status, permissions
 
-from .serializers import FeatureSerializer, StaffFeatureSerializer, StaffCategorySerializer, StaffFeatureOrderSerializer
+from .serializers import (
+    FeatureSerializer,
+    StaffFeatureSerializer,
+    StaffCategorySerializer,
+    StaffFeatureOrderSerializer,
+)
 from .models import Feature, Category
 from core.permissions import DjangoPermissionOrReadOnly
 
@@ -21,29 +23,35 @@ class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
         return False
 
 
-class FeatureViewSet(ModelViewSet):
+class FeatureViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = FeatureSerializer
-    queryset = Feature.allowed.order_by("category")
-    search_fields = ("name",)
+    queryset = Feature.objects.allowed().fiction_counts().order_by("-fiction_count")
+    search_fields = ["name"]
 
     def get_queryset(self):
         """Détermine la liste de caractéristiques à afficher"""
 
-        if self.request.user.is_staff:
+        if self.request.user.is_staff:  # TODO - features.view_features
             return Feature.objects.order_by("category")
         return self.queryset
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
 
-        if self.request.user.is_staff:
+        if self.request.user.is_staff:  # TODO - features.view_features
             return StaffFeatureSerializer
         return self.serializer_class
 
-    @action(methods=["POST"], detail=False, url_name="upsert", name="Feature create or retrieve", url_path="upsert")
+    @decorators.action(
+        detail=False,
+        methods=["POST"],
+        url_name="upsert",
+        name="Feature create or retrieve",
+        url_path="upsert",
+    )
     def create_or_retrieve(self, request, *args, **kwargs):
         """Traite la requête de création ou récupération de la caractéristique"""
 
@@ -52,7 +60,7 @@ class FeatureViewSet(ModelViewSet):
         created = self.perform_create_or_retrieve(serializer)
         headers = self.get_success_headers(serializer.data)
         feature_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        return Response(serializer.data, status=feature_status, headers=headers)
+        return response.Response(serializer.data, status=feature_status, headers=headers)
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user, creation_date=timezone.now())
@@ -71,7 +79,7 @@ class FeatureViewSet(ModelViewSet):
         return created
 
 
-class CategoryViewSet(ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     """Ensemble de vues de modération pour les catégories"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
@@ -84,12 +92,17 @@ class CategoryViewSet(ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
-    @action(methods=["GET", "PUT"], detail=True, serializer_class=StaffFeatureOrderSerializer, url_name="feature-order")
+    @decorators.action(
+        detail=True,
+        methods=["GET", "PUT"],
+        serializer_class=StaffFeatureOrderSerializer,
+        url_name="feature-order",
+    )
     def order(self, request, *args, **kwargs):
         if request.method == "GET":
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return response.Response(serializer.data)
         elif request.method == "PUT":
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
@@ -102,4 +115,4 @@ class CategoryViewSet(ModelViewSet):
                 # forcibly invalidate the prefetch cache on the instance.
                 instance._prefetched_objects_cache = {}
 
-            return Response(serializer.data)
+            return response.Response(serializer.data)

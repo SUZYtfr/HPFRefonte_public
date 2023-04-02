@@ -115,7 +115,7 @@ class TestsChapterValidation(APITestCase):
         self.author.is_premium = False
         self.author.save()
 
-        self.chapter.validation_status = Chapter.ChapterValidationStage.DRAFT
+        self.chapter.validation_status = Chapter.ValidationStage.DRAFT
         self.chapter.save()
 
         self.client.force_authenticate(self.author)
@@ -128,7 +128,7 @@ class TestsChapterValidation(APITestCase):
         self.chapter.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.chapter.validation_status, Chapter.ChapterValidationStage.PENDING)
+        self.assertEqual(self.chapter.validation_status, Chapter.ValidationStage.PENDING)
 
     def test_premium_member_skips_validation(self):
         """Teste qu'un adhérent publie automatiquement son chapitre"""
@@ -141,12 +141,12 @@ class TestsChapterValidation(APITestCase):
         self.chapter.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.chapter.validation_status, Chapter.ChapterValidationStage.PUBLISHED)
+        self.assertEqual(self.chapter.validation_status, Chapter.ValidationStage.PUBLISHED)
 
     def test_chapter_validation_while_beta_ongoing_fails(self):
         """Teste que la validation ne peut pas être demandée si le chapitre est en cours de bêtatage"""
 
-        self.chapter.validation_status = Chapter.ChapterValidationStage.BETA_ONGOING
+        self.chapter.validation_status = Chapter.ValidationStage.BETA_ONGOING
         self.chapter.save()
 
         res = self.client.put(generate_mychapter_validate_url(self.chapter.id))
@@ -157,13 +157,13 @@ class TestsChapterValidation(APITestCase):
         """Teste plusieurs scénarios de manipulation d'URL ou de requêtes HTML"""
 
         random_fiction = sample_fiction()
-        random_chapter = sample_chapter(validation_status=Chapter.ChapterValidationStage.DRAFT, fiction=random_fiction)
+        random_chapter = sample_chapter(validation_status=Chapter.ValidationStage.DRAFT, fiction=random_fiction)
 
         res = self.client.put(generate_mychapter_validate_url(random_chapter.id))
         random_chapter.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(random_chapter.validation_status, Chapter.ChapterValidationStage.DRAFT)
+        self.assertEqual(random_chapter.validation_status, Chapter.ValidationStage.DRAFT)
 
     def tearDown(self) -> None:
         self.author.fictions.clear()
