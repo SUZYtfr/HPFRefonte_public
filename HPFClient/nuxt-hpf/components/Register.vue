@@ -164,7 +164,7 @@
               <TipTapEditor
                 :placeholder="'Votre description'"
                 :show-footer="false"
-                @change="(value) => (signupForm.bio = value)"
+                @change="(value) => (signupForm.bio = value.content)"
               />
             </div>
           </div>
@@ -186,6 +186,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
+import { ModalsStatesModule } from "@/utils/store-accessor";
 import { signup } from "@/api/users";
 import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
 import TipTapEditor from "@/components/TipTapEditor.vue";
@@ -236,11 +237,11 @@ export default class extends Vue {
   }
 
   get modalActive(): boolean {
-    return this.active;
+    return ModalsStatesModule.registerModalActive;
   }
 
   set modalActive(value) {
-    this.$emit("change", value);
+    ModalsStatesModule.setRegisterModalActive(value);
   }
 
   get form(): VForm {

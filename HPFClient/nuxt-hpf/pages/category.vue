@@ -234,12 +234,4 @@ export default class extends Vue {
 .card-content {
   padding: 0px;
 }
-
-.sub-title {
-  background-color: $primary;
-}
-.sub-title .card-header-title {
-  color: white;
-  text-transform: uppercase;
-}
 </style>

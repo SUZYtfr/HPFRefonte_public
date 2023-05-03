@@ -44,7 +44,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
+import { Component, Vue, Watch } from "nuxt-property-decorator";
+import { ModalsStatesModule } from "@/utils/store-accessor";
 import { login } from "@/api/users";
 import { VForm, OpenToast } from "@/utils/formHelper";
 import { UserLoginData } from "@/types/users";
@@ -53,10 +54,6 @@ import { UserLoginData } from "@/types/users";
   name: "Connexion"
 })
 export default class extends Vue {
-  // #region Props
-  @Prop() private active!: boolean;
-  // #endregion
-
   // #region Data
   public loginForm: UserLoginData = {
     username: "",
@@ -70,16 +67,17 @@ export default class extends Vue {
 
   // #region Computed
   get modalActive(): boolean {
-    return this.active;
+    return ModalsStatesModule.loginModalActive;
   }
 
   set modalActive(value) {
-    this.$emit("change", value);
+    ModalsStatesModule.setLoginModalActive(value);
   }
 
   get form(): VForm {
     return this.$refs.loginForm as VForm;
   }
+
   // #endregion
 
   // #region Watchers

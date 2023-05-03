@@ -33,7 +33,9 @@ export class BasicClass<T> {
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
   public modification_date: Date | null = null;
 
-  constructor(basicClass: T) {
+  constructor()
+
+  constructor(basicClass?: T) {
     Object.assign(this, basicClass); // or set each prop individually
   }
 

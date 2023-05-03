@@ -9,7 +9,7 @@
         <h3 class="h3 is-inline">
           <NuxtLink
             class="pl-0"
-            :to="{ name: 'actualités-id', params: { id: news.news_id } }"
+            :to="{ name: 'actualites-id', params: { id: news.news_id } }"
           >
             {{ news.title }}
           </NuxtLink>
@@ -20,6 +20,8 @@
           size="is-small"
           icon-pack="fas"
           icon-left="comment-alt"
+          tag="nuxt-link"
+          :to="{ name: 'actualites-id', params: { id: news.news_id } }"
         >
           <span class="badge">{{ news.comments?.length ?? 0 }}</span>
         </b-button>

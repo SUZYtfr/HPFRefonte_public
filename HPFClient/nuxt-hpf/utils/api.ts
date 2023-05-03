@@ -108,8 +108,8 @@ export class AxiosWrapper {
           params: params
         });
         const items = data.items;
-        // console.log("dans le get");
-        // console.log(items);
+        console.log("dans le get");
+        console.log(items);
         // console.log(items[0]);
         // console.log(items[0] instanceof type);
         // if (process.client) data.items = this.parseData(type, items, useConstructor);

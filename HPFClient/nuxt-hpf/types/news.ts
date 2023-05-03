@@ -42,7 +42,7 @@ export class CommentData extends BasicClass<CommentData> {
   }
 
   public news_id: number = 0;
-  public author_id: number = 0;
+  public user_id: number = 0;
   public content: string = "";
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })

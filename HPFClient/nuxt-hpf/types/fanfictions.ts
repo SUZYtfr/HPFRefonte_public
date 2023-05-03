@@ -91,7 +91,7 @@ export class ReviewData extends BasicClass<ReviewData> {
 
   public item_id: number = 0;
   public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
-  public author_id: number | null = null;
+  public user_id: number | null = null;
   public group_id: number | null = null;
   public rating: number | null = null;
   public content: string = "";

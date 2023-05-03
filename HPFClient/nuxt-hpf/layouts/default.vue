@@ -29,8 +29,8 @@ import SidebarDebug from "@/components/SidebarDebug.vue";
 export default class extends Vue {}
 </script>
 
-<style lang="scss">
-@import "~/assets/scss/custom.scss";
+<style lang="scss" scoped>
+@import "~/assets/scss/custom_bulma_core.scss";
 
 #container {
   background-color: $primary-light;
@@ -55,6 +55,6 @@ body {
 }
 
 * {
-  //outline: 1px solid #0f0 !important;
+  // outline: 1px solid #0f0 !important;
 }
 </style>

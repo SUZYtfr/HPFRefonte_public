@@ -86,10 +86,10 @@
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="loginModalActive = true">
+              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
                 Se connecter
               </a>
-              <a class="button" @click="registerModalActive = true">
+              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
                 S'inscrire
               </a>
             </div>
@@ -163,7 +163,7 @@
         <b-navbar-item href="#">
           Partenaires
         </b-navbar-item>
-        <b-navbar-item href="#" @click="contactModalActive = true">
+        <b-navbar-item href="#" @click="ModalsStatesModule.setContactModalActive(true)">
           Contact
         </b-navbar-item>
       </template>
@@ -241,10 +241,10 @@
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="loginModalActive = true">
+              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
                 Se connecter
               </a>
-              <a class="button" @click="registerModalActive = true">
+              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
                 S'inscrire
               </a>
             </div>
@@ -261,29 +261,21 @@
       </div>
     </section>
     <!-- Modal de contact -->
-    <Contact
-      :active="contactModalActive"
-      @change="(value) => (contactModalActive = value)"
-    />
+    <Contact />
     <!-- Modal de connexion -->
-    <Login
-      :active="loginModalActive"
-      @change="(value) => (loginModalActive = value)"
-    />
+    <Login />
     <!-- Modal d'inscription -->
-    <Register
-      :active="registerModalActive"
-      @change="(value) => (registerModalActive = value)"
-    />
+    <Register />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from "@/utils/store-accessor";
+import { UserModule, ModalsStatesModule } from "@/utils/store-accessor";
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
+import ModalsStates from "~/store/modules/ModalsStates";
 
 @Component({
   name: "Navbar",
@@ -295,14 +287,16 @@ import Contact from "~/components/Contact.vue";
 })
 export default class extends Vue {
   // #region Data
-  public loginModalActive: boolean = false;
-  public registerModalActive: boolean = false;
-  public contactModalActive: boolean = false;
+
   // #endregion
 
   // #region Computed
   get ConnectedVisibility(): boolean {
     return UserModule.token.length > 0;
+  }
+
+  get ModalsStatesModule(): ModalsStates {
+    return ModalsStatesModule;
   }
   // #endregion
 }

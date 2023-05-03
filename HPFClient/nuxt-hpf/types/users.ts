@@ -72,9 +72,10 @@ export interface UserLoginData {
 
 export class AuthorData extends BasicClass<AuthorData> {
   @Exclude()
-  public get author_id(): number {
+  public get user_id(): number {
     return this.id;
   }
 
   public nickname: string | null = null;
+  public avatar: string | null = null;
 }

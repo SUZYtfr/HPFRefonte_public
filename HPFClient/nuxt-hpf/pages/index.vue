@@ -28,14 +28,12 @@ import { searchFanfictions } from "@/api/fanfictions";
 import { FanfictionModel } from "@/models/fanfictions";
 import { IBasicQuery, SortByEnum } from "@/types/basics";
 import { IFanfictionFilters } from "@/types/fanfictions";
-import News_2 from "@/components/News_2.vue";
 import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
 import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
 import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
 
 @Component({
   components: {
-    News_2,
     FanfictionThumbnail,
     FanfictionThumbnailList,
     NewsThumbnailList
@@ -118,7 +116,7 @@ export default class extends Vue {
     this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).items;
     this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).items;
     // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
-    console.log("Date type: " + ((new Date()) instanceof Date));
+    // console.log("Date type: " + ((new Date()) instanceof Date));
     // console.log("Creation date type: " + (this.fanfictions[0]?.creation_date instanceof Date));
     // console.log("Last update date type: " + (this.fanfictions[0]?.last_update_date instanceof Date));
     // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
@@ -160,13 +158,6 @@ export default class extends Vue {
 <style lang="scss">
 @import "~/assets/scss/custom.scss";
 
-.sub-title {
-  background-color: $primary;
-}
-.sub-title .card-header-title {
-  color: white;
-  text-transform: uppercase;
-}
 .card-content {
   padding: 0px;
 }

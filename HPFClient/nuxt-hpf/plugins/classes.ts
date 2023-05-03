@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
-import { UserData, UserLinkData } from "@/types/users";
+import { UserData, UserLinkData, AuthorData } from "@/types/users";
 import { NewsData, CommentData } from "@/types/news";
 import { FanfictionData, ReviewData, SerieData } from "@/types/fanfictions";
 
@@ -13,6 +13,7 @@ import { FanfictionListType } from "@/types/other";
 
 // Types
 Vue.prototype.UserData = UserData;
+Vue.prototype.AuthorData = AuthorData;
 Vue.prototype.UserLinkData = UserLinkData;
 Vue.prototype.CharacteristicData = CharacteristicData;
 Vue.prototype.CharacteristicTypeData = CharacteristicTypeData;

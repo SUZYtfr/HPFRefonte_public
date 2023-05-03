@@ -260,8 +260,6 @@ export default class extends Vue {
 
   // #region Methods
   private async getCharacteristics(): Promise<void> {
-    // this.characteristics = (await getCharacteristics(null)).items;
-    // this.characteristics_types = (await getCharacteristicsTypes()).items;
     if (
       ConfigModule.characteristicTypes.length === 0 ||
       ConfigModule.characteristics.length === 0
@@ -269,9 +267,7 @@ export default class extends Vue {
       await ConfigModule.LoadConfig();
     }
     this.characteristics = ConfigModule.characteristics;
-    console.log("CharacteristicModel: " + (this.characteristics[0] instanceof CharacteristicModel));
     this.characteristics_types = ConfigModule.characteristicTypes;
-    console.log("CharacteristicTypeModel: " + (this.characteristics_types[0] instanceof CharacteristicTypeModel));
   }
 
   public sliderCustomFormatter(sliderValue: number): string {
@@ -350,12 +346,6 @@ export default class extends Vue {
 
 .card {
   overflow: hidden;
-}
-
-.card-header-title {
-  color: white;
-  text-transform: uppercase;
-  background-color: $primary;
 }
 
 .card-content {

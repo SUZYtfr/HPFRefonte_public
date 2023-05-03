@@ -2,9 +2,9 @@
   <div style="height: 100%;">
     <!-- Editor -->
     <div
+      v-if="editor != null"
       id="editor"
       class="is-flex is-flex-direction-column is-justify-content-flex-start"
-      v-if="editor != null"
     >
       <!-- Toolbar -->
       <div
@@ -24,8 +24,8 @@
           icon-pack="fas"
           icon-left="bold"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
-          @click="editor.chain().focus().toggleBold().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleBold().run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -33,8 +33,8 @@
           icon-pack="fas"
           icon-left="italic"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
-          @click="editor.chain().focus().toggleItalic().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleItalic().run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -42,8 +42,8 @@
           icon-pack="fas"
           icon-left="underline"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
-          @click="editor.chain().focus().toggleUnderline().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleUnderline().run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -51,8 +51,8 @@
           icon-pack="fas"
           icon-left="strikethrough"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
-          @click="editor.chain().focus().toggleStrike().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleStrike().run()"
+        />
         <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -63,8 +63,8 @@
           icon-pack="fas"
           icon-left="align-left"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
-          @click="editor.chain().focus().setTextAlign('left').run()"
-        ></b-button>
+          @click="editor?.chain().focus().setTextAlign('left').run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -74,8 +74,8 @@
           :class="{
             'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
           }"
-          @click="editor.chain().focus().setTextAlign('center').run()"
-        ></b-button>
+          @click="editor?.chain().focus().setTextAlign('center').run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -85,8 +85,8 @@
           :class="{
             'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
           }"
-          @click="editor.chain().focus().setTextAlign('right').run()"
-        ></b-button>
+          @click="editor?.chain().focus().setTextAlign('right').run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -96,8 +96,8 @@
           :class="{
             'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
           }"
-          @click="editor.chain().focus().setTextAlign('justify').run()"
-        ></b-button>
+          @click="editor?.chain().focus().setTextAlign('justify').run()"
+        />
         <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -107,16 +107,16 @@
           size="is-small"
           icon-pack="fas"
           icon-left="indent"
-          @click="editor.chain().focus().indent().run()"
-        ></b-button>
+          @click="editor?.chain().focus().indent().run()"
+        />
         <b-button
           type="is-primary"
           outlined
           size="is-small"
           icon-pack="fas"
           icon-left="outdent"
-          @click="editor.chain().focus().outdent().run()"
-        ></b-button>
+          @click="editor?.chain().focus().outdent().run()"
+        />
         <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -127,8 +127,8 @@
           icon-pack="fas"
           icon-left="list-ul"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
-          @click="editor.chain().focus().toggleBulletList().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleBulletList().run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -136,8 +136,8 @@
           icon-pack="fas"
           icon-left="list-ol"
           :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
-          @click="editor.chain().focus().toggleOrderedList().run()"
-        ></b-button>
+          @click="editor?.chain().focus().toggleOrderedList().run()"
+        />
         <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -148,8 +148,8 @@
           icon-pack="fas"
           icon-left="undo"
           :disabled="!editorFunctionsActiveStatuses.undo"
-          @click="editor.chain().focus().undo().run()"
-        ></b-button>
+          @click="editor?.chain().focus().undo().run()"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -157,8 +157,8 @@
           icon-pack="fas"
           icon-left="redo"
           :disabled="!editorFunctionsActiveStatuses.redo"
-          @click="editor.chain().focus().redo().run()"
-        ></b-button>
+          @click="editor?.chain().focus().redo().run()"
+        />
         <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -181,7 +181,7 @@
             aria-role="listitem"
           >
             <div class="media" @click="toggleStyle(menu.action)">
-              <b-icon class="media-left" :icon="menu.icon"></b-icon>
+              <b-icon class="media-left" :icon="menu.icon" />
               <div class="media-content">
                 <h3>{{ menu.text }}</h3>
               </div>
@@ -210,11 +210,7 @@
             <div
               class="media"
               @click="
-                editor
-                  .chain()
-                  .focus()
-                  .setFontSize(fontSize + 'px')
-                  .run()
+                editor?.chain().focus().setFontSize(fontSize + 'px').run()
               "
             >
               <div class="media-content">
@@ -269,8 +265,8 @@
           size="is-small"
           icon-pack="fas"
           icon-left="image"
-          @click="addHPFImage()"
-        ></b-button>
+          @click="addHPFImage(null, null, null, null)"
+        />
         <b-button
           type="is-primary"
           outlined
@@ -278,15 +274,15 @@
           icon-pack="fas"
           icon-left="link"
           @click="linkEditorModalActive = true"
-        ></b-button>
+        />
         <b-button
           type="is-primary"
           outlined
           size="is-small"
           icon-pack="fas"
           icon-left="grip-lines"
-          @click="editor.chain().focus().setHorizontalRule().run()"
-        ></b-button>
+          @click="editor?.chain().focus().setHorizontalRule().run()"
+        />
         <!-- <div class="py-1">
           <div class="vertical-line" />
         </div>
@@ -305,13 +301,13 @@
       <!-- END: ToolBar -->
 
       <div
+        id="editor-content"
         class="
           is-flex-grow-5
           is-flex
           is-flex-direction-row
           is-justify-content-flex-start
         "
-        id="editor-content"
       >
         <div
           class="
@@ -327,7 +323,7 @@
             id="editor-bubble-menu"
             :editor="editor"
             :tippy-options="{ duration: 100, placement: 'bottom' }"
-            :shouldShow="bubbleMenuShouldShow"
+            :should-show="bubbleMenuShouldShow"
           >
             <b-button
               type="is-primary"
@@ -336,8 +332,8 @@
               icon-pack="fas"
               icon-left="bold"
               :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
-              @click="editor.chain().focus().toggleBold().run()"
-            ></b-button>
+              @click="editor?.chain().focus().toggleBold().run()"
+            />
             <b-button
               type="is-primary"
               outlined
@@ -345,8 +341,8 @@
               icon-pack="fas"
               icon-left="italic"
               :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
-              @click="editor.chain().focus().toggleItalic().run()"
-            ></b-button>
+              @click="editor?.chain().focus().toggleItalic().run()"
+            />
             <b-button
               type="is-primary"
               outlined
@@ -354,8 +350,8 @@
               icon-pack="fas"
               icon-left="underline"
               :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
-              @click="editor.chain().focus().toggleUnderline().run()"
-            ></b-button>
+              @click="editor?.chain().focus().toggleUnderline().run()"
+            />
             <b-button
               type="is-primary"
               outlined
@@ -363,15 +359,17 @@
               icon-pack="fas"
               icon-left="link"
               @click="linkEditorModalActive = true"
-            ></b-button>
+            />
           </bubble-menu>
           <!-- END: Bubble menu -->
 
           <!-- Modal Editor Link -->
-          <div class="editor-modal-container" v-if="linkEditorModalActive">
+          <div v-if="linkEditorModalActive" class="editor-modal-container">
             <div class="editor-modal-card">
               <header class="modal-card-head">
-                <p class="modal-card-title">Insérer un lien hypertexte</p>
+                <p class="modal-card-title">
+                  Insérer un lien hypertexte
+                </p>
                 <button
                   type="button"
                   class="delete"
@@ -385,12 +383,11 @@
                   custom-class="has-text-primary"
                 >
                   <b-input
-                    type="text"
                     v-model="linkEditorTextHolder"
+                    type="text"
                     size="is-small"
                     placeholder="Texte du lien"
-                  >
-                  </b-input>
+                  />
                 </b-field>
 
                 <b-field
@@ -399,12 +396,11 @@
                   custom-class="has-text-primary"
                 >
                   <b-input
-                    type="text"
                     v-model="linkEditorLinkHolder"
+                    type="text"
                     size="is-small"
                     placeholder="Adresse du lien"
-                  >
-                  </b-input>
+                  />
                 </b-field>
               </section>
               <footer
@@ -426,7 +422,7 @@
                   type="is-danger"
                   outlined
                   @click="linkEditorModalActive = false"
-                ></b-button>
+                />
                 <b-button
                   v-else
                   size="is-small"
@@ -434,7 +430,7 @@
                   type="is-danger"
                   outlined
                   @click="deleteLinkEdit()"
-                ></b-button>
+                />
               </footer>
             </div>
           </div>
@@ -462,11 +458,9 @@
               { 'editor-disabled': linkEditorModalActive },
             ]"
           >
-            <span class="ml-2"
-              >{{ this.editorFunctionsCharacterStatuses.wordCount }} mot{{
-                this.editorFunctionsCharacterStatuses.wordCount > 1 ? "s" : ""
-              }}</span
-            >
+            <span class="ml-2">{{ editorFunctionsCharacterStatuses.wordCount }} mot{{
+              editorFunctionsCharacterStatuses.wordCount > 1 ? "s" : ""
+            }}</span>
           </div>
           <!-- END: Footer -->
         </div>
@@ -496,22 +490,23 @@
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
 import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
-import ImageSmallEditor from "~/components/hpf_image/ImageSmallEditor.vue";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
-import TextStyle from "@tiptap/extension-text-style";
-import FontFamily from "@tiptap/extension-font-family";
-import CharacterCount from "@tiptap/extension-character-count";
-import Table from "@tiptap/extension-table";
-import TableRow from "@tiptap/extension-table-row";
-import TableCell from "@tiptap/extension-table-cell";
-import TableHeader from "@tiptap/extension-table-header";
-import Link from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Underline } from "@tiptap/extension-underline";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import { CharacterCount } from "@tiptap/extension-character-count";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { Link } from "@tiptap/extension-link";
+import { Placeholder } from "@tiptap/extension-placeholder";
+import ImageSmallEditor from "~/components/hpf_image/ImageSmallEditor.vue";
 import { Indent } from "~/utils/tiptap_extensions/tiptap_indent";
 import { FontSize } from "~/utils/tiptap_extensions/tiptap_font_size";
 import { ImageHPFData } from "@/types/images";
+import { TipTapEditorContent } from "@/types/tiptap";
 import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
 
 @Component({
@@ -519,50 +514,51 @@ import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
   components: {
     EditorContent,
     ImageSmallEditor,
-    BubbleMenu,
-  },
+    BubbleMenu
+  }
 })
 export default class extends Vue {
   // #region Props
-  @Prop({ default: true }) private showFooter!: boolean;
+  @Prop({ default: true }) public showFooter!: boolean;
   @Prop({ default: "" }) private placeholder!: string;
   // #endregion
 
   // #region Datas
 
-  private editor: Editor | null = null;
+  public editor: Editor | null = null;
   private images: ImageHPFData[] = [];
   // Timer Editor update
   private timerThrottleId: number = 0;
 
   // #region Toolbar
-  private menusStyle: any = [
+  public menusStyle: any = [
     { icon: "heading", text: "Titre 1", action: "h1" },
     { icon: "heading", text: "Titre 2", action: "h2" },
     { icon: "heading", text: "Titre 3", action: "h3" },
     { icon: "heading", text: "Titre 4", action: "h4" },
     { icon: "heading", text: "Titre 5", action: "h5" },
     { icon: "heading", text: "Titre 6", action: "h6" },
-    { icon: "paragraph", text: "Paragraphe", action: "p" },
+    { icon: "paragraph", text: "Paragraphe", action: "p" }
   ];
-  private menusFontSize: number[] = [8, 10, 12, 14, 16, 18, 24, 36];
-  private menusFontFamily: string[] = [
+
+  public menusFontSize: number[] = [8, 10, 12, 14, 16, 18, 24, 36];
+  public menusFontFamily: string[] = [
     "Arial",
     "Calibri",
     "Tahoma",
-    "Times new roman",
+    "Times new roman"
   ];
   // #endregion
 
   // #region Editor Link Modal
-  private linkEditorModalActive: boolean = false;
-  private linkEditorTextHolder: string = "";
-  private linkEditorLinkHolder: string = "";
+  public linkEditorModalActive: boolean = false;
+  public linkEditorTextHolder: string = "";
+  public linkEditorLinkHolder: string = "";
   // #endregion
 
   // #region Editor status
   // Cache des status de l'éditeur (actives)
-  private editorFunctionsActiveSettings: { [key: string]: Function } = {
+  public editorFunctionsActiveSettings: { [key: string]: Function } = {
     h1: (editor: Editor): boolean => editor.isActive("heading", { level: 1 }),
     h2: (editor: Editor): boolean => editor.isActive("heading", { level: 2 }),
     h3: (editor: Editor): boolean => editor.isActive("heading", { level: 3 }),
@@ -591,27 +587,25 @@ export default class extends Vue {
     orderedList: (editor: Editor): boolean => editor.isActive("orderedList"),
 
     undo: (editor: Editor): boolean => editor.can().undo(),
-    redo: (editor: Editor): boolean => editor.can().redo(),
+    redo: (editor: Editor): boolean => editor.can().redo()
   };
 
   // Cache des status de l'éditeur (Font)
-  private editorFunctionsTextStyleSettings: { [key: string]: Function } = {
+  public editorFunctionsTextStyleSettings: { [key: string]: Function } = {
     fontSize: (editor: Editor): string => {
-      if (editor?.getAttributes("textStyle").fontSize != undefined) {
+      if (editor?.getAttributes("textStyle").fontSize !== undefined) {
         return editor?.getAttributes("textStyle").fontSize;
-      } else {
-        if (editor.isActive("heading", { level: 1 })) return "32px";
-        else if (editor.isActive("heading", { level: 2 })) return "24px";
-        else if (editor.isActive("heading", { level: 3 })) return "18px";
-        else if (editor.isActive("heading", { level: 4 })) return "16px";
-        else if (editor.isActive("heading", { level: 5 })) return "14px";
-        else if (editor.isActive("heading", { level: 6 })) return "12px";
-        else if (editor.isActive("paragraph")) return "16px";
-        else return "16px";
-      }
+      } else if (editor.isActive("heading", { level: 1 })) return "32px";
+      else if (editor.isActive("heading", { level: 2 })) return "24px";
+      else if (editor.isActive("heading", { level: 3 })) return "18px";
+      else if (editor.isActive("heading", { level: 4 })) return "16px";
+      else if (editor.isActive("heading", { level: 5 })) return "14px";
+      else if (editor.isActive("heading", { level: 6 })) return "12px";
+      else if (editor.isActive("paragraph")) return "16px";
+      else return "16px";
     },
     fontFamily: (editor: Editor): string => {
-      if (editor?.getAttributes("textStyle").fontFamily != undefined) {
+      if (editor?.getAttributes("textStyle").fontFamily !== undefined) {
         return editor?.getAttributes("textStyle").fontFamily;
       } else {
         if (editor.isActive("textStyle", { fontFamily: "Arial" }))
@@ -624,26 +618,26 @@ export default class extends Vue {
           return "Times new roman";
         else return "Arial";
       }
-    },
+    }
   };
 
   // Cache des status de l'éditeur (Link)
-  private editorFunctionsMiscSettings: { [key: string]: Function } = {
+  public editorFunctionsMiscSettings: { [key: string]: Function } = {
     link: (editor: Editor): string => {
       return editor?.isActive("link") ? editor?.getAttributes("link").href : "";
-    },
+    }
   };
 
   // Cache des status de l'éditeur (Character count extension)
-  private editorFunctionsCharacterSettings: { [key: string]: Function } = {
+  public editorFunctionsCharacterSettings: { [key: string]: Function } = {
     wordCount: (editor: Editor): number =>
       editor.storage.characterCount.words(),
     characterCount: (editor: Editor): number =>
-      editor.storage.characterCount.characters(),
+      editor.storage.characterCount.characters()
   };
 
   // Cache des status de l'éditeur (Tableau)
-  private tableFunctionsActiveSettings: { [key: string]: Function } = {
+  public tableFunctionsActiveSettings: { [key: string]: Function } = {
     deleteTable: (editor: Editor): boolean => editor.can().deleteTable(),
     addColumnBefore: (editor: Editor): boolean =>
       editor.can().addColumnBefore(),
@@ -659,11 +653,11 @@ export default class extends Vue {
     toggleHeaderRow: (editor: Editor): boolean =>
       editor.can().toggleHeaderRow(),
     toggleHeaderCell: (editor: Editor): boolean =>
-      editor.can().toggleHeaderCell(),
+      editor.can().toggleHeaderCell()
   };
 
   // Cache des status de l'éditeur (actives)
-  private editorFunctionsActiveStatuses: Record<string, boolean> = {
+  public editorFunctionsActiveStatuses: Record<string, boolean> = {
     h1: false,
     h2: false,
     h3: false,
@@ -701,24 +695,24 @@ export default class extends Vue {
     toggleHeaderCell: false,
 
     undo: false,
-    redo: false,
+    redo: false
   };
 
   // Cache des status de l'éditeur (Font) Status
-  private editorFunctionsTextStyleStatuses: Record<string, string> = {
+  public editorFunctionsTextStyleStatuses: Record<string, string> = {
     fontFamily: "Arial",
-    fontSize: "12px",
+    fontSize: "12px"
   };
 
   // Cache des status de l'éditeur (Character count extension) Status
   private editorFunctionsMiscStatuses: Record<string, string> = {
-    link: "",
+    link: ""
   };
 
   // Cache des status de l'éditeur (Font) Status
-  private editorFunctionsCharacterStatuses: Record<string, number> = {
+  public editorFunctionsCharacterStatuses: Record<string, number> = {
     wordCount: 0,
-    characterCount: 0,
+    characterCount: 0
   };
 
   // #endregion
@@ -726,38 +720,38 @@ export default class extends Vue {
   // #endregion
 
   // #region Hooks
-  mounted() {
+  private mounted(): void {
     this.editor = new Editor({
       content: "",
       extensions: [
         StarterKit,
         TextStyle,
-        //Image,
+        // Image,
         Underline,
         TextAlign.configure({
-          types: ["heading", "paragraph"],
+          types: ["heading", "paragraph"]
         }),
         Indent,
         TipTapImageEditor,
         FontSize,
         FontFamily,
         Link.configure({
-          openOnClick: false,
+          openOnClick: false
         }),
         CharacterCount,
         Table.configure({
-          resizable: true,
+          resizable: true
         }),
         TableRow,
         TableHeader,
         TableCell,
         Placeholder.configure({
-          placeholder: this.placeholder,
-        }),
+          placeholder: this.placeholder
+        })
       ],
       editorProps: {
         attributes: {
-          spellcheck: "true",
+          spellcheck: "true"
         },
         // handleDrop: function(view, event, slice, moved) {
         //     if (!moved && event.dataTransfer && event.dataTransfer.files) { // if dropping external files
@@ -792,7 +786,7 @@ export default class extends Vue {
               img.addEventListener("load", () => {
                 const coordinates = view.posAtCoords({
                   left: e.clientX,
-                  top: e.clientY,
+                  top: e.clientY
                 });
                 this.addHPFImage(
                   imgURL,
@@ -817,9 +811,9 @@ export default class extends Vue {
               this.toggleForbiddenDropAlert();
               return true;
             }
-          },
-        },
-      },
+          }
+        }
+      }
     });
 
     // Bind custom update function
@@ -830,13 +824,13 @@ export default class extends Vue {
     this.editor?.chain().focus().setParagraph().setFontFamily("Arial").run();
   }
 
-  beforeDestroy() {
+  private beforeDestroy(): void {
     this.editor?.destroy();
   }
   // #endregion
 
   // #region Computed
-  get currentStyle() {
+  get currentStyle(): any {
     if (this.editorFunctionsActiveStatuses.h1)
       return { icon: "heading", text: "Titre 1", action: "h1" };
     else if (this.editorFunctionsActiveStatuses.h2)
@@ -856,7 +850,7 @@ export default class extends Vue {
   // #region Watchers
   // Ouverture de la modal-homemade
   @Watch("linkEditorModalActive")
-  private async onlinkEditorModalActiveChanged() {
+  private onlinkEditorModalActiveChanged(): void {
     if (this.linkEditorModalActive) {
       if (this.editor != null) {
         this.editor.chain().focus().extendMarkRange("link").run();
@@ -872,26 +866,26 @@ export default class extends Vue {
 
   // #region Methods
   // Toggle Alert Drop interdit
-  private toggleForbiddenDropAlert() {
+  private toggleForbiddenDropAlert(): void {
     this.$buefy.toast.open({
       duration: 5000,
-      message: `Non supporté par l'éditeur`,
+      message: "Non supporté par l'éditeur",
       position: "is-bottom",
-      type: "is-danger",
+      type: "is-danger"
     });
   }
 
-  private test() {
+  private test(): void {
     console.log(this.editor?.getHTML());
   }
 
   // Ajout d'une image HPF
-  private addHPFImage(
+  public addHPFImage(
     url: string | null,
     width: number | null,
     height: number | null,
     pos: any | null
-  ) {
+  ): void {
     this.editor?.commands.insertContentAt(
       pos != null ? pos : this.editor.view.state.selection.$anchor.pos,
       "<hpf-image " +
@@ -907,11 +901,7 @@ export default class extends Vue {
   }
 
   // Actualisation de status en cache de l'éditeur, actualisation du contenu
-  private calcEditorButtonsActiveStatuses() {
-
-    // Emet l'évènement change
-    this.$emit("change", this.editor?.getHTML());
-
+  private calcEditorButtonsActiveStatuses(): void {
     // Cache des status de l'éditeur (actives)
     const objectToReturn: Record<string, boolean> = {};
     for (const key in this.editorFunctionsActiveSettings) {
@@ -963,10 +953,13 @@ export default class extends Vue {
         );
     }
     this.editorFunctionsCharacterStatuses = characterToReturn;
+
+    // Emet l'évènement change
+    this.$emit("change", new TipTapEditorContent({ content: this.editor?.getHTML(), wordcount: this.editorFunctionsCharacterStatuses.wordCount }));
   }
 
   // Déclenche l'actualisation du cache via un timer
-  private onEditorUpdated() {
+  private onEditorUpdated(): void {
     clearTimeout(this.timerThrottleId);
     this.timerThrottleId = window.setTimeout(
       this.calcEditorButtonsActiveStatuses,
@@ -975,7 +968,7 @@ export default class extends Vue {
   }
 
   // Mise en forme d'un style dans l'éditeur
-  private toggleStyle(action: string) {
+  public toggleStyle(action: string): void {
     switch (action) {
       case "h1":
         this.editor?.chain().focus().toggleHeading({ level: 1 }).run();
@@ -1002,7 +995,7 @@ export default class extends Vue {
   }
 
   // Mise à jour d'une taille de police dans l'éditeur
-  private toggleFontSize(fontSize: number) {
+  private toggleFontSize(fontSize: number): void {
     this.editor
       ?.chain()
       .focus()
@@ -1012,13 +1005,13 @@ export default class extends Vue {
   }
 
   // Mise à jour d'une police dans l'éditeur
-  private toggleFontFamily(fontFamily: string) {
+  public toggleFontFamily(fontFamily: string): void {
     this.editor?.chain().focus().setFontFamily(fontFamily).run();
     this.calcEditorButtonsActiveStatuses();
   }
 
   // Ajout d'un lien hypertexte
-  private validateLinkEdit() {
+  public validateLinkEdit(): void {
     this.linkEditorModalActive = false;
     if (this.editor != null) {
       const { view } = this.editor;
@@ -1037,13 +1030,13 @@ export default class extends Vue {
   }
 
   // Suppression du lien hypertexte
-  private deleteLinkEdit() {
+  public deleteLinkEdit(): void {
     this.linkEditorModalActive = false;
     this.editor?.chain().focus().extendMarkRange("link").unsetLink().run();
   }
 
   // Où doit apparaitre le Bubble Menu
-  private bubbleMenuShouldShow() {
+  public bubbleMenuShouldShow(): boolean {
     if (this.editor != null) {
       const { view, state } = this.editor;
       const { from, to } = view.state.selection;
@@ -1061,13 +1054,14 @@ export default class extends Vue {
           this.editorFunctionsActiveStatuses.link)
       );
     }
+    return false;
   }
   // #endregion
 }
 </script>
 
-<style lang="scss">
-@import "~/assets/scss/custom.scss";
+<style lang="scss" scoped>
+@import "~/assets/scss/custom_bulma_core.scss";
 
 /* Basic editor styles */
 #editor {
@@ -1115,7 +1109,7 @@ export default class extends Vue {
     }
     #editor-content-main-pane {
       overflow-y: auto;
-      height: 250px;
+      height: 125px;
       .ProseMirror {
         //background-color: #f3e5a9;
         min-height: 100%;

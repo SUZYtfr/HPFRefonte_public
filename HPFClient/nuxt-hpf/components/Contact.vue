@@ -95,6 +95,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
+import { ModalsStatesModule } from "@/utils/store-accessor";
 import { contact } from "@/api/other";
 import { VForm, OpenToast } from "@/utils/formHelper";
 import { ContactFormData } from "@/types/other";
@@ -121,11 +122,11 @@ export default class extends Vue {
 
   // #region Computed
   get modalActive(): boolean {
-    return this.active;
+    return ModalsStatesModule.contactModalActive;
   }
 
   set modalActive(value) {
-    this.$emit("change", value);
+    ModalsStatesModule.setContactModalActive(value);
   }
 
   get form(): VForm {

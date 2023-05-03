@@ -42,9 +42,9 @@
             ,
           </template>
           <NuxtLink
-            :key="'author_' + author.author_id.toString()"
+            :key="'author_' + author.user_id.toString()"
             class="is-size-7 has-text-weight-normal"
-            :to="{ name: 'auteurs-id', params: { id: author.author_id } }"
+            :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
           >
             {{ author.nickname }}
           </NuxtLink>

@@ -121,12 +121,6 @@ export default class extends Vue {
   overflow: hidden;
 }
 
-.card-header-title {
-  color: white;
-  text-transform: uppercase;
-  background-color: $primary;
-}
-
 .card-content {
   padding: 0px;
 }
