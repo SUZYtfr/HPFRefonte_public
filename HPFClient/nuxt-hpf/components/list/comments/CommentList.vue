@@ -14,7 +14,7 @@
           Aucun commentaire
         </p>
       </div>
-      <div v-if="ConnectedVisibility">
+      <div v-if="$auth.loggedIn">
         <client-only>
           <TipTapEditor ref="commentEditor" :show-footer="false" :placeholder="'Ecrire un commentaire'" @change="(value) => (editorContent = value)" />
         </client-only>
@@ -46,7 +46,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import Comment from "~/components/entities/comment.vue";
 import { CommentModel } from "@/models/news";
 import { postComment } from "~/api/news";
-import { UserModule, ModalsStatesModule } from "@/utils/store-accessor";
+import { ModalsStatesModule } from "@/utils/store-accessor";
 import TipTapEditor from "~/components/TipTapEditor.vue";
 import { TipTapEditorContent } from "@/types/tiptap";
 import ModalsStates from "~/store/modules/ModalsStates";
@@ -63,10 +63,6 @@ export default class CommentList extends Vue {
   // #endregion
 
   // #region Computed
-  get ConnectedVisibility(): boolean {
-    return UserModule.token.length > 0;
-  }
-
   get ModalsStatesModule(): ModalsStates {
     return ModalsStatesModule;
   }

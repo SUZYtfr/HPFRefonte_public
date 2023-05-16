@@ -14,7 +14,9 @@
       {{ asyncMessage }}
     </p>
     <h2>fetch ()</h2>
-    <p v-if="$fetchState.pending">Fetching from frontend...</p>
+    <p v-if="$fetchState.pending">
+      Fetching from frontend...
+    </p>
     <ul v-else>
       <li v-for="todo in fetchedTodos.slice(0, 5)" :key="todo.id">
         {{ todo.completed ? "&#9989;" : "&#11036;" }} {{ todo.id }}:
@@ -40,7 +42,6 @@
 <script lang="ts">
 import { Component, Vue, namespace, State } from "nuxt-property-decorator";
 import { MetaInfo } from "vue-meta";
-import User from "~/store/modules/User";
 import { getModule } from "vuex-module-decorators";
 // import type { RootState } from '~/store'
 // import { namespace as settingStoreNamespace, SettingState, actionType } from '~/store/setting'
@@ -52,7 +53,7 @@ interface ToDo {
   completed: boolean;
 }
 
-//const SettingStore = namespace(settingStoreNamespace)
+// const SettingStore = namespace(settingStoreNamespace)
 
 @Component({
   fetchOnServer: false,
@@ -60,12 +61,12 @@ interface ToDo {
   asyncData(context) {
     return {
       asyncMessage: "I'm defined on asyncData()",
-      userAgent: context.userAgent,
+      userAgent: context.userAgent
     };
   },
   fetch(this: ClassApi) {
     return fetch("https://jsonplaceholder.typicode.com/todos")
-      .then((response) => response.json())
+      .then(response => response.json())
       .then((data: ToDo[]) => {
         this.fetchedTodos = data;
       });
@@ -76,11 +77,11 @@ interface ToDo {
       meta: [
         {
           name: "message",
-          content: this.computedMessage,
-        },
-      ],
+          content: this.computedMessage
+        }
+      ]
     };
-  },
+  }
 })
 export default class ClassApi extends Vue {
   // @State('description') descriptionOnStore!: RootState['description']
@@ -93,9 +94,9 @@ export default class ClassApi extends Vue {
   userAgent = "I will be overwritten by asyncData";
 
   public created() {
-    const MyModuleInstance = getModule(User, this.$store);
     // Do stuff with module
   }
+
   get computedMessage(): string {
     return this.message.replace("data()", "computed()");
   }

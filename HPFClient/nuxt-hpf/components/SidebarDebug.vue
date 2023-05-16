@@ -1,41 +1,53 @@
 <template>
   <section>
     <b-sidebar
+      v-model="open"
       type="is-light"
       :fullheight="true"
       :overlay="true"
       :right="true"
-      v-model="open"
     >
       <div class="p-1">
         <b-menu>
           <b-menu-list>
-            <b-switch v-model="connectedValue" @input="connectedChanged()">Connecté</b-switch>
+            <b-switch v-model="connectedValue" @input="connectedChanged()">
+              Connecté
+            </b-switch>
           </b-menu-list>
         </b-menu>
       </div>
     </b-sidebar>
-    <b-button @click="open = true">Debug panel</b-button>
+    <b-button @click="open = true">
+      Debug panel
+    </b-button>
   </section>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from '@/utils/store-accessor'
 
 @Component({
-  name: "SidebarDebug",
+  name: "SidebarDebug"
 })
 export default class extends Vue {
-  private open: boolean = false;
-  private connectedValue: boolean = false;
+  public open: boolean = false;
+  public connectedValue: boolean = false;
 
-  private connectedChanged(){
-      console.log(this.connectedValue);
-    UserModule.SET_TOKEN(this.connectedValue ? "AAAAA" : "");
-    console.log(UserModule.token);
+  public connectedChanged(): void {
+    if (this.connectedValue) {
+      const user = {
+        username: "SUZYtfr"
+      };
+      this.$auth.setUser(user);
+      this.$auth.$storage.setUniversal("loggedIn", true);
+    } else {
+      this.$auth.setUser(null);
+      this.$auth.$storage.setUniversal("loggedIn", false);
+    }
+    console.log(this.connectedValue);
+    console.log(this.$auth.loggedIn);
+    console.log(this.$auth.user);
   }
-  
 }
 </script>
 

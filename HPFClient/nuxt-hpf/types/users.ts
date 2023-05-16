@@ -1,7 +1,7 @@
 import { Exclude, Transform } from "class-transformer";
 import { BasicClass } from "./basics";
 
-enum UserStatus {
+export enum UserStatus {
   Unvalidated = 1,
   Validated = 2,
   Moderator = 3,

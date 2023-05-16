@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { UserData, UserLinkData } from "@/types/users";
+import { UserData, UserLinkData, UserStatus } from "@/types/users";
 
 interface UserStats {
   fanfictions: number,
@@ -20,4 +20,11 @@ export class UserModel extends UserData {
 
   @Type(() => UserLinkData)
   public links: UserLinkData[] | null = null;
+}
+
+export class Account {
+  public user_id: number | null = null;
+  public username: string | null = null;
+  public avatar: string | null = null;
+  public roles: UserStatus[] = [];
 }

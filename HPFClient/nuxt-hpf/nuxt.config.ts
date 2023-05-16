@@ -40,6 +40,7 @@ const config: NuxtConfig = {
   loading: { color: "#0c64c1" },
   modules: [
     "@nuxtjs/axios",
+    "@nuxtjs/auth-next",
     ["nuxt-buefy", {
       css: false,
       materialDesignIcons: false,
@@ -55,6 +56,47 @@ const config: NuxtConfig = {
     }]
     // "nuxt-ssr-class-serialiser"
   ],
+  auth: {
+    localStorage: false,
+    strategies: {
+      local: undefined,
+      cookie: {
+        token: {
+          property: "access_token",
+          global: true,
+          required: true,
+          type: "Bearer",
+          name: "Authorization",
+          maxAge: 60 * 30 // 30 minutes
+        },
+        refreshToken: {
+          property: "refresh_token",
+          required: true,
+          data: "refresh_token",
+          maxAge: 60 * 60 * 24 * 30 // 30 jours
+        },
+        user: {
+          property: "user",
+          autoFetch: false
+        },
+        endpoints: {
+          login: { url: "/account/login", method: "post" },
+          refresh: { url: "/account/refresh", method: "post" },
+          logout: { url: "/account/logout", method: "post" },
+          user: { url: "/account/profile", method: "get" }
+        },
+        options: {
+          secure: true
+        },
+        redirect: {
+          login: "/login",
+          logout: "/",
+          callback: false,
+          home: "/"
+        }
+      }
+    }
+  },
   plugins: [
     "~/plugins/truncate",
     "~/plugins/axios",

@@ -97,7 +97,8 @@ export default class extends Vue {
   private async login(): Promise<void> {
     this.loading = true;
     try {
-      const { data } = await login(this.loginForm);
+      const data = await this.$auth.loginWith("cookie", { data: this.loginForm });
+      this.$auth.setUser(data);
     } catch (exception) {
       console.log(exception);
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");

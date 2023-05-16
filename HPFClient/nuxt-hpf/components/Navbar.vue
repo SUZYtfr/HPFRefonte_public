@@ -12,7 +12,7 @@
           >
         </b-navbar-item>
         <div class="is-hidden-desktop" style="margin-left: auto">
-          <b-navbar-item v-if="ConnectedVisibility" tag="div">
+          <b-navbar-item v-if="$auth.loggedIn" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -40,23 +40,6 @@
             </b-dropdown>
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
-                <!-- <b-button
-                  type="is-light"
-                  :icon-right="active ? 'angle-up' : 'angle-down'"
-                >
-                  <img
-                    src="https://nsa39.casimages.com/img/2018/02/16/mini_180216012732482019.jpg"
-                    width="22"
-                    height="22"
-                    alt="Logo forum HPF"
-                    style="
-                      margin-left: -8px;
-                      vertical-align: middle;
-                      margin-bottom: 2px;
-                    "
-                  />
-                  <span class="username-visibility">SUZYftr</span>
-                </b-button> -->
                 <button
                   type="button"
                   class="button is-light"
@@ -72,14 +55,14 @@
                   <span
                     class="username-visibility"
                     style="margin-left: 5px"
-                  >SUZYftr</span>
+                  >{{ $auth.user?.username }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
               <b-dropdown-item aria-role="listitem">
                 Mon compte
               </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem">
+              <b-dropdown-item aria-role="listitem" @click="logout">
                 Se déconnecter
               </b-dropdown-item>
             </b-dropdown>
@@ -170,7 +153,7 @@
 
       <template #end>
         <div class="is-hidden-touch">
-          <b-navbar-item v-if="ConnectedVisibility" tag="div">
+          <b-navbar-item v-if="$auth.loggedIn" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -198,23 +181,6 @@
             </b-dropdown>
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
-                <!--<b-button
-                  type="is-light"
-                  label="SUZYtfr"
-                  :icon-right="active ? 'angle-up' : 'angle-down'"
-                  icon-left="bell"
-                >-->
-                <!-- <div style="/*background-color: red;*/ width: 22px; height: 22px">
-                  <b-image
-                    src="https://nsa39.casimages.com/img/2018/02/16/mini_180216012732482019.jpg"
-                    alt="Logo forum HPF"
-                    style="width: 22px; height: 22px"
-                    :rounded="true"
-                    :responsive="true"
-                  />
-                </div>-->
-                <!-- SUZYtfr -->
-                <!--</b-button>-->
                 <button
                   type="button"
                   class="button is-light"
@@ -227,14 +193,14 @@
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span style="margin-left: 5px">SUZYftr</span>
+                  <span style="margin-left: 5px">{{ $auth.user?.username }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
               <b-dropdown-item aria-role="listitem">
                 Mon compte
               </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem">
+              <b-dropdown-item aria-role="listitem" @click="logout">
                 Se déconnecter
               </b-dropdown-item>
             </b-dropdown>
@@ -271,7 +237,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule, ModalsStatesModule } from "@/utils/store-accessor";
+import { ModalsStatesModule } from "@/utils/store-accessor";
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
@@ -291,12 +257,14 @@ export default class extends Vue {
   // #endregion
 
   // #region Computed
-  get ConnectedVisibility(): boolean {
-    return UserModule.token.length > 0;
-  }
-
   get ModalsStatesModule(): ModalsStates {
     return ModalsStatesModule;
+  }
+  // #endregion
+
+  // #region Methods
+  public async logout(): Promise<void> {
+    await this.$auth.logout();
   }
   // #endregion
 }

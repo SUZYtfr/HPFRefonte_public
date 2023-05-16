@@ -2,7 +2,6 @@ import type { NuxtAxiosInstance } from "@nuxtjs/axios";
 import { ClassConstructor, plainToInstance } from "class-transformer";
 // import { Message, MessageBox } from 'element-ui'
 import qs from "qs";
-import { UserModule } from "@/utils/store-accessor";
 
 let $axios: NuxtAxiosInstance;
 
@@ -14,14 +13,16 @@ export function initializeAxios(axiosInstance: NuxtAxiosInstance): void {
     withCredentials: false
   });
 
+  $axios.defaults.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
+
   // Request interceptors
   $axios.interceptors.request.use(
     (config) => {
       // Add X-Access-Token header to every request, you can add other custom headers here
-      if (UserModule.token) {
-        config.headers["X-Access-Token"] = UserModule.token;
-      }
-      config.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
+      // if (UserModule.token) {
+      //   config.headers["X-Access-Token"] = UserModule.token;
+      // }
+      // config.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
       return config;
     },
     (error) => {
