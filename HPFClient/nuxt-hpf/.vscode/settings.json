@@ -1,0 +1,6 @@
+{
+    "sonarlint.disableTelemetry": true,
+    "eslint.lintTask.enable": true,
+    "eslint.run": "onType",
+    "eslint.packageManager": "yarn"
+}
