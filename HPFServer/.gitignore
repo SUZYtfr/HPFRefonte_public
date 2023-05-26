@@ -1,0 +1,17 @@
+# Les images restent locales
+/media/banners/*
+/media/profilepictures/*
+
+# Mais garder la trace de ces dossiers sur Git
+!/media/banners/.gitkeep
+!/media/profilepictures/.gitkeep
+
+# Venv
+/.venv/
+
+# Fichiers compilés et migrations
+**/__pycache__/
+**/migrations/
+
+# BDD de test locale
+*.sqlite3
