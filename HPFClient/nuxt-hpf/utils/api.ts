@@ -1,5 +1,6 @@
 import type { NuxtAxiosInstance } from "@nuxtjs/axios";
-import { ClassConstructor, plainToInstance } from "class-transformer";
+import type { ClassConstructor } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 // import { Message, MessageBox } from 'element-ui'
 import qs from "qs";
 
@@ -122,7 +123,7 @@ export class AxiosWrapper {
         return data;
       } catch (error) {
         console.log(error);
-        return error;
+        throw error;
       }
       // return new Promise(async (resolve, reject) => {
       //   try {

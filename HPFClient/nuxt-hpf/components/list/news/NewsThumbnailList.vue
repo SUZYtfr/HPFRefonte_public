@@ -5,7 +5,7 @@
         Actualités
       </p>
     </header>
-    <div class="card-content is-relative">
+    <div class="card-content is-relative p-2">
       <b-loading v-model="isLoading" :is-full-page="false" />
       <div v-if="news?.length > 0">
         <News_2
@@ -13,7 +13,7 @@
           :key="'news_' + (item.news_id?.toString() ?? '0')"
           :news="item"
           :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
-          :class="[{ 'is-hidden-mobile': innerindex > 0 }]"
+          :class="[{ 'is-hidden-mobile': innerindex > 0 }, 'mb-2']"
           :index="innerindex"
         />
       </div>

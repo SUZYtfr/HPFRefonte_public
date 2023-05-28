@@ -43,10 +43,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { getModule } from "vuex-module-decorators";
 import Comment from "~/components/entities/comment.vue";
 import { CommentModel } from "@/models/news";
 import { postComment } from "~/api/news";
-import { ModalsStatesModule } from "@/utils/store-accessor";
 import TipTapEditor from "~/components/TipTapEditor.vue";
 import { TipTapEditorContent } from "@/types/tiptap";
 import ModalsStates from "~/store/modules/ModalsStates";
@@ -64,7 +64,7 @@ export default class CommentList extends Vue {
 
   // #region Computed
   get ModalsStatesModule(): ModalsStates {
-    return ModalsStatesModule;
+    return getModule(ModalsStates, this.$store);
   }
   // #endregion
 

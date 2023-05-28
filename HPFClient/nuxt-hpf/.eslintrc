@@ -38,6 +38,6 @@
     "curly": "off",
     "object-shorthand": "off",
     "no-useless-escape": "off",
-    "import/no-mutable-exports": "off",
+    "import/no-mutable-exports": "off"
   }
 }

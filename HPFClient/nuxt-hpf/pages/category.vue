@@ -71,8 +71,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "nuxt-property-decorator";
+import { getModule } from "vuex-module-decorators";
+import Config from "~/store/modules/Config";
 import TagPanel from "~/components/TagPanel.vue";
-import { ConfigModule } from "@/utils/store-accessor";
 import { ICharacteristicFilters } from "@/types/characteristics";
 import {
   CharacteristicModel,
@@ -134,6 +135,12 @@ export default class extends Vue {
   public listLoading: boolean = false;
   // #endregion
 
+  // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
+  // #endregion
+
   // #region Hooks
   private async fetch(): Promise<void> {
     this.listLoading = true;
@@ -187,16 +194,47 @@ export default class extends Vue {
   // #region Methods
   // Récupération des caractéristiques types, depuis la config
   private async getCharacteristicsTypes(): Promise<void> {
-    if (ConfigModule.characteristicTypes.length === 0)
-      await ConfigModule.LoadConfig();
-    this.currentCharacs = ConfigModule.characteristicTypes;
+    if (this.ConfigModule.characteristicTypes.length === 0)
+      await this.ConfigModule.LoadConfig();
+    this.currentCharacs = this.ConfigModule.characteristicTypes;
+    if (this.currentCharacs == null || this.currentCharacs.length === 0) {
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération des catégories",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log("Une erreur s'est produite lors de la récupération des catégories");
+      }
+    }
   }
 
   // Récupération des caractéristiques et de leurs stats
   private async getCharacteristics(): Promise<void> {
-    this.currentCharacs = (
-      await getCharacteristics(this.caracteristicFilters)
-    ).items;
+    try {
+      this.currentCharacs = (
+        await getCharacteristics(this.caracteristicFilters)
+      ).items;
+    } catch (error) {
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération des catégories",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
+    }
   }
 
   // Descendre dans l'arborescence

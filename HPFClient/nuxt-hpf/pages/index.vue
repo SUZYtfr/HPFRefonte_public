@@ -112,16 +112,33 @@ export default class extends Vue {
 
   async fetch(): Promise<void> {
     this.listLoading = true;
-    this.recentNews = (await searchNews(this.newsFilters)).items;
-    this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).items;
-    this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).items;
+    try {
+      this.recentNews = (await searchNews(this.newsFilters)).items;
+      this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).items;
+      this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).items;
     // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
     // console.log("Date type: " + ((new Date()) instanceof Date));
     // console.log("Creation date type: " + (this.fanfictions[0]?.creation_date instanceof Date));
     // console.log("Last update date type: " + (this.fanfictions[0]?.last_update_date instanceof Date));
     // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
     // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
-    this.listLoading = false;
+    } catch (error) {
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération des données",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
+    } finally {
+      this.listLoading = false;
+    }
   }
 
   beforeMount(): void {}

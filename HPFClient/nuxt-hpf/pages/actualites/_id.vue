@@ -1,9 +1,9 @@
 <template>
   <div id="main-container" class="container px-5">
-    <News_2 v-if="news !== null" :news="news" :active-color="'#f0f0f0'" />
+    <News_2 v-if="news !== null" class="mt-2" :news="news" :active-color="'#f0f0f0'" />
     <br>
-    <div class="mx-2">
-      <CommentList :news_id="news?.id" :comments="news?.comments" />
+    <div>
+      <CommentList v-if="news !== null" :news_id="news?.id" :comments="news?.comments" />
     </div>
     <br>
   </div>
@@ -40,7 +40,19 @@ export default class extends Vue {
     try {
       this.news = (await getNews(parseInt(this.$route.params.id))).items;
     } catch (error) {
-      console.log(error);
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération de l'actualité",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
     } finally {
       this.newsLoading = false;
     }

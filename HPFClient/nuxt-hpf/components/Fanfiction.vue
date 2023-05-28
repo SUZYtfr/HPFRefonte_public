@@ -160,13 +160,13 @@ export default class Fanfiction extends Vue {
   // #endregion
 
   public mounted(): void {
-    console.log("Fanfiction type: " + (this.fanfiction instanceof FanfictionModel));
-    console.log("Date type: " + ((new Date()) instanceof Date));
-    console.log("Creation date type: " + (this.fanfiction?.creation_date instanceof Date));
-    console.log("Last update date type: " + (this.fanfiction?.last_update_date instanceof Date));
+    // console.log("Fanfiction type: " + (this.fanfiction instanceof FanfictionModel));
+    // console.log("Date type: " + ((new Date()) instanceof Date));
+    // console.log("Creation date type: " + (this.fanfiction?.creation_date instanceof Date));
+    // console.log("Last update date type: " + (this.fanfiction?.last_update_date instanceof Date));
     // console.log("Characteristic type: " + (this.fanfiction.characteristics[0] instanceof CharacteristicData));
-    console.log(this.fanfiction?.creation_date);
-    console.log(this.fanfiction?.creation_date?.toLocaleDateString());
+    // console.log(this.fanfiction?.creation_date);
+    // console.log(this.fanfiction?.creation_date?.toLocaleDateString());
   }
 
   // #region Methods

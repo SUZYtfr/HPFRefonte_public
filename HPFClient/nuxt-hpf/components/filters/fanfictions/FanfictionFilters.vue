@@ -193,12 +193,13 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
+import { getModule } from "vuex-module-decorators";
+import Config from "~/store/modules/Config";
 import { SerialiseClass } from "@/serialiser-decorator";
 import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 import CharacteristicPanel from "@/components/CharacteristicPanel.vue";
 import { IFanfictionFilters } from "~/types/fanfictions";
 import { groupBy } from "@/utils/es6-utils";
-import { ConfigModule } from "@/utils/store-accessor";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 
 @Component({
@@ -240,6 +241,12 @@ export default class extends Vue {
   public sliderWords: number[] = [1, 6];
   // #endregion
 
+  // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
+  // #endregion
+
   // #region Hooks
   async fetch(): Promise<void> {
     // Récupération des caractéristiques
@@ -261,13 +268,13 @@ export default class extends Vue {
   // #region Methods
   private async getCharacteristics(): Promise<void> {
     if (
-      ConfigModule.characteristicTypes.length === 0 ||
-      ConfigModule.characteristics.length === 0
+      this.ConfigModule.characteristicTypes.length === 0 ||
+      this.ConfigModule.characteristics.length === 0
     ) {
-      await ConfigModule.LoadConfig();
+      await this.ConfigModule.LoadConfig();
     }
-    this.characteristics = ConfigModule.characteristics;
-    this.characteristics_types = ConfigModule.characteristicTypes;
+    this.characteristics = this.ConfigModule.characteristics;
+    this.characteristics_types = this.ConfigModule.characteristicTypes;
   }
 
   public sliderCustomFormatter(sliderValue: number): string {

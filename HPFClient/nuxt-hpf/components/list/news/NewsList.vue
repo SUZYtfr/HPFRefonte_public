@@ -53,9 +53,9 @@
       </div>
     </header>
     <div
-      :class="[{ 'card-content': isCard }, 'px-0', 'pt-1', 'pb-0', 'is-flex-grow-5']"
+      :class="[{ 'card-content': isCard }, 'p-2', 'is-flex-grow-5']"
     >
-      <div v-if="news.length == 0" class="mx-auto my-auto has-text-centered">
+      <div v-if="(news?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
@@ -63,6 +63,7 @@
           <News_2
             v-for="(item, innerindex) of news"
             :key="'news_' + item.news_id.toString()"
+            class="mb-2"
             :news="item"
             :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
             :index="innerindex"
@@ -74,7 +75,7 @@
       <b-pagination
         v-model="newsFilters.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="news.length"
+        :total="news?.length ?? 1"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -127,9 +128,9 @@ export default class NewsList extends Vue {
 
   // #region Computed
   get newsResultLabel(): string {
-    let result = "";
-    result += this.news.length > 0 ? this.news.length.toString() : "Aucun";
-    result += " résultat";
+    let result = "Aucun résultat";
+    if (this.news == null || this.news.length === 0) return result;
+    result = this.news.length.toString() + " résultat";
     result += this.news.length > 1 ? "s" : "";
     return result;
   }
@@ -162,13 +163,22 @@ export default class NewsList extends Vue {
 
   // #region Methods
   private async searchNews(): Promise<void> {
-    // this.listLoading = true;
     try {
       this.news = (await searchNews(this.newsFilters)).items;
     } catch (error) {
-      console.log(error);
-    } finally {
-      // this.listLoading = false;
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération des actualités",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
     }
   }
 

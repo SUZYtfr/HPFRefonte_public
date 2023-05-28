@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['news', 'px-3', 'm-2']"
+    :class="['news', 'px-3']"
     :style="{ backgroundColor: activeColor }"
   >
     <!-- Header -->
@@ -68,12 +68,12 @@ export default class News_2 extends Vue {
   // #endregion
 
   public mounted(): void {
-    console.log("News type: " + (this.news instanceof NewsModel));
-    console.log("Date type: " + ((new Date()) instanceof Date));
-    console.log("Creation date type: " + (this.news?.creation_date instanceof Date));
-    console.log("Last update date type: " + (this.news?.post_date instanceof Date));
-    console.log(this.news);
-    console.log(this.news?.post_date?.toLocaleDateString());
+    // console.log("News type: " + (this.news instanceof NewsModel));
+    // console.log("Date type: " + ((new Date()) instanceof Date));
+    // console.log("Creation date type: " + (this.news?.creation_date instanceof Date));
+    // console.log("Last update date type: " + (this.news?.post_date instanceof Date));
+    // console.log(this.news);
+    // console.log(this.news?.post_date?.toLocaleDateString());
   }
 }
 </script>

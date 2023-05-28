@@ -186,7 +186,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { ModalsStatesModule } from "@/utils/store-accessor";
+import { getModule } from "vuex-module-decorators";
+import ModalsStates from "~/store/modules/ModalsStates";
 import { signup } from "@/api/users";
 import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
 import TipTapEditor from "@/components/TipTapEditor.vue";
@@ -236,12 +237,16 @@ export default class extends Vue {
     return regexPasswordPattern.source;
   }
 
+  get ModalsStatesModule(): ModalsStates {
+    return getModule(ModalsStates, this.$store);
+  }
+
   get modalActive(): boolean {
-    return ModalsStatesModule.registerModalActive;
+    return this.ModalsStatesModule.registerModalActive;
   }
 
   set modalActive(value) {
-    ModalsStatesModule.setRegisterModalActive(value);
+    this.ModalsStatesModule.setRegisterModalActive(value);
   }
 
   get form(): VForm {

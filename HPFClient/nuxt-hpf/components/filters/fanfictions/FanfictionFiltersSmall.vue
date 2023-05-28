@@ -137,9 +137,10 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
+import { getModule } from "vuex-module-decorators";
+import Config from "~/store/modules/Config";
 import { IFanfictionFilters } from "@/types/fanfictions";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
-import { ConfigModule } from "@/utils/store-accessor";
 import { groupBy } from "@/utils/es6-utils";
 import { getClassTypeColor, getFullPath } from "@/utils/characteristics";
 import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
@@ -169,6 +170,9 @@ export default class extends Vue {
   // #endregion
 
   // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
   // #endregion
 
   // #region Watchers
@@ -233,17 +237,17 @@ export default class extends Vue {
 
   public async getCharacteristics(): Promise<void> {
     if (
-      ConfigModule.characteristicTypes.length === 0 ||
-      ConfigModule.characteristics.length === 0
+      this.ConfigModule.characteristicTypes.length === 0 ||
+      this.ConfigModule.characteristics.length === 0
     ) {
-      await ConfigModule.LoadConfig();
+      await this.ConfigModule.LoadConfig();
     }
 
     const grouped = groupBy(
-      ConfigModule.characteristics,
+      this.ConfigModule.characteristics,
       (characteristic: CharacteristicData) => characteristic.characteristic_type_id
     );
-    ConfigModule.characteristicTypes.forEach((element: CharacteristicTypeData) => {
+    this.ConfigModule.characteristicTypes.forEach((element: CharacteristicTypeData) => {
       const items = grouped
         .get(element.id)
         .map((groupedCharacteristic: CharacteristicData) => {
@@ -279,7 +283,7 @@ export default class extends Vue {
   }
 
   public getFullPath(characteristic: CharacteristicData): string {
-    return getFullPath(characteristic, ConfigModule.characteristics);
+    return getFullPath(characteristic, this.ConfigModule.characteristics);
   }
   // #endregion
 }

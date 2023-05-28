@@ -237,7 +237,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ModalsStatesModule } from "@/utils/store-accessor";
+import { getModule } from "vuex-module-decorators";
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
@@ -258,7 +258,7 @@ export default class extends Vue {
 
   // #region Computed
   get ModalsStatesModule(): ModalsStates {
-    return ModalsStatesModule;
+    return getModule(ModalsStates, this.$store);
   }
   // #endregion
 

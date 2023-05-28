@@ -59,7 +59,7 @@
     </header>
     <div :class="[{'card-content': isCard }, 'px-2', 'py-3', 'is-flex-grow-5']">
       <div
-        v-if="fanfictions.length == 0"
+        v-if="(fanfictions?.length ?? 0) == 0"
         class="mx-auto my-auto has-text-centered"
       >
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
@@ -78,7 +78,7 @@
       <b-pagination
         v-model="fanfictionFilters.page"
         :class="[{'card-footer-item': isCard}, 'py-2']"
-        :total="fanfictions.length"
+        :total="fanfictions?.length ?? 1"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -137,12 +137,9 @@ export default class FanfictionList extends Vue {
 
   // #region Computed
   get fanfictionResultLabel(): string {
-    let result = "";
-    result +=
-      this.fanfictions.length > 0
-        ? this.fanfictions.length.toString()
-        : "Aucun";
-    result += " résultat";
+    let result = "Aucun résultat";
+    if (this.fanfictions == null || this.fanfictions.length === 0) return result;
+    result = this.fanfictions.length.toString() + " résultat";
     result += this.fanfictions.length > 1 ? "s" : "";
     return result;
   }
@@ -177,17 +174,29 @@ export default class FanfictionList extends Vue {
     // this.listLoading = true;
     try {
       this.fanfictions = (await searchFanfictions(this.fanfictionFilters)).items;
-      console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
-      console.log("Date type: " + ((new Date()) instanceof Date));
-      console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
-      console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
+      // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
+      // console.log("Date type: " + ((new Date()) instanceof Date));
+      // console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
+      // console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
       // console.log("Characteristic type: " + (this.fanfictions[0].characteristics[0] instanceof CharacteristicData));
-      console.log(this.fanfictions[0]?.creation_date);
+      // console.log(this.fanfictions[0]?.creation_date);
       // console.log(new Date(this.fanfictions[0]?.creation_date));
       // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString());
-      console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
+      // console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
     } catch (error) {
-      console.log(error);
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération des fictions",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
     } finally {
       // this.listLoading = false;
     }

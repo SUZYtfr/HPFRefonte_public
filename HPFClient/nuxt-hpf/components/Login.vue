@@ -45,8 +45,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "nuxt-property-decorator";
-import { ModalsStatesModule } from "@/utils/store-accessor";
-import { login } from "@/api/users";
+import { getModule } from "vuex-module-decorators";
+import ModalsStates from "~/store/modules/ModalsStates";
 import { VForm, OpenToast } from "@/utils/formHelper";
 import { UserLoginData } from "@/types/users";
 
@@ -66,12 +66,16 @@ export default class extends Vue {
   // #endregion
 
   // #region Computed
+  get ModalsStatesModule(): ModalsStates {
+    return getModule(ModalsStates, this.$store);
+  }
+
   get modalActive(): boolean {
-    return ModalsStatesModule.loginModalActive;
+    return this.ModalsStatesModule.loginModalActive;
   }
 
   set modalActive(value) {
-    ModalsStatesModule.setLoginModalActive(value);
+    this.ModalsStatesModule.setLoginModalActive(value);
   }
 
   get form(): VForm {
