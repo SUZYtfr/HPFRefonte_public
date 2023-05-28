@@ -36,7 +36,7 @@
               </div>
               <div class="media-content">
                 <p class="title is-5">
-                  {{ user.nickname }}
+                  {{ user.username }}
                 </p>
                 <p class="subtitle is-7">
                   {{ user.realname }}

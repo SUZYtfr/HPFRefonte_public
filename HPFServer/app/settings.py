@@ -202,12 +202,12 @@ AUTH_USER_MODEL = 'users.User'
 # HARDCODAGE
 MODERATION_ACCOUNT = {
     "pk": 0,
-    "nickname": "La modération",
+    "username": "La modération",
     "email": "moderation@hpf.fr",
 }
 ANONYMOUS_ACCOUNT = {
     "pk": -1,
-    "nickname": "",
+    "username": "",
     "email": "anonyme@hpf.fr",
 }
 

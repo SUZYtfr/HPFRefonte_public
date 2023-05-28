@@ -87,7 +87,7 @@ class Banner(BaseImage):
         verbose_name = "bannière"
 
     def __str__(self):
-        owner = " de {}".format(self.user.nickname) if self.user else ""
+        owner = " de {}".format(self.user.username) if self.user else ""
         status = "active" if self.is_active else "inactive"
         on_disk = " (sur disque)" if self.is_uploaded else ""
         return f"Bannière{owner} {status}{on_disk}"

@@ -9,7 +9,7 @@ def get_moderation_account():
     return get_user_model().objects.get_or_create(
         pk=settings.MODERATION_ACCOUNT["pk"],
         defaults={
-            "nickname": settings.MODERATION_ACCOUNT["nickname"],
+            "username": settings.MODERATION_ACCOUNT["username"],
             "email": settings.MODERATION_ACCOUNT["email"],
             "password": make_password(None),
         },
@@ -24,7 +24,7 @@ def get_user_deleted_sentinel():
     return get_user_model().objects.get_or_create(
         pk=settings.ANONYMOUS_ACCOUNT["pk"],
         defaults={
-            "nickname": settings.ANONYMOUS_ACCOUNT["nickname"],
+            "username": settings.ANONYMOUS_ACCOUNT["username"],
             "email": settings.ANONYMOUS_ACCOUNT["email"],
             "password": make_password(None),
         },

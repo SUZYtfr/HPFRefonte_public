@@ -16,7 +16,7 @@ export class UserData extends BasicClass<UserData> {
   }
 
   public status: UserStatus = UserStatus.Unvalidated;
-  public nickname: string = "";
+  public username: string = "";
   public realname: string = "";
   public email: string = "";
 
@@ -76,6 +76,6 @@ export class AuthorData extends BasicClass<AuthorData> {
     return this.id;
   }
 
-  public nickname: string | null = null;
+  public username: string | null = null;
   public avatar: string | null = null;
 }

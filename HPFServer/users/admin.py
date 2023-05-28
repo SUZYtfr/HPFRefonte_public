@@ -12,7 +12,7 @@ class UserAdminAccess(UserAdmin):
     list_filter = ("is_active",)
     list_per_page = 20
     fieldsets = (
-        ("Informations publiques", {"fields": ("nickname",
+        ("Informations publiques", {"fields": ("username",
                                                "bio",
                                                "mean",)}),
         ("Informations privées", {"fields": ("gender",
@@ -43,13 +43,13 @@ class UserAdminAccess(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('nickname', "email", 'password1', 'password2'),
+            'fields': ('username', "email", 'password1', 'password2'),
         }),
     )
 
-    def has_nickname(self, obj):
-        return bool(obj.nickname)
-    has_nickname.short_description = "anonyme"
+    def has_username(self, obj):
+        return bool(obj.username)
+    has_username.short_description = "anonyme"
 
     def mean(self, obj):
         return obj.mean

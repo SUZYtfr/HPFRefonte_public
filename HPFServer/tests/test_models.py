@@ -50,8 +50,8 @@ class TestsAllModels(TestCase):
 
     def test_str_values_of_models(self):
         """Teste la valeur de chaîne des différents objets"""
-        nickname = "Michou"
-        user = sample_user(nickname=nickname)
+        username = "Michou"
+        user = sample_user(username=username)
         fiction_title = "Exemple de titre de fiction"
         fiction = sample_fiction(creation_user=user, title=fiction_title)
         chapter_title = "Exemple de titre de chapitre"
@@ -62,7 +62,7 @@ class TestsAllModels(TestCase):
         feature = sample_feature(creation_user=user, name=feature_name)
         category = random_category()
 
-        self.assertEqual(str(user), nickname)
+        self.assertEqual(str(user), username)
         self.assertEqual(str(fiction), fiction_title)
         self.assertEqual(str(chapter), chapter_title)
         self.assertEqual(str(collection), collection_title)
@@ -75,19 +75,19 @@ class TestsUserModel(TestCase):
 
     def test_create_user_with_basic_required_info(self):
         """Teste la création d'un utilisateur avec les infos de base"""
-        nickname = "Michou"
+        username = "Michou"
         email = "michel@salut.fr"
         password = "MotDePasse123"
         birthdate = "1988-05-12"
 
         user = User.objects.create_user(
-            nickname=nickname,
+            username=username,
             email=email,
             password=password,
             birthdate=birthdate
         )
 
-        self.assertEqual(str(user), user.nickname)
+        self.assertEqual(str(user), user.username)
         self.assertNotEqual(user.password, password)  # mot de passe est crypté
         self.assertTrue(user.check_password(password))  # mot de passe est correct
         self.assertEqual(user.is_active, True)
@@ -102,7 +102,7 @@ class TestsUserModel(TestCase):
     def test_create_superuser(self):
         """Teste la création d'un superutilisateur (admin)"""
         superuser = User.objects.create_superuser(
-            nickname="Paulo Modulo",
+            username="Paulo Modulo",
             email="paulo@modulo.fr",
             password="PassPauLo123"
         )
@@ -127,7 +127,7 @@ class TestsUserModel(TestCase):
         self.assertEqual(user.bio, "")
         self.assertFalse(user.is_active)
         self.assertEqual(user.gender, User.UserGender.UNDEFINED)
-        self.assertIsNone(user.nickname)
+        self.assertIsNone(user.username)
         self.assertIsNone(user.birthdate)
         with self.assertRaises(Fiction.DoesNotExist):
             fiction.refresh_from_db()

@@ -46,7 +46,7 @@
             class="is-size-7 has-text-weight-normal"
             :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
           >
-            {{ author.nickname }}
+            {{ author.username }}
           </NuxtLink>
         </template>
       </div>
