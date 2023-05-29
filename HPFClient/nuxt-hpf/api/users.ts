@@ -17,7 +17,7 @@ export const getUser = (user_id: string): Promise<AxiosResponse<any>> =>
 
 export const signup = (data: UserRegisterData): Promise<AxiosResponse<any>> =>
   $axios.request({
-    url: "/signup",
+    url: "/account/",
     method: "post",
     data
   });
