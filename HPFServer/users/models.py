@@ -19,11 +19,11 @@ class UserManager(BaseUserManager):
     """Gestionnaire d'utilisateurs"""
 
     @transaction.atomic
-    def create_user(self, nickname, email, password, **extra_fields):
+    def create_user(self, username, email, password, **extra_fields):
         """Crée un utilisateur"""
 
         user = self.model(
-            nickname=nickname,
+            username=username,
             email=self.normalize_email(email),
             is_active=True,
         )
@@ -39,11 +39,11 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, nickname, email, password, **extra_fields):
+    def create_superuser(self, username, email, password, **extra_fields):
         """Crée un super utilisateur"""
 
         superuser = self.model(
-            nickname=nickname,
+            username=username,
             email=self.normalize_email(email),
             is_active=True,
             is_staff=True,
@@ -62,7 +62,7 @@ class UserManager(BaseUserManager):
 
         anonymous_user = self.model(
             email=self.normalize_email(email),
-            nickname=None,
+            username=None,
             is_active=False,
         )
         anonymous_user.set_unusable_password()
@@ -83,9 +83,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
         ]
 
-    # NOTE : nickname laissé NULL pour les comptes anonymes
+    # NOTE : usernam laissé NULL pour les comptes anonymes
     # blank=False permet d'obliger l'UI à demander ces infos : seul le moteur peut créer des comptes anonymes
-    nickname = models.CharField(
+    username = models.CharField(
         max_length=200,
         verbose_name="pseudonyme",
         unique=True,
@@ -140,8 +140,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Il faut définir "à la main" quel champ est utilisé comme identifiant
     # La définition du champ "email" n'est pas nécessaire, mais on n'est jamais trop prudent
     # La définition de REQUIRED_FIELDS est nécessaire pour la création d'un superutilisateur via shell
-    # nickname et password sont implicitement ajoutés à la liste
-    USERNAME_FIELD = "nickname"
+    # username et password sont implicitement ajoutés à la liste
+    USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
 
@@ -149,11 +149,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def profile(self):
         return getattr(self, "user_profile", None)
 
-    @property
-    def username(self) -> str:
-        """Renvoie le pseudonyme ou [anonyme] si le compte est anonymisé"""
+    # @property
+    # def username(self) -> str:
+    #     """Renvoie le pseudonyme ou [anonyme] si le compte est anonymisé"""
 
-        return self.get_username() or "[anonyme]"
+    #     return self.get_username() or "[anonyme]"
 
     def __str__(self):
         return self.username
@@ -225,7 +225,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.groups.clear()  # Supprime de tous les groupes / équipes
         self.is_staff = False
         self.is_superuser = False
-        self.nickname = None
+        self.username = None
 
         self.is_active = False
         self.set_unusable_password()

@@ -41,7 +41,7 @@
             :key="'author_' + author.user_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
             :href="'auteurs/' + author.user_id"
-          >{{ author.nickname }}
+          >{{ author.username }}
           </a>
         </template>
       </div>

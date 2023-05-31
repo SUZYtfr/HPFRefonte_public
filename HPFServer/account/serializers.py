@@ -14,7 +14,7 @@ class AccountManagementSerializer(UserSerializer):
             "banner",
         ]
         extra_kwargs = {
-            "nickname": {
+            "username": {
                 "read_only": True,
             },
             "password": {
@@ -43,7 +43,7 @@ class AccountManagementSerializer(UserSerializer):
 class AccountCreationSerializer(AccountManagementSerializer):
     class Meta(AccountManagementSerializer.Meta):
         extra_kwargs = {
-            "nickname": {
+            "username": {
                 "required": True,
             },
         }

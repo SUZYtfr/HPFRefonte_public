@@ -21,11 +21,11 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         },
         {
           "user_id": 2,
-          "nickname": "Lilouze"
+          "username": "Lilouze"
         }
       ],
       "rating": 0,
@@ -37,7 +37,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         }
@@ -84,7 +84,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "rating": 0,
@@ -96,7 +96,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         },
@@ -107,7 +107,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         },
@@ -118,7 +118,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         },
@@ -129,7 +129,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         }
@@ -197,7 +197,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "rating": 0,
@@ -209,7 +209,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         }
@@ -247,7 +247,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "rating": 0,
@@ -285,7 +285,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "rating": 0,
@@ -297,7 +297,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         }
@@ -335,7 +335,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "rating": 0,
@@ -347,7 +347,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ]
         }
@@ -386,7 +386,7 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         }
       ],
       "comments": [
@@ -396,7 +396,7 @@
           "content": "Mon super commentaire",
           "author": {
             "user_id": 1,
-            "nickname": "SUZYtfr"
+            "username": "SUZYtfr"
           }
         },
         {
@@ -405,7 +405,7 @@
           "content": "Intéressé ? N’hésitez pas à contacter Chalusse par MP sur le forum pour lui transmettre les informations principales (thème général, condition particulière d’inscription, deadline, etc.) ! <br>Prenez bien soin de vous !",
           "author": {
             "user_id": 1,
-            "nickname": "SUZYtfr"
+            "username": "SUZYtfr"
           }
         },
         {
@@ -414,7 +414,7 @@
           "content": "Mon troisième commentaire",
           "author": {
             "user_id": 1,
-            "nickname": "SUZYtfr"
+            "username": "SUZYtfr"
           }
         }
       ]
@@ -427,11 +427,11 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         },
         {
           "user_id": 2,
-          "nickname": "Lilouze66"
+          "username": "Lilouze66"
         }
       ],
       "comments": []
@@ -444,11 +444,11 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         },
         {
           "user_id": 2,
-          "nickname": "Lilouze66"
+          "username": "Lilouze66"
         }
       ],
       "comments": []
@@ -461,11 +461,11 @@
       "authors": [
         {
           "user_id": 1,
-          "nickname": "SUZYtfr"
+          "username": "SUZYtfr"
         },
         {
           "user_id": 2,
-          "nickname": "Lilouze66"
+          "username": "Lilouze66"
         }
       ],
       "comments": []
@@ -478,7 +478,7 @@
         "user_id": 1,
         "creation_date": "2020-11-01T19:25:43.511Z",
         "status": 2,
-        "nickname": "SUZYtfr",
+        "username": "SUZYtfr",
         "realname": "Simon",
         "bio": "<p style=\"text-align: center;\"><strong>Membre HPF et toutes mes dents.</strong></p><br>\r\n<p style=\"text-align: center;\"><strong></strong> <img src=\"http://i22.photobucket.com/albums/b348/Atropos_/asso1.gif\" alt=\"\"></p><br>\r\n<p style=\"text-align: justify;\">Bonjour aux curieux ! Comme mon pseudonyme l'indique si bien, je suis Ielenna. Mon âge reste un grand mystère, je suis ergothérapeute en libéral (le plus beau métier du monde), mais avant tout je suis auteur ! (je suis également graphiste en amateur, dessinatrice et compositrice au piano).</p><br>\r\n<p style=\"text-align: justify;\">Ca commence à faire monstre temps que je suis sur HPF (depuis 2012, dammit). A tel point que je suis en couple avec un HPFien !</p><br>\r\n<p style=\"text-align: justify;\">J'ai pris la plume sous un véritable projet littéraire en mars 2006 et ait intégré les rangs d'internet l'été suivant avec ce qui deviendra mon plus gros projet : <em>Les Chroniques des Fleurs d'Opale</em>. Les deux premiers volumes sont sortis en 2017, des monstres pavés ! Le tome II devrit paraître fin 2019-début 2020.</p><br>\r\n<p style=\"text-align: justify;\">Et sinon, je suis aussi fondatrice et ancienne présidente d'une association de jeunes auteurs : Génération Ecriture. Collectif qui oeuvre pour la reconnaissance des jeunes auteurs, autant par le public extérieur que par le monde professionnel de la littérature.  Je suis du genre à énormément m'investir auprès des jeunes auteurs et suis très sensible à ce qui touche de près ou de loin à l'édition, milieu que je fréquente plus ou moins (traduction : j'essaie d'éviter à un grand nombre de se faire pigeonner)  J'ai rédigé pas mal de textes et de nouvelles, je manque rarement d'imagination et d'inspiration. Je vis dans un monde de Boursoufflets multicolores en pâte d'amande.  Twitter : @ielenna_ GE : www.generation-ecriture.com</p><br>\r\n<p style=\"text-align: justify;\"><em>A propos de Harry Potter</em></p><br>\r\n<p style=\"text-align: justify;\">Ma première réaction face à cette saga a été un rejet total de ce que j'appelais un effet de mode. Puis, j'ai succombé à la tentation et ait lu les quatre premiers tome, alors âgée de neuf-dix ans. Ayant grandi avec les acteurs de la saga, pour appartenir à la même génération qu'eux, j'ai constamment été plongée dans cet univers qui, plus que l'histoire et les personnages, m'a fascinée par la richesse de son univers. Facette que j'essaie de retranscrire au mieux dans mes fanfictions. Au lycée, j'échangeais régulièrement des Drarry avec ma meilleure amie, j'en étais particulièrement friande. J'aime les textes qui se rattachent au canon et qui font preuve d'imagination, qui véhiculent de véritables émotions. Je n'ai pas de personnage favori à proprement parlé, car pour moi <em>Harry Potter</em> est un tout.</p><br>\r\n<p style=\"text-align: center;\">*** *** *** *** *** *** *** ***</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://i39.servimg.com/u/f39/11/66/29/43/montag10.jpg\" alt=\"\"> <strong> </strong></p><br>\r\n<p style=\"font-size: 14px; text-align: center;\"><strong>Ludo Mentis Aciem</strong></p><br>\r\n<p style=\"text-align: center;\"><strong> Comme le jeu s'empare de la raison</strong></p><br>\r\n<p style=\"text-align: justify;\">Fiction commencée en juin 2012. Il s'agit de mon travail le plus important en termes de FF. LMA fait directement suite au tome VII de HP, avec une petite OC qui se retrouve à ouvrir, sans le vouloir, la cinquième maison de Poudlard. L'aventure se décline en sept parties, à la manière de la saga originelle. En phase de devenir l'une des fictions les plus longues du site HPF, LMA a été saluée et plébiscitée par 11 répertoires sur la plateforme Skyrock, où se trouve le \"blog officiel\" de l'histoire (ludo-mentis-aciem.skyrock.com)</p><br>\r\n<p style=\"text-align: justify;\"><em>N'attendez pas plus longtemps pour prendre part à cette grande aventure en compagnie de Kate Whisper, l'une des héroïnes les plus maladroites et touchantes qui soient !</em></p><br>\r\n<p style=\"text-align: justify;\">Images : Warner Bros, Abigail Breslin, brushs divers, montage : bibi</p><br>\r\n<p>&nbsp;</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~</p><br>\r\n<p style=\"text-align: center;\">&nbsp;</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://img15.hostingpics.net/pics/623114premier.jpg\" alt=\"\"></p><br>\r\n<p style=\"text-align: center;\"><strong>Blanche-Neige et les Sept Weasley</strong></p><br>\r\n<p style=\"text-align: center;\">Fanfiction parodique sur le thème des Contes rédigée dans le cadre du concours d'Asianchoose. Je certifie n'avoir consommé aucune drogue durant l'écriture de cette nouvelle !</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~ <br><img src=\"http://i754.photobucket.com/albums/xx182/papier_froisse/riez-1.jpg\" alt=\"\" width=\"204\" height=\"104\"></p><br>\r\n<p style=\"text-align: center;\"><strong>La Contingence des Malchanceux</strong>&nbsp;</p><br>\r\n<p style=\"text-align: center;\">Fanfiction comique pour le concours d'Ellie : et si la coupe des quatre maison tombait à parfaite égalité ? Et si les quatre champions du tournoi étaient ceux qu'on imaginait le moins à ce rôle ? Et si Dumbledore était un sociopathe atteint du syndrome de la Tourette ?</p><br>\r\n<p style=\"text-align: center;\">~~ ~~ ~~ ~~ ~~ ~~</p><br>\r\n<p style=\"text-align: center;\"><img src=\"http://img15.hostingpics.net/pics/189353fvrier2016.png\" alt=\"\" width=\"117\" height=\"50\"></p><br>\r\n<p style=\"text-align: center;\"><br><strong>Et je vous laisse découvrir tous mes autres textes un peu plus bas !</strong> ;)</p><br>",
         "is_premium": true,
@@ -537,7 +537,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -549,7 +549,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -563,7 +563,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -575,7 +575,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -589,7 +589,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -601,7 +601,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -615,7 +615,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -627,7 +627,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -641,7 +641,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -653,7 +653,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -667,7 +667,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -679,7 +679,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }
@@ -693,7 +693,7 @@
           "authors": [
             {
               "user_id": 1,
-              "nickname": "SUZYtfr"
+              "username": "SUZYtfr"
             }
           ],
           "rating": 0,
@@ -705,7 +705,7 @@
               "authors": [
                 {
                   "user_id": 1,
-                  "nickname": "SUZYtfr"
+                  "username": "SUZYtfr"
                 }
               ]
             }

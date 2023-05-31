@@ -131,7 +131,7 @@ class CollectionReviewViewSet(ReviewViewSet):
 #     serializer_class = ReviewSerializer
 #     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsReviewOwnerOrReadOnly]
 #     # queryset = Review.objects.filter(draft=False).order_by("-creation_date")
-#     search_fields = ["creation_user__nickname"]
+#     search_fields = ["creation_user__username"]
 #
 #     def perform_update(self, serializer):
 #         serializer.save(modification_user=self.request.user, modification_date=timezone.now())

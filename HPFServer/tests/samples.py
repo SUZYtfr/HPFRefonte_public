@@ -41,7 +41,7 @@ def get_random_user():
 
 def sample_user(**kwargs):
     user = User.objects.create_user(
-        nickname=kwargs.pop("nickname", None) or french_faker.user_name(),
+        username=kwargs.pop("username", None) or french_faker.user_name(),
         email=kwargs.pop("email", None) or french_faker.email(safe=True),
         password=kwargs.pop("password", None) or make_password(None),  # mot de passe inutilisable
         realname=kwargs.pop("realname", None) or french_faker.name(),
@@ -237,9 +237,9 @@ def sample_comment(**kwargs):
 
 # DONNÉES DE TRANSFERT AUTO-GÉNÉRÉES
 
-def sample_user_create_payload(nickname=None, realname=None, email=None, password=None, birthdate=None):
+def sample_user_create_payload(username=None, realname=None, email=None, password=None, birthdate=None):
     payload = {
-        "nickname": lorem.get_word(2) if nickname is None else nickname,
+        "username": lorem.get_word(2) if username is None else username,
         "realname": lorem.get_word(2) if realname is None else realname,
         "email": (lorem.get_word() + "@" + lorem.get_word() + ".fr") if email is None else email,
         "password": "MotDePasse123" if password is None else password,

@@ -190,20 +190,20 @@ class FictionCardSerializer(serializers.ModelSerializer):
 class FictionExtraAuthorSerializer(serializers.Serializer):
     """Sérialiseur d'ajout d'auteur à une fiction"""
 
-    class AuthorNicknameField(serializers.CharField):
+    class AuthorUsernameField(serializers.CharField):
         def to_internal_value(self, data):
             try:
-                user = User.objects.get(nickname=data)
+                user = User.objects.get(username=data)
             except User.DoesNotExist:
                 raise exceptions.ValidationError(f"L'utilisateur {data} n'a pas été trouvé.")
 
             return user
 
-    author_nickname = AuthorNicknameField(write_only=True)
+    author_username = AuthorUsernameField(write_only=True)
     authors = serializers.StringRelatedField(many=True, read_only=True)
 
     def update(self, instance, validated_data):
-        instance.authors.add(validated_data["author_nickname"])
+        instance.authors.add(validated_data["author_username"])
         return instance
 
 

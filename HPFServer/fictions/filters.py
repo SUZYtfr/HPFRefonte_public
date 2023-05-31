@@ -7,13 +7,13 @@ from features.models import Feature
 
 class FictionFilterSet(filters.FilterSet):
     author = filters.CharFilter(
-        field_name="creation_user__nickname",
+        field_name="creation_user__username",
         lookup_expr="icontains",
         label="Écrite par",
     )
     # FIXME - pas un multi-charfield...
     # coauthor = filters.MultipleChoiceFilter(
-    #     field_name="coauthors__nickname",
+    #     field_name="coauthors__username",
     #     lookup_expr="icontains",
     #     conjoined=True,
     #     label="co-écrite par",
@@ -113,8 +113,8 @@ class FictionFilterSet(filters.FilterSet):
 
     def filter_authors(self, queryset, name, value):
         return queryset.filter(
-            models.Q(creation_user__nickname__icontains=value) |
-            models.Q(coauthors__nickname__icontains=value)
+            models.Q(creation_user__username__icontains=value) |
+            models.Q(coauthors__username__icontains=value)
         )
 
     def sort_by(self, queryset, name, value):

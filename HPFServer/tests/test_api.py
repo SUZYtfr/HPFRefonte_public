@@ -255,21 +255,21 @@ class TestsAccountAPI(APITestCase):
     def test_user_can_get_token(self):
         """Teste qu'un utilisateur peut obtenir un jeton d'authentification JWT"""
 
-        res = self.client.post(generate_token_url(), {"nickname": self.user.nickname, "password": self.user_password})
+        res = self.client.post(generate_token_url(), {"username": self.user.username, "password": self.user_password})
         self.assertContains(res, "access", status_code=status.HTTP_200_OK)
 
         res_2 = self.client.post(generate_token_url(refresh=True), {"refresh": res.data["refresh"]})
         self.assertContains(res_2, "access", status_code=status.HTTP_200_OK)
 
-    def test_user_cannot_change_nickname(self):
+    def test_user_cannot_change_username(self):
         """Teste qu'un utilisateur ne peut pas modifier son pseudo"""
 
-        res = self.client.patch(generate_account_url(profile=True), {"nickname": "NickTheName"})
+        res = self.client.patch(generate_account_url(profile=True), {"username": "NickTheName"})
 
-        self.user.refresh_from_db(fields=["nickname"])
+        self.user.refresh_from_db(fields=["username"])
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)  # les paramètres inconnus sont ignorés
-        self.assertNotEqual(self.user.nickname, "NickTheName")
+        self.assertNotEqual(self.user.username, "NickTheName")
 
 
 class TestsUserAPI(APITestCase):
@@ -389,11 +389,11 @@ class TestsUserAPI(APITestCase):
         user_2 = sample_user()
         user_3 = sample_user()
 
-        res_1 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_nickname": user_2.nickname}, **{"QUERY_STRING": "mine=True"})
+        res_1 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_username": user_2.username}, **{"QUERY_STRING": "mine=True"})
 
         self.client.force_authenticate(user_2)
 
-        res_2 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_nickname": user_3.nickname}, **{"QUERY_STRING": "mine=True"})
+        res_2 = self.client.put(generate_fiction_authors_url(pk=self.unvalidated_fiction.id), {"author_username": user_3.username}, **{"QUERY_STRING": "mine=True"})
 
         self.assertContains(res_1, "authors", status_code=status.HTTP_200_OK)
         self.assertIn(user_2, self.unvalidated_fiction.authors.all())

@@ -89,8 +89,8 @@ const config: NuxtConfig = {
         options: {
           secure: (process.env.NODE_ENV === "production")
         },
-        redirect: undefined,
-        resetOnError: true
+        redirect: false,
+        resetOnError: true,
       }
     }
   },

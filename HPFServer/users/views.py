@@ -12,10 +12,10 @@ class UserViewSet(
 ):
     """Ensemble de vues pour les utilisateurs"""
 
-    queryset = User.objects.active().order_by("nickname")
+    queryset = User.objects.active().order_by("username")
     serializer_class = UserSerializer
     permission_classes = [IsRequestUser | HasPermission | ReadOnly]
-    search_fields = ["nickname"]
+    search_fields = ["username"]
 
     def get_queryset(self):
         """Détermine la liste de membres à afficher
