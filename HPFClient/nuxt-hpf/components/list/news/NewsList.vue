@@ -164,7 +164,8 @@ export default class NewsList extends Vue {
   // #region Methods
   private async searchNews(): Promise<void> {
     try {
-      this.news = (await searchNews(this.newsFilters)).items;
+      const response = (await searchNews(this.newsFilters));
+      this.news = response.results;
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({

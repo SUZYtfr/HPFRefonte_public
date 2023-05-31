@@ -113,9 +113,9 @@ export default class extends Vue {
   async fetch(): Promise<void> {
     this.listLoading = true;
     try {
-      this.recentNews = (await searchNews(this.newsFilters)).items;
-      this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).items;
-      this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).items;
+      this.recentNews = (await searchNews(this.newsFilters)).results;
+      this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
+      this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
     // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
     // console.log("Date type: " + ((new Date()) instanceof Date));
     // console.log("Creation date type: " + (this.fanfictions[0]?.creation_date instanceof Date));

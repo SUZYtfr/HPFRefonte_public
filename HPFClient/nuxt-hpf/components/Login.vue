@@ -101,11 +101,21 @@ export default class extends Vue {
   private async login(): Promise<void> {
     this.loading = true;
     try {
-      const data = await this.$auth.loginWith("cookie", { data: this.loginForm });
-      this.$auth.setUser(data);
-    } catch (exception) {
-      console.log(exception);
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+      await this.$auth.loginWith("cookie", { data: this.loginForm });
+    } catch (error) {
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la tentative de connexion",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
     } finally {
       this.loading = false;
     }

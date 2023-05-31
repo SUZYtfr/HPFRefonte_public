@@ -1,9 +1,9 @@
 <template>
   <div id="main-container" class="container px-5">
-    <News_2 v-if="news !== null" class="mt-2" :news="news" :active-color="'#f0f0f0'" />
+    <News_2 v-if="news != null" class="mt-2" :news="news" :active-color="'#f0f0f0'" />
     <br>
     <div>
-      <CommentList v-if="news !== null" :news_id="news?.id" :comments="news?.comments" />
+      <CommentList v-if="news != null" :news_id="news?.id" :comments="news?.comments" />
     </div>
     <br>
   </div>
@@ -38,7 +38,7 @@ export default class extends Vue {
   private async fetch(): Promise<void> {
     this.newsLoading = true;
     try {
-      this.news = (await getNews(parseInt(this.$route.params.id))).items;
+      this.news = (await getNews(parseInt(this.$route.params.id)));
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({

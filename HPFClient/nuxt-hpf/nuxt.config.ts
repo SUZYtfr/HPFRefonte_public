@@ -61,8 +61,9 @@ const config: NuxtConfig = {
     strategies: {
       local: undefined,
       cookie: {
+        scheme: "refresh",
         token: {
-          property: "access_token",
+          property: "access",
           global: true,
           required: true,
           type: "Bearer",
@@ -70,30 +71,26 @@ const config: NuxtConfig = {
           maxAge: 60 * 30 // 30 minutes
         },
         refreshToken: {
-          property: "refresh_token",
+          property: "refresh",
           required: true,
-          data: "refresh_token",
+          data: "refresh",
           maxAge: 60 * 60 * 24 * 30 // 30 jours
         },
         user: {
-          property: "user",
-          autoFetch: false
+          property: false,
+          autoFetch: true
         },
         endpoints: {
-          login: { url: "/account/login", method: "post" },
-          refresh: { url: "/account/refresh", method: "post" },
-          logout: { url: "/account/logout", method: "post" },
-          user: { url: "/account/profile", method: "get" }
+          login: { url: "/account/token/", method: "post" },
+          refresh: { url: "/account/token/refresh/", method: "post" },
+          logout: false,
+          user: { url: "/account/", method: "get" }
         },
         options: {
-          secure: true
+          secure: (process.env.NODE_ENV === "production")
         },
-        redirect: {
-          login: "/login",
-          logout: "/",
-          callback: false,
-          home: "/"
-        }
+        redirect: undefined,
+        resetOnError: true
       }
     }
   },
@@ -105,7 +102,7 @@ const config: NuxtConfig = {
   ],
   axios: {
     baseURL: process.env.VUE_APP_BASE_API, // Used as fallback if no runtime config is provided,
-    credentials: true
+    credentials: (process.env.NODE_ENV === "production")
   },
   ssr: true,
   target: "server",
