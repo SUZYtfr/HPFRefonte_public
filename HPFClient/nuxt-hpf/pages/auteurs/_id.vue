@@ -516,7 +516,7 @@ export default class extends Vue {
   public fanfictionFilters: IFanfictionFilters = {
     searchTerm: "",
     searchAuthor: "",
-    searchAuthorId: 0,
+    searchAuthorId: Number(this.$route.params.id),
     multipleAuthors: null,
     status: null,
     minWords: null,

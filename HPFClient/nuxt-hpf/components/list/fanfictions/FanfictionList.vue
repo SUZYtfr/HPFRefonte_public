@@ -173,7 +173,8 @@ export default class FanfictionList extends Vue {
   private async getFanfictions(): Promise<void> {
     // this.listLoading = true;
     try {
-      this.fanfictions = (await searchFanfictions(this.fanfictionFilters)).items;
+      const response = (await searchFanfictions(this.fanfictionFilters));
+      this.fanfictions = response.results;
       // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
       // console.log("Date type: " + ((new Date()) instanceof Date));
       // console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));

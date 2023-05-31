@@ -87,7 +87,7 @@ const config: NuxtConfig = {
           user: { url: "/account/", method: "get" }
         },
         options: {
-          secure: true
+          secure: (process.env.NODE_ENV === "production")
         },
         redirect: false,
         resetOnError: true,
@@ -102,7 +102,7 @@ const config: NuxtConfig = {
   ],
   axios: {
     baseURL: process.env.VUE_APP_BASE_API, // Used as fallback if no runtime config is provided,
-    credentials: true
+    credentials: (process.env.NODE_ENV === "production")
   },
   ssr: true,
   target: "server",

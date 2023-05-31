@@ -8,7 +8,7 @@
     <div class="media-content">
       <div class="content">
         <div class="is-flex is-flex-direction-row is-justify-content-space-between">
-          <NuxtLink :to="{ name: 'author-id', params: { id: comment.author?.user_id } }">
+          <NuxtLink :to="{ name: 'auteurs-id', params: { id: comment.author?.user_id } }">
             <strong>{{ comment.author?.username }}</strong>
           </NuxtLink>
           <small>{{ comment.post_date != null ? (comment.post_date.toLocaleDateString() + " à " + comment.post_date.getHours() + ":" + comment.post_date.getMinutes()) : "" }}</small>

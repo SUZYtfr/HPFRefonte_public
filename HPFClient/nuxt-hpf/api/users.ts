@@ -4,14 +4,14 @@ import { UserRegisterData } from "@/types/users";
 
 export const getUserInfo = (data: any): Promise<AxiosResponse<any>> =>
   $axios.request({
-    url: "/users/info",
+    url: "/users/info/",
     method: "post",
     data
   });
 
 export const getUser = (user_id: string): Promise<AxiosResponse<any>> =>
   $axios.request({
-    url: "/authors/" + user_id,
+    url: "/users/" + user_id + "/",
     method: "get"
   });
 
