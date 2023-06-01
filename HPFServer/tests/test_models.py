@@ -30,7 +30,7 @@ class TestCoreModels(TestCase):
     def test_creation_of_created_model_through_characteristic_model(self):
         """Teste la création d'un modèle de base de créateur / modificateur par le biais du modèle Feature"""
         user = sample_user()
-        feature = sample_feature(creation_user=user)
+        feature = sample_characteristic(creation_user=user)
 
         self.assertEqual(feature.creation_user, user)
         self.assertEqual(feature.modification_user, None)
@@ -59,7 +59,7 @@ class TestsAllModels(TestCase):
         collection_title = "Exemple de titre de série"
         collection = sample_collection(creation_user=user, title=collection_title)
         feature_name = "Exemple de nom caractéristique"
-        feature = sample_feature(creation_user=user, name=feature_name)
+        feature = sample_characteristic(creation_user=user, name=feature_name)
         category = random_characteristic_type()
 
         self.assertEqual(str(user), username)
@@ -243,9 +243,9 @@ class TestFeatureModels(TestCase):
         """Teste qu'une caractéristique interdite est retirée de la liste de caractéristique d'une fiction"""
 
         fiction = sample_fiction()
-        replaced_feature = sample_feature()
-        replacement_feature = sample_feature()
-        forbidden_feature = sample_feature()
+        replaced_feature = sample_characteristic()
+        replacement_feature = sample_characteristic()
+        forbidden_feature = sample_characteristic()
 
         fiction.features.set([replaced_feature, forbidden_feature])
         replaced_feature.ban(modification_user=self.staff_user, replace_with=replacement_feature)

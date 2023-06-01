@@ -38,7 +38,7 @@ class TestsMyFictionsAPI(APITestCase):
                                                validation_status=Chapter.ValidationStage.PUBLISHED)
 
         # Crée une liste d'ID dont le nombre correspond au minimum pour chaque catégorie de caractéristique
-        cls.features_id_list = [sample_feature(creation_user=category.creation_user, characteristic_type=category).id
+        cls.features_id_list = [sample_characteristic(creation_user=category.creation_user, characteristic_type=category).id
                                 for category in CATEGORIES.values()
                                 for x in range(category.min_limit)]
 

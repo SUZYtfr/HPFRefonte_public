@@ -161,8 +161,8 @@ class TestsPublicAPI(APITestCase):
     def test_features_api_returns_only_allowed_features(self):
         """Teste que l'API de caractéristiques renvoie uniquement les caractéristiques autorisées"""
 
-        allowed_feature = sample_feature(creation_user=self.active_user, is_forbidden=False)
-        banned_feature = sample_feature(creation_user=self.active_user, is_forbidden=True)
+        allowed_feature = sample_characteristic(creation_user=self.active_user, is_forbidden=False)
+        banned_feature = sample_characteristic(creation_user=self.active_user, is_forbidden=True)
 
         allowed_feature_serializer = CharacteristicSerializer(allowed_feature, context={"request": self.request})
         banned_feature_serializer = CharacteristicSerializer(banned_feature, context={"request": self.request})

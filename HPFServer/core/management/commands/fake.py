@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tests.samples import (
     sample_user,
     sample_fiction,
+    sample_chapter,
     sample_news,
     sample_comment,
     sample_fiction_review,
@@ -13,12 +14,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "model",
-            choices=["user", "fiction", "news", "comment", "fictionreview"],
-        )
-        parser.add_argument(
-            "-c",
-            "--count",
+            "count",
             nargs="?",
             default=1,
             type=int,
@@ -26,27 +22,45 @@ class Command(BaseCommand):
             help="Nombre d'éléments à générer",
         )
         parser.add_argument(
+            "model",
+            choices=["users", "fictions", "chapters", "news", "comments", "fictionreviews"],
+            type=str,
+            metavar="MODÈLE",
+            help="Modèle à générer"
+        )
+        parser.add_argument(
             "-p",
             "--parent",
-            nargs="?",
+            nargs=1,
             default=None,
             type=int,
             metavar="ID",
             help="ID de l'élément parent",
         )
+        parser.add_argument(
+            "-u",
+            "--user",
+            nargs=1,
+            default=None,
+            type=int,
+            metavar="CRÉATEUR",
+            help="ID de l'utilisateur créateur",
+        )
 
     def handle(self, *args, **options):
         corres = {
-            "user": (sample_user, None),
-            "fiction": (sample_fiction, None),
+            "users": (sample_user, None),
+            "fictions": (sample_fiction, None),
+            "chapters": (sample_chapter, "fiction_id"),
             "news": (sample_news, None),
-            "comment": (sample_comment, "newsarticle_id"),
-            "fictionreview": (sample_fiction_review, "fiction_id"),
+            "comments": (sample_comment, "newsarticle_id"),
+            "fictionreviews": (sample_fiction_review, "fiction_id"),
         }
 
         model = options["model"]
         count = options["count"]
         parent_id = options["parent"]
+        creation_user_id = options["user"]
         sample_func, parent = corres[model]
 
         kwargs = {}
@@ -59,7 +73,10 @@ class Command(BaseCommand):
 
         else:
             if parent:
-                raise CommandError(f"ID de l'élément parent requis pour la création de {model}.")
+                raise CommandError(f"ID de l'élément parent requis pour la création de {model}.")          
+
+        if creation_user_id:
+            kwargs["creation_user_id"] = creation_user_id
 
         for i in range(count):
             try:

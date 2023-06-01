@@ -1,14 +1,10 @@
 import faker
-import lorem
-import time
-import datetime
-import random
 
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils import timezone
 
+from core.utils import get_moderation_account
 from users.models import User
 from characteristics.models import Characteristic, CharacteristicType
 from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage
@@ -20,15 +16,11 @@ french_faker = faker.Faker("fr_FR")
 
 
 def random_characteristic_type():
-    if CharacteristicType.objects.count() > 0:
-        return random.choices(list(CharacteristicType.objects.all()))[0]
+    characteristic_types = CharacteristicType.objects.all()
+    if characteristic_types.count() > 0:
+        return french_faker.random_element(characteristic_types)
     else:
         return sample_characteristic_type()
-
-
-def random_date():
-    d = random.randint(1, int(time.time()))
-    return datetime.datetime.fromtimestamp(d).strftime('%Y-%m-%d')
 
 
 def get_random_user():
@@ -84,30 +76,32 @@ def sample_fiction(generate_chapters=None, **kwargs):
                 validation_status=ChapterValidationStage.PUBLISHED,
             )
             chapter.create_text_version(
-                creation_user=chapter.creation_user,
+                creation_user_id=chapter.creation_user_id,
                 text=french_faker.paragraph(100),
                 touch=False,
             )
     return fiction
 
 
-def sample_chapter(creation_user=None, title=None, fiction=None, text=None,
-                   **extra_fields):
-    if not creation_user:
-        creation_user = sample_user()
-    if not fiction:
-        fiction = sample_fiction(creation_user=creation_user)
+def sample_chapter(**kwargs):
+    creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
+    text = kwargs.pop("text", None)
     chapter = Chapter.objects.create(
-        creation_user=creation_user,
-        title=lorem.get_sentence() if title is None else title,
-        fiction=fiction,
-        **extra_fields
+        creation_user_id=creation_user_id,
+        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(creation_user_id), "id"),
+        title=kwargs.pop("title", None) or french_faker.sentence(),
+        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
+        **kwargs,
     )
-    chapter.create_text_version(text=text or lorem.get_paragraph(3), creation_user=creation_user, touch=False)
+    chapter.create_text_version(
+        creation_user_id=creation_user_id,
+        text=text or french_faker.paragraph(3),
+        touch=False,
+    )
 
     return chapter
 
-
+"""
 def sample_collection(creation_user=None, title=None, summary=None,
                       **extra_fields):
     creation_user = creation_user or sample_user()
@@ -115,41 +109,42 @@ def sample_collection(creation_user=None, title=None, summary=None,
         creation_user=creation_user,
         title=lorem.get_sentence() if title is None else title,
         summary=lorem.get_paragraph() if summary is None else summary,
-        # starting_chapters=[sample_chapter(creation_user=creation_user)] if starting_chapters is None else starting_chapters,
         **extra_fields
     )
 
     return collection
+"""
 
 
-def sample_characteristic_type(creation_user=None, name=None, min_limit=None, max_limit=None, is_closed=False, **extra_fields):
+def sample_characteristic_type(**kwargs):
+    min_limit = kwargs.pop("min_limit", None)
+    max_limit = kwargs.pop("max_limit", None)
     if not min_limit or max_limit:
-        min_limit, max_limit = sorted(random.choices(range(0, 10), k=2))
+        min_limit, max_limit = sorted(french_faker.random_elements(length=2, unique=True, elements=range(10)))
     elif min_limit:
-        max_limit = random.randint(min_limit, 10)
+        max_limit = french_faker.random_int(min_limit, 10)
     elif max_limit:
-        min_limit = random.randint(0, max_limit)
+        min_limit = french_faker.random_int(0, max_limit)
 
     characteristic_type = CharacteristicType.objects.create(
-        creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
-        name=lorem.get_word(3) if name is None else name,
+        creation_user_id=kwargs.pop("creation_user_id", None) or getattr(get_moderation_account(), "id"),
+        name=kwargs.pop("name", None) or french_faker.word().capitalize(),
         min_limit=min_limit,
         max_limit=max_limit,
-        is_closed=is_closed,
-        **extra_fields,
+        is_closed=kwargs.pop("is_closed", False),
+        **kwargs,
     )
     return characteristic_type
 
 
-def sample_feature(characteristic_type=None, creation_user=None, name=None,
-                   **extra_fields):
-    feature = Characteristic.objects.create(
-        creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
-        characteristic_type=characteristic_type or sample_characteristic_type(),
-        name=lorem.get_word(3) if name is None else name,
-        **extra_fields
+def sample_characteristic(**kwargs):
+    characteristic = Characteristic.objects.create(
+        creation_user_id=kwargs.pop("creation_user_id", None) or getattr(get_moderation_account(), "id"),
+        characteristic_type_id=kwargs.pop("characteristic_type_id", None) or getattr(random_characteristic_type(), "id"),
+        name=kwargs.pop("name", None) or french_faker.word().capitalize(),
+        **kwargs,
     )
-    return feature
+    return characteristic
 
 
 def sample_fiction_review(**kwargs):
@@ -191,15 +186,15 @@ def sample_news(**kwargs):
 
 def sample_comment(**kwargs):
     comment = NewsComment.objects.create(
-        creation_user_id=kwargs.pop("creation_user_id", None) or get_random_user().id,
+        creation_user_id=kwargs.pop("creation_user_id", None) or getattr(get_random_user(), "id"),
         text=kwargs.pop("text", None) or french_faker.paragraph(5),
-        newsarticle_id=kwargs.pop("newsarticle_id", sample_news().id),
+        newsarticle_id=kwargs.pop("newsarticle_id", None) or getattr(sample_news(), "id"),
         **kwargs,
     )
 
     return comment
 
-
+"""
 # DONNÉES DE TRANSFERT AUTO-GÉNÉRÉES
 
 def sample_user_create_payload(username=None, realname=None, email=None, password=None, birthdate=None):
@@ -250,3 +245,4 @@ def sample_fiction_create_payload(title=None, storynote=None, summary=None, char
     }
 
     return fiction_create_payload
+"""

@@ -261,14 +261,14 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         """Renvoie le nombre de reviews"""
         return self.published_reviews.count()
 
-    def create_text_version(self, creation_user, text, touch=True):
+    def create_text_version(self, creation_user_id, text, touch=True):
         """Crée une nouvelle version du texte du chapitre par l'utilisateur passé"""
 
         version = ChapterTextVersion.objects.create(
             chapter=self,
             text=text,
             word_count=count_words(text),
-            creation_user=creation_user,
+            creation_user_id=creation_user_id,
             creation_date=timezone.now(),
         )
         version.save()
