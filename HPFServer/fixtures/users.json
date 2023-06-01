@@ -1,309 +1,296 @@
 [
-{
- "model": "auth.group",
- "pk": 1,
- "fields": {
-  "name": "L'équipe des Nuits",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 2,
- "fields": {
-  "name": "L'association HPF",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 3,
- "fields": {
-  "name": "L'équipe Communication",
-  "permissions": [
-   110,
-   111,
-   112,
-   113
-  ]
- }
-},
-{
- "model": "auth.group",
- "pk": 4,
- "fields": {
-  "name": "L'équipe de Modération",
-  "permissions": [
-   30,
-   31,
-   32,
-   35,
-   36,
-   47,
-   48,
-   51,
-   49,
-   52,
-   53,
-   55,
-   22,
-   23,
-   24,
-   72
-  ]
- }
-},
-{
- "model": "auth.group",
- "pk": 5,
- "fields": {
-  "name": "L'équipe des Éditions",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 6,
- "fields": {
-  "name": "L'équipe des Podiums",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 7,
- "fields": {
-  "name": "L'équipe du CA",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 8,
- "fields": {
-  "name": "L'équipe Technique",
-  "permissions": []
- }
-},
-{
- "model": "auth.group",
- "pk": 9,
- "fields": {
-  "name": "Adhérents",
-  "permissions": [
-   50,
-   69,
-   122
-  ]
- }
-},
-{
- "model": "users.user",
- "pk": 0,
- "fields": {
-  "creation_date": "2022-02-19T16:15:57.527Z",
-  "modification_date": null,
-  "username": "La modération",
-  "realname": null,
-  "email": "moderation@hpf.fr",
-  "password": null,
-  "birthdate": null,
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": true,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 2,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.166Z",
-  "modification_date": "2021-08-12T10:12:21.166Z",
-  "username": "admin",
-  "realname": null,
-  "email": "admin@le-heron.fr",
-  "password": "pbkdf2_sha256$320000$LYXmJIGoGL0ucb1Rumhv0W$5X+RqCzg6H4qloeII1V+7RC46fDsh+8LUzp5GmIpBJo=",
-  "birthdate": null,
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": true,
-  "last_login": "2022-02-19T19:13:39.194Z",
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 3,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.234Z",
-  "modification_date": "2021-08-12T10:12:21.234Z",
-  "username": "modo",
-  "realname": null,
-  "email": "modo@modo.modo",
-  "password": "pbkdf2_sha256$260000$J4kM2a7EqFhZdsIyLuFQFP$e422bIdTTpJg+XfGAQ26yap5dFfypYCiynprsNP0L2E=",
-  "birthdate": "1970-01-01",
-  "age_consent": true,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 4,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.321Z",
-  "modification_date": "2021-08-12T10:12:21.321Z",
-  "username": "Le reviewer compulsif",
-  "realname": null,
-  "email": "reviewer@reviewer.fr",
-  "password": "pbkdf2_sha256$320000$9DWZ9ULKgvOGm6phllYwPH$nFHLd7PlLmwe/6vlkoPZiFvQzj8tRGIKUGWIcjZrSgM=",
-  "birthdate": "1986-06-06",
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 5,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.394Z",
-  "modification_date": "2021-08-12T10:12:21.394Z",
-  "username": "Chacal",
-  "realname": "Lucien Dupain",
-  "email": "chacal@chacal.com",
-  "password": "pbkdf2_sha256$260000$nxapbETE7dF0gG9yVe8335$MAWBK/QLgIN9AUPCeBXCNB9cQPaDynHzlk38vtpaye4=",
-  "birthdate": "1986-06-06",
-  "age_consent": true,
-  "bio": "Chacal est un animal. Chacal n'est pas sale.",
-  "gender": 3,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   9
-  ],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 6,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.467Z",
-  "modification_date": "2021-08-12T10:12:21.467Z",
-  "username": "Loutre",
-  "realname": "tempor ullamco",
-  "email": "do@nisi.fr",
-  "password": "pbkdf2_sha256$320000$lacUySFx5AMmotFOgV2bLP$ZEdZ0Lr+f5wwFf64x5sWVPASJ/O2kqAEJaCpmv0kV7c=",
-  "birthdate": "1958-06-04",
-  "age_consent": false,
-  "bio": "",
-  "gender": null,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": false,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   3
-  ],
-  "user_permissions": []
- }
-},
-{
- "model": "users.user",
- "pk": 7,
- "fields": {
-  "creation_date": "2021-08-12T10:12:21.550Z",
-  "modification_date": "2021-08-12T10:12:21.550Z",
-  "username": "Pollo le Mollusque",
-  "realname": "Paul Moëlle",
-  "email": "pollo@mollo.fr",
-  "password": "pbkdf2_sha256$260000$7SI3YUDTmDae6gDflk7vie$RTSd6CtegMdbsReWMX/OX4GE1aaKCcAeA5BbXW/J2XE=",
-  "birthdate": "2852-06-15",
-  "age_consent": false,
-  "bio": "Salut moi c'est Pollo l'octopus à puces",
-  "gender": 2,
-  "user_pref_font": "Tahoma",
-  "user_pref_font_size": 7,
-  "user_pref_line_spacing": "1.00",
-  "user_pref_dark_mode": null,
-  "user_pref_skin": "default",
-  "user_pref_show_reaction": true,
-  "is_beta": false,
-  "is_active": true,
-  "is_staff": true,
-  "is_superuser": false,
-  "last_login": null,
-  "groups": [
-   4
-  ],
-  "user_permissions": []
- }
-}
+    {
+        "model": "users.user",
+        "pk": 0,
+        "fields": {
+            "first_seen": "2022-02-19T16:15:57.527Z",
+            "username": "La modération",
+            "email": "moderation@hpfanfiction.org",
+            "password": "pbkdf2_sha256$320000$LYXmJIGoGL0ucb1Rumhv0W$5X+RqCzg6H4qloeII1V+7RC46fDsh+8LUzp5GmIpBJo=",
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 2,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.166Z",
+            "username": "admin",
+            "email": "admin@admin.admin",
+            "password": "pbkdf2_sha256$320000$LYXmJIGoGL0ucb1Rumhv0W$5X+RqCzg6H4qloeII1V+7RC46fDsh+8LUzp5GmIpBJo=",
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2022-02-19T19:13:39.194Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 3,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.234Z",
+            "username": "modo",
+            "email": "modo@modo.modo",
+            "password": "pbkdf2_sha256$260000$J4kM2a7EqFhZdsIyLuFQFP$e422bIdTTpJg+XfGAQ26yap5dFfypYCiynprsNP0L2E=",
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": false,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 4,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.321Z",
+            "username": "Le reviewer compulsif",
+            "email": "reviewer@reviewer.fr",
+            "password": "pbkdf2_sha256$320000$9DWZ9ULKgvOGm6phllYwPH$nFHLd7PlLmwe/6vlkoPZiFvQzj8tRGIKUGWIcjZrSgM=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 5,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.394Z",
+            "username": "Chacal",
+            "email": "chacal@chacal.com",
+            "password": "pbkdf2_sha256$260000$nxapbETE7dF0gG9yVe8335$MAWBK/QLgIN9AUPCeBXCNB9cQPaDynHzlk38vtpaye4=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 6,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.467Z",
+            "username": "Loutre",
+            "email": "do@nisi.fr",
+            "password": "pbkdf2_sha256$320000$lacUySFx5AMmotFOgV2bLP$ZEdZ0Lr+f5wwFf64x5sWVPASJ/O2kqAEJaCpmv0kV7c=",
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 7,
+        "fields": {
+            "first_seen": "2021-08-12T10:12:21.550Z",
+            "username": "Pollo le Mollusque",
+            "email": "pollo@mollo.fr",
+            "password": "pbkdf2_sha256$260000$7SI3YUDTmDae6gDflk7vie$RTSd6CtegMdbsReWMX/OX4GE1aaKCcAeA5BbXW/J2XE=",
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": false,
+            "last_login": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 0,
+        "fields": {
+            "user": 0,
+            "creation_date": "2023-05-05",
+            "realname": null,
+            "birthdate": null,
+            "bio": "",
+            "gender": 0
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "creation_date": "2023-05-05",
+            "realname": null,
+            "birthdate": null,
+            "bio": "",
+            "gender": 0
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 3,
+        "fields": {
+            "user": 3,
+            "creation_date": "2023-05-05",
+            "realname": null,
+            "birthdate": "1970-01-01",
+            "bio": "",
+            "gender": 0
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 4,
+        "fields": {
+            "user": 4,
+            "creation_date": "2023-05-05",
+            "realname": null,
+            "birthdate": "1986-06-06",
+            "bio": "",
+            "gender": 0
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "creation_date": "2023-05-05",
+            "realname": "Lucien Dupain",
+            "birthdate": "1986-06-06",
+            "bio": "Chacal est un animal. Chacal n'est pas sale.",
+            "gender": 3
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 6,
+        "fields": {
+            "user": 6,
+            "creation_date": "2023-05-05",
+            "realname": "tempor ullamco",
+            "birthdate": "1958-06-04",
+            "bio": "",
+            "gender": 0
+        }
+    },
+    {
+        "model": "users.userprofile",
+        "pk": 7,
+        "fields": {
+            "user": 7,
+            "creation_date": "2023-05-05",
+            "realname": "Paul Moëlle",
+            "birthdate": "2852-06-15",
+            "bio": "Salut moi c'est Pollo l'octopus à puces",
+            "gender": 2
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 0,
+        "fields": {
+            "user": 0,
+            "age_consent": false,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "age_consent": false,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 3,
+        "fields": {
+            "user": 3,
+            "age_consent": true,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 4,
+        "fields": {
+            "user": 4,
+            "age_consent": false,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "age_consent": true,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 6,
+        "fields": {
+            "user": 6,
+            "age_consent": false,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    },
+    {
+        "model": "users.userpreferences",
+        "pk": 7,
+        "fields": {
+            "user": 7,
+            "age_consent": false,
+            "font": "Tahoma",
+            "font_size": 7,
+            "line_spacing": "1.00",
+            "dark_mode": null,
+            "skin": "default",
+            "show_reaction": true
+        }
+    }
 ]

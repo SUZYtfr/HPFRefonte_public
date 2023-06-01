@@ -13,7 +13,7 @@ from pathlib import Path
 
 from users.models import User
 from fictions.models import Fiction, Chapter
-from features.models import Category, Feature
+from characteristics.models import CharacteristicType, Characteristic
 from selections.models import Selection, Proposition
 from reviews.models import Review, ReviewReply, MIN_GRADING_VALUE, MAX_GRADING_VALUE
 from images.models import Banner
@@ -60,7 +60,7 @@ class TestsAllModels(TestCase):
         collection = sample_collection(creation_user=user, title=collection_title)
         feature_name = "Exemple de nom caractéristique"
         feature = sample_feature(creation_user=user, name=feature_name)
-        category = random_category()
+        category = random_characteristic_type()
 
         self.assertEqual(str(user), username)
         self.assertEqual(str(fiction), fiction_title)
@@ -231,7 +231,7 @@ class TestFeatureModels(TestCase):
         """Teste que le minimum de caractéristiques pour une catégorie ne peut pas être plus grand que le maximum"""
 
         with self.assertRaises(IntegrityError):
-            Category.objects.create(
+            CharacteristicType.objects.create(
                 creation_user=self.staff_user,
                 name="Test catégorie minimum / maximum",
                 is_closed=True,

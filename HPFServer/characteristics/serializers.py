@@ -1,37 +1,37 @@
 from rest_framework import serializers, exceptions
 
-from .models import Feature, Category
+from .models import Characteristic, CharacteristicType
 
 
-class FeatureBaseSerializer(serializers.ModelSerializer):
+class CharacteristicBaseSerializer(serializers.ModelSerializer):
     """Base pour les sérialiseurs de caractéristiques"""
 
     class Meta:
-        model = Feature
+        model = Characteristic
         fields = "__all__"
 
 
-class FeatureCardSerializer(serializers.ModelSerializer):
+class CharacteristicCardSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feature
+        model = Characteristic
         fields = [
             "id",
             "name",
-            "category_id",
+            "characteristic_type_id",
         ]
 
 
-class FeatureSerializer(FeatureBaseSerializer):
+class CharacteristicSerializer(CharacteristicBaseSerializer):
     """Sérialiseur de caractéristique"""
 
     is_personal = serializers.HiddenField(default=True)
     fiction_count = serializers.IntegerField(default=None)
 
-    class Meta(FeatureBaseSerializer.Meta):
+    class Meta(CharacteristicBaseSerializer.Meta):
         fields = [
             "id",
             "name",
-            "category_id",
+            "characteristic_type_id",
             "parent_id",
             "description",
             "is_personal",
@@ -40,8 +40,8 @@ class FeatureSerializer(FeatureBaseSerializer):
         ]
         extra_kwargs = {
             "description": {"read_only": True},
-            "category": {"queryset": Category.objects.open()},
-            "parent": {"queryset": Feature.objects.allowed(),
+            "characteristic_type": {"queryset": CharacteristicType.objects.open()},
+            "parent": {"queryset": Characteristic.objects.allowed(),
                        "allow_null": True,
                        "initial": ""},
             "order": {"source": "_order"},
@@ -77,12 +77,12 @@ class FeatureSerializer(FeatureBaseSerializer):
             return super().save(**kwargs)
 
 
-class StaffFeatureSerializer(FeatureBaseSerializer):
+class StaffCharacteristicSerializer(CharacteristicBaseSerializer):
     """Sérialiseur de caractéristique pour les modérateurs"""
 
-    url = serializers.HyperlinkedIdentityField(view_name="features:feature-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="characteristics:characteristic-detail")
 
-    class Meta(FeatureBaseSerializer.Meta):
+    class Meta(CharacteristicBaseSerializer.Meta):
         pass
 
     def save(self, **kwargs):
@@ -101,11 +101,11 @@ class StaffFeatureSerializer(FeatureBaseSerializer):
         return super().save(**kwargs)
 
 
-class StaffCategorySerializer(serializers.ModelSerializer):
-    """Sérialiseur de catégorie pour les modérateurs"""
+class StaffCharacteristicTypeSerializer(serializers.ModelSerializer):
+    """Sérialiseur de type de caractéristiques pour les modérateurs"""
 
     class Meta:
-        model = Category
+        model = CharacteristicType
         fields = [
             "id",
             "name",
@@ -122,26 +122,26 @@ class StaffCategorySerializer(serializers.ModelSerializer):
         return attrs
 
 
-class StaffFeatureOrderSerializer(serializers.ModelSerializer):
+class StaffCharacteristicOrderSerializer(serializers.ModelSerializer):
     """Sérialiseur d'ordre de caractéristiques pour les modérateurs"""
 
     class Meta:
-        model = Category
+        model = CharacteristicType
         fields = ("order",)
 
     order = serializers.ListField(
         child=serializers.IntegerField(),
-        source="get_feature_order",
+        source="get_characteristic_order",
     )
 
     def validate_order(self, value):
         if not len(set(value)) == len(value):
             raise serializers.ValidationError("Des ID de caractéristiques sont en double.")
 
-        if not set(self.instance.get_feature_order()) == set(value):
+        if not set(self.instance.get_characteristic_order()) == set(value):
             raise serializers.ValidationError("Les ID de caractéristiques passés ne correspondent pas aux ID existants.")
 
         return value
 
     def reorder(self):
-        self.instance.set_feature_order(self.validated_data["get_feature_order"])
+        self.instance.set_characteristic_order(self.validated_data["get_characteristic_order"])

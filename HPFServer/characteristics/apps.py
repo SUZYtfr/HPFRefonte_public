@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class CharacteristicsConfig(AppConfig):
-    name = 'features'
+    name = "characteristics"

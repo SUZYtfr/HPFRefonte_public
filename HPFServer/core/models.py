@@ -59,14 +59,14 @@ class AuthoredModel(models.Model):
         abstract = True
 
 
-class FeaturedModel(models.Model):
+class CharacteristicModel(models.Model):
     """Modèle de base implémentant l'assignation de caractéristiques"""
 
     class Meta:
         abstract = True
 
-    features = models.ManyToManyField(
-        to="features.Feature",
+    characteristics = models.ManyToManyField(
+        to="characteristics.Characteristic",
         verbose_name="caractéristiques",
     )
 

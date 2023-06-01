@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.admin import BaseAdminAccess
-from fictions.models import Fiction, Chapter, Beta
+from fictions.models import Fiction, Chapter
 
 
 class FictionAdminAccess(BaseAdminAccess):
@@ -89,4 +89,3 @@ class BetaAdminAccess(BaseAdminAccess):
 
 admin.site.register(Fiction, FictionAdminAccess)
 admin.site.register(Chapter, ChapterAdminAccess)
-admin.site.register(Beta, BetaAdminAccess)

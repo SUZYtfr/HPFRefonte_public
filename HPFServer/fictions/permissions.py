@@ -59,12 +59,3 @@ class IsParentFictionCreationUser(permissions.BasePermission):
 class IsParentFictionCoAuthor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return IsFictionCoAuthor().has_object_permission(request, view, obj.fiction)
-
-#
-# class IsFictionFirstAuthor(permissions.BasePermission):
-#     def has_object_permission(self, request, view, obj):
-#         if request.method == "GET":
-#             return True
-#         if request.user == obj.authors.first():
-#             return True
-#         return False

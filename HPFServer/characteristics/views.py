@@ -3,12 +3,12 @@ from django.utils import timezone
 from rest_framework import viewsets, decorators, response, status, permissions
 
 from .serializers import (
-    FeatureSerializer,
-    StaffFeatureSerializer,
-    StaffCategorySerializer,
-    StaffFeatureOrderSerializer,
+    CharacteristicSerializer,
+    StaffCharacteristicSerializer,
+    StaffCharacteristicTypeSerializer,
+    StaffCharacteristicOrderSerializer,
 )
-from .models import Feature, Category
+from .models import Characteristic, CharacteristicType
 from core.permissions import DjangoPermissionOrReadOnly
 
 
@@ -23,33 +23,33 @@ class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
         return False
 
 
-class FeatureViewSet(viewsets.ModelViewSet):
+class CharacteristicViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
-    serializer_class = FeatureSerializer
-    queryset = Feature.objects.allowed().fiction_counts().order_by("-fiction_count")
+    serializer_class = CharacteristicSerializer
+    queryset = Characteristic.objects.allowed().fiction_counts().order_by("-fiction_count")
     search_fields = ["name"]
 
     def get_queryset(self):
         """Détermine la liste de caractéristiques à afficher"""
 
-        if self.request.user.is_staff:  # TODO - features.view_features
-            return Feature.objects.order_by("category")
+        if self.request.user.is_staff:  # TODO - characteristics.view_characteristics
+            return Characteristic.objects.order_by("characteristic_type")
         return self.queryset
 
     def get_serializer_class(self):
         """Détermine le sérialiseur à utiliser pour l'action demandé par le routeur"""
 
-        if self.request.user.is_staff:  # TODO - features.view_features
-            return StaffFeatureSerializer
+        if self.request.user.is_staff:  # TODO - characteristics.view_characteristics
+            return StaffCharacteristicSerializer
         return self.serializer_class
 
     @decorators.action(
         detail=False,
         methods=["POST"],
         url_name="upsert",
-        name="Feature create or retrieve",
+        name="Characteristic create or retrieve",
         url_path="upsert",
     )
     def create_or_retrieve(self, request, *args, **kwargs):
@@ -59,8 +59,8 @@ class FeatureViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         created = self.perform_create_or_retrieve(serializer)
         headers = self.get_success_headers(serializer.data)
-        feature_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        return response.Response(serializer.data, status=feature_status, headers=headers)
+        characteristic_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return response.Response(serializer.data, status=characteristic_status, headers=headers)
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user, creation_date=timezone.now())
@@ -79,12 +79,12 @@ class FeatureViewSet(viewsets.ModelViewSet):
         return created
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    """Ensemble de vues de modération pour les catégories"""
+class CharacteristicTypeViewSet(viewsets.ModelViewSet):
+    """Ensemble de vues de modération pour les types de caractéristiques"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = StaffCategorySerializer
+    queryset = CharacteristicType.objects.all()
+    serializer_class = StaffCharacteristicTypeSerializer
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user, creation_date=timezone.now())
@@ -95,8 +95,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     @decorators.action(
         detail=True,
         methods=["GET", "PUT"],
-        serializer_class=StaffFeatureOrderSerializer,
-        url_name="feature-order",
+        serializer_class=StaffCharacteristicOrderSerializer,
+        url_name="characteristic-order",
     )
     def order(self, request, *args, **kwargs):
         if request.method == "GET":

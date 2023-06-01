@@ -3,33 +3,39 @@ from django.utils import timezone
 from django.contrib.auth.models import Group
 
 from core.models import DatedModel, CreatedModel, AuthoredModel
+from .enums import NewsCategory, NewsStatus
 
 
 class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     """Modèle d'actualité"""
 
-    class Status(models.IntegerChoices):
-        PENDING = (1, "En attente")
-        DRAFT = (2, "À publier")
-        PUBLISHED = (3, "Publiée")
+    title = models.CharField(
+        verbose_name="titre",
+        max_length=255,
+    )
+    post_date = models.DateTimeField(
+        verbose_name="horodatage de parution",
+        default=None,
+        null=True,
+        blank=True,
+    )
+    content = models.TextField(
+        verbose_name="contenu",
+    )
+    category = models.SmallIntegerField(
+        verbose_name="catégorie",
+        choices=NewsCategory.choices,
+    )
+    status = models.SmallIntegerField(
+        verbose_name="état",
+        choices=NewsStatus.choices,
+        default=NewsStatus.PENDING,
+    )
 
-    class Category(models.IntegerChoices):
-        UNDEFINED = (0, "Actualité")
-        ASSEMBLY = (1, "Assemblée générale")
-        ASSOCIATION = (2, "Association")
-        CONTEST = (3, "Concours")
-        NIGHTS = (4, "Nuits")
-        PODIUM = (5, "Podium")
-        PROJECTS = (6, "Projet")
-
-    post_date = models.DateTimeField(verbose_name="parution", default=None, null=True, blank=True)
-    title = models.CharField(verbose_name="titre", max_length=255)
-    content = models.TextField(verbose_name="contenu")
-    category = models.SmallIntegerField(verbose_name="catégorie", choices=Category.choices)
-    status = models.SmallIntegerField(verbose_name="état", choices=Status.choices,
-                                      default=Status.PENDING)
-
-    teams = models.ManyToManyField(to=Group, related_name="authored_newsarticles")
+    teams = models.ManyToManyField(
+        to=Group,
+        related_name="authored_newsarticles",
+    )
 
     class Meta:
         verbose_name = "actualité"
@@ -38,7 +44,7 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
         return self.title
 
     def post(self, modification_user):
-        self.status = self.Status.PUBLISHED
+        self.status = NewsStatus.PUBLISHED
         self.post_date = timezone.now()
         self.modification_user = modification_user
         self.save()
@@ -47,10 +53,16 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
 class NewsComment(DatedModel, CreatedModel):
     """Modèle de commentaire d'actualité"""
 
-    text = models.TextField(verbose_name="texte")
-    newsarticle = models.ForeignKey(to=NewsArticle, verbose_name="actualité", related_name="comments",
-                                    on_delete=models.CASCADE,
-                                    limit_choices_to={"status": NewsArticle.Status.PUBLISHED}, )
+    text = models.TextField(
+        verbose_name="texte",
+    )
+    newsarticle = models.ForeignKey(
+        to=NewsArticle,
+        verbose_name="actualité",
+        related_name="comments",
+        on_delete=models.CASCADE,
+        limit_choices_to={"status": NewsStatus.PUBLISHED},
+    )
 
     class Meta:
         verbose_name = "commentaire"

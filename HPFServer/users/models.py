@@ -1,13 +1,14 @@
+from decimal import Decimal
+
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import DatedModel, get_user_deleted_sentinel
-from fictions.models import Fiction, Chapter, ChapterTextVersion
-from colls.models import Collection
+from fictions.models import ChapterTextVersion
 from images.models import ProfilePicture
+from .enums import Gender
 
 
 class UserQuerySet(models.QuerySet):
@@ -57,19 +58,6 @@ class UserManager(BaseUserManager):
 
         return superuser
 
-    def create_anonymous_user(self, email, **extra_fields):
-        """Crée un utilisateur anonyme"""
-
-        anonymous_user = self.model(
-            email=self.normalize_email(email),
-            username=None,
-            is_active=False,
-        )
-        anonymous_user.set_unusable_password()
-        anonymous_user.save()
-
-        return anonymous_user
-
     def active(self):
         return UserQuerySet(self.model).active()
 
@@ -77,19 +65,13 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Modèle d'utilisateur"""
 
-    class Meta:
-        verbose_name = "utilisateur"
-        permissions = [
-            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
-        ]
-
-    # NOTE : usernam laissé NULL pour les comptes anonymes
+    # NOTE : username laissé NULL pour les comptes anonymes
     # blank=False permet d'obliger l'UI à demander ces infos : seul le moteur peut créer des comptes anonymes
     username = models.CharField(
         max_length=200,
         verbose_name="pseudonyme",
         unique=True,
-        null=True,
+        null=False,
         blank=False,
     )
     email = models.EmailField(
@@ -104,18 +86,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=False,
         # editable=False,
     )
-
-    # Champs par défaut restreints modifiables par la modération
-    is_beta = models.BooleanField(
-        verbose_name="bêta",
-        default=False,
-    )
     is_active = models.BooleanField(
         verbose_name="actif",
         default=True,
     )
-
-    # Champs par défaut restreints modifiables par l'administration
     is_staff = models.BooleanField(
         verbose_name="modérateur",
         default=False,
@@ -145,15 +119,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
 
+    class Meta:
+        verbose_name = "utilisateur·ice"
+        verbose_name_plural = "utilisateur·ice·s"
+        permissions = [
+            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
+        ]
+
     @property
     def profile(self):
         return getattr(self, "user_profile", None)
 
-    # @property
-    # def username(self) -> str:
-    #     """Renvoie le pseudonyme ou [anonyme] si le compte est anonymisé"""
-
-    #     return self.get_username() or "[anonyme]"
+    @property
+    def preferences(self):
+        return getattr(self, "user_preferences", None)
 
     def __str__(self):
         return self.username
@@ -235,7 +214,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserProfileManager(models.Manager):
     def create(self, **fields):
-        profile_picture_fields = fields.pop("profile_picture")
+        profile_picture_fields = fields.pop("profile_picture", None)
         user_profile = super().create(**fields)
         if profile_picture_fields:
             ProfilePicture.objects.create(
@@ -248,12 +227,6 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(DatedModel):  # TODO - renverser le O2O
-    class Gender(models.IntegerChoices):
-        UNDEFINED = (0, "Non renseigné")
-        FEMALE = (1, "Femme")
-        MALE = (2, "Homme")
-        OTHER = (3, "Autre")
-
     user = models.OneToOneField(
         to=User,
         on_delete=models.CASCADE,
@@ -300,6 +273,9 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
     class Meta:
         verbose_name = "profil"
 
+    def __str__(self) -> str:
+        return f"Profil de {str(self.user)}"
+
 
 class UserPreferences(models.Model):  # TODO - renverser le O2O
     class ReviewPolicy(models.IntegerChoices):
@@ -313,8 +289,9 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         to=User,
         on_delete=models.CASCADE,
         verbose_name="utilisateur",
-        related_name="preferences",
+        related_name="user_preferences",
         primary_key=True,
+        editable=False,
     )
     age_consent = models.BooleanField(
         verbose_name="accès au contenu +18 ans",
@@ -327,19 +304,21 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         blank=True,
         default="Tahoma",
     )
-    font_size = models.SmallIntegerField(
+    font_size = models.DecimalField(
         verbose_name="taille de police",
+        max_digits=3,
+        decimal_places=2,
         null=True,
         blank=True,
-        default=7.5,
+        default=Decimal(7.5),
     )
     line_spacing = models.DecimalField(
         verbose_name="taille d'interligne",
         max_digits=3,
         decimal_places=2,
-        default=1.0,
         null=True,
         blank=True,
+        default=Decimal(1.0),
     )
     dark_mode = models.BooleanField(
         verbose_name="mode sombre",
@@ -370,14 +349,17 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
     )
 
     class Meta:
-        verbose_name = "préférences d'utilisateur"
-        verbose_name_plural = "préférences d'utilisateurs"
+        verbose_name = "préférences"
+        verbose_name_plural = "préférences"
         constraints = [
             models.CheckConstraint(
                 name="CK_users_userpreferences_anonymous_review_policy_lte_member_review_policy",
                 check=models.Q(anonymous_review_policy__lte=models.F("member_review_policy")),
             ),
         ]
+
+    def __str__(self) -> str:
+        return f"Préférences de {str(self.user)}"
 
 
 class UserLink(models.Model):

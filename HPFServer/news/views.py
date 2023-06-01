@@ -1,18 +1,18 @@
 from django.utils import timezone
-
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from core.permissions import DjangoPermissionOrReadOnly, IsObjectCreatorOrReadOnly
 from .models import NewsArticle, NewsComment
 from .serializers import NewsSerializer, NewsCommentSerializer
-from core.permissions import DjangoPermissionOrReadOnly, IsObjectCreatorOrReadOnly
+from .enums import NewsStatus
 
 
 class NewsViewSet(ModelViewSet):
     """Ensemble de vues d'actualités"""
 
     permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
-    queryset = NewsArticle.objects.filter(status=NewsArticle.Status.PUBLISHED).order_by("-post_date")
+    queryset = NewsArticle.objects.filter(status=NewsStatus.PUBLISHED).order_by("-post_date")
     serializer_class = NewsSerializer
 
     def get_queryset(self):
@@ -42,7 +42,7 @@ class NewsCommentViewSet(ModelViewSet):
         else:
             return self.queryset.filter(
                 newsarticle_id=self.kwargs["news_pk"],
-                newsarticle__status=NewsArticle.Status.PUBLISHED
+                newsarticle__status=NewsStatus.PUBLISHED
             )
 
     def perform_create(self, serializer):

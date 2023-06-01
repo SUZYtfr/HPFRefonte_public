@@ -1,18 +1,4 @@
 from rest_framework import permissions
-from fictions.models import Beta
-
-
-class HasBetaTurnOrReadOnly(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return \
-            (obj.stage == Beta.BetaStage.REQUESTED and request.user == obj.user) or \
-            (obj.stage == Beta.BetaStage.ONGOING and request.user == obj.user) or \
-            (obj.stage == Beta.BetaStage.CORRECTED and request.user in obj.chapter.authors.all())
-
 
 """
 Permissions hybrides, ou comment tirer profit du peu que Django permet en matière de permissions en palliant le peu

@@ -1,17 +1,12 @@
 from rest_framework import serializers, exceptions
 from drf_extra_fields import relations as extra_relations
 
-from users.models import User
-from .models import Fiction, Chapter, Beta
-from features.models import Category, Feature
+from .models import Fiction, Chapter, Collection
+from characteristics.models import CharacteristicType, Characteristic
 from users.serializers import UserCardSerializer
-from colls.models import Collection
 from core.serializers import ListableModelSerializer
 from core.text_functions import read_text_file
 from reviews.models import Review
-
-# ALLOWED_EXTENSIONS = ["txt", "doc", "docx", "odt"]
-ALLOWED_EXTENSIONS = ["txt", "docx"]
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -24,10 +19,10 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 
 class FictionListSerializer(serializers.ModelSerializer):
-    features = extra_relations.PresentablePrimaryKeyRelatedField(
+    characteristics = extra_relations.PresentablePrimaryKeyRelatedField(
         many=True,
         read_only=True,
-        presentation_serializer="features.serializers.FeatureCardSerializer",
+        presentation_serializer="characteristics.serializers.CharacteristicCardSerializer",
     )
     creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
         read_only=True,
@@ -52,7 +47,7 @@ class FictionListSerializer(serializers.ModelSerializer):
             "word_count",
             "collection_count",
             "featured",
-            "features",
+            "characteristics",
             "authors",
             "series",
             "chapter_count",
@@ -67,10 +62,10 @@ class FictionListSerializer(serializers.ModelSerializer):
 class FictionSerializer(ListableModelSerializer):
     """Sérialiseur privé de fiction"""
 
-    features = extra_relations.PresentablePrimaryKeyRelatedField(
+    characteristics = extra_relations.PresentablePrimaryKeyRelatedField(
         many=True,
         read_only=True,
-        presentation_serializer="features.serializers.FeatureCardSerializer",
+        presentation_serializer="characteristics.serializers.CharacteristicCardSerializer",
     )
     creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
         read_only=True,
@@ -81,7 +76,7 @@ class FictionSerializer(ListableModelSerializer):
         source="collections",
         many=True,
         read_only=True,
-        presentation_serializer="colls.serializers.CollectionCardSerializer",
+        presentation_serializer="fictions.serializers.CollectionCardSerializer",
     )
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
@@ -105,7 +100,7 @@ class FictionSerializer(ListableModelSerializer):
             "word_count",
             "collection_count",
             "featured",
-            "features",
+            "characteristics",
             "authors",
             "series",
             "chapter_count",
@@ -136,7 +131,7 @@ class FictionSerializer(ListableModelSerializer):
     #     return CollectionSerializer(collections, many=True).data
 
 
-    # features = serializers.FeaturesChoiceRelatedField(
+    # characteristics = serializers.CharacteristicChoiceRelatedField(
     #     many=True,
     # )
 
@@ -146,21 +141,21 @@ class FictionSerializer(ListableModelSerializer):
     #     lookup_url_kwarg="object_pk",
     # )
 
-    def validate_features(self, value):
-        """Valide le nombre de caractéristiques pour chaque catégorie"""
+    def validate_characteristics(self, value):
+        """Valide le nombre de caractéristiques pour chaque type"""
 
-        category_count = []
+        characteristic_type_count = []
 
-        for feature in value:
-            category_count.append(feature.category.id)
+        for characteristic in value:
+            characteristic_type_count.append(characteristic.characteristic_type.id)
 
         result = {"below_minimum": [], "above_maximum": []}
-        for category in Category.objects.all():
-            cat_id_count = category_count.count(category.id)
-            if cat_id_count < category.min_limit:
-                result["below_minimum"].append(str(category.min_limit - cat_id_count) + " " + category.name)
-            if cat_id_count > (category.max_limit or float("inf")):
-                result["above_maximum"].append(str(cat_id_count - category.max_limit) + " " + category.name)
+        for characteristic_type in CharacteristicType.objects.all():
+            type_id_count = characteristic_type_count.count(characteristic_type.id)
+            if type_id_count < characteristic_type.min_limit:
+                result["below_minimum"].append(str(characteristic_type.min_limit - type_id_count) + " " + characteristic_type.name)
+            if type_id_count > (characteristic_type.max_limit or float("inf")):
+                result["above_maximum"].append(str(type_id_count - characteristic_type.max_limit) + " " + characteristic_type.name)
 
         below = ""
         above = ""
@@ -187,26 +182,6 @@ class FictionCardSerializer(serializers.ModelSerializer):
         ]
 
 
-class FictionExtraAuthorSerializer(serializers.Serializer):
-    """Sérialiseur d'ajout d'auteur à une fiction"""
-
-    class AuthorUsernameField(serializers.CharField):
-        def to_internal_value(self, data):
-            try:
-                user = User.objects.get(username=data)
-            except User.DoesNotExist:
-                raise exceptions.ValidationError(f"L'utilisateur {data} n'a pas été trouvé.")
-
-            return user
-
-    author_username = AuthorUsernameField(write_only=True)
-    authors = serializers.StringRelatedField(many=True, read_only=True)
-
-    def update(self, instance, validated_data):
-        instance.authors.add(validated_data["author_username"])
-        return instance
-
-
 class ChapterListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
@@ -224,24 +199,17 @@ class ChapterSerializer(ListableModelSerializer):
         presentation_serializer="users.serializers.UserCardSerializer",
     )
     order = serializers.SerializerMethodField()
-    # mean = serializers.IntegerField(default=None)
-
-    # text_file_upload = serializers.FileField(allow_null=True, allow_empty_file=True, write_only=True, validators=[
-    #     FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS,
-    #                            message="L'extension de fichier %(extension)s n'est pas pris en charge. "
-    #                                    "Les extensions de fichiers autorisés sont %(allowed_extensions)s.")
-    # ])
 
     # text = serializers.CharField(allow_blank=True, style={'base_template': 'textarea.html'})
 
-    member_review_policy = serializers.IntegerField(
-        read_only=True,
-        source="fiction.creation_user.preferences.member_review_policy",
-    )
-    anonymous_review_policy = serializers.IntegerField(
-        read_only=True,
-        source="fiction.creation_user.preferences.anonymous_review_policy",
-    )
+    # member_review_policy = serializers.IntegerField(
+    #     read_only=True,
+    #     source="fiction.creation_user.preferences.member_review_policy",
+    # )
+    # anonymous_review_policy = serializers.IntegerField(
+    #     read_only=True,
+    #     source="fiction.creation_user.preferences.anonymous_review_policy",
+    # )
 
     class Meta:
         model = Chapter
@@ -261,10 +229,9 @@ class ChapterSerializer(ListableModelSerializer):
             "read_count",
             "review_count",
             "mean",
-            "poll",
             # "reviews_url",
-            "member_review_policy",
-            "anonymous_review_policy",
+            # "member_review_policy",
+            # "anonymous_review_policy",
         ]
         read_only_fields = (
             "order",
@@ -272,7 +239,6 @@ class ChapterSerializer(ListableModelSerializer):
             "word_count",
             "read_count",
             "mean",
-            "poll",
             # "reviews_url",
             "fiction",
         )
@@ -353,113 +319,123 @@ class FictionChapterOrderSerializer(serializers.ModelSerializer):
         self.instance.set_chapter_order(self.validated_data["get_chapter_order"])
 
 
-class BetaSerializer(serializers.ModelSerializer):
-    """Sérialiseur de bêtatage"""
 
-    class ChapterField(serializers.PrimaryKeyRelatedField):
-        """Champ de choix de chapitres pour le bêtatage"""
+# class CollectionChapterOrderSerializer(serializers.ModelSerializer):
 
-        def get_queryset(self):
-            """Renvoie la liste des chapitres à l'état de brouillon de l'utilisateur authentifié
+#     class Meta:
+#         model = Collection
+#         fields = ("order",)
 
-                Exclut les chapitres avec un bêtatage en cours."""
+#     order = serializers.ListField(
+#         child=serializers.IntegerField(),
+#         write_only=True,
+#     )
 
-            queryset = Chapter.objects.filter(
-                authors=self.context["request"].user,
-                validation_status__in=[
-                    Chapter.ValidationStage.DRAFT,
-                    Chapter.ValidationStage.BETA_COMPLETE,
-                ]
-            ).exclude(
-                beta__stage__in=[
-                    Beta.BetaStage.REQUESTED,
-                    Beta.BetaStage.ONGOING,
-                    Beta.BetaStage.CORRECTED,
-                ]
-            )
-            return queryset
+#     def validate_order(self, value):
 
-    chapter = ChapterField()
+#         if not len(set(value)) == len(value):
+#             raise serializers.ValidationError("Des ID de chapitres sont manquants ou en double.")
 
-    class Meta:
-        model = Beta
-        fields = ("chapter", "user", "stage", "text",)
-        read_only_fields = ("stage", "text",)
+#         if not set(self.instance.chapters.values_list("pk", flat=True)) == set(value):
+#             raise serializers.ValidationError("Les ID de chapitres passés ne correspondent pas aux ID existants.")
+
+#         return value
+
+#     def reorder(self):
+#         self.instance.set_work_order(self.validated_data["get_work_order"])
 
 
-STAGE_TO_CHOICES_AND_INITIAL_DICT = {
-    Beta.BetaStage.REQUESTED.value: {
-        "choices": [
-            (Beta.BetaStage.ONGOING, "Accepter"),
-            (Beta.BetaStage.REFUSED, "Refuser"),
-        ],
-        "initial": Beta.BetaStage.ONGOING,
-    },
-    Beta.BetaStage.ONGOING.value: {
-        "choices": [
-            (Beta.BetaStage.ONGOING, "Continuer"),
-            (Beta.BetaStage.CORRECTED, "Proposer"),
-        ],
-        "initial": Beta.BetaStage.CORRECTED,
-    },
-    Beta.BetaStage.CORRECTED.value: {
-        "choices": [
-            (Beta.BetaStage.CORRECTED, "Continuer"),
-            (Beta.BetaStage.ONGOING, "Renvoyer"),
-            (Beta.BetaStage.COMPLETED, "Compléter"),
-        ],
-        "initial": Beta.BetaStage.COMPLETED,
-    },
-}
+# class MyCollectionChapterChoiceRelatedField(serializers.PrimaryKeyRelatedField):
+#     """Champ de choix de chapitre pour le sérialiseur de série"""
+
+#     queryset = Chapter.objects.filter(validation_status=7).order_by("fiction", "_order")
+
+#     def to_internal_value(self, data):
+#         """Recherche et renvoie un chapitre par son ID en vérifiant le statut de validation de sa fiction"""
+
+#         return get_object_or_404(Chapter, id=data[0], validation_status=7)
+
+#     def display_value(self, instance):
+#         """Renvoie le titre raccourci de la fiction, puis le titre du chapitre pour l'affichage des choix"""
+
+#         return f"{instance.fiction.title[:25]} : {instance.title}"
 
 
-class BetaActionSerializer(serializers.ModelSerializer):
-    """Sérialiseur d'actions de bêtatage"""
+# class CollectionCardSerializer(serializers.ModelSerializer):
+#     """Sérialiseur de carte de série"""
 
-    def __init__(self, *args, **kwargs):
-        """Redéfinition de l'initialisation du sérialiseur
+#     class Meta:
+#         model = Collection
+#         fields = [
+#             "id",
+#             "title",
+#         ]
 
-            Afin de pouvoir proposer des choix d'actions dynamiques par rapport au bêtatage en cours,
-            on laisse le sérialiseur s'initialiser normalement, puis une fois l'instance passée, on modifie
-            les choix (et la valeur initiale) selon cette instance."""
 
-        super(serializers.ModelSerializer, self).__init__(*args, **kwargs)
-        if self.instance:
-            corres = STAGE_TO_CHOICES_AND_INITIAL_DICT.get(self.instance.stage, None)
-            if corres:
-                self.fields["stage"].choices = corres.get("choices")
-                self.fields["stage"].initial = corres.get("initial")
-            if self.instance.stage == Beta.BetaStage.REQUESTED:
-                self.fields["text"].read_only = True
+# class CollectionListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Collection
+#         fields = [
+#             "id",
+#             "title",
+#         ]
 
-    class TextField(serializers.CharField):
-        def to_internal_value(self, data):
-            return data
 
-    text = TextField()
+# class CollectionSerializer(ListableModelSerializer):
+#     """Sérialiseur de série"""
 
-    class Meta:
-        model = Beta
-        fields = ("chapter", "user", "stage", "text",)
-        read_only_fields = ("chapter", "user",)
+#     creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+#         read_only=True,
+#         presentation_serializer="users.serializers.UserCardSerializer",
+#     )
+#     modification_user = extra_relations.PresentablePrimaryKeyRelatedField(
+#         read_only=True,
+#         presentation_serializer="users.serializers.UserCardSerializer",
+#     )
 
-    def update(self, instance, validated_data):
+#     class Meta:
+#         model = Collection
+#         fields = (
+#             "id",
+#             "title",
+#             "summary",
+#             "status",
+#             "review_count",
+#             "mean",
+#             "fiction_count",
+#             "creation_user",
+#             "modification_user",
+#             "creation_date",
+#             "modification_date",
+#         )
+#         list_serializer_child_class = CollectionListSerializer
 
-        stage = validated_data.get("stage")
-        text = validated_data.pop("text", None)
 
-        if stage == Beta.BetaStage.ONGOING:
-            if text:
-                instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
-            else:
-                instance.chapter.validation_status = Chapter.ValidationStage.BETA_ONGOING
-                instance.chapter.modification_user = self.context["request"].user
-        elif stage == Beta.BetaStage.CORRECTED:
-            instance.chapter.create_text_version(creation_user=self.context["request"].user, text=text)
-            instance.chapter.modification_user = self.context["request"].user
-        elif stage == Beta.BetaStage.COMPLETED:
-            instance.chapter.validation_status = Chapter.ValidationStage.BETA_COMPLETE
-            instance.chapter.modification_user = self.context["request"].user
-        instance.chapter.save()
+    # TODO - Repenser ceci : peut-être ne pas obliger le passage de chapitres lors de la création
+    # du modèle Collection ? Mais alors comment garantir l'ordonnement des chapitres si la méthode
+    # .create() de base se base sur Collection.set() ?
+    # def create(self, validated_data):
+    #     """Crée la série depuis les informations du sérialiseur validées
+    #
+    #         Le comportement normal de DRF consiste à créer d'abord l'instance de Collection, puis
+    #         à ajouter les relations M2M.
+    #         Ce comportement est évité ici. "chapters" est récupéré avant d'être traité comme M2M,
+    #         et est "forcé" dans les attributs à passer à Collection.create().
+    #         Pas très beau, mais permet de garantir l'ordonnement des chapitres par la table intermédiaire.
+    #     """
+    #     chapters = validated_data.pop("chapters")
+    #     validated_data["starting_chapters"] = chapters
+    #     return super().create(validated_data)
 
-        return super().update(instance, validated_data)
+
+    # def update(self, instance, validated_data):
+    #     """Met à jour la série depuis les informations du sérialiseur validées,
+    #
+    #         cf.: Méthode de création du sérialiseur de création
+    #     """
+    #
+    #     chapters = validated_data.pop("chapters")
+    #     instance.chapters.clear()
+    #     instance.add_chapters(chapters)
+    #
+    #     return super().update(instance, validated_data)

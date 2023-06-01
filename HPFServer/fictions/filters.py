@@ -1,8 +1,9 @@
 from django.db import models
 from django_filters import rest_framework as filters
 
+from characteristics.models import Characteristic
 from .models import Fiction
-from features.models import Feature
+from .enums import FictionStatus
 
 
 class FictionFilterSet(filters.FilterSet):
@@ -51,16 +52,16 @@ class FictionFilterSet(filters.FilterSet):
     )
 
     includedTags = filters.ModelMultipleChoiceFilter(
-        field_name="features",
+        field_name="characteristics",
         label="Avec les caractéristiques",
         conjoined=True,
-        queryset=Feature.objects.allowed(),
+        queryset=Characteristic.objects.allowed(),
     )
     excludedTags = filters.ModelMultipleChoiceFilter(
-        field_name="features",
+        field_name="characteristics",
         label="Sans les caractéristiques",
         conjoined=False,
-        queryset=Feature.objects.allowed(),
+        queryset=Characteristic.objects.allowed(),
         exclude=True,
     )
     finished = filters.BooleanFilter(
@@ -106,9 +107,9 @@ class FictionFilterSet(filters.FilterSet):
 
     def filter_finished(self, queryset, name, value):
         if value == True:
-            return queryset.filter(status=Fiction.Status.COMPLETED)
+            return queryset.filter(status=FictionStatus.COMPLETED)
         elif value == False:
-            return queryset.exclude(status=Fiction.Status.COMPLETED)
+            return queryset.exclude(status=FictionStatus.COMPLETED)
         return queryset
 
     def filter_authors(self, queryset, name, value):

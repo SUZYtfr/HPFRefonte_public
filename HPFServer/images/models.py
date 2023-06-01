@@ -1,8 +1,9 @@
+import os.path
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from core.models import CreatedModel, DatedModel
-import os.path
+from .enums import BannerType
 
 
 def upload_function(instance, filename):
@@ -64,16 +65,10 @@ class Banner(BaseImage):
 
     upload_folder = "banners"
 
-    class Type(models.IntegerChoices):
-        WEBSITE = (1, "Bannière du site")
-        PARTNER = (2, "Bannière de partenaire")
-        EVENT = (3, "Bannière événementielle")
-        PREMIUM = (4, "Bannière d'adhérent")
-
     user = models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                 null=True, blank=True, editable=False,
                                 verbose_name="utilisateur")
-    category = models.SmallIntegerField(choices=Type.choices,
+    category = models.SmallIntegerField(choices=BannerType.choices,
                                         verbose_name="catégorie")
     is_active = models.BooleanField(default=True,
                                     verbose_name="bannière active")

@@ -14,7 +14,7 @@ from tests.samples import *
 from users.serializers import UserSerializer, UserCardSerializer
 from fictions.serializers import FictionCardSerializer, FictionSerializer, Fiction, ChapterSerializer, ChapterCardSerializer, Chapter
 from news.serializers import NewsSerializer, NewsArticle
-from features.serializers import FeatureSerializer
+from characteristics.serializers import CharacteristicSerializer
 from images.serializers import BannerSerializer, Banner
 
 import logging
@@ -164,8 +164,8 @@ class TestsPublicAPI(APITestCase):
         allowed_feature = sample_feature(creation_user=self.active_user, is_forbidden=False)
         banned_feature = sample_feature(creation_user=self.active_user, is_forbidden=True)
 
-        allowed_feature_serializer = FeatureSerializer(allowed_feature, context={"request": self.request})
-        banned_feature_serializer = FeatureSerializer(banned_feature, context={"request": self.request})
+        allowed_feature_serializer = CharacteristicSerializer(allowed_feature, context={"request": self.request})
+        banned_feature_serializer = CharacteristicSerializer(banned_feature, context={"request": self.request})
 
         res_1 = self.client.get(path=generate_url("features"))
         res_2 = self.client.get(path=generate_url("features", allowed_feature.id))

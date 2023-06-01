@@ -3,8 +3,7 @@ from rest_framework import viewsets, mixins, generics, exceptions, permissions, 
 from users.models import User, UserPreferences
 
 from core.utils import get_moderation_account
-from fictions.models import Fiction, Chapter
-from colls.models import Collection
+from fictions.models import Fiction, Chapter, Collection
 from .models import Review, ReviewReply, FictionReview, ChapterReview, CollectionReview
 from .serializers import ReviewSerializer, AnonymousReviewSerializer, StaffReviewSerializer, \
     ReviewReplySerializer, ReviewTextSerializer, StaffReviewReplySerializer, ChapterReviewSerializer, CollectionReviewSerializer, FictionReviewSerializer, ChapterAnonymousReviewSerializer, FictionAnonymousReviewSerializer, CollectionAnonymousReviewSerializer

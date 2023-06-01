@@ -1,14 +1,25 @@
 from django.db import models
 from django.utils import timezone
 
-from app.settings import AUTH_USER_MODEL
-from core.models import DatedModel, CreatedModel, AuthoredModel, FeaturedModel, TextDependentModel, BaseTextVersionModel
+from core.models import (
+    DatedModel,
+    CreatedModel,
+    AuthoredModel,
+    CharacteristicModel,
+    TextDependentModel,
+    BaseTextVersionModel,
+)
 from core.text_functions import count_words
+from .enums import (
+    FictionStatus,
+    ChapterValidationStage,
+    CollectionAccess,
+)
 
 
 class FictionQuerySet(models.QuerySet):
     def published(self):
-        return self.filter(chapters__validation_status=Chapter.ValidationStage.PUBLISHED).distinct()
+        return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
     def means(self):
         mean = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
@@ -17,7 +28,7 @@ class FictionQuerySet(models.QuerySet):
     def read_counts(self):
         read_count = models.Sum(
             "chapters__read_count",
-            filter=models.Q(chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
+            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
         return self.annotate(read_count=read_count)
 
@@ -25,19 +36,13 @@ class FictionQuerySet(models.QuerySet):
         last_version = ChapterTextVersion.objects.filter(chapter__fiction=models.OuterRef("pk")).order_by("-pk")
         word_count = models.Sum(
             models.Subquery(last_version.values("word_count")[:1]),
-            filter=models.Q(chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
+            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
         return self.alias(word_count=word_count)
 
 
-class Fiction(DatedModel, CreatedModel, FeaturedModel):
+class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de fiction"""
-
-    class Status(models.IntegerChoices):
-        PROGRESS = (1, "En cours")
-        PAUSED = (2, "À l'arrêt")
-        ABANDONED = (3, "Abandonnée")
-        COMPLETED = (4, "Terminée")
 
     title = models.CharField(
         verbose_name="titre",
@@ -58,8 +63,8 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
     )
     status = models.SmallIntegerField(
         verbose_name="état d'écriture",
-        choices=Status.choices,
-        default=Status.PROGRESS,
+        choices=FictionStatus.choices,
+        default=FictionStatus.PROGRESS,
     )
     featured = models.BooleanField(
         verbose_name="mise en avant",
@@ -85,7 +90,7 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
     @property
     def published_chapters(self):
         """Renvoie les chapitres publiés"""
-        return self.chapters.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+        return self.chapters.filter(validation_status=ChapterValidationStage.PUBLISHED)
 
     @property
     def is_published(self) -> bool:
@@ -133,13 +138,15 @@ class Fiction(DatedModel, CreatedModel, FeaturedModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self) -> float:
+    def mean(self) -> float | None:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
         if all_gradings:  # pour éviter une division par 0
             return sum(filter(None, all_gradings)) / len(all_gradings)
+        else:
+            return None
 
     @property
     def review_count(self) -> int:
@@ -172,7 +179,7 @@ class ChapterQuerySet(models.QuerySet):
         return self.annotate(annotated_mean=mean)
 
     def published(self):
-        return self.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+        return self.filter(validation_status=ChapterValidationStage.PUBLISHED)
 
 
 class Chapter(DatedModel, CreatedModel, TextDependentModel):
@@ -185,15 +192,6 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
             ("automatic_validation", "A la validation automatique des chapitres"),
             ("staff_validation", "A la validation de modérateur des chapitres"),
         ]
-
-    class ValidationStage(models.IntegerChoices):
-        DRAFT = (1, "Brouillon")
-        BETA_ONGOING = (2, "Bêtatage en cours")
-        BETA_COMPLETE = (3, "Bêtatage réalisé")
-        PENDING = (4, "En cours de validation")
-        EDIT_REQUIRED = (5, "En attente de modification")
-        EDITED = (6, "Modifié")
-        PUBLISHED = (7, "Publié")
 
     class InvalidChapterAction(Exception):
         message = "Cette action est invalide."
@@ -228,15 +226,8 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     )
     validation_status = models.SmallIntegerField(
         verbose_name="étape de validation",
-        choices=ValidationStage.choices,
-        default=ValidationStage.DRAFT,
-    )
-    poll = models.OneToOneField(
-        verbose_name="sondage",
-        to="polls.PollQuestion",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        choices=ChapterValidationStage.choices,
+        default=ChapterValidationStage.DRAFT,
     )
 
     objects = ChapterQuerySet.as_manager()
@@ -249,7 +240,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self) -> int:
+    def mean(self) -> float | None:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
@@ -259,7 +250,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
     @property
     def text(self) -> str:
-        return getattr(self.versions.first(), "text", None)
+        return getattr(self.versions.first(), "text", "")
 
     @property
     def word_count(self) -> int:
@@ -297,24 +288,24 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         self.save()
 
     def submit(self, user=None):
-        if self.validation_status == Chapter.ValidationStage.DRAFT:
+        if self.validation_status == ChapterValidationStage.DRAFT:
             if self.fiction.creation_user.has_perm("fictions.automatic_validation"):
                 self.change_status(
-                    Chapter.ValidationStage.PUBLISHED,
+                    ChapterValidationStage.PUBLISHED,
                     modification_user=user,
                     modification_time=timezone.now(),
                 )
 
             else:
                 self.change_status(
-                    Chapter.ValidationStage.PENDING,
+                    ChapterValidationStage.PENDING,
                     modification_user=user,
                     modification_time=timezone.now(),
                 )
 
-        elif self.validation_status == self.ValidationStage.EDIT_REQUIRED:
+        elif self.validation_status == ChapterValidationStage.EDIT_REQUIRED:
             self.change_status(
-                Chapter.ValidationStage.EDITED,
+                ChapterValidationStage.EDITED,
                 modification_user=user,
                 modification_time=timezone.now(),
             )
@@ -324,27 +315,27 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
     def validate(self, user=None):
         if self.validation_status not in [
-            Chapter.ValidationStage.PENDING,
-            Chapter.ValidationStage.EDITED,
+            ChapterValidationStage.PENDING,
+            ChapterValidationStage.EDITED,
         ]:
             raise Chapter.InvalidChapterAction
 
         self.change_status(
-            Chapter.ValidationStage.PUBLISHED,
+            ChapterValidationStage.PUBLISHED,
             modification_user=user,
             modification_time=timezone.now(),
         )
 
     def invalidate(self, user=None):
         if self.validation_status not in [
-            Chapter.ValidationStage.PENDING,
-            Chapter.ValidationStage.EDITED,
-            Chapter.ValidationStage.PUBLISHED,
+            ChapterValidationStage.PENDING,
+            ChapterValidationStage.EDITED,
+            ChapterValidationStage.PUBLISHED,
         ]:
             raise Chapter.InvalidChapterAction
 
         self.change_status(
-            Chapter.ValidationStage.EDIT_REQUIRED,
+            ChapterValidationStage.EDIT_REQUIRED,
             modification_user=user,
             modification_time=timezone.now(),
         )
@@ -370,98 +361,97 @@ class ChapterTextVersion(BaseTextVersionModel):
     )
 
 
-class ChallengeManager(models.Manager):
-    """Gestionnaire de challenges"""
+class Collection(DatedModel, CreatedModel, AuthoredModel, CharacteristicModel):
+    """Modèle de série"""
 
-    def create(self, title, summary, creation_user,
-               **extra_fields):
-        if not title:
-            raise ValueError("Le titre ne peut pas être laissé vide.")
-        if not summary:
-            raise ValueError("Le résumé ne peut pas être laissé vide.")
+    title = models.CharField(
+        verbose_name="titre",
+        max_length=200,
+    )
+    summary = models.TextField(
+        verbose_name="résumé",
+    )
+    status = models.SmallIntegerField(
+        verbose_name="état",
+        choices=CollectionAccess.choices,
+        default=CollectionAccess.CLOSED,
+    )
+    parent = models.ForeignKey(
+        verbose_name="série parente",
+        to="self",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="subcollections",
+    )
 
-        challenge = self.model(
-            title=title,
-            summary=summary,
-            creation_user=creation_user,
-            **extra_fields
-        )
+    fictions = models.ManyToManyField(
+        verbose_name="fictions",
+        to="fictions.Fiction",
+        # through="FictionCollectionPosition",
+        related_name="collections",
+    )
 
-        challenge.save()
+    @property
+    def published_reviews(self):
+        return self.reviews.filter(draft=False)
 
-        # Sauvegarde > ID Challenge > Possibilité d'assignation d'autorat
-        challenge.authors.add(creation_user)
+    @property
+    def mean(self) -> float | None:
+        """Renvoie la moyenne des reviews publiées"""
 
-        return challenge
+        all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
+        if all_gradings:  # pour éviter une division par 0
+            return sum(filter(None, all_gradings)) / len(all_gradings)
+        else:
+            return None
 
-class Challenge(DatedModel, CreatedModel, AuthoredModel, FeaturedModel):
-    """Modèle de challenge"""
+    @property
+    def review_count(self) -> int:
+        """Renvoie le nombre de reviews publiées"""
+        return self.published_reviews.count()
 
-    class Status(models.IntegerChoices):
-        OPEN = (1, "Ouvert")
-        CLOSED = (2, "Fermé")
+    @property
+    def fiction_count(self) -> int:
+        """Renvoie le compte de fictions"""
 
-    class Type(models.IntegerChoices):
-        CHALLENGE = (1, "Challenge")
-        PROJECT = (2, "Projet")
-
-    title = models.CharField(verbose_name="titre", max_length=200,
-                             blank=False)
-    summary = models.TextField(verbose_name="résumé", blank=False)
-    status = models.SmallIntegerField(verbose_name="état", choices=Status.choices)
-    challenge_type = models.SmallIntegerField(verbose_name="type", choices=Type.choices)
-    official = models.BooleanField(verbose_name="officiel", default=False)
-    deadline = models.DateTimeField(verbose_name="clôture", null=True)
-    forum_link = models.CharField(verbose_name="lien vers le forum", max_length=400,
-                                  null=False, blank=True)
-
-    objects = ChallengeManager()
+        return self.fictions.count()
 
     class Meta:
-        verbose_name = "challenge"
+        verbose_name = "série"
 
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        if self.id:
-            self.modification_date = timezone.now()
-            self.modification_user = kwargs.pop("modification_user", self.modification_user)
-        super().save(*args, **kwargs)
 
+# class FictionCollectionPosition(OrderedModel):
 
-class Beta(models.Model):
-    """Modèle de bêtatage"""
+#     collection = models.ForeignKey(
+#         to=Collection,
+#         on_delete=models.CASCADE,
+#     )
+#     fiction = models.ForeignKey(
+#         to="fictions.Fiction",
+#         on_delete=models.CASCADE,
+#     )
 
-    class BetaStage(models.IntegerChoices):
-        REQUESTED = (1, "Demandé par l'auteur")
-        ONGOING = (2, "Accepté par le correcteur")
-        REFUSED = (3, "Refusé par le correcteur")
-        CORRECTED = (4, "Terminé par le correcteur")
-        COMPLETED = (5, "Terminé par l'auteur")
+#     order_with_respect_to = "collection"
 
-    class Meta:
-        verbose_name = "bêtatage"
-        constraints = [
-            models.UniqueConstraint(
-                name="unique_ongoing_beta",
-                fields=["chapter"],
-                condition=models.Q(stage__in=[1, 2, 4]),
-            ),
-        ]
+#     class Meta:
+#         ordering = ["collection", "order"]
+#         constraints = [
+#             models.UniqueConstraint(
+#                 name="UQ_colls_fictioncollectionposition_collection_fiction",
+#                 fields=["collection", "fiction"],
+#             ),
+#             models.UniqueConstraint(
+#                 name="UQ_colls_fictioncollectionposition_collection_order",
+#                 fields=["collection", "fiction"],
+#             )
+#         ]
 
-    chapter = models.ForeignKey(verbose_name="chapitre", to=Chapter, on_delete=models.CASCADE,
-                                related_name="betas")
-    user = models.ForeignKey(verbose_name="correcteur", to=AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             related_name="betas")
-    stage = models.SmallIntegerField(verbose_name="état", choices=BetaStage.choices,
-                                     default=BetaStage.REQUESTED)
+#     def __repr__(self):
+#         return self.collection.title[:15] + " <-> " + self.fiction.title[:15]
 
-    def __str__(self):
-        return f"{self.chapter} (correcteur : {self.user})"
-
-    @property
-    def text(self):
-        return self.chapter.text
+#     def __str__(self):
+#         return self.__repr__()

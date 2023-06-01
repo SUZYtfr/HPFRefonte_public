@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [os.getenv("SERVER_HOST", "*")]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
+    "http://localhost:8000/",
 ]
 
 
@@ -51,14 +51,10 @@ INSTALLED_APPS = [
     "core",
     "users",
     "account",
-    "features",
+    "characteristics",
     "fictions",
-    "colls",
     "reviews",
-    "polls",
-    "selections",
     "news",
-    "reports",
     "images",
 ]
 
@@ -90,9 +86,7 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "NewsStatusEnum": "news.models.NewsArticle.Status",
         "FictionStatusEnum": "fictions.models.Fiction.Status",
-        "ChallengeStatusEnum": "fictions.models.Challenge.Status",
-        "ReportStatusEnum": "reports.models.Report.Status",
-        "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
+        # "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
     }
 }
 
@@ -199,6 +193,10 @@ STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 AUTH_USER_MODEL = 'users.User'
 
+FIXTURE_DIRS = [
+    BASE_DIR / "fixtures",
+]
+
 # HARDCODAGE
 MODERATION_ACCOUNT = {
     "pk": 0,
@@ -212,6 +210,5 @@ ANONYMOUS_ACCOUNT = {
 }
 
 BANNER_MAX_SIZE = (468, 60)  # (largeur, hauteur)
-MAX_POLL_ANSWERS = 5
 MEMBERS_MAX_REVIEW_DRAFTS = 2
 PREMIUM_MAX_REVIEW_DRAFTS = 5

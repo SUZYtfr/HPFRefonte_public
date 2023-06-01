@@ -2,15 +2,16 @@ from django.db import models
 from django.utils import timezone
 from core.models import DatedModel, CreatedModel
 from fictions.models import Chapter
+from fictions.enums import ChapterValidationStage
 
 
-class CategoryQuerySet(models.QuerySet):
+class CharacteristicTypeQuerySet(models.QuerySet):
     def open(self):
         return self.filter(is_closed=False)
 
 
-class Category(DatedModel, CreatedModel):
-    """Modèle de catégorie de caractéristiques"""
+class CharacteristicType(DatedModel, CreatedModel):
+    """Modèle de type de caractéristiques"""
 
     name = models.CharField(
         verbose_name="nom",
@@ -29,13 +30,14 @@ class Category(DatedModel, CreatedModel):
         verbose_name="restreinte",
     )
 
-    objects = CategoryQuerySet.as_manager()
+    objects = CharacteristicTypeQuerySet.as_manager()
 
     class Meta:
-        verbose_name = "catégorie"
+        verbose_name = "type de caractéristiques"
+        verbose_name_plural = "types de caractéristiques"
         constraints = [
             models.CheckConstraint(
-                name="min_not_over_max",
+                name="CK_characteristics_characteristictype_min_limit_lte_max_limit",
                 check=models.Q(min_limit__lte=models.F("max_limit")),
             )
         ]
@@ -44,7 +46,7 @@ class Category(DatedModel, CreatedModel):
         return self.name
 
 
-class FeatureQuerySet(models.QuerySet):
+class CharacteristicQuerySet(models.QuerySet):
     def allowed(self):
         return self.filter(is_forbidden=False)
 
@@ -54,12 +56,12 @@ class FeatureQuerySet(models.QuerySet):
     def fiction_counts(self):
         fiction_count = models.Count(
             "fiction",
-            models.Q(fiction__chapters__validation_status=Chapter.ValidationStage.PUBLISHED)
+            models.Q(fiction__chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
         return self.annotate(fiction_count=fiction_count)
 
 
-class Feature(DatedModel, CreatedModel):
+class Characteristic(DatedModel, CreatedModel):
     """Modèle de caractéristique"""
 
     name = models.CharField(
@@ -71,12 +73,12 @@ class Feature(DatedModel, CreatedModel):
         null=True,
         blank=True,
     )
-    category = models.ForeignKey(
-        verbose_name="catégorie",
-        to=Category,
-        related_name="features",
+    characteristic_type = models.ForeignKey(
+        verbose_name="type de caractéristiques",
+        to=CharacteristicType,
+        related_name="characteristics",
         on_delete=models.CASCADE,
-        help_text="Si un parent est indiqué, sa catégorie prévaut.",
+        help_text="Si un parent est indiqué, son type de caractéristiques prévaut.",
     )
     parent = models.ForeignKey(
         to="self",
@@ -111,14 +113,14 @@ class Feature(DatedModel, CreatedModel):
         limit_choices_to={"is_forbidden": False},
     )  # idem
 
-    objects = FeatureQuerySet.as_manager()
+    objects = CharacteristicQuerySet.as_manager()
 
     class Meta:
         verbose_name = "caractéristique"
-        order_with_respect_to = "category"
+        order_with_respect_to = "characteristic_type"
         constraints = [
             models.UniqueConstraint(
-                name="unique_name",
+                name="UQ_characteristics_characteristic_name",
                 fields=["name"],
             )
         ]
@@ -142,7 +144,7 @@ class Feature(DatedModel, CreatedModel):
         self.modification_date = timezone.now()
         if replace_with:
             for fiction in self.fiction_set.all():
-                fiction.features.add(replace_with)
+                fiction.characteristics.add(replace_with)
         self.fiction_set.clear()
 
         for child in self.children.all():
@@ -155,5 +157,5 @@ class Feature(DatedModel, CreatedModel):
         if hasattr(self.parent, "parent"):
             if self.parent.parent:
                 raise RecursionError("La caractéristique parente est déjà sous-ordonnée.")
-            self.category = self.parent.category  # Impose que la catégorie de l'enfant soit celle du parent
+            self.characteristic_type = self.parent.characteristic_type  # Impose que la catégorie de l'enfant soit celle du parent
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)

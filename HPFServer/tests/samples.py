@@ -7,25 +7,23 @@ import random
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
-from django.apps import apps
+from django.utils import timezone
 
 from users.models import User
-from features.models import Feature, Category
-from fictions.models import Fiction, Chapter
-from colls.models import Collection 
+from characteristics.models import Characteristic, CharacteristicType
+from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage
 from reviews.models import FictionReview, ChapterReview, CollectionReview
-from polls.models import PollGroup, PollQuestion, PollAnswer
-from news.models import NewsArticle, NewsComment
+from news.models import NewsArticle, NewsComment, NewsStatus
 
 
 french_faker = faker.Faker("fr_FR")
 
 
-def random_category():
-    if Category.objects.count() > 0:
-        return random.choices(list(Category.objects.all()))[0]
+def random_characteristic_type():
+    if CharacteristicType.objects.count() > 0:
+        return random.choices(list(CharacteristicType.objects.all()))[0]
     else:
-        return sample_category()
+        return sample_characteristic_type()
 
 
 def random_date():
@@ -64,17 +62,17 @@ def sample_fiction(generate_chapters=None, **kwargs):
             **kwargs,
         )
 
-        random_features = []
+        random_characteristics = []
 
-        for category in Category.objects.all():
-            min_limit = category.min_limit
-            max_limit = category.max_limit or 5
-            random_category_features = set()
-            while len(random_category_features) < french_faker.random_int(min_limit, max_limit):
-                random_category_features.add(category.features.filter(is_forbidden=False).order_by("?").first())
-            random_features.extend(random_category_features)
+        for characteristic_type in CharacteristicType.objects.all():
+            min_limit = characteristic_type.min_limit
+            max_limit = characteristic_type.max_limit or 5
+            random_chartype_chars = set()
+            while len(random_chartype_chars) < french_faker.random_int(min_limit, max_limit):
+                random_chartype_chars.add(characteristic_type.characteristics.filter(is_forbidden=False).order_by("?").first())
+            random_characteristics.extend(random_chartype_chars)
 
-        fiction.features.set(random_features)
+        fiction.characteristics.set(random_characteristics)
 
         for i in range(1, generate_chapters or french_faker.random_int(1, 5)):
             chapter = Chapter.objects.create(
@@ -83,7 +81,7 @@ def sample_fiction(generate_chapters=None, **kwargs):
                 title=french_faker.sentence(),
                 startnote=french_faker.paragraph(10),
                 endnote=french_faker.paragraph(10),
-                validation_status=Chapter.ValidationStage.PUBLISHED,
+                validation_status=ChapterValidationStage.PUBLISHED,
             )
             chapter.create_text_version(
                 creation_user=chapter.creation_user,
@@ -124,7 +122,7 @@ def sample_collection(creation_user=None, title=None, summary=None,
     return collection
 
 
-def sample_category(creation_user=None, name=None, min_limit=None, max_limit=None, is_closed=False, **extra_fields):
+def sample_characteristic_type(creation_user=None, name=None, min_limit=None, max_limit=None, is_closed=False, **extra_fields):
     if not min_limit or max_limit:
         min_limit, max_limit = sorted(random.choices(range(0, 10), k=2))
     elif min_limit:
@@ -132,7 +130,7 @@ def sample_category(creation_user=None, name=None, min_limit=None, max_limit=Non
     elif max_limit:
         min_limit = random.randint(0, max_limit)
 
-    category = Category.objects.create(
+    characteristic_type = CharacteristicType.objects.create(
         creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
         name=lorem.get_word(3) if name is None else name,
         min_limit=min_limit,
@@ -140,14 +138,14 @@ def sample_category(creation_user=None, name=None, min_limit=None, max_limit=Non
         is_closed=is_closed,
         **extra_fields,
     )
-    return category
+    return characteristic_type
 
 
-def sample_feature(category=None, creation_user=None, name=None,
+def sample_feature(characteristic_type=None, creation_user=None, name=None,
                    **extra_fields):
-    feature = Feature.objects.create(
+    feature = Characteristic.objects.create(
         creation_user=creation_user or User.objects.get(pk=settings.MODERATION_ACCOUNT_ID),
-        category=category or sample_category(),
+        characteristic_type=characteristic_type or sample_characteristic_type(),
         name=lorem.get_word(3) if name is None else name,
         **extra_fields
     )
@@ -176,47 +174,14 @@ def sample_fiction_review(**kwargs):
     return fiction_review
 
 
-def sample_poll_group(**kwargs):
-    poll_group = PollGroup.objects.create(
-        creation_user=kwargs.pop("creation_user", sample_user()),
-        title=kwargs.pop("title", lorem.get_word(count=5)),
-        **kwargs
-    )
-
-    return poll_group
-
-
-def sample_poll_question(**kwargs):
-    poll_group = kwargs.get("poll_group", None)
-
-    poll_question = PollQuestion.objects.create(
-        creation_user=kwargs.pop("creation_user", getattr(poll_group, "creation_user", sample_user())),
-        question_text=kwargs.pop("question_text", lorem.get_sentence()),
-        **kwargs,
-    )
-
-    return poll_question
-
-
-def sample_poll_answer(**kwargs):
-    poll_question = kwargs.pop("poll_question", sample_poll_question())
-
-    poll_answer = PollAnswer.objects.create(
-        poll_question=poll_question,
-        creation_user=kwargs.pop("creation_user", poll_question.creation_user),
-        answer_text=kwargs.pop("answer_text", lorem.get_sentence()),
-    )
-
-    return poll_answer
-
-
 def sample_news(**kwargs):
     news_article = NewsArticle.objects.create(
         creation_user=kwargs.pop("creation_user", None) or get_random_user(),
         title=kwargs.pop("title", None) or french_faker.paragraph(),
         content=kwargs.pop("content", None) or french_faker.paragraph(10),
         category=kwargs.pop("category", None) or french_faker.random_int(min=0, max=6),
-        status=kwargs.pop("status", None) or NewsArticle.Status.PUBLISHED,
+        status=kwargs.pop("status", None) or NewsStatus.PUBLISHED,
+        post_date=kwargs.pop("post_date", None) or timezone.now(),
         **kwargs,
     )
     news_article.authors.add(news_article.creation_user)
@@ -265,22 +230,22 @@ def sample_user_edit_payload(realname=None, email=None, password=None, birthdate
 
 
 def random_valid_feature_id_list():
-    features_id_list = []
+    characteristics_id_list = []
 
-    for category in Category.objects.all():
-        choices = random.sample(list(category.features.values_list("pk", flat=True)), category.min_limit)
-        features_id_list.extend(choices)
+    for characteristic_type in CharacteristicType.objects.all():
+        choices = random.sample(list(characteristic_type.characteristics.values_list("pk", flat=True)), characteristic_type.min_limit)
+        characteristics_id_list.extend(choices)
 
-    return features_id_list
+    return characteristics_id_list
 
 
-def sample_fiction_create_payload(title=None, storynote=None, summary=None, features=None, text=None):
+def sample_fiction_create_payload(title=None, storynote=None, summary=None, characteristics=None, text=None):
 
     fiction_create_payload = {
         "title": title or lorem.get_sentence(),
         "storynote": storynote or lorem.get_sentence(),
         "summary": summary or lorem.get_sentence(),
-        "features": features or random_valid_feature_id_list(),
+        "characteristics": characteristics or random_valid_feature_id_list(),
         "text": text or lorem.get_paragraph(2),
     }
 

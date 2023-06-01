@@ -1,0 +1,3230 @@
+[
+    {
+        "model": "characteristics.characteristictype",
+        "pk": 1,
+        "fields": {
+            "creation_date": "2021-08-12T10:12:20.865Z",
+            "modification_date": null,
+            "creation_user": 0,
+            "modification_user": null,
+            "name": "Genres littéraires",
+            "min_limit": 1,
+            "max_limit": 1,
+            "is_closed": false
+        }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 2,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.865Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Genres",
+      "min_limit": 0,
+      "max_limit": 3,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 3,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.865Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Langues",
+      "min_limit": 1,
+      "max_limit": 2,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 4,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.865Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Avertissements",
+      "min_limit": 0,
+      "max_limit": null,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 5,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ratings",
+      "min_limit": 1,
+      "max_limit": 1,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 6,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Époques",
+      "min_limit": 0,
+      "max_limit": 2,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 7,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Personnages",
+      "min_limit": 0,
+      "max_limit": 6,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristictype",
+     "pk": 8,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Relations",
+      "min_limit": 0,
+      "max_limit": 3,
+      "is_closed": false
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 1,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Albus Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 2,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.881Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Alice Londubat",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 3,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Alicia Spinnet",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 4,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Andromeda Tonks",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 5,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Angelina Johnson",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 6,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Armée de Dumbledore",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 5
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 7,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Arthur Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 6
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 8,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Astoria Greengrass",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 7
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 9,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Audrey Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 8
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 10,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Autre personnage",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 9
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 11,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Bellatrix Lestrange",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 10
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 12,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Bill Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 11
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 13,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Blaise Zabini",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 12
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 14,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Cedric Diggory",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 13
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 15,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Charlie Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 14
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 16,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Cho Chang",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 15
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 17,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Colin Crivey",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 16
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 18,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Croyance Bellebosse",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 17
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 19,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.887Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Daphné Greengrass",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 18
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 20,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dean Thomas",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 19
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 21,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dennis Crivey",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 20
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 22,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dobby",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 21
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 23,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dominique Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 22
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 24,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dorcas Meadowes",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 23
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 25,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Drago Malefoy",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 24
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 26,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Dudley Dursley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 25
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 27,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ernie McMillan",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 26
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 28,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille Black",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 27
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 29,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille Dumbledore",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 28
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 30,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille Malefoy",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 29
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 31,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 30
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 32,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 31
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 33,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Fenrir Greyback",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 32
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 34,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Filius Flitwick",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 33
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 35,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Fleur Delacour",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 34
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 36,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Frank Londubat",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 35
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 37,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.903Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Fred II Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 36
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 38,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Fred Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 37
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 39,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Gabrielle Delacour",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 38
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 40,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Gellert Grindelwald",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 39
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 41,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "George Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 40
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 42,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ginny Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 41
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 43,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Godric Gryffondor",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 42
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 44,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.919Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Hannah Abbot",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 43
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 45,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Harry Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 44
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 46,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Helga Poufsouffle",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 45
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 47,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Hermione Granger",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 46
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 48,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Hugo Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 47
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 49,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Jacob Kowalski",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 48
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 50,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "James Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 49
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 51,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "James S. Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 50
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 52,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Jedusor/Voldemort",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 51
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 53,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Jumeaux Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 52
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 54,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Katie Bell",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 53
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 55,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lavande Brown",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 54
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 56,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Le Trio",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 55
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 57,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lee Jordan",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 56
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 58,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Les Fondateurs",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 57
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 59,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Les Mangemorts",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 58
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 60,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.927Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Les Maraudeurs",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 59
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 61,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lily Evans",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 60
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 62,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lily L. Potter",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 61
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 63,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lorcan Scamander",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 62
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 64,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Louis Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 63
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 65,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lucius Malefoy",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 64
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 66,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lucy Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 65
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 67,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Luna Lovegood",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 66
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 68,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lysander Scamander",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 67
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 69,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Marcus Flint",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 68
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 70,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Marlene McKinnon",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 69
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 71,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Membre d'HPF",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 70
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 72,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Minerva McGonagall",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 71
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 73,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Molly II Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 72
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 74,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Molly Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 73
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 75,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Narcissa Malefoy",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 74
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 76,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Neville Londubat",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 75
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 77,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.943Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Newt Scamander",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 76
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 78,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Nymphadora Tonks",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 77
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 79,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Olivier Dubois",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 78
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 80,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ordre du Phénix",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 79
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 81,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Padma Patil",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 80
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 82,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Pansy Parkinson",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 81
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 83,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Parvati Patil",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 82
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 84,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Percy Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 83
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 85,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Personnage original (OC)",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 84
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 86,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Peter Pettigrow",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 85
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 87,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Pétunia Dursley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 86
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 88,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Pomona Chourave",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 87
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 89,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Porpentina Goldstein",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 88
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 90,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Professeurs de Poudlard",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 89
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 91,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Queenie Goldstein",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 90
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 92,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Regulus Black",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 91
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 93,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.959Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Remus Lupin",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 92
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 94,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Rolf Scamander",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 93
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 95,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ron Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 94
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 96,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Rose Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 95
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 97,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Rowena Serdaigle",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 96
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 98,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Roxanne Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 97
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 99,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Rubeus Hagrid",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 98
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 100,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Salazar Serpentard",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 99
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 101,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Scorpius Malefoy",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 100
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 102,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Seamus Finnigan",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 101
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 103,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Severus Rogue",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 102
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 104,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Sirius Black",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 103
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 105,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Susan Bones",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 104
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 106,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Ted Tonks",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 105
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 107,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.974Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Teddy Lupin",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 106
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 108,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Theodore Nott",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 107
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 109,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Vernon Dursley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 108
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 110,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Victoire Weasley",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 109
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 111,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Viktor Krum",
+      "description": "",
+      "characteristic_type": 7,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 110
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 112,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Biographies",
+      "description": "Fanfictions centrées sur l'histoire et la vie d'un seul personnage en particulier.",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 113,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "CrossOver",
+      "description": "Fanfictions mélangeant l'univers d'Harry Potter à celui d'une ou plusieurs autres séries.",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 114,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Enfances",
+      "description": "Fanfictions racontant l'enfance des personnages, avant leur entrée à Poudlard.",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 115,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Romance (Het)",
+      "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages.",
+      "characteristic_type": 8,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 116,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Romance (Slash)",
+      "description": "Fanfictions centrées sur une histoire d'amour entre deux personnages de même sexe.",
+      "characteristic_type": 8,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 117,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Durant Poudlard",
+      "description": "Récits se déroulant entre les murs de la célèbre école de sorcellerie.",
+      "characteristic_type": 6,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 118,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Après Poudlard",
+      "description": "Fanfictions dont l'intrigue se déroule après la scolarité de Harry à Poudlard.",
+      "characteristic_type": 6,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 119,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Univers Alternatifs",
+      "description": "Fanfictions où les personnages évoluent dans un univers différent du leur.",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 121,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Voyages temporels",
+      "description": "Fanfictions où les personnages voyagent dans le temps.",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 122,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Résistance",
+      "description": "",
+      "characteristic_type": 6,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 123,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Quidditch",
+      "description": "",
+      "characteristic_type": 8,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 124,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:20.987Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Les Animaux Fantastiques",
+      "description": "",
+      "characteristic_type": 6,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 125,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.003Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Fêtes / Célébrations",
+      "description": "",
+      "characteristic_type": 6,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 126,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.004Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Autres fics HP",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": true,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 127,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Tous",
+      "description": "",
+      "characteristic_type": 5,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 128,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Déconseillé -12",
+      "description": "",
+      "characteristic_type": 5,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 129,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Déconseillé -16",
+      "description": "",
+      "characteristic_type": 5,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 130,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Interdit -18",
+      "description": "",
+      "characteristic_type": 5,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 131,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Tout public",
+      "description": "",
+      "characteristic_type": 5,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 132,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Amitié",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 5
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 133,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Angoisse/Suspense",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 6
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 134,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Autres genres",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 7
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 135,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Aventure/Action",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 8
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 136,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Comédie/Humour",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 9
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 137,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Epistolaire",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 10
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 138,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Famille",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 11
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 139,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Femslash/Yuri",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 12
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 140,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Guerre",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 13
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 141,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Horreur",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 14
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 142,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Missing Moments",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 15
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 143,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.006Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Parodie",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 16
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 144,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Poésie",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 17
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 145,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Polar/enquête",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 18
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 146,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Romance/Amour",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 19
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 147,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Slash/Yaoi",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 20
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 148,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Songfic",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 21
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 149,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Tragédie/Drame",
+      "description": "",
+      "characteristic_type": 2,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 22
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 150,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Français",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 151,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Anglais",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 152,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Allemand",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 153,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Breton",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 154,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Picard",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 155,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Espagnol",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 5
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 156,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Latin",
+      "description": "",
+      "characteristic_type": 3,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 6
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 157,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Scène(s) gore(s)",
+      "description": "",
+      "characteristic_type": 4,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 0
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 158,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lime",
+      "description": "",
+      "characteristic_type": 4,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 159,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lemon soft",
+      "description": "",
+      "characteristic_type": 4,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 160,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.022Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Lemon Hard",
+      "description": "",
+      "characteristic_type": 4,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 161,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.037Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Nouvelle",
+      "description": "",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 1
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 162,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.037Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Poésie (Prose)",
+      "description": "",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 2
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 163,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.037Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Poésie (Vers)",
+      "description": "",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 3
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 164,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.037Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Roman",
+      "description": "",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 4
+     }
+    },
+    {
+     "model": "characteristics.characteristic",
+     "pk": 165,
+     "fields": {
+      "creation_date": "2021-08-12T10:12:21.037Z",
+      "modification_date": null,
+      "creation_user": 0,
+      "modification_user": null,
+      "name": "Théâtre",
+      "description": "",
+      "characteristic_type": 1,
+      "parent": null,
+      "is_highlighted": false,
+      "is_personal": false,
+      "is_forbidden": false,
+      "replace_with": null,
+      "_order": 5
+     }
+    }
+    ]

@@ -7,8 +7,11 @@ from core.models import DatedModel, CreatedModel, TextDependentModel, BaseTextVe
 from core.utils import get_moderation_account
 
 from users.models import User
-from fictions.models import Fiction, Chapter
-from colls.models import Collection
+from fictions.models import (
+    Fiction,
+    Chapter,
+    Collection,
+)
 
 MIN_GRADING_VALUE = 1
 MAX_GRADING_VALUE = 10

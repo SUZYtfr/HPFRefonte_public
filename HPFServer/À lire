@@ -17,7 +17,7 @@ https://pypi.org/project/pipenv/
 pipenv install
 
 - Créer le schéma de la base de données :
-pipenv makemigrations users features fictions reviews texts colls polls selections news sessions auth reports banners
+pipenv makemigrations users characteristics fictions reviews texts colls polls selections news sessions auth reports banners
 
 - Démarrer le serveur test de Django dans Pipenv :
 pipenv run manage.py runserver
