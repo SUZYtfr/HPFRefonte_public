@@ -9,6 +9,36 @@ export enum UserStatus {
   Banned = 4,
 }
 
+export enum UserGender {
+  Undefined = 0,
+  Female = 1,
+  Male = 2,
+  Other = 3,
+}
+
+export class UserProfileData extends BasicClass<UserProfileData> {
+  public realname: string = "";
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public birthdate: Date = new Date();
+
+  public website: string | null = null;
+  public gender: UserGender | null = null;
+  public bio: string | null = null;
+  public profile_picture: string | ArrayBuffer | null = null;
+}
+
+export class UserPreferencesData extends BasicClass<UserPreferencesData> {
+  public age_consent: boolean = false;
+  public font: string | null = null;
+  public font_size: number | null = null;
+  public line_spacing: number | null = null;
+  public dark_mode: boolean | null = null;
+  public skin: string = "default";
+  public show_reaction: boolean = true;
+}
+
 export class UserData extends BasicClass<UserData> {
   @Exclude()
   public get user_id(): number {
@@ -17,29 +47,20 @@ export class UserData extends BasicClass<UserData> {
 
   public status: UserStatus = UserStatus.Unvalidated;
   public username: string = "";
-  public realname: string = "";
   public email: string = "";
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
-  public birthdate: Date = new Date();
-
-  public sex: number | null = null;
-  public bio: string | null = null;
   public is_premium: boolean = false;
   public is_beta: boolean = false;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
-  public last_login_date: Date | null = null;
+  public first_seen: Date | null = null;
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public last_login: Date | null = null;
 
-  public user_pref_font: string | null = null;
-  public user_pref_font_size: number | null = null;
-  public user_pref_line_spacing: number | null = null;
-  public user_pref_dark_mode: boolean | null = null;
-  public user_pref_skin: string = "default";
-  public user_pref_show_reaction: boolean = true;
-  public age_consent: boolean = false;
+  public profile: UserProfileData | null = null;
+  public preferences: UserPreferencesData | null = null;
 }
 
 export class UserLinkData extends BasicClass<UserLinkData> {
@@ -55,14 +76,18 @@ export class UserLinkData extends BasicClass<UserLinkData> {
   public visible: boolean = true;
 }
 
+export interface UserRegisterProfileData {
+  realname: string | null,
+  bio: string | null,
+  website: string | null,
+  profile_picture: string | ArrayBuffer | null,
+}
+
 export interface UserRegisterData {
   email: string,
   password: string,
   username: string,
-  realname: string | null,
-  bio: string | null,
-  website: string | null,
-  avatar: string | ArrayBuffer | null,
+  profile: UserRegisterProfileData,
 }
 
 export interface UserLoginData {

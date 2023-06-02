@@ -1,5 +1,5 @@
 from rest_framework import permissions, generics
-from .serializers import AccountManagementSerializer, AccountCreationSerializer
+from .serializers import AccountCreationSerializer, AccountManagementSerializer
 
 
 class AuthenticatedUserView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
@@ -23,3 +23,6 @@ class AuthenticatedUserView(generics.CreateAPIView, generics.RetrieveUpdateDestr
 
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user)
+
+
+# TODO - ExternalProfileViewSet

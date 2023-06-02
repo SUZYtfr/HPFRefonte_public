@@ -1,8 +1,8 @@
-from rest_framework import serializers
-
 from django.conf import settings
+from rest_framework import serializers
+from drf_extra_fields import fields as extra_fields
 
-from .models import User, UserProfile, UserPreferences, UserLink
+from .models import User, UserProfile, UserPreferences, ExternalProfile
 from images.serializers import ProfilePictureSerializer, BannerSerializer
 from core.serializers import ListableModelSerializer
 
@@ -54,37 +54,49 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserLinkSerializer(serializers.ModelSerializer):
-    link_type_id = serializers.SerializerMethodField()
-
+class ExternalProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserLink
+        model = ExternalProfile
         fields = [
-            "display_text",
-            "link_type_id",
-            "url",
+            "id",
+            "website_type",
+            "username",
+            "is_visible",
         ]
-
-    def get_link_type_id(self, obj):
-        return randint(1,6)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """Sérialiseur de profil d'utilisateur"""
 
-    user_links = UserLinkSerializer(many=True, read_only=True)
-    profile_picture = ProfilePictureSerializer(required=False)
+    external_profiles = ExternalProfileSerializer(
+        many=True,
+        read_only=True,
+    )
+    # profile_picture = ProfilePictureSerializer(required=False)
+    profile_picture = extra_fields.Base64ImageField(
+        source="profile_picture.src_path",
+        required=False,
+    )
+    is_user_property = serializers.HiddenField(
+        source="profile_picture.is_user_property",
+        default=True,
+    )
+    is_adult_only = serializers.HiddenField(
+        source="profile_picture.is_adult_only",
+        default=False,
+    )
 
     class Meta:
         model = UserProfile
         fields = [
-            "bio",
-            "profile_picture",
-            "user_links",
             "realname",  # if pref_showname ?
             "birthdate",  # if pref_showbirthdate ?
             "gender",  # if pref_showgender ?
-            # "email"# if pref_showemail?
+            "bio",
+            "external_profiles",
+            "profile_picture",
+            "is_user_property",
+            "is_adult_only",
         ]
 
 
@@ -120,16 +132,11 @@ class UserSerializer(ListableModelSerializer):
         fields = [
             "id",
             "username",
-            "username",
-            "password",
             "email",
+            "banner",
             "first_seen",
             "last_login",
             "profile",
             "stats",
-            "banner",
         ]
         list_serializer_child_class = UserListSerializer
-        extra_kwargs = {
-            "username": {"write_only": True},
-        }

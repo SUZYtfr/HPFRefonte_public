@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterTextVersion
 from images.models import ProfilePicture
-from .enums import Gender
+from .enums import Gender, WebsiteType
 
 
 class UserQuerySet(models.QuerySet):
@@ -247,8 +247,9 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
     realname = models.CharField(
         max_length=200,
         verbose_name="nom",
-        null=True,  # TODO - False
+        null=False, 
         blank=True,
+        default="",
     )
     birthdate = models.DateField(
         verbose_name="date de naissance",
@@ -266,6 +267,12 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         choices=Gender.choices,
         default=Gender.UNDEFINED,
         blank=True,
+    )
+    website = models.URLField(
+        verbose_name="site perso",
+        null=False,
+        blank=True,
+        default="",
     )
 
     objects = UserProfileManager()
@@ -362,26 +369,35 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         return f"Préférences de {str(self.user)}"
 
 
-class UserLink(models.Model):
-    """Modèle de lien de profil d'utilisateur"""
+class ExternalProfile(models.Model):
+    """Modèle de lien de profil d'utilisateur externe"""
 
-    user = models.ForeignKey(
+    user_profile = models.ForeignKey(
         to=UserProfile,
         on_delete=models.CASCADE,
-        related_name="user_links",
-        verbose_name="utilisateur",
+        related_name="external_profiles",
+        verbose_name="profil",
     )
-    url = models.URLField(
-        verbose_name="URL",
+    website_type = models.SmallIntegerField(
+        verbose_name="type de site web",
+        choices=WebsiteType.choices,
     )
-    display_text = models.CharField(
-        max_length=50,
-        verbose_name="texte du lien",
+    username = models.CharField(
+        max_length=100,
+        null=False,
+        blank=True,
+        default="",
+        verbose_name="pseudonyme",
+    )
+    is_visible = models.BooleanField(
+        default=True,
+        verbose_name="visible",
     )
 
     class Meta:
-        verbose_name = "lien externe"
-        verbose_name_plural = "liens externes"
+        verbose_name = "profil externe"
+        verbose_name_plural = "profils externes"
 
     def __str__(self):
-        return "<a href='" + str(self.url) + "'>" + str(self.display_text) + "</a>"
+        return f"{self.external_username} sur {str(self.website_type)}"
+  
