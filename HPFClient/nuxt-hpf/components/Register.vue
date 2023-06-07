@@ -53,7 +53,7 @@
                     custom-class="has-text-primary"
                   >
                     <b-input
-                      v-model="signupForm.realname"
+                      v-model="signupForm.profile.realname"
                       type="text"
                       placeholder="Votre nom réel"
                       pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\- ]{3,30}$"
@@ -83,7 +83,7 @@
                 custom-class="has-text-primary"
               >
                 <b-input
-                  v-model="signupForm.website"
+                  v-model="signupForm.profile.website"
                   type="url"
                   placeholder="Votre site web"
                 />
@@ -137,7 +137,7 @@
                       <div v-if="uploadedFile">
                         <img
                           id="previewPicture"
-                          :src="signupForm.avatar"
+                          :src="signupForm.profile.profile_picture"
                           :alt="uploadedFile.name"
                           width="256"
                           height="256"
@@ -164,7 +164,7 @@
               <TipTapEditor
                 :placeholder="'Votre description'"
                 :show-footer="false"
-                @change="(value) => (signupForm.bio = value.content)"
+                @change="(value) => (signupForm.profile.bio = value.content)"
               />
             </div>
           </div>
@@ -213,10 +213,12 @@ export default class extends Vue {
     email: "",
     password: "",
     username: "",
-    realname: "",
-    bio: "",
-    website: "",
-    avatar: null
+    profile: {
+      realname: "",
+      bio: "",
+      website: "",
+      profile_picture: null
+    }
   };
 
   public formIsValid: boolean = false;
@@ -264,14 +266,14 @@ export default class extends Vue {
   @Watch("uploadedFile", { deep: true })
   public onChanged(): void {
     const reader = new FileReader();
-    reader.onloadend = e => (this.signupForm.avatar = reader.result);
+    reader.onloadend = e => (this.signupForm.profile.profile_picture = reader.result);
     if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
     // reader.readAsDataURL(
     //   this.uploadedFile != null ? this.uploadedFile : new Blob()
     // );
     console.log(this.uploadedFile);
     console.log(reader);
-    console.log(this.signupForm.avatar);
+    console.log(this.signupForm.profile.profile_picture);
   }
   // #endregion
 
@@ -284,7 +286,7 @@ export default class extends Vue {
   // Supprimer l'avatar uploadé
   public deleteDropFile(): void {
     this.uploadedFile = null;
-    this.signupForm.avatar = "";
+    this.signupForm.profile.profile_picture = "";
   }
 
   // Envoyer le formulaire
