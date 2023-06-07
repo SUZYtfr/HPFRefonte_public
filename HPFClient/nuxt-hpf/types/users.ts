@@ -59,7 +59,9 @@ export class UserData extends BasicClass<UserData> {
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
   public last_login: Date | null = null;
 
+  @Type(() => UserProfileData)
   public profile: UserProfileData | null = null;
+  @Type(() => UserPreferencesData)
   public preferences: UserPreferencesData | null = null;
 }
 
