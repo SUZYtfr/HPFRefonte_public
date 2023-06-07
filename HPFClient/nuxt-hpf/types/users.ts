@@ -16,29 +16,8 @@ export enum UserGender {
   Other = 3,
 }
 
-export class UserProfileData extends BasicClass<UserProfileData> {
-  public realname: string = "";
-
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
-  public birthdate: Date = new Date();
-
-  public website: string | null = null;
-  public gender: UserGender | null = null;
-  public bio: string | null = null;
-  public profile_picture: string | ArrayBuffer | null = null;
-}
-
-export class UserPreferencesData extends BasicClass<UserPreferencesData> {
-  public age_consent: boolean = false;
-  public font: string | null = null;
-  public font_size: number | null = null;
-  public line_spacing: number | null = null;
-  public dark_mode: boolean | null = null;
-  public skin: string = "default";
-  public show_reaction: boolean = true;
-}
-
+// Table User
+// Informations essentielles d'un utilisateur
 export class UserData extends BasicClass<UserData> {
   @Exclude()
   public get user_id(): number {
@@ -55,16 +34,51 @@ export class UserData extends BasicClass<UserData> {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
   public first_seen: Date | null = null;
+
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
   public last_login: Date | null = null;
-
-  @Type(() => UserProfileData)
-  public profile: UserProfileData | null = null;
-  @Type(() => UserPreferencesData)
-  public preferences: UserPreferencesData | null = null;
 }
 
+// Table UserProfile
+// Informations secondaire (de profil) d'un utilisateur
+export class UserProfileData extends BasicClass<UserProfileData> {
+  @Exclude()
+  public get user_profile_id(): number {
+    return this.id;
+  }
+
+  public realname: string = "";
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public birthdate: Date = new Date();
+
+  public website: string | null = null;
+  public gender: UserGender | null = null;
+  public bio: string | null = null;
+  public profile_picture: string | ArrayBuffer | null = null;
+}
+
+// Table UserPreferences
+// Informations secondaire (des préférences) d'un utilisateur
+export class UserPreferencesData extends BasicClass<UserPreferencesData> {
+  @Exclude()
+  public get user_preference_id(): number {
+    return this.id;
+  }
+
+  public age_consent: boolean = false;
+  public font: string | null = null;
+  public font_size: number | null = null;
+  public line_spacing: number | null = null;
+  public dark_mode: boolean | null = null;
+  public skin: string = "default";
+  public show_reaction: boolean = true;
+}
+
+// Table UserLink
+// Liens de l'utilisateur
 export class UserLinkData extends BasicClass<UserLinkData> {
   @Exclude()
   public get user_link_id(): number {

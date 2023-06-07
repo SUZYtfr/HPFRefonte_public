@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { UserData, UserLinkData, UserStatus, UserProfileData } from "@/types/users";
+import { UserData, UserLinkData, UserStatus, UserProfileData, UserPreferencesData } from "@/types/users";
 
 interface UserStats {
   fanfictions: number,
@@ -13,15 +13,19 @@ interface UserStats {
   favorites_author: number
 }
 
+// Model d'un utilisateur
+// Avec stats, information de profil, préférences et liens
 export class UserModel extends UserData {
-  public storiesCount: number = 0;
-  public avatar: string | null = null;
   public stats: UserStats | null = null;
+
+  @Type(() => UserProfileData)
+  public profile: UserProfileData | null = null;
+
+  @Type(() => UserPreferencesData)
+  public preferences: UserPreferencesData | null = null;
 
   @Type(() => UserLinkData)
   public links: UserLinkData[] | null = null;
-  @Type(() => UserProfileData)
-  public profile: UserProfileData | null = null;
 }
 
 export class Account {
