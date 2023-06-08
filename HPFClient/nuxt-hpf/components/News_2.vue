@@ -23,7 +23,7 @@
           tag="nuxt-link"
           :to="{ name: 'actualites-id', params: { id: news.news_id } }"
         >
-          <span class="badge">{{ news.comments?.length ?? 0 }}</span>
+          <span class="badge">{{ news.comment_count }}</span>
         </b-button>
         <hr>
       </div>

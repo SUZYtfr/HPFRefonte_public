@@ -18,10 +18,10 @@
           <a href="viewstory.php?sid=37709">{{ fanfiction.title }}</a>
         </h3>
       </div>
-      <span class="has-text-weight-bold">{{ ratinga }}</span>
-      <b-rate
+      <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
+      <b-rate v-if="fanfiction.average"
         icon-pack="fas"
-        :value="1"
+        :value="fanfiction.average / 10"
         :disabled="true"
         :max="1"
         :rtl="true"
@@ -101,7 +101,7 @@ export default class FanfictionThumbnail extends Vue {
   // #endregion
 
   // #region Datas
-  public ratinga = 10;
+  // public ratinga = 10;
   public hover: boolean = false;
   // #endregion
 

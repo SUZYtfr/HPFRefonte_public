@@ -22,6 +22,8 @@ export class NewsData extends BasicClass<NewsData> {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
   public post_date: Date | null = null;
+
+  public comment_count: number = 0;
 }
 
 export interface INewsFilters extends IBasicQuery {

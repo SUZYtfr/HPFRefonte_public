@@ -99,6 +99,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "is_adult_only",
         ]
 
+    # FIXME - temporaire branchement
+    def get_user_links(self, obj):
+        return []
+
 
 class UserCardSerializer(serializers.ModelSerializer):
     """Sérialiseur du lien vers une présentation d'utilisateur"""

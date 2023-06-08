@@ -24,7 +24,7 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public title: string = "";
   public summary: string | null = null;
   public image: string | null = null;
-  public rating: number | null = null;
+  public average: number | null = null;
   public storynote: string | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
@@ -32,6 +32,9 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public last_update_date: Date = new Date();
 
   public read_count: number | null = null;
+  public word_count: number | null = null;
+  public review_count: number | null = null;
+  public collection_count: number | null = null;
   public status: FanfictionStatus = FanfictionStatus.OnGoing;
   public featured: boolean = false;
   public validation_status: ValidationStatus = ValidationStatus.Unvalidated;
