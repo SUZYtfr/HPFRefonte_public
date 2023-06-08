@@ -31,7 +31,6 @@ class Command(BaseCommand):
         parser.add_argument(
             "-p",
             "--parent",
-            nargs=1,
             default=None,
             type=int,
             metavar="ID",
@@ -40,7 +39,6 @@ class Command(BaseCommand):
         parser.add_argument(
             "-u",
             "--user",
-            nargs=1,
             default=None,
             type=int,
             metavar="CRÉATEUR",
