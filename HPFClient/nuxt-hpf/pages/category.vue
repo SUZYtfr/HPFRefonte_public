@@ -30,7 +30,7 @@
             <hr class="mt-1 mb-3">
             <!-- Liste -->
             <div
-              v-if="currentCharacs.length > 0"
+              v-if="(currentCharacs?.length ?? 0) > 0"
               class="columns is-multiline is-centered is-variable is-8"
             >
               <div
@@ -50,12 +50,12 @@
                   "
                   :characteristic_name="charac.name"
                   :characteristic_description="charac.description"
-                  :characteristic_count="charac.storiesCount"
+                  :characteristic_count="charac.fiction_count"
                   @click="AddBreadCrumbLevel"
                 />
               </div>
             </div>
-            <div v-if="currentCharacs.length == 0">
+            <div v-if="(currentCharacs?.length ?? 0) == 0">
               <FanfictionList
                 :is-card="false"
                 :fanfiction-filters="fanfictionFilters"
@@ -102,11 +102,7 @@ export default class extends Vue {
   // Filtres des charactéristiques
   public caracteristicFilters: ICharacteristicFilters = {
     characteristic_type_id: null,
-    parent_id: null,
-    options: {
-      with_stats: true
-    },
-    limit: 10
+    parent_id: null
   };
 
   // Filtres
@@ -182,8 +178,9 @@ export default class extends Vue {
       }
       await this.getCharacteristics();
       // Si pas de nouvelle caractéristique, on est en bas de la pile on déclenche recherche les fictions
-      if (this.currentCharacs.length === 0)
+      if ((this.currentCharacs?.length ?? 0) === 0)
         this.fanfictionFilters.includedTags = [current.characteristic_id];
+      console.log(this.fanfictionFilters);
     } else {
       await this.getCharacteristicsTypes();
     }
@@ -219,21 +216,24 @@ export default class extends Vue {
     try {
       this.currentCharacs = (
         await getCharacteristics(this.caracteristicFilters)
-      ).items;
+      );
+      console.log(this.currentCharacs);
     } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des catégories",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
+      this.currentCharacs = [];
+
+      // if (process.client) {
+      //   this.$buefy.snackbar.open({
+      //     duration: 5000,
+      //     message: "Une erreur s'est produite lors de la récupération des catégories",
+      //     type: "is-danger",
+      //     position: "is-bottom-right",
+      //     actionText: null,
+      //     pauseOnHover: true,
+      //     queue: true
+      //   });
+      // } else {
+      //   console.log(error);
+      // }
     }
   }
 

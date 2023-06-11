@@ -11,7 +11,7 @@ export class CharacteristicData extends BasicClass<CharacteristicData> {
   public parent_id: number | null = null;
   public name: string = "";
   public description: string | null = null;
-  public in_order: number = 0;
+  public order: number = 0;
   public visible: boolean = true;
   public enabled: boolean = true;
 }
@@ -29,13 +29,12 @@ export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
   public enabled: boolean = true;
 }
 
-export class ICharacteristicGetOptions {
-  with_stats: boolean = false;
-}
+// export class ICharacteristicGetOptions {
+//   with_stats: boolean = false;
+// }
 
 export interface ICharacteristicFilters {
   characteristic_type_id: number | null,
   parent_id: number | null,
-  options: ICharacteristicGetOptions | null,
-  limit: number | null
+  // options: ICharacteristicGetOptions | null,
 }

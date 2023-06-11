@@ -116,12 +116,6 @@ export default class extends Vue {
       this.recentNews = (await searchNews(this.newsFilters)).results;
       this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
       this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
-    // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
-    // console.log("Date type: " + ((new Date()) instanceof Date));
-    // console.log("Creation date type: " + (this.fanfictions[0]?.creation_date instanceof Date));
-    // console.log("Last update date type: " + (this.fanfictions[0]?.last_update_date instanceof Date));
-    // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
-    // console.log(this.fanfictions[0]?.creation_date?.toLocaleDateString());
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({
@@ -144,30 +138,6 @@ export default class extends Vue {
   beforeMount(): void {}
 
   mouted(): void {}
-  // #endregion
-
-  // #region Methods
-  // private async searchNews(): Promise<void> {
-  //   this.listLoading = true;
-  //   try {
-  //     const { data } = await searchNews(this.newsFilters);
-  //     this.news = data.items;
-  //   } catch {
-  //   } finally {
-  //     this.listLoading = false;
-  //   }
-  // }
-
-  // private async getFanfictions(): Promise<void> {
-  //   this.listLoading = true;
-  //   try {
-  //     const { data } = await getFanfictions(this.fanfictionFilters);
-  //     this.fanfictions = data.items;
-  //   } catch {
-  //   } finally {
-  //     this.listLoading = false;
-  //   }
-  // }
   // #endregion
 }
 </script>

@@ -293,7 +293,7 @@ export default class extends Vue {
           t.parent_id == null
       )
       .sort((a: CharacteristicModel, b: CharacteristicModel) => {
-        return a.in_order - b.in_order;
+        return a.order - b.order;
       });
     groupBy(
       this.characteristics.filter(

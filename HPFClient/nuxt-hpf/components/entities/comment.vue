@@ -11,7 +11,7 @@
           <NuxtLink :to="{ name: 'auteurs-id', params: { id: comment.author?.user_id } }">
             <strong>{{ comment.author?.username }}</strong>
           </NuxtLink>
-          <small>{{ comment.post_date != null ? (comment.post_date.toLocaleDateString() + " à " + comment.post_date.getHours() + ":" + comment.post_date.getMinutes()) : "" }}</small>
+          <small>{{ comment.post_date != null ? (comment.post_date.toLocaleDateString() + " à " + comment.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
         </div>
         <p>
           <span

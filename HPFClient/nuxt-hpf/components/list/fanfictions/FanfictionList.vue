@@ -78,7 +78,7 @@
       <b-pagination
         v-model="fanfictionFilters.page"
         :class="[{'card-footer-item': isCard}, 'py-2']"
-        :total="fanfictions?.length ?? 1"
+        :total="totalFanfictions"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -123,6 +123,7 @@ export default class FanfictionList extends Vue {
   @SerialiseClass(FanfictionModel)
   public fanfictions: FanfictionModel[] = [];
 
+  public totalFanfictions: number = 0;
   private timerId: number = 0;
   // #endregion
 
@@ -138,9 +139,9 @@ export default class FanfictionList extends Vue {
   // #region Computed
   get fanfictionResultLabel(): string {
     let result = "Aucun résultat";
-    if (this.fanfictions == null || this.fanfictions.length === 0) return result;
-    result = this.fanfictions.length.toString() + " résultat";
-    result += this.fanfictions.length > 1 ? "s" : "";
+    if (this.totalFanfictions === 0) return result;
+    result = this.totalFanfictions.toString() + " résultat";
+    result += this.totalFanfictions > 1 ? "s" : "";
     return result;
   }
 
@@ -175,6 +176,8 @@ export default class FanfictionList extends Vue {
     try {
       const response = (await searchFanfictions(this.fanfictionFilters));
       this.fanfictions = response.results;
+      this.fanfictionFilters.page = response.current;
+      this.totalFanfictions = response.count;
       // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
       // console.log("Date type: " + ((new Date()) instanceof Date));
       // console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));

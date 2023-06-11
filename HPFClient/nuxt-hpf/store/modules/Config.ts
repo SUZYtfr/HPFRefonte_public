@@ -22,7 +22,7 @@ export default class _Config extends VuexModule implements ConfigState {
   private _characteristicTypes: CharacteristicTypeModel[] = [];
 
   public get characteristics(): CharacteristicModel[] {
-    if (process.client && this._characteristics !== null && this._characteristics.length > 0 && (this._characteristics[0] instanceof CharacteristicModel) === false) {
+    if (process.client && this._characteristics != null && this._characteristics.length > 0 && (this._characteristics[0] instanceof CharacteristicModel) === false) {
       return plainToInstance(
         CharacteristicModel,
         this._characteristics
@@ -32,7 +32,7 @@ export default class _Config extends VuexModule implements ConfigState {
   }
 
   public get characteristicTypes(): CharacteristicTypeModel[] {
-    if (process.client && this._characteristicTypes !== null && this._characteristicTypes.length > 0 && (this._characteristicTypes[0] instanceof CharacteristicTypeModel) === false) {
+    if (process.client && this._characteristicTypes != null && this._characteristicTypes.length > 0 && (this._characteristicTypes[0] instanceof CharacteristicTypeModel) === false) {
       return plainToInstance(
         CharacteristicTypeModel,
         this._characteristicTypes
@@ -71,14 +71,14 @@ export default class _Config extends VuexModule implements ConfigState {
     let caracteristicsTemp;
     let caracteristicTypesTemp;
     try {
-      caracteristicsTemp = (await getCharacteristics(null)).items;
+      caracteristicsTemp = (await getCharacteristics(null));
     } catch (error) {
       caracteristicsTemp = [];
       console.log(error);
     }
 
     try {
-      caracteristicTypesTemp = (await getCharacteristicsTypes()).items;
+      caracteristicTypesTemp = (await getCharacteristicsTypes());
     } catch (error) {
       caracteristicTypesTemp = [];
       console.log(error);

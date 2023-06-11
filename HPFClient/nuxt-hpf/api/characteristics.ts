@@ -4,4 +4,3 @@ import { CharacteristicTypeModel, CharacteristicModel } from "~/models/character
 
 export const getCharacteristics = (filters: ICharacteristicFilters | null): Promise<any> => $AxiosWrapper.get<CharacteristicModel>("/characteristics/characteristics/", filters, CharacteristicModel);
 export const getCharacteristicsTypes = (): Promise<any> => $AxiosWrapper.get<CharacteristicTypeModel>("/characteristics/characteristic-types/", null, CharacteristicTypeModel);
-    

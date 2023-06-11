@@ -75,7 +75,7 @@
       <b-pagination
         v-model="newsFilters.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="news?.length ?? 1"
+        :total="totalNews"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -120,18 +120,16 @@ export default class NewsList extends Vue {
   @SerialiseClass(NewsModel)
   public news: NewsModel[] = [];
 
+  public totalNews: number = 0;
   private timerId: number = 0;
-
-  // Pagination
-
   // #endregion
 
   // #region Computed
   get newsResultLabel(): string {
     let result = "Aucun résultat";
-    if (this.news == null || this.news.length === 0) return result;
-    result = this.news.length.toString() + " résultat";
-    result += this.news.length > 1 ? "s" : "";
+    if (this.totalNews === 0) return result;
+    result = this.totalNews.toString() + " résultat";
+    result += this.totalNews > 1 ? "s" : "";
     return result;
   }
 
@@ -166,6 +164,8 @@ export default class NewsList extends Vue {
     try {
       const response = (await searchNews(this.newsFilters));
       this.news = response.results;
+      this.newsFilters.page = response.current;
+      this.totalNews = response.count;
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({

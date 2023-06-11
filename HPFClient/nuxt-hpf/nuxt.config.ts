@@ -90,7 +90,7 @@ const config: NuxtConfig = {
           secure: (process.env.NODE_ENV === "production")
         },
         redirect: false,
-        resetOnError: true,
+        resetOnError: true
       }
     }
   },
@@ -111,24 +111,24 @@ const config: NuxtConfig = {
       routeContext(context) {
         // console.log("Data: ");
         // console.log(context.data);
-        console.log("Fetch: ");
-        console.log(context.fetch);
+        // console.log("Fetch: ");
+        // console.log(context.fetch);
         const { fetch } = context || {};
         // const { fetch } = context.nuxtState || {};
         if (fetch) {
           Object.keys(fetch).forEach((fetchkey) => {
-            console.log("FetchKey: ");
-            console.log(fetchkey);
+            // console.log("FetchKey: ");
+            // console.log(fetchkey);
 
             Object.keys(fetch[fetchkey]).forEach((key) => {
               const asyncFetch = fetch[fetchkey];
-              console.log("AsyncFetch: ");
-              console.log(key);
-              console.log("Instance:");
-              console.log(asyncFetch[key]);
+              // console.log("AsyncFetch: ");
+              // console.log(key);
+              // console.log("Instance:");
+              // console.log(asyncFetch[key]);
               asyncFetch[key] = instanceToPlain(asyncFetch[key]);
-              console.log("Plain:");
-              console.log(asyncFetch[key]);
+              // console.log("Plain:");
+              // console.log(asyncFetch[key]);
             });
           });
         }

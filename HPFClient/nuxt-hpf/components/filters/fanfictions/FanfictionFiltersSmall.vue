@@ -209,7 +209,7 @@ export default class extends Vue {
       const itemsSorted: CharacteristicData[] = items
         .filter(t => t.parent_id == null)
         .sort((a: CharacteristicData, b: CharacteristicData) => {
-          return a.in_order - b.in_order;
+          return a.order - b.order;
         });
       groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
         (value: CharacteristicData[], key: number) => {
@@ -257,7 +257,7 @@ export default class extends Vue {
       const itemsSorted: CharacteristicData[] = items
         .filter((t: CharacteristicData) => t.parent_id == null)
         .sort((a: CharacteristicData, b: CharacteristicData) => {
-          return a.in_order - b.in_order;
+          return a.order - b.order;
         });
       groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
         (value: CharacteristicData[], key: number) => {

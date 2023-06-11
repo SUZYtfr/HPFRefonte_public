@@ -6,8 +6,8 @@ import { createDecorator, VueDecorator } from "vue-class-component";
  * @param classType The class constructor to use for this property
  */
 export const SerialiseClass = <T>(classType: ClassConstructor<T>): VueDecorator => createDecorator((options, key): void => {
-  console.log("Serializer");
-  console.log(key);
+  // console.log("Serializer");
+  // console.log(key);
   if (process.server) {
     wrapFetch(options, key);
   } else {
@@ -33,7 +33,7 @@ export const SerialiseClass = <T>(classType: ClassConstructor<T>): VueDecorator 
  * Ensure we still call the original hook if it exists.
  */
 function wrapFetch(options: ComponentOptions<Vue>, key: string): void {
-  console.log("wrapFetch");
+  // console.log("wrapFetch");
   const originalwrapFetchHook = options.fetch;
   options.fetch = async function wrapperFetch(...args) {
     const originalAsyncData = (await originalwrapFetchHook?.apply(this, args));
@@ -45,15 +45,15 @@ function wrapFetch(options: ComponentOptions<Vue>, key: string): void {
 
 /** Add a config property to store the data that must be serialised */
 function registerSerializableProp(asyncData: any, key: string): void {
-  console.log("registerSerializableProp asyncData: " + asyncData);
-  console.log("registerSerializableProp key: " + key);
+  // console.log("registerSerializableProp asyncData: " + asyncData);
+  // console.log("registerSerializableProp key: " + key);
   if (asyncData == null) {
     asyncData = {};
     asyncData.serializerConfig = [];
   }
   asyncData.serializerConfig = asyncData.serializerConfig || [];
-  console.log("registerSerializableProp asyncData après: ");
-  console.log(asyncData);
+  // console.log("registerSerializableProp asyncData après: ");
+  // console.log(asyncData);
   asyncData.serializerConfig.push(key);
 }
 
@@ -61,8 +61,8 @@ function registerSerializableProp(asyncData: any, key: string): void {
  * Ensure we still call the original hook if it exists.
  */
 function wrapBeforeCreate<T>(options: ComponentOptions<Vue>, key: string, classType: ClassConstructor<T>): void {
-  console.log("wrapBeforeCreate");
-  console.log(key);
+  // console.log("wrapBeforeCreate");
+  // console.log(key);
   const originalBeforeCreateHook = options.beforeCreate;
   options.beforeCreate = function deserializerWrapper(...args) {
     deserializer.call(this, key, classType);
@@ -75,8 +75,8 @@ function wrapBeforeCreate<T>(options: ComponentOptions<Vue>, key: string, classT
  * @param classType The class constructor used to create the instance
  */
 function deserializer<T>(this: Vue, key: string, classType: ClassConstructor<T>): void {
-  console.log("deserializer: " + key);
-  console.log(this.$nuxt.context.nuxtState);
+  // console.log("deserializer: " + key);
+  // console.log(this.$nuxt.context.nuxtState);
   // console.log(classType);
   // console.log(this.$nuxt);
   // console.log(this.$nuxt.context);
@@ -112,19 +112,19 @@ function deserializer<T>(this: Vue, key: string, classType: ClassConstructor<T>)
     // const asyncFetch = fetch[Object.keys(fetch)[0]];
 
     Object.keys(fetch).forEach((fetchkey) => {
-      console.log("FetchKey: ");
-      console.log(fetchkey);
+      // console.log("FetchKey: ");
+      // console.log(fetchkey);
 
       Object.keys(fetch[fetchkey]).forEach((localKey) => {
         if (localKey !== key) return;
         const asyncFetch = fetch[fetchkey];
-        console.log("AsyncFetch: ");
-        console.log(key);
-        console.log("Plain:");
-        console.log(asyncFetch[key]);
+        // console.log("AsyncFetch: ");
+        // console.log(key);
+        // console.log("Plain:");
+        // console.log(asyncFetch[key]);
         asyncFetch[key] = plainToInstance(classType, asyncFetch[key]);
-        console.log("Instance:");
-        console.log(asyncFetch[key]);
+        // console.log("Instance:");
+        // console.log(asyncFetch[key]);
       });
     });
 

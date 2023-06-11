@@ -43,7 +43,7 @@
       <div class="column pt-2 pb-1">
         <span>Le </span>
         <span class="has-text-weight-semibold">
-          {{ news.post_date != null ? (news.post_date.toLocaleDateString() + " à " + news.post_date.getHours() + ":" + news.post_date.getMinutes()) : "" }}
+          {{ news.post_date != null ? (news.post_date.toLocaleDateString() + " à " + news.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}
         </span>
         <span> par </span>
         <span v-for="(author, index) in news.authors" :key="author.id" class="has-text-weight-semibold">
