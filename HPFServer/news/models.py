@@ -43,6 +43,10 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     def __str__(self):
         return self.title
 
+    @property
+    def comment_count(self) -> int:
+        return self.comments.count()
+
     def post(self, modification_user):
         self.status = NewsStatus.PUBLISHED
         self.post_date = timezone.now()

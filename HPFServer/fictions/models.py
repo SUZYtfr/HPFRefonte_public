@@ -21,24 +21,24 @@ class FictionQuerySet(models.QuerySet):
     def published(self):
         return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
-    def means(self):
-        mean = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
-        return self.annotate(annotated_mean=mean)
+    def with_averages(self):
+        average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
+        return self.annotate(_average=average)
 
-    def read_counts(self):
+    def with_read_counts(self):
         read_count = models.Sum(
             "chapters__read_count",
             filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
-        return self.annotate(read_count=read_count)
+        return self.annotate(_read_count=read_count)
 
-    def word_counts(self):
+    def with_word_counts(self):
         last_version = ChapterTextVersion.objects.filter(chapter__fiction=models.OuterRef("pk")).order_by("-pk")
         word_count = models.Sum(
             models.Subquery(last_version.values("word_count")[:1]),
             filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
-        return self.alias(word_count=word_count)
+        return self.alias(_word_count=word_count)
 
 
 class Fiction(DatedModel, CreatedModel, CharacteristicModel):
@@ -102,7 +102,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def chapter_count(self) -> int:
         """Renvoie le compte de chapitres publiés"""
 
-        return self.published_chapters.count()
+        return getattr(self, "_chapter_count", None) or self.published_chapters.count()
 
     @property
     def collection_count(self) -> int:
@@ -114,9 +114,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def word_count(self) -> int:
         """Renvoie le compte de mots des chapitres publiés"""
 
+        # NOTE : Pas instancié tant que sum n'est pas appelé, le cas échéant
         last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-pk")
         word_count = models.Subquery(last_version.values('word_count')[:1])
-        return sum(
+
+        return getattr(self, "_word_count", None) or sum(
             self.published_chapters
             .annotate(word_count=word_count)
             .filter(word_count__isnull=False)
@@ -127,7 +129,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def read_count(self) -> int:
         """Renvoie le compte de lectures des chapitres publiés"""
 
-        return sum(
+        return getattr(self, "_read_count", None) or sum(
             self.published_chapters
             .filter(read_count__isnull=False)
             .values_list("read_count", flat=True)
@@ -138,20 +140,23 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self) -> float | None:
+    def average(self) -> float | None:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
-        if all_gradings:  # pour éviter une division par 0
-            return sum(filter(None, all_gradings)) / len(all_gradings)
-        else:
-            return None
+        return getattr(self, "_average", None) or (sum(filter(None, all_gradings)) / len(all_gradings)) if all_gradings else None
+
+        # if all_gradings:  # pour éviter une division par 0
+        #     return sum(filter(None, all_gradings)) / len(all_gradings)
+        # else:
+        #     return None
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
-        return self.published_reviews.count()
+
+        return getattr(self, "_review_count", None) or self.published_reviews.count()
 
     def delete(self, using=None, keep_parents=False):
         """Supprime la fiction
@@ -169,14 +174,14 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 
 class ChapterQuerySet(models.QuerySet):
-    def word_counts(self):
+    def with_word_counts(self):
         last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-pk")
         word_count = models.Subquery(last_version.values('word_count')[:1])
-        return self.annotate(word_count=word_count)
+        return self.annotate(_word_count=word_count)
 
-    def means(self):
-        mean = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
-        return self.annotate(annotated_mean=mean)
+    def with_averages(self):
+        average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
+        return self.annotate(_average=average)
 
     def published(self):
         return self.filter(validation_status=ChapterValidationStage.PUBLISHED)
@@ -240,13 +245,17 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self) -> float | None:
+    def average(self) -> float | None:
         """Renvoie la moyenne des reviews"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
-        if all_gradings:  # pour éviter une division par 0
-            return sum(filter(None, all_gradings)) / len(all_gradings)
+        return getattr(self, "_average", None) or (sum(filter(None, all_gradings)) / len(all_gradings)) if all_gradings else None
+
+        # all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
+
+        # if all_gradings:  # pour éviter une division par 0
+        #     return sum(filter(None, all_gradings)) / len(all_gradings)
 
     @property
     def text(self) -> str:
@@ -254,12 +263,13 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
     @property
     def word_count(self) -> int:
-        return getattr(self.versions.first(), "word_count")
+        return getattr(self, "_word_count", None) or getattr(self.versions.first(), "word_count", None)
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
-        return self.published_reviews.count()
+
+        return getattr(self, "_review_count", None) or self.published_reviews.count()
 
     def create_text_version(self, creation_user_id, text, touch=True):
         """Crée une nouvelle version du texte du chapitre par l'utilisateur passé"""
@@ -396,26 +406,31 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, CharacteristicModel):
         return self.reviews.filter(draft=False)
 
     @property
-    def mean(self) -> float | None:
+    def average(self) -> float | None:
         """Renvoie la moyenne des reviews publiées"""
 
         all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
 
-        if all_gradings:  # pour éviter une division par 0
-            return sum(filter(None, all_gradings)) / len(all_gradings)
-        else:
-            return None
+        return getattr(self, "_average", None) or (sum(filter(None, all_gradings)) / len(all_gradings)) if all_gradings else None
+
+        # all_gradings = self.published_reviews.filter(grading__isnull=False).values_list("grading", flat=True)
+
+        # if all_gradings:  # pour éviter une division par 0
+        #     return sum(filter(None, all_gradings)) / len(all_gradings)
+        # else:
+        #     return None
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews publiées"""
-        return self.published_reviews.count()
+
+        return getattr(self, "_review_count", None) or self.published_reviews.count()
 
     @property
     def fiction_count(self) -> int:
         """Renvoie le compte de fictions"""
 
-        return self.fictions.count()
+        return getattr(self, "_fiction_count", None) or self.fictions.count()
 
     class Meta:
         verbose_name = "série"

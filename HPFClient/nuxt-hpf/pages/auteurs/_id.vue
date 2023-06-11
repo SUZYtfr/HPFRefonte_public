@@ -39,11 +39,11 @@
                   {{ user.username }}
                 </p>
                 <p class="subtitle is-7">
-                  {{ user.realname }}
+                  {{ user.profile?.realname }}
                 </p>
-                <p class="subtitle is-7">
+                <p class="subtitle is-7" v-if="user.first_seen">
                   Inscrit le
-                  <strong>{{ user.creation_date | parseTime }}</strong>
+                  <strong>{{ user.first_seen | parseTime }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -242,12 +242,12 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.fanfictions ?? 0) | numberToString }}
+                          {{ (user?.stats?.fiction_count ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
                             "Fanfiction" +
-                              ((user?.stats?.fanfictions ?? 0) > 1 ? "s" : "")
+                              ((user?.stats?.fiction_count ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -257,11 +257,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.chapters ?? 0) | numberToString }}
+                          {{ (user?.stats?.chapter_count ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Chapitre" + ((user?.stats?.chapters ?? 0) > 1 ? "s" : "")
+                            "Chapitre" + ((user?.stats?.chapter_count ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -271,10 +271,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.words ?? 0) | numberToString }}
+                          {{ (user?.stats?.word_count ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Mot" + ((user?.stats?.words ?? 0) > 1 ? "s" : "") }}
+                          {{ "Mot" + ((user?.stats?.word_count ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -283,10 +283,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.series ?? 0) | numberToString }}
+                          {{ (user?.stats?.collection_count ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Série" + ((user?.stats?.series ?? 0) > 1 ? "s" : "") }}
+                          {{ "Série" + ((user?.stats?.collection_count ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -309,10 +309,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.reviews ?? 0) | numberToString }}
+                          {{ (user?.stats?.review_count ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Review" + ((user?.stats?.reviews ?? 0) > 1 ? "s" : "") }}
+                          {{ "Review" + ((user?.stats?.review_count ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -346,7 +346,7 @@
                   :is-full-page="false"
                   :model="true"
                 />
-                <span v-else v-html="user.bio" />
+                <span v-else v-html="user.profile?.bio" />
               </div>
             </simplebar>
           </div>
@@ -368,7 +368,7 @@
                       :is-full-page="false"
                       :model="true"
                     /><b-tag v-else rounded>
-                      {{ user?.stats?.fanfictions }}
+                      {{ user?.stats?.fiction_count }}
                     </b-tag>
                   </span>
                 </template>
@@ -391,7 +391,7 @@
                       v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.series }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.collection_count }} </b-tag>
                   </span>
                 </template>
                 2
@@ -404,7 +404,7 @@
                       v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.reviews }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.review_count }} </b-tag>
                   </span>
                 </template>
                 3
@@ -569,7 +569,7 @@ export default class extends Vue {
   async fetch(): Promise<void> {
     this.userLoading = true;
     try {
-      this.user = (await getUser(this.$route.params.id)).data.items.user;
+      this.user = (await getUser(this.$route.params.id)).data;
     } catch (error) {
     } finally {
       this.userLoading = false;

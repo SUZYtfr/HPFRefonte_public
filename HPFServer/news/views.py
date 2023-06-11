@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from core.permissions import DjangoPermissionOrReadOnly, IsObjectCreatorOrReadOnly
 from .models import NewsArticle, NewsComment
-from .serializers import NewsSerializer, NewsCommentSerializer
+from .serializers import NewsArticleSerializer, NewsCommentSerializer
 from .enums import NewsStatus
 
 
@@ -13,7 +13,7 @@ class NewsViewSet(ModelViewSet):
 
     permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = NewsArticle.objects.filter(status=NewsStatus.PUBLISHED).order_by("-post_date")
-    serializer_class = NewsSerializer
+    serializer_class = NewsArticleSerializer
 
     def get_queryset(self):
         if self.request.user.has_perm("news.view_newsarticle"):

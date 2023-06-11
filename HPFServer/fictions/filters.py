@@ -125,8 +125,8 @@ class FictionFilterSet(filters.FilterSet):
             "less_recent": "creation_date",
             "most_reviews": "-review_count",
             "less_reviews": "review_count",
-            "most_rating": "-mean",
-            "less_rating": "mean",
+            "most_rating": "-average",
+            "less_rating": "average",
         }
         return queryset.order_by(corres.get(value, "-creation_date"))
 

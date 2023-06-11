@@ -16,5 +16,7 @@ export class NewsModel extends NewsData {
 
   @Type(() => CommentModel)
   public comments: CommentModel[] | null = null;
+
+  public comment_count: number = 0;
 }
 // #endregion

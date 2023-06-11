@@ -17,11 +17,11 @@
           type="is-primary"
           icon="award"
         />
-        <span class="has-text-weight-bold">{{ ratinga }}</span>
-        <b-rate
+        <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
+        <b-rate v-if="fanfiction.average"
           class="is-align-items-start"
           icon-pack="fas"
-          :value="1"
+          :value="fanfiction.average / 10"
           :disabled="true"
           :max="1"
           :rtl="true"
@@ -47,20 +47,20 @@
       </div>
       <div class="">
         <a class="is-size-6 has-text-weight-normal">{{
-          (fanfiction?.reviews != null ? (fanfiction?.reviews.length +
+          (fanfiction?.review_count != null ? (fanfiction?.review_count +
             " review" +
-            (fanfiction?.reviews.length > 1 ? "s" : "")) : "aucune review")
+            (fanfiction?.review_count > 1 ? "s" : "")) : "aucune review")
         }}<font-awesome-icon class="ml-1" icon="comments" />
         </a>
       </div>
     </div>
     <div
-      v-if="fanfiction?.series != null && fanfiction?.series.length > 0"
+      v-if="(fanfiction?.collection_count ?? 0) > 0"
       class="is-flex is-flex-direction-row"
     >
       <div class="is-flex-grow-5">
         <span><strong>{{
-          "Série" + (fanfiction?.series.length > 1 ? "s" : "") + " : "
+          "Série" + ((fanfiction?.collection_count ?? 0) > 1 ? "s" : "") + " : "
         }}</strong></span>
         <template v-for="(serie, index) in fanfiction?.series">
           <template v-if="index > 0">
@@ -155,7 +155,7 @@ export default class Fanfiction extends Vue {
   // #endregion
 
   // #region Datas
-  public ratinga = 10;
+  // public ratinga = 10;
   public hover: boolean = false;
   // #endregion
 
