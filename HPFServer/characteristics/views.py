@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from rest_framework import viewsets, decorators, response, status, permissions
+from django_filters import rest_framework as filters
 
 from .serializers import (
     CharacteristicSerializer,
@@ -9,6 +10,7 @@ from .serializers import (
     StaffCharacteristicOrderSerializer,
 )
 from .models import Characteristic, CharacteristicType
+from .filters import CharacteristicFilterSet
 from core.permissions import DjangoPermissionOrReadOnly
 
 
@@ -29,7 +31,9 @@ class CharacteristicViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = CharacteristicSerializer
     queryset = Characteristic.objects.allowed().fiction_counts().order_by("-fiction_count")
-    search_fields = ["name"]
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = CharacteristicFilterSet
+    pagination_class = None
 
     def get_queryset(self):
         """Détermine la liste de caractéristiques à afficher"""
@@ -85,6 +89,7 @@ class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = CharacteristicType.objects.all()
     serializer_class = StaffCharacteristicTypeSerializer
+    pagination_class = None
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user, creation_date=timezone.now())
