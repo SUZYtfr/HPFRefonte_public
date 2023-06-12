@@ -11,7 +11,8 @@ from .enums import NewsStatus
 class NewsViewSet(ModelViewSet):
     """Ensemble de vues d'actualités"""
 
-    permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = NewsArticle.objects.filter(status=NewsStatus.PUBLISHED).order_by("-post_date")
     serializer_class = NewsArticleSerializer
 

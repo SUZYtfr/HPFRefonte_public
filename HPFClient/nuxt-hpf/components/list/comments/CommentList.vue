@@ -76,6 +76,7 @@ export default class CommentList extends Vue {
     try {
       let comment: CommentModel = new CommentModel();
       comment.content = this.editorContent?.content;
+      comment.content_images = this.editorContent?.content_images;
       comment = (await postComment(this.news_id, comment)).items;
       if (comment != null) this.comments?.push(comment);
     } catch (error) {

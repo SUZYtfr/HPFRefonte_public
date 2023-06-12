@@ -2,11 +2,14 @@ from django.conf import settings
 from rest_framework import serializers
 from drf_extra_fields import fields as extra_fields
 
-from .models import User, UserProfile, UserPreferences, ExternalProfile
-from images.serializers import ProfilePictureSerializer, BannerSerializer
 from core.serializers import ListableModelSerializer
-
-from random import randint
+from .models import (
+    User,
+    UserProfile,
+    UserPreferences,
+    ExternalProfile,
+)
+from images.serializers import ContentImageSerializer
 
 
 class UserStatsSerializer(serializers.ModelSerializer):
@@ -72,18 +75,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
+    bio_images = ContentImageSerializer(
+        many=True,
+        max_length=1,
+        required=False,
+        max_dimensions=(700, None),
+    )
+
+    # FIXME - branchement
     # profile_picture = ProfilePictureSerializer(required=False)
     profile_picture = extra_fields.Base64ImageField(
         source="profile_picture.src_path",
         required=False,
     )
-    is_user_property = serializers.HiddenField(
-        source="profile_picture.is_user_property",
-        default=True,
-    )
-    is_adult_only = serializers.HiddenField(
-        source="profile_picture.is_adult_only",
-        default=False,
+    banner = extra_fields.Base64ImageField(
+        source="banner.src_path",
+        required=False,
     )
 
     class Meta:
@@ -93,10 +100,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "birthdate",  # if pref_showbirthdate ?
             "gender",  # if pref_showgender ?
             "bio",
+            "bio_images",
             "external_profiles",
             "profile_picture",
-            "is_user_property",
-            "is_adult_only",
+            "banner",
         ]
 
     # FIXME - temporaire branchement
@@ -129,7 +136,6 @@ class UserSerializer(ListableModelSerializer):
 
     profile = UserProfileSerializer(required=False)
     stats = UserStatsSerializer(read_only=True, source="*")
-    banner = BannerSerializer(read_only=True)
 
     class Meta:
         model = User

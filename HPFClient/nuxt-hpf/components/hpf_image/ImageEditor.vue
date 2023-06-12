@@ -41,7 +41,7 @@
             }"
           >
           <p class="is-italic has-text-centered">
-            Crédits: {{ image.credit }}
+            Crédits: {{ image.credits }}
           </p>
         </div>
         <div
@@ -128,7 +128,7 @@
                 />
               </b-field>
             </div>
-            <b-checkbox v-model="image.age_restricted" size="is-small">
+            <b-checkbox v-model="image.is_adult_only" size="is-small">
               Contenu sensible
             </b-checkbox>
           </div>
@@ -139,7 +139,7 @@
               custom-class="has-text-primary"
             >
               <b-input
-                v-model="image.credit"
+                v-model="image.credits"
                 type="textarea"
                 :has-counter="false"
                 minlength="10"
@@ -156,7 +156,7 @@
         class="is-flex is-flex-direction-row is-justify-content-flex-start"
         style="gap: 5px"
       >
-        <!-- <font-awesome-icon class="is-danger" v-if="image.credit == null || image.credit.match(/\b\w+\b/) == null" id="warning" icon="exclamation-triangle" /> -->
+        <!-- <font-awesome-icon class="is-danger" v-if="image.credits == null || image.credits.match(/\b\w+\b/) == null" id="warning" icon="exclamation-triangle" /> -->
         <b-button
           type="is-primary"
           outlined
@@ -228,7 +228,7 @@ export default class extends Vue {
     if (this.extension.storage.images === undefined)
       this.extension.storage.images = new Array<ImageHPFData>();
     this.image = this.editor.extensionStorage.hpfImage.images.filter(
-      (image: ImageHPFData) => image.id_in_text === this.node.attrs.id_in_text
+      (image: ImageHPFData) => image.index === this.node.attrs.index
     )[0];
     if (this.image === null || this.image === undefined) {
       this.image = new ImageHPFData(
@@ -242,7 +242,7 @@ export default class extends Vue {
         false
       );
       // Mettre à jour l'attribut sans recharger le component
-      this.node.attrs.id_in_text = this.image.id_in_text;
+      this.node.attrs.index = this.image.index;
       // Ajouter l'image au storage
       this.extension.storage.images.push(this.image);
     } else {
@@ -316,7 +316,7 @@ export default class extends Vue {
   public deleteImage(): void {
     this.editor.extensionStorage.hpfImage.images.splice(
       this.editor.extensionStorage.hpfImage.images.findIndex(
-        (item: ImageHPFData) => item.id_in_text === this.image?.id_in_text
+        (item: ImageHPFData) => item.index === this.image?.index
       ),
       1
     );

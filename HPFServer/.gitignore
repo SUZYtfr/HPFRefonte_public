@@ -1,10 +1,12 @@
 # Les images restent locales
 /media/banners/*
 /media/profilepictures/*
+/media/contentimages/*
 
 # Mais garder la trace de ces dossiers sur Git
 !/media/banners/.gitkeep
 !/media/profilepictures/.gitkeep
+!/media/contentimages/.gitkeep
 
 # Venv
 /.venv/

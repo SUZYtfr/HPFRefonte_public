@@ -28,7 +28,7 @@ export default Node.create({
       defaultHeight: {
         default: 32
       },
-      id_in_text: {
+      index: {
         default: 0
       },
       editing: {
@@ -49,7 +49,7 @@ export default Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["hpf-image", mergeAttributes({ id_in_text: HTMLAttributes.id_in_text, width: HTMLAttributes.currentWidth, height: HTMLAttributes.currentHeight })];
+    return ["hpf-image", mergeAttributes({ index: HTMLAttributes.index, width: HTMLAttributes.currentWidth, height: HTMLAttributes.currentHeight })];
     // return ['hpf-image', mergeAttributes(HTMLAttributes, { 'data-type': 'draggable-item' })]
   },
 

@@ -7,7 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterTextVersion
-from images.models import ProfilePicture
+from images.models import ProfilePicture, Banner, ContentImage
+from images.enums import BannerType
 from .enums import Gender, WebsiteType
 
 
@@ -20,22 +21,33 @@ class UserManager(BaseUserManager):
     """Gestionnaire d'utilisateurs"""
 
     @transaction.atomic
-    def create_user(self, username, email, password, **extra_fields):
+    def create_user(
+        self,
+        username,
+        email,
+        password,
+        profile=None,
+        preferences=None,
+        **extra_fields
+    ):
         """Crée un utilisateur"""
 
         user = self.model(
             username=username,
             email=self.normalize_email(email),
             is_active=True,
+            **extra_fields,
         )
         user.set_password(password)
         user.save()
+
         UserProfile.objects.create(
             pk=user.pk,  # TODO - est-ce une bonnée idée ?
-            **extra_fields,
+            **(profile or {}),
         )
         UserPreferences.objects.create(
             pk=user.pk,  # TODO - est-ce une bonnée idée ?
+            **(preferences or {}),
         )
 
         return user
@@ -213,16 +225,31 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class UserProfileManager(models.Manager):
-    def create(self, **fields):
-        profile_picture_fields = fields.pop("profile_picture", None)
-        user_profile = super().create(**fields)
-        if profile_picture_fields:
-            ProfilePicture.objects.create(
-                user_profile=user_profile,
-                creation_user=user_profile.user,
-                **profile_picture_fields,
-            )
+    def create(
+        self,
+        profile_picture=None,
+        banner=None,
+        bio_images=None,
+        **extra_fields,
+    ):
+        user_profile = super().create(**extra_fields)
+        
+        if profile_picture:
+            user_profile.profile_picture = profile_picture
+        
+        if banner:
+            user_profile.banner = banner
 
+        if bio_images:
+            images = [
+                ContentImage(
+                    **_hpf_image,
+                    creation_user=user_profile.user,                
+                ) for _hpf_image in bio_images
+            ]
+            ContentImage.objects.bulk_create(images)
+            user_profile.bio_images.set(images)
+            
         return user_profile
 
 
@@ -262,6 +289,11 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         blank=True,
         default="",
     )
+    bio_images = models.ManyToManyField(
+        verbose_name="images de biographie",
+        to="images.ContentImage",
+        related_name="profile",
+    )
     gender = models.SmallIntegerField(
         verbose_name="genre",
         choices=Gender.choices,
@@ -282,6 +314,41 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
 
     def __str__(self) -> str:
         return f"Profil de {str(self.user)}"
+
+    @property
+    def profile_picture(self):
+        return getattr(self, "user_profile_picture", None)
+
+    @profile_picture.setter
+    def profile_picture(self, profile_picture):
+        if current_profile_picture := self.profile_picture:
+            current_profile_picture.delete()
+        ProfilePicture.objects.create(
+            user_profile=self,
+            creation_user=self.user,
+            display_height=0,  # FIXME - supprimer les dimensions du modèle d'avatar
+            display_width=0,
+            is_adult_only=False,
+            is_user_property=True,
+            **profile_picture,
+        )        
+
+    @property
+    def banner(self):
+        return getattr(self, "user_banner", None)
+    
+    @banner.setter
+    def banner(self, banner):
+        if current_banner := getattr(self, "banner", None):
+            current_banner.delete()
+        Banner.objects.create(
+            user_profile=self,
+            creation_user=self.user,
+            display_height=0,  # FIXME - supprimer les dimensions du modèle de bannière
+            display_width=0,
+            category=BannerType.PREMIUM,
+            **banner,
+        )
 
 
 class UserPreferences(models.Model):  # TODO - renverser le O2O

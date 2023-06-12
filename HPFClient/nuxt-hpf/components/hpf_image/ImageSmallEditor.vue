@@ -25,20 +25,20 @@
           style="gap: 5px"
         >
           <b-input v-model="image.url" placeholder="Url" size="is-small" />
-          <b-checkbox v-model="image.age_restricted" size="is-small">
+          <b-checkbox v-model="image.is_adult_only" size="is-small">
             Contenu sensible
           </b-checkbox>
         </div>
       </div>
 
-      <b-input v-model="image.credit" placeholder="Crédits" size="is-small" />
+      <b-input v-model="image.credits" placeholder="Crédits" size="is-small" />
       <b-input v-model="image.alt" placeholder="Attribut alt" size="is-small" />
     </div>
     <font-awesome-icon
       v-if="hover"
       id="close-button"
       icon="window-close"
-      @click="$emit('remove', image.id_in_text)"
+      @click="$emit('remove', image.index)"
     />
     <!-- <b-button
       id="close-button"
@@ -47,7 +47,7 @@
       size="is-small"
       icon-pack="fas"
       icon-left="xmark"
-      @click="$emit('remove', image.id_in_text)"
+      @click="$emit('remove', image.index)"
     ></b-button> -->
   </div>
 </template>

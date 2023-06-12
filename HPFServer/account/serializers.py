@@ -36,8 +36,7 @@ class AccountCreationSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        profile_validated_data = validated_data.pop("profile", {})
-        user = self.Meta.model.objects.create_user(**validated_data, **profile_validated_data)
+        user = self.Meta.model.objects.create_user(**validated_data)
         return user
 
 

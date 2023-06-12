@@ -955,7 +955,11 @@ export default class extends Vue {
     this.editorFunctionsCharacterStatuses = characterToReturn;
 
     // Emet l'évènement change
-    this.$emit("change", new TipTapEditorContent({ content: this.editor?.getHTML(), wordcount: this.editorFunctionsCharacterStatuses.wordCount }));
+    this.$emit("change", new TipTapEditorContent({
+      content: this.editor?.getHTML(),
+      wordcount: this.editorFunctionsCharacterStatuses.wordCount,
+      content_images: this.editor?.extensionStorage.hpfImage.images
+    }));
   }
 
   // Déclenche l'actualisation du cache via un timer

@@ -37,6 +37,11 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
         related_name="authored_newsarticles",
     )
 
+    content_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="newsarticles",
+    )
+
     class Meta:
         verbose_name = "actualité"
 
@@ -66,6 +71,11 @@ class NewsComment(DatedModel, CreatedModel):
         related_name="comments",
         on_delete=models.CASCADE,
         limit_choices_to={"status": NewsStatus.PUBLISHED},
+    )
+
+    text_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="news_comments",
     )
 
     class Meta:

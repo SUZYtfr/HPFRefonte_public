@@ -1,11 +1,19 @@
 from django.utils import timezone
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers import BannerSerializer, ProfilePictureSerializer
-from .models import Banner, ProfilePicture
+from .models import (
+    Banner,
+    ProfilePicture,
+    ContentImage,
+)
+from .serializers import (
+    BannerSerializer,
+    ProfilePictureSerializer,
+    ContentImageSerializer,
+)
 
 
-class BannerViewSet(ModelViewSet):
+class BannerViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les bannières"""
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -19,7 +27,7 @@ class BannerViewSet(ModelViewSet):
         serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
 
-class ProfilePictureView(ModelViewSet):
+class ProfilePictureView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ProfilePictureSerializer
     queryset = ProfilePicture.objects.all()
@@ -29,3 +37,8 @@ class ProfilePictureView(ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
+
+class ContentImageViewSet(viewsets.ModelViewSet):
+    serializer_class = ContentImageSerializer
+    queryset = ContentImage.objects.all()
