@@ -7,7 +7,7 @@ from .enums import FictionStatus
 
 
 class FictionFilterSet(filters.FilterSet):
-    author = filters.CharFilter(
+    searchAuthor = filters.CharFilter(
         field_name="creation_user__username",
         lookup_expr="icontains",
         label="Écrite par",
@@ -24,7 +24,8 @@ class FictionFilterSet(filters.FilterSet):
     #     method="filter_authors",
     #     label="écrite par",
     # )
-    title = filters.CharFilter(
+    searchTerm = filters.CharFilter(
+        field_name="title",
         lookup_expr="icontains",
         label="Le titre contient",
     )
@@ -32,23 +33,9 @@ class FictionFilterSet(filters.FilterSet):
         lookup_expr="icontains",
         label="Le résumé contient",
     )
-    # maxWords = filters.NumberFilter(
-    #     field_name="word_count",
-    #     lookup_expr="lte",
-    #     label="Minimum de mots",
-    # )
-    # minWords = filters.NumberFilter(
-    #     field_name="word_count",
-    #     lookup_expr="gte",
-    #     label="maximum de mots",
-    # )
-    maxWords = filters.NumberFilter(
-        method="filter_max_words",
-        label="maximum de mots",
-    )
-    minWords = filters.NumberFilter(
-        method="filter_min_words",
-        label="minimum de mots",
+    wordCount = filters.RangeFilter(
+        field_name="_word_count",
+        label="Plage de compte de mots",
     )
 
     includedTags = filters.ModelMultipleChoiceFilter(
@@ -91,13 +78,12 @@ class FictionFilterSet(filters.FilterSet):
     class Meta:
         model = Fiction
         fields = [
-            "author",
+            "searchAuthor",
             # "coauthor",
             # "authors"
-            "title",
+            "searchTerm",
             "summary",
-            "minWords",
-            "maxWords",
+            "wordCount",
             "status",
             "includedTags",
             "excludedTags",
@@ -129,12 +115,3 @@ class FictionFilterSet(filters.FilterSet):
             "less_rating": "average",
         }
         return queryset.order_by(corres.get(value, "-creation_date"))
-
-
-    def filter_min_words(self, queryset, name, value):
-        return queryset.word_counts().filter(annotated_word_count__gte=value)
-
-    def filter_max_words(self, queryset, name, value):
-        return queryset.word_counts().filter(annotated_word_count__lte=value)
-
-DjangoFilterBackend = filters.DjangoFilterBackend

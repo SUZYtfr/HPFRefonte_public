@@ -2,13 +2,19 @@ from django.utils import timezone
 from django.db.models import Q, F
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from rest_framework import viewsets, response, decorators, exceptions, mixins, permissions
+from django_filters import rest_framework as filters
 
 from users.models import UserPreferences
 from reviews.utils import can_post_reviews, can_see_reviews
-from .enums import ChapterValidationStage
-
+from reviews.serializers import (
+    ChapterReviewSerializer,
+    ChapterAnonymousReviewSerializer,
+    FictionReviewSerializer,
+    FictionAnonymousReviewSerializer,
+)
 
 from .models import Fiction, Chapter
+from .enums import ChapterValidationStage
 from .serializers import (
     FictionSerializer,
     # FictionExtraAuthorSerializer,
@@ -25,13 +31,7 @@ from .permissions import (
     IsParentFictionCoAuthor,
     HasStaffValidation,
 )
-from .filters import DjangoFilterBackend, FictionFilterSet
-from reviews.serializers import (
-    ChapterReviewSerializer,
-    ChapterAnonymousReviewSerializer,
-    FictionReviewSerializer,
-    FictionAnonymousReviewSerializer,
-)
+from .filters import FictionFilterSet
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -59,11 +59,11 @@ class FictionViewSet(
     mixins.UpdateModelMixin,
 ):
     """Ensemble de vues pour les fictions"""
-    queryset = Fiction.objects.with_averages().order_by("-creation_date")
+    queryset = Fiction.objects.with_averages().with_word_counts().order_by("-creation_date")
     # queryset = Fiction.objects.order_by("-creation_date")
     serializer_class = FictionSerializer
     permission_classes = [IsAuthenticated & (IsCreationUser | IsFictionCoAuthor) | ReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend]
     filterset_class = FictionFilterSet
 
     def get_queryset(self):

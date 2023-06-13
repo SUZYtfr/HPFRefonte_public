@@ -257,11 +257,11 @@ export default class extends Vue {
   // #region Watchers
   @Watch("sliderWords")
   public onSliderChanged(): void {
-    this.fanfictionFilters.minWords = this.sliderTicks[this.sliderWords[0] - 1].realValue;
-    this.fanfictionFilters.maxWords = this.sliderTicks[this.sliderWords[1] - 1].realValue;
+    this.fanfictionFilters.wordCount_min = this.sliderTicks[this.sliderWords[0] - 1].realValue;
+    this.fanfictionFilters.wordCount_max = this.sliderTicks[this.sliderWords[1] - 1].realValue;
     // Valeurs min et max -> null
-    if (this.fanfictionFilters.minWords === 500) this.fanfictionFilters.minWords = null;
-    if (this.fanfictionFilters.maxWords === 100000) this.fanfictionFilters.maxWords = null;
+    if (this.fanfictionFilters.wordCount_min === 500) this.fanfictionFilters.wordCount_min = null;
+    if (this.fanfictionFilters.wordCount_max === 100000) this.fanfictionFilters.wordCount_max = null;
   }
   // #endregion
 

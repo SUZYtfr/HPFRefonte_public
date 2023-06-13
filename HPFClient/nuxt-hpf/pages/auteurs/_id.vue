@@ -519,8 +519,8 @@ export default class extends Vue {
     searchAuthorId: Number(this.$route.params.id),
     multipleAuthors: null,
     status: null,
-    minWords: null,
-    maxWords: null,
+    wordCount_min: null,
+    wordCount_max: null,
     includedTags: [],
     excludedTags: [],
     customTags: [],
@@ -569,7 +569,7 @@ export default class extends Vue {
   async fetch(): Promise<void> {
     this.userLoading = true;
     try {
-      this.user = (await getUser(this.$route.params.id)).data;
+      this.user = (await getUser(parseInt(this.$route.params.id)));
     } catch (error) {
     } finally {
       this.userLoading = false;
