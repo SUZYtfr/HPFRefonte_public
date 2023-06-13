@@ -30,7 +30,7 @@ class CharacteristicViewSet(viewsets.ModelViewSet):
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = CharacteristicSerializer
-    queryset = Characteristic.objects.allowed().fiction_counts().order_by("-fiction_count")
+    queryset = Characteristic.objects.allowed().with_fiction_counts().order_by("-_fiction_count")
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = CharacteristicFilterSet
     pagination_class = None

@@ -53,12 +53,13 @@ class CharacteristicQuerySet(models.QuerySet):
     def forbidden(self):
         return self.filter(is_forbidden=True)
 
-    def fiction_counts(self):
+    def with_fiction_counts(self):
         fiction_count = models.Count(
             "fiction",
-            models.Q(fiction__chapters__validation_status=ChapterValidationStage.PUBLISHED)
+            distinct=True,
+            filter=models.Q(fiction__chapters__validation_status=ChapterValidationStage.PUBLISHED)
         )
-        return self.annotate(fiction_count=fiction_count)
+        return self.annotate(_fiction_count=fiction_count)
 
 
 class Characteristic(DatedModel, CreatedModel):
@@ -127,6 +128,13 @@ class Characteristic(DatedModel, CreatedModel):
 
     def __str__(self):
         return self.name
+
+    @property
+    def fiction_count(self) -> int:
+        """Compte de fictions publiées"""
+
+        published_fictions = self.fiction_set.filter(chapters__validation_status=7).distinct()
+        return getattr(self, "_fiction_count", None) or published_fictions.count()
 
     def ban(self, modification_user, replace_with=None):
         """Interdit l'usage de la caractéristique
