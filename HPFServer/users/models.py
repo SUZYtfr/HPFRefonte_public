@@ -142,6 +142,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def profile(self):
         return getattr(self, "user_profile", None)
 
+    # FIXME - branchement
+    @property
+    def avatar(self):
+        if self.profile and self.profile.profile_picture:
+            return self.profile.profile_picture.src_path
+        return None
+
     @property
     def preferences(self):
         return getattr(self, "user_preferences", None)

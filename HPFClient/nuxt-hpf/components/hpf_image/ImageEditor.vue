@@ -239,7 +239,9 @@ export default class extends Vue {
         this.node.attrs.url,
         null,
         null,
-        false
+        false,
+        null,
+        null
       );
       // Mettre à jour l'attribut sans recharger le component
       this.node.attrs.index = this.image.index;

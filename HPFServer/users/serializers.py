@@ -114,11 +114,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserCardSerializer(serializers.ModelSerializer):
     """Sérialiseur du lien vers une présentation d'utilisateur"""
 
+    avatar = extra_fields.Base64ImageField()
+
     class Meta:
         model = User
         fields = [
             "id",
             "username",
+            "avatar",
         ]
 
 
