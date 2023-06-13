@@ -143,7 +143,6 @@ class UserSerializer(ListableModelSerializer):
             "id",
             "username",
             "email",
-            "banner",
             "first_seen",
             "last_login",
             "profile",
