@@ -181,13 +181,13 @@
         </template>
       </b-tooltip>
     </div>
-    <footer class="card-footer">
+    <!-- <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
           <a @click.prevent.stop="toggleFilterChanged()">Rechercher</a>
         </span>
       </p>
-    </footer>
+    </footer> -->
   </div>
 </template>
 

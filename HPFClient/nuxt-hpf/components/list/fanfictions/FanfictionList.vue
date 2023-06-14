@@ -155,10 +155,11 @@ export default class FanfictionList extends Vue {
   // #endregion
 
   // #region Watchers
-  @Watch("fanfictionFilters", { deep: true })
+  // @Watch("fanfictionFilters", { deep: true })
   public onFiltersChanged(): void {
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.$fetch, 500);
+    // clearTimeout(this.timerId);
+    // this.timerId = window.setTimeout(this.$fetch, 500);
+    this.$fetch();
   }
   // #endregion
 
