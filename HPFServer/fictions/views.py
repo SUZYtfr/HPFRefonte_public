@@ -59,7 +59,13 @@ class FictionViewSet(
     mixins.UpdateModelMixin,
 ):
     """Ensemble de vues pour les fictions"""
-    queryset = Fiction.objects.with_averages().with_word_counts().order_by("-creation_date")
+    queryset = (
+        Fiction.objects
+        .with_averages()
+        .with_word_counts()
+        .with_review_counts()
+        .order_by("-creation_date")
+    )
     # queryset = Fiction.objects.order_by("-creation_date")
     serializer_class = FictionSerializer
     permission_classes = [IsAuthenticated & (IsCreationUser | IsFictionCoAuthor) | ReadOnly]
