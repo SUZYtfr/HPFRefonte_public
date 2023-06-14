@@ -22,7 +22,10 @@ class FictionQuerySet(models.QuerySet):
         return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
     def with_averages(self):
-        average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
+        average = models.Sum(
+            "reviews__grading",
+            filter=models.Q(reviews__draft=False),
+        ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
     def with_read_counts(self):
@@ -44,11 +47,24 @@ class FictionQuerySet(models.QuerySet):
             word_count=models.Sum("_word_count"),
         ).values("word_count")
 
-        fictions_with_word_counts = Fiction.objects.annotate(
+        fictions_with_word_counts = self.annotate(
             _word_count=models.Subquery(summed_up_word_counts),
         )
 
         return fictions_with_word_counts
+
+    def with_review_counts(self):
+        """Ajoute le total des reviews publiées"""
+
+        review_count = models.Count(
+            "reviews",
+            distinct=True,
+            filter=models.Q(reviews__draft=False),
+        )
+
+        return self.annotate(
+            _review_count=review_count,
+        )
 
 
 class Fiction(DatedModel, CreatedModel, CharacteristicModel):

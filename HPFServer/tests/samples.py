@@ -30,6 +30,18 @@ def get_random_user():
 # MODÈLES AUTO-GÉNÉRÉS
 
 def sample_user(**kwargs):
+    def sample_profile_picture():
+        from drf_extra_fields.fields import Base64ImageField
+        import base64
+
+        img_bytes = french_faker.image(size=(96,96))
+        img_base64 = base64.encodebytes(img_bytes)
+        img_base64_str = img_base64.decode("utf-8")
+
+        return {
+            "src_path": Base64ImageField().to_internal_value(img_base64_str),
+        }
+
     def sample_profile():
         return {
             "bio": french_faker.paragraph(3),
@@ -37,6 +49,7 @@ def sample_user(**kwargs):
             "birthdate": french_faker.date_of_birth(),
             "realname": french_faker.name(),
             "website": french_faker.url(),
+            "profile_picture": sample_profile_picture(),
         }
 
     user = User.objects.create_user(
@@ -59,6 +72,8 @@ def sample_fiction(generate_chapters=None, **kwargs):
             featured=kwargs.pop("featured", None) or french_faker.boolean(),
             **kwargs,
         )
+        fiction.last_update_date = fiction.modification_date
+        fiction.save()
 
         random_characteristics = []
 
