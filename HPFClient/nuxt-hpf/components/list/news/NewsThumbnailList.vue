@@ -17,7 +17,7 @@
           :index="innerindex"
         />
       </div>
-      <p v-else class="has-text-centered">
+      <p v-else class="has-text-centered my-2">
         Aucune actualité trouvée
       </p>
     </div>

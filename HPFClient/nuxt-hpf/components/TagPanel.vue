@@ -53,7 +53,7 @@
       </div>
     </div>
     <label
-      v-if="characteristic_count !== undefined"
+      v-if="characteristic_count !== undefined && characteristic_id != null"
       :class="[
         'is-size-7',
         'is-clickable',
