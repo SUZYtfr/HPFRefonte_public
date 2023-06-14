@@ -186,12 +186,14 @@ export default class NewsList extends Vue {
   public SelectSortBy_OnInputChanged(value: string): void {
     switch (value) {
       case "most_recent":
-        this.newsFilters.sortBy = SortByEnum.Descending;
-        this.newsFilters.sortOn = "last_update_date";
+        // this.newsFilters.sortBy = SortByEnum.Descending;
+        // this.newsFilters.sortOn = "last_update_date";
+        this.newsFilters.orderBy = "-post_date";
         break;
       case "less_recent":
-        this.newsFilters.sortBy = SortByEnum.Ascending;
-        this.newsFilters.sortOn = "last_update_date";
+        // this.newsFilters.sortBy = SortByEnum.Ascending;
+        // this.newsFilters.sortOn = "last_update_date";
+        this.newsFilters.orderBy = "post_date";
         break;
     }
   }

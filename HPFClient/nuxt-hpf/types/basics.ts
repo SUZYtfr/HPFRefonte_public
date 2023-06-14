@@ -10,7 +10,8 @@ export interface IBasicQuery {
   totalPages: boolean,
   pageSize: number,
   sortOn: string,
-  sortBy: SortByEnum
+  sortBy: SortByEnum,
+  orderBy: string,
 }
 
 export interface BasicResponse {

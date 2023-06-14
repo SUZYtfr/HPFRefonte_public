@@ -42,16 +42,16 @@
               Plus ancien au plus récent
             </option>
             <option value="most_reviews">
-              Nombre de reviews - croissant
-            </option>
-            <option value="less_reviews">
               Nombre de reviews - décroissant
             </option>
+            <option value="less_reviews">
+              Nombre de reviews - croissant
+            </option>
             <option value="most_rating">
-              Rating - croissant
+              Rating - décroissant
             </option>
             <option value="less_rating">
-              Rating - décroissant
+              Rating - croissant
             </option>
           </b-select>
         </b-field>
@@ -209,32 +209,39 @@ export default class FanfictionList extends Vue {
   public SelectSortBy_OnInputChanged(value: string): void {
     switch (value) {
       case "alpha":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "title";
+        // this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        // this.fanfictionFilters.sortOn = "title";
+        this.fanfictionFilters.orderBy = "title";
         break;
       case "most_recent":
-        this.fanfictionFilters.sortBy = SortByEnum.Descending;
-        this.fanfictionFilters.sortOn = "last_update_date";
+        // this.fanfictionFilters.sortBy = SortByEnum.Descending;
+        // this.fanfictionFilters.sortOn = "last_update_date";
+        this.fanfictionFilters.orderBy = "-last_update_date";
         break;
       case "less_recent":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "last_update_date";
+        // this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        // this.fanfictionFilters.sortOn = "last_update_date";
+        this.fanfictionFilters.orderBy = "last_update_date";
         break;
       case "most_reviews":
-        this.fanfictionFilters.sortBy = SortByEnum.Descending;
-        this.fanfictionFilters.sortOn = "comments";
+        // this.fanfictionFilters.sortBy = SortByEnum.Descending;
+        // this.fanfictionFilters.sortOn = "comments";
+        this.fanfictionFilters.orderBy = "-review_count";
         break;
       case "less_reviews":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "comments";
+        // this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        // this.fanfictionFilters.sortOn = "comments";
+        this.fanfictionFilters.orderBy = "review_count";
         break;
       case "most_rating":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "rating";
+        // this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        // this.fanfictionFilters.sortOn = "rating";
+        this.fanfictionFilters.orderBy = "-average";
         break;
       case "less_rating":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "rating";
+        // this.fanfictionFilters.sortBy = SortByEnum.Ascending;
+        // this.fanfictionFilters.sortOn = "rating";
+        this.fanfictionFilters.orderBy = "average";
         break;
     }
   }

@@ -532,7 +532,8 @@ export default class extends Vue {
     pageSize: 10,
     totalPages: true,
     sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending
+    sortBy: SortByEnum.Descending,
+    orderBy: "-last_update_date",
   };
 
   // #endregion

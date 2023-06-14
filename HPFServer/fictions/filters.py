@@ -55,9 +55,13 @@ class FictionFilterSet(filters.FilterSet):
         method="filter_finished",
         label="terminée",
     )
-    sortBy = filters.CharFilter(
-        method="sort_by",
-        label="trier selon",
+    orderBy = filters.OrderingFilter(
+        fields=(
+            ("title", "title",),
+            ("last_update_date", "last_update_date",),
+            ("_review_count", "review_count",),
+            ("_average", "average",),
+        )
     )
     fromDate = filters.DateTimeFilter(
         field_name="creation_date",
@@ -89,6 +93,7 @@ class FictionFilterSet(filters.FilterSet):
             "excludedTags",
             "featured",
             "searchAuthorId",
+            "orderBy",
         ]
 
     def filter_finished(self, queryset, name, value):
@@ -103,15 +108,3 @@ class FictionFilterSet(filters.FilterSet):
             models.Q(creation_user__username__icontains=value) |
             models.Q(coauthors__username__icontains=value)
         )
-
-    def sort_by(self, queryset, name, value):
-        corres = {
-            "alpha": "title",
-            "most_recent": "-creation_date",
-            "less_recent": "creation_date",
-            "most_reviews": "-review_count",
-            "less_reviews": "review_count",
-            "most_rating": "-average",
-            "less_rating": "average",
-        }
-        return queryset.order_by(corres.get(value, "-creation_date"))
