@@ -87,6 +87,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     profile_picture = extra_fields.Base64ImageField(
         source="profile_picture.src_path",
         required=False,
+        allow_null=True,
     )
     banner = extra_fields.Base64ImageField(
         source="banner.src_path",
@@ -143,7 +144,6 @@ class UserSerializer(ListableModelSerializer):
             "id",
             "username",
             "email",
-            "banner",
             "first_seen",
             "last_login",
             "profile",

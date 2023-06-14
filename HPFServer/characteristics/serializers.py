@@ -25,7 +25,6 @@ class CharacteristicSerializer(CharacteristicBaseSerializer):
     """Sérialiseur de caractéristique"""
 
     is_personal = serializers.HiddenField(default=True)
-    fiction_count = serializers.IntegerField(default=None)
 
     class Meta(CharacteristicBaseSerializer.Meta):
         fields = [
@@ -46,9 +45,6 @@ class CharacteristicSerializer(CharacteristicBaseSerializer):
                        "initial": ""},
             "order": {"source": "_order"},
         }
-
-    def get_fiction_count(self, obj):
-        return obj.fiction_set.count()
 
     def get_or_create(self, validated_data):
         """Crée ou retourne la caractéristique correspondant à un nom

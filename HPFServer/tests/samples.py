@@ -30,14 +30,33 @@ def get_random_user():
 # MODÈLES AUTO-GÉNÉRÉS
 
 def sample_user(**kwargs):
+    def sample_profile_picture():
+        from drf_extra_fields.fields import Base64ImageField
+        import base64
+
+        img_bytes = french_faker.image(size=(96,96))
+        img_base64 = base64.encodebytes(img_bytes)
+        img_base64_str = img_base64.decode("utf-8")
+
+        return {
+            "src_path": Base64ImageField().to_internal_value(img_base64_str),
+        }
+
+    def sample_profile():
+        return {
+            "bio": french_faker.paragraph(3),
+            "gender": french_faker.random_int(min=0, max=3),
+            "birthdate": french_faker.date_of_birth(),
+            "realname": french_faker.name(),
+            "website": french_faker.url(),
+            "profile_picture": sample_profile_picture(),
+        }
+
     user = User.objects.create_user(
         username=kwargs.pop("username", None) or french_faker.user_name(),
         email=kwargs.pop("email", None) or french_faker.email(safe=True),
         password=kwargs.pop("password", None) or make_password(None),  # mot de passe inutilisable
-        realname=kwargs.pop("realname", None) or french_faker.name(),
-        birthdate=kwargs.pop("birthdate", None) or french_faker.date_of_birth(),
-        bio=kwargs.pop("bio", None) or french_faker.paragraph(3),
-        gender=kwargs.pop("gender", None) or french_faker.random_int(min=0, max=3),
+        profile=kwargs.pop("profile", None) or sample_profile(),
     )
     return user
 
@@ -53,6 +72,8 @@ def sample_fiction(generate_chapters=None, **kwargs):
             featured=kwargs.pop("featured", None) or french_faker.boolean(),
             **kwargs,
         )
+        fiction.last_update_date = fiction.modification_date
+        fiction.save()
 
         random_characteristics = []
 

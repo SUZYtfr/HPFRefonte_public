@@ -15,6 +15,7 @@ gunicorn = "*"
 docx2python = "*"
 django-ordered-model = "*"
 drf-extra-fields = "*"
+psycopg2 = "*"
 
 [dev-packages]
 faker = "*"

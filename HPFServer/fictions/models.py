@@ -22,7 +22,10 @@ class FictionQuerySet(models.QuerySet):
         return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
     def with_averages(self):
-        average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
+        average = models.Sum(
+            "reviews__grading",
+            filter=models.Q(reviews__draft=False),
+        ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
     def with_read_counts(self):
@@ -33,12 +36,35 @@ class FictionQuerySet(models.QuerySet):
         return self.annotate(_read_count=read_count)
 
     def with_word_counts(self):
-        last_version = ChapterTextVersion.objects.filter(chapter__fiction=models.OuterRef("pk")).order_by("-pk")
-        word_count = models.Sum(
-            models.Subquery(last_version.values("word_count")[:1]),
-            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
+        """Ajoute le total des comptes de mots des chapitres publiés des fictions"""
+
+        grouped_published_chapters = Chapter.objects.with_word_counts().filter(
+            fiction_id=models.OuterRef("id"),
+            validation_status=ChapterValidationStage.PUBLISHED,
+        ).values("fiction_id")
+
+        summed_up_word_counts = grouped_published_chapters.annotate(
+            word_count=models.Sum("_word_count"),
+        ).values("word_count")
+
+        fictions_with_word_counts = self.annotate(
+            _word_count=models.Subquery(summed_up_word_counts),
         )
-        return self.alias(_word_count=word_count)
+
+        return fictions_with_word_counts
+
+    def with_review_counts(self):
+        """Ajoute le total des reviews publiées"""
+
+        review_count = models.Count(
+            "reviews",
+            distinct=True,
+            filter=models.Q(reviews__draft=False),
+        )
+
+        return self.annotate(
+            _review_count=review_count,
+        )
 
 
 class Fiction(DatedModel, CreatedModel, CharacteristicModel):
@@ -114,16 +140,12 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def word_count(self) -> int:
         """Renvoie le compte de mots des chapitres publiés"""
 
-        # NOTE : Pas instancié tant que sum n'est pas appelé, le cas échéant
-        last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-pk")
-        word_count = models.Subquery(last_version.values('word_count')[:1])
-
-        return getattr(self, "_word_count", None) or sum(
-            self.published_chapters
-            .annotate(word_count=word_count)
-            .filter(word_count__isnull=False)
-            .values_list("word_count", flat=True)
-        )
+        return getattr(self, "_word_count", None) or (
+            self.chapters.
+            published().
+            with_word_counts().
+            aggregate(word_count=models.Sum("_word_count"))
+        )["word_count"]
 
     @property
     def read_count(self) -> int:
@@ -175,9 +197,19 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 class ChapterQuerySet(models.QuerySet):
     def with_word_counts(self):
-        last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-pk")
-        word_count = models.Subquery(last_version.values('word_count')[:1])
-        return self.annotate(_word_count=word_count)
+
+        last_version_word_count = (
+            ChapterTextVersion.objects
+            .filter(chapter_id=models.OuterRef('id'))
+            .order_by('-id')
+            .values('word_count')
+        )[:1]
+
+        chapters_with_word_counts = Chapter.objects.annotate(
+            _word_count=models.Subquery(last_version_word_count)
+        )
+
+        return chapters_with_word_counts
 
     def with_averages(self):
         average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
