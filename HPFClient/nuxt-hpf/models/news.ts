@@ -7,6 +7,7 @@ import { ImageHPFData } from "~/types/images";
 export class CommentModel extends CommentData {
   @Type(() => AuthorData)
   public author: AuthorData | null = null;
+
   public content_images: ImageHPFData[] | null = null;
 }
 // #endregion

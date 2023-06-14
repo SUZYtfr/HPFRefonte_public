@@ -41,9 +41,9 @@
                 <p class="subtitle is-7">
                   {{ user.profile?.realname }}
                 </p>
-                <p class="subtitle is-7" v-if="user.first_seen">
+                <p v-if="user.first_seen" class="subtitle is-7">
                   Inscrit le
-                  <strong>{{ user.first_seen | parseTime }}</strong>
+                  <strong>{{ user.first_seen.toLocaleDateString() }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -372,7 +372,7 @@
                     </b-tag>
                   </span>
                 </template>
-                <FanfictionFilters :fanfiction-filters="fanfictionFilters" />
+                <FanfictionFiltersSmall :fanfiction-filters="fanfictionFilters" />
                 <div class="columns mt-2">
                   <div class="column is-12">
                     <FanfictionList
@@ -481,8 +481,9 @@ import simplebar from "simplebar-vue";
 import "simplebar/dist/simplebar.min.css";
 import "simplebar/dist/simplebar.min.js";
 import SimpleBar from "simplebar";
+import { SerialiseClass } from "@/serialiser-decorator";
 import UserLink from "@/components/UserLink.vue";
-import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
+import FanfictionFiltersSmall from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
 import { UserModel } from "@/models/users";
 import { IFanfictionFilters } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
@@ -494,7 +495,7 @@ import { SortByEnum } from "~/types/basics";
   components: {
     simplebar,
     UserLink,
-    FanfictionFilters,
+    FanfictionFiltersSmall,
     FanfictionList
   },
   filters: {
@@ -509,7 +510,9 @@ import { SortByEnum } from "~/types/basics";
 })
 export default class extends Vue {
   // #region  Data
+  @SerialiseClass(UserModel)
   public user: UserModel | null = null;
+
   public userLoading = false;
 
   // Filtres de recherche
@@ -538,10 +541,6 @@ export default class extends Vue {
   // #endregion
 
   // #region Hooks
-  created(): void {
-    this.user = null!;
-  }
-
   mounted(): void {
     const tabs = document.getElementsByClassName("tabs is-boxed")[0];
     console.log(tabs);
@@ -564,13 +563,24 @@ export default class extends Vue {
     );
   }
 
-  async asyncData(): Promise<void> {}
-
-  async fetch(): Promise<void> {
+  private async fetch(): Promise<void> {
     this.userLoading = true;
     try {
-      this.user = (await getUser(this.$route.params.id)).data;
+      this.user = (await getUser(parseInt(this.$route.params.id)));
     } catch (error) {
+      if (process.client) {
+        this.$buefy.snackbar.open({
+          duration: 5000,
+          message: "Une erreur s'est produite lors de la récupération de l'utilisateur",
+          type: "is-danger",
+          position: "is-bottom-right",
+          actionText: null,
+          pauseOnHover: true,
+          queue: true
+        });
+      } else {
+        console.log(error);
+      }
     } finally {
       this.userLoading = false;
     }

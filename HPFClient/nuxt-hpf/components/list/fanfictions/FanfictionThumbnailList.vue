@@ -34,7 +34,7 @@
             />
           </div>
         </div>
-        <p v-else class="has-text-centered">
+        <p v-else class="has-text-centered my-2">
           Aucune fanfiction trouvée
         </p>
       </div>

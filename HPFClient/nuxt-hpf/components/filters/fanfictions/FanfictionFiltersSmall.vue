@@ -48,7 +48,7 @@
         >
           <b-taginput
             ref="includedTags"
-            v-model="fanfictionFilters.includedTags"
+            v-model="includedTagsFull"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
@@ -93,7 +93,7 @@
         >
           <b-taginput
             ref="excludedTags"
-            v-model="fanfictionFilters.excludedTags"
+            v-model="excludedTagsFull"
             :data="filteredCharacteristics"
             autocomplete
             :open-on-focus="true"
@@ -160,6 +160,8 @@ export default class extends Vue {
   // #region Data
   private characteristics: any[] = [];
   public filteredCharacteristics: any[] = [];
+  public includedTagsFull: CharacteristicData[] = [];
+  public excludedTagsFull: CharacteristicData[] = [];
   // #endregion
 
   // #region Hooks
@@ -179,6 +181,22 @@ export default class extends Vue {
   @Watch("fanfictionFilters", { deep: true })
   private onFiltersChanged(): void {
     this.$emit("change", this.fanfictionFilters);
+  }
+
+  @Watch("includedTagsFull")
+  private onFiltersincludedTagsChanged(): void {
+    if ((this.includedTagsFull?.length ?? 0) > 0)
+      this.fanfictionFilters.includedTags = this.includedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
+    else
+      this.fanfictionFilters.includedTags = [];
+  }
+
+  @Watch("excludedTagsFull")
+  private onFiltersexcludedTagsChanged(): void {
+    if ((this.excludedTagsFull?.length ?? 0) > 0)
+      this.fanfictionFilters.excludedTags = this.excludedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
+    else
+      this.fanfictionFilters.excludedTags = [];
   }
   // #endregion
 
