@@ -306,6 +306,7 @@ export default class extends Vue {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {
       this.loading = false;
+      this.modalActive = false;
     }
   }
   // #endregion

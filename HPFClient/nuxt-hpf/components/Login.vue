@@ -118,6 +118,7 @@ export default class extends Vue {
       }
     } finally {
       this.loading = false;
+      this.modalActive = false;
     }
   }
   // #endregion
