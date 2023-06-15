@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from core.views import ContactView
 
 urlpatterns = [
     path(r"api/", include([
@@ -14,6 +15,7 @@ urlpatterns = [
         # path(r"reports/", include("reports.urls", namespace="reports")),
         path(r"images/", include("images.urls", namespace="images")),
         path(r"account/", include("account.urls", namespace="account")),
+        path(r"contact/", ContactView.as_view()),
     ])),
     path(r"admin/", admin.site.urls),
     path(r'schema/download/', SpectacularAPIView.as_view(), name='schema'),
