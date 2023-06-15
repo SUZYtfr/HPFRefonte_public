@@ -382,7 +382,7 @@
                   </div>
                 </div>
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="book" />
                   <span>
@@ -396,7 +396,7 @@
                 </template>
                 2
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="feather" />
                   <span>
@@ -409,7 +409,7 @@
                 </template>
                 3
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="trophy" />
                   <span>
@@ -422,7 +422,7 @@
                 </template>
                 4
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="star" />
                   <span>
@@ -437,7 +437,7 @@
                 </template>
                 5
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="star" />
                   <span>
@@ -452,7 +452,7 @@
                 </template>
                 6
               </b-tab-item>
-              <b-tab-item>
+              <b-tab-item :disabled="true">
                 <template #header>
                   <b-icon icon="star" />
                   <span>

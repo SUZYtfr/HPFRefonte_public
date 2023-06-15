@@ -7,7 +7,7 @@
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <NuxtLink :to="{ name: 'patience', params: { title: fanfiction?.title } }">{{ fanfiction?.title }}</NuxtLink>
+          <NuxtLink :to="{ name: 'patience', params: { title: 'Fanfiction « ' + fanfiction?.title + ' »' } }">{{ fanfiction?.title }}</NuxtLink>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
@@ -37,21 +37,26 @@
           <template v-if="index > 0">
             ,
           </template>
-          <a
+          <NuxtLink
             :key="'author_' + author.user_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
-            :href="'auteurs/' + author.user_id"
-          >{{ author.username }}
-          </a>
+            :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
+          >
+            {{ author.username }}
+          </NuxtLink>
         </template>
       </div>
       <div class="">
-        <a class="is-size-6 has-text-weight-normal">{{
-          (fanfiction?.review_count != null ? (fanfiction?.review_count +
-            " review" +
-            (fanfiction?.review_count > 1 ? "s" : "")) : "aucune review")
-        }}<font-awesome-icon class="ml-1" icon="comments" />
-        </a>
+        <NuxtLink
+          class="is-size-6 has-text-weight-normal"
+            :to="{ name: 'patience', params: { title: 'Reviews pour « ' + fanfiction.title + ' »' } }"
+        >
+          {{
+            (fanfiction?.review_count != null ? (fanfiction?.review_count +
+              " review" +
+              (fanfiction?.review_count > 1 ? "s" : "")) : "aucune review")
+          }}<font-awesome-icon class="ml-1" icon="comments" />
+        </NuxtLink>
       </div>
     </div>
     <div
@@ -76,14 +81,18 @@
       </div>
     </div>
     <b-taglist class="mb-0">
-      <a
+      <NuxtLink
         v-for="characteristic in fanfiction?.characteristics"
         :key="'tag_' + characteristic.id.toString()"
-        :href="'auteurs/' + characteristic.id"
-      ><b-tag
-        :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
-        type="is-info"
-      >{{ characteristic.name }}</b-tag></a>
+        :to="{ name: 'patience', params: { title: 'Page de la caractéristique « ' + characteristic.name + ' »' } }"
+      >
+        <b-tag
+          :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
+          type="is-info"
+        >
+          {{ characteristic.name }}
+        </b-tag>
+      </NuxtLink>
     </b-taglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">

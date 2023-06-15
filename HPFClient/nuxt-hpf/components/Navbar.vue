@@ -197,7 +197,7 @@
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem">
+              <b-dropdown-item aria-role="listitem" :disabled="true">
                 Mon compte
               </b-dropdown-item>
               <b-dropdown-item aria-role="listitem" @click="logout">
