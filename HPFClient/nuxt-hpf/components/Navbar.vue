@@ -83,7 +83,7 @@
         <b-navbar-item active tag="router-link" to="/">
           Accueil
         </b-navbar-item>
-        <b-navbar-dropdown :collapsible="true" label="Association HPF">
+<!--        <b-navbar-dropdown :collapsible="true" label="Association HPF">
           <b-navbar-item href="#">
             Link 1
           </b-navbar-item>
@@ -145,7 +145,7 @@
         </b-navbar-dropdown>
         <b-navbar-item href="#">
           Partenaires
-        </b-navbar-item>
+        </b-navbar-item> -->
         <b-navbar-item href="#" @click="ModalsStatesModule.setContactModalActive(true)">
           Contact
         </b-navbar-item>
@@ -154,7 +154,7 @@
       <template #end>
         <div class="is-hidden-touch">
           <b-navbar-item v-if="$auth.loggedIn" tag="div">
-            <b-dropdown aria-role="list">
+<!--             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
                   <span class="icon is-small" style="margin-right: -8px">
@@ -178,7 +178,7 @@
                   <span><span class="badge">8</span></span>
                 </button>
               </template>
-            </b-dropdown>
+            </b-dropdown> -->
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button
@@ -187,7 +187,7 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    :src="$auth.user?.profile.profile_picture"
+                    :src="$auth.user?.profile?.profile_picture ?? 'https://bulma.io/images/placeholders/96x96.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"

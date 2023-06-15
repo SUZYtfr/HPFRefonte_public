@@ -7,7 +7,7 @@
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <a href="viewstory.php?sid=37709">{{ fanfiction?.title }}</a>
+          <NuxtLink :to="{ name: 'patience', params: { title: fanfiction?.title } }">{{ fanfiction?.title }}</NuxtLink>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">

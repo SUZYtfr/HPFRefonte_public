@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- Debug sidebar -->
-    <SidebarDebug />
+    <!-- <SidebarDebug /> -->
     <!-- Header -->
     <Navbar />
     <div id="wrapper">

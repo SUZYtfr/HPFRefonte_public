@@ -15,7 +15,7 @@
     >
       <div class="is-flex-grow-5">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <a href="viewstory.php?sid=37709">{{ fanfiction.title }}</a>
+          <NuxtLink :to="{ name: 'patience', params: { title: fanfiction?.title } }">{{ fanfiction?.title }}</NuxtLink>
         </h3>
       </div>
       <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
@@ -51,19 +51,21 @@
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">
-        <a
+        <NuxtLink
           v-for="characteristic in fanfiction.characteristics"
+          :to="{ name: 'patience', params: { title: characteristic.name } }"
           :key="
             'ff_' +
               fanfiction.fanfiction_id +
               '_characteristic_' +
               characteristic.id.toString()
           "
-          :href="'auteurs/' + characteristic.id"
-        ><b-tag
-          :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
-          type="is-info"
-        >{{ characteristic.name }}</b-tag></a>
+        >
+          <b-tag
+            :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
+            type="is-info"
+          >{{ characteristic.name }}</b-tag>
+        </NuxtLink>
       </div>
     </div>
     <p
