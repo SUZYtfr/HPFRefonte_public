@@ -7,7 +7,12 @@
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <a href="viewstory.php?sid=37709">{{ fanfiction?.title }}</a>
+          <NuxtLink
+            :key="'fiction_' + fanfiction.fanfiction_id.toString()"
+            :to="{ name: 'fictions-id', params: { id: fanfiction.fanfiction_id } }"
+          >
+            {{ fanfiction.title }}
+          </NuxtLink>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
@@ -18,7 +23,8 @@
           icon="award"
         />
         <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
-        <b-rate v-if="fanfiction.average"
+        <b-rate
+          v-if="fanfiction.average"
           class="is-align-items-start"
           icon-pack="fas"
           :value="fanfiction.average / 10"

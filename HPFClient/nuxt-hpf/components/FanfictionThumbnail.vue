@@ -15,11 +15,17 @@
     >
       <div class="is-flex-grow-5">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <a href="viewstory.php?sid=37709">{{ fanfiction.title }}</a>
+          <NuxtLink
+            :key="'fiction_' + fanfiction.fanfiction_id.toString()"
+            :to="{ name: 'fictions-id', params: { id: fanfiction.fanfiction_id } }"
+          >
+            {{ fanfiction.title }}
+          </NuxtLink>
         </h3>
       </div>
       <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
-      <b-rate v-if="fanfiction.average"
+      <b-rate
+        v-if="fanfiction.average"
         icon-pack="fas"
         :value="fanfiction.average / 10"
         :disabled="true"
