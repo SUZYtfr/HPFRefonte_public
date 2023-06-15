@@ -89,10 +89,11 @@ const config: NuxtConfig = {
         options: {
           secure: (process.env.NODE_ENV === "production")
         },
-        redirect: false,
-        resetOnError: true
       }
-    }
+    },
+    // @ts-ignore
+    redirect: false,
+    resetOnError: true,
   },
   plugins: [
     "~/plugins/truncate",
