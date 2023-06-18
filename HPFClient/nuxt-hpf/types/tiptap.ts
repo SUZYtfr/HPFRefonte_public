@@ -9,3 +9,14 @@ export class TipTapEditorContent {
     Object.assign(this, init);
   }
 }
+
+export class TipTapEditorConfig {
+  public showFooter: boolean = true;
+  public placeholder: string = "";
+  public readOnly: boolean = true;
+  public fixedHeight: boolean = true;
+
+  public constructor(init?: Partial<TipTapEditorConfig>) {
+    Object.assign(this, init);
+  }
+}

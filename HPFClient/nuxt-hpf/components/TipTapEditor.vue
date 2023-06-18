@@ -1,13 +1,14 @@
 <template>
-  <div style="height: 100%;">
+  <div :class="[((config?.fixedHeight ?? true) ? 'editor-height' : '')]">
     <!-- Editor -->
     <div
       v-if="editor != null"
       id="editor"
-      class="is-flex is-flex-direction-column is-justify-content-flex-start"
+      :class="['is-flex', 'is-flex-direction-column', 'is-justify-content-flex-start', ((config?.readOnly == false) ? 'editor-borders' : '')]"
     >
       <!-- Toolbar -->
       <div
+        v-if="config?.readOnly == false"
         id="editor-header"
         :class="[
           'is-flex',
@@ -443,13 +444,14 @@
             :class="[
               'is-flex-grow-5',
               { 'editor-disabled': linkEditorModalActive },
+              ((config?.fixedHeight ?? true) ? 'editor-content-main-pane-height' : '')
             ]"
           />
           <!-- END: Editor -->
 
           <!-- Footer -->
           <div
-            v-if="showFooter"
+            v-if="config?.showFooter"
             id="editor-content-footer-pane"
             :class="[
               'is-flex',
@@ -506,7 +508,7 @@ import ImageSmallEditor from "~/components/hpf_image/ImageSmallEditor.vue";
 import { Indent } from "~/utils/tiptap_extensions/tiptap_indent";
 import { FontSize } from "~/utils/tiptap_extensions/tiptap_font_size";
 import { ImageHPFData } from "@/types/images";
-import { TipTapEditorContent } from "@/types/tiptap";
+import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
 
 @Component({
@@ -519,8 +521,7 @@ import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
 })
 export default class extends Vue {
   // #region Props
-  @Prop({ default: true }) public showFooter!: boolean;
-  @Prop({ default: "" }) private placeholder!: string;
+  @Prop({ default: null }) public config!: TipTapEditorConfig;
   // #endregion
 
   // #region Datas
@@ -746,7 +747,7 @@ export default class extends Vue {
         TableHeader,
         TableCell,
         Placeholder.configure({
-          placeholder: this.placeholder
+          placeholder: this.config?.placeholder
         })
       ],
       editorProps: {
@@ -1068,11 +1069,16 @@ export default class extends Vue {
 @import "~/assets/scss/custom_bulma_core.scss";
 
 /* Basic editor styles */
-#editor {
-  border: 3px solid $primary !important;
-  border-radius: 0.75rem !important;
+.editor-height{
+  height: 100%;
+}
+.editor-borders{
+    border: 3px solid $primary !important;
+    border-radius: 0.75rem !important;
   // border: 1px solid #CCCCCC !important;
   // border-radius: 0rem !important;
+  }
+#editor {
   background-color: #fff;
   height: 100%;
   width: 100%;
@@ -1111,9 +1117,11 @@ export default class extends Vue {
       border-radius: 0.57rem !important;
       padding: 3px;
     }
-    #editor-content-main-pane {
+    .editor-content-main-pane-height {
       overflow-y: auto;
       height: 125px;
+    }
+    #editor-content-main-pane {
       .ProseMirror {
         //background-color: #f3e5a9;
         min-height: 100%;
