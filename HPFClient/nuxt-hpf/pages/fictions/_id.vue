@@ -162,6 +162,34 @@
             </div>
           </b-collapse>
         </section>
+        <br>
+        <div class="is-flex is-flex-direction-row is-justify-content-space-between">
+          <b-button type="is-primary" outlined icon-left="angle-left">
+            Le précedent chapitre
+          </b-button>
+          <b-dropdown aria-role="list" position="is-top-right">
+            <template #trigger="{ active }">
+              <b-button
+                label="Sommaire"
+                type="is-primary"
+                outlined
+                :icon-right="active ? 'angle-up' : 'angle-down'"
+              />
+            </template>
+            <b-dropdown-item aria-role="listitem">
+              Action
+            </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem">
+              Another action
+            </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem">
+              Something else
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-button type="is-primary" outlined icon-right="angle-right">
+            Le prochain chapitre
+          </b-button>
+        </div>
         <div><p>Liste des reviews</p></div>
       </div>
       <!-- Colonne droite - Editeur review -->
@@ -193,20 +221,6 @@
         </div>
       </div>
     </div>
-    <b-pagination
-      :class="[ 'py-2']"
-      :total="32"
-      :range-before="3"
-      :range-after="1"
-      :rounded="false"
-      :per-page="1"
-      icon-prev="chevron-left"
-      icon-next="chevron-right"
-      aria-next-label="Chapitre suivant"
-      aria-previous-label="Chapitre précédent"
-      aria-page-label="Page"
-      aria-current-label="Page actuelle"
-    />
   </div>
 </template>
 

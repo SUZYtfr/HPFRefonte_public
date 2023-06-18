@@ -817,6 +817,8 @@ export default class extends Vue {
       }
     });
 
+    this.editor.setEditable((this.config?.readOnly ?? false) === false);
+
     // Bind custom update function
     this.editor.on("update", () => this.onEditorUpdated());
     this.editor.on("selectionUpdate", () => this.onEditorUpdated());
