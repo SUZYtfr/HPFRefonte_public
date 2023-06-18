@@ -16,7 +16,7 @@
       </div>
       <div v-if="$auth.loggedIn">
         <client-only>
-          <TipTapEditor ref="commentEditor" :show-footer="false" :placeholder="'Ecrire un commentaire'" @change="(value) => (editorContent = value)" />
+          <TipTapEditor ref="commentEditor" :config="tiptapConfig" @change="(value) => (editorContent = value)" />
         </client-only>
         <div class="buttons mt-1">
           <b-button
@@ -48,7 +48,7 @@ import Comment from "~/components/entities/comment.vue";
 import { CommentModel } from "@/models/news";
 import { postComment } from "~/api/news";
 import TipTapEditor from "~/components/TipTapEditor.vue";
-import { TipTapEditorContent } from "@/types/tiptap";
+import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import ModalsStates from "~/store/modules/ModalsStates";
 
 @Component({ name: "CommentList", components: { Comment, TipTapEditor } })
@@ -60,6 +60,13 @@ export default class CommentList extends Vue {
 
   // #region Datas
   public editorContent: TipTapEditorContent | null = null;
+
+  public tiptapConfig: TipTapEditorConfig = {
+    showFooter: false,
+    placeholder: "Ecrire un commentaire",
+    readOnly: false,
+    fixedHeight: true
+  };
   // #endregion
 
   // #region Computed

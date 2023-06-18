@@ -162,8 +162,7 @@
             <!-- Bio -->
             <div class="column is-6">
               <TipTapEditor
-                :placeholder="'Votre description'"
-                :show-footer="false"
+                :config="tiptapConfig"
                 @change="(value) => (signupForm.profile.bio = value.content)"
               />
             </div>
@@ -192,6 +191,7 @@ import { signup } from "@/api/users";
 import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
 import TipTapEditor from "@/components/TipTapEditor.vue";
 import { UserRegisterData } from "@/types/users";
+import { TipTapEditorConfig } from "@/types/tiptap";
 
 @Component({
   name: "Inscription",
@@ -224,6 +224,13 @@ export default class extends Vue {
   public formIsValid: boolean = false;
 
   public loading: boolean = false;
+
+  public tiptapConfig: TipTapEditorConfig = {
+    showFooter: false,
+    placeholder: "Votre description",
+    readOnly: false,
+    fixedHeight: true
+  };
   // #endregion
 
   // #region Computed
