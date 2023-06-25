@@ -2,7 +2,7 @@
   <div id="main-container" class="container px-1" style="background-color: red;">
     <div class="columns">
       <!-- Colonne gauche - Toolbar -->
-      <div class="column is-narrow" style="background-color: green;">
+      <div v-if="chapter != null" class="column is-narrow" style="background-color: green;">
         <div class="card" style="position: sticky; top: 60px; width: 40px;">
           <div class="card-content" style="padding: 5px;">
             <div class="content is-flex is-flex-direction-column" style="gap: 5px;">
@@ -36,7 +36,22 @@
       </div>
       <!-- Colonne centrale - Contenu -->
       <div :class="['column']" style="background-color: blue;">
-        <section>
+        <!-- Détail de la fiction -->
+        <section v-if="fiction != null">
+          <div class="card">
+            <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px;">
+              <FanfictionEntity
+                :key="'ff_' + fiction.fanfiction_id.toString()"
+                class="my-2"
+                :fanfiction="fiction"
+                :config="fanfictionEntityConfig"
+              />
+            </div>
+          </div>
+          <br>
+        </section>
+        <!-- Notes de fiction -->
+        <section v-if="fiction != null">
           <b-collapse
             class="card"
             animation="slide"
@@ -64,9 +79,11 @@
               </div>
             </div>
           </b-collapse>
+          <br>
         </section>
-        <br>
-        <section>
+
+        <!-- Note de début de chapitre -->
+        <section v-if="chapter != null">
           <b-collapse
             class="card"
             animation="slide"
@@ -94,9 +111,11 @@
               </div>
             </div>
           </b-collapse>
+          <br>
         </section>
-        <br>
-        <section>
+
+        <!-- Contenu du chapitre -->
+        <section v-if="chapter != null">
           <b-collapse
             class="card"
             animation="slide"
@@ -131,9 +150,11 @@
               <a class="card-footer-item">Delete</a>
             </footer>
           </b-collapse>
+          <br>
         </section>
-        <br>
-        <section>
+
+        <!-- Note de fin de chapitre -->
+        <section v-if="chapter != null">
           <b-collapse
             class="card"
             animation="slide"
@@ -161,13 +182,17 @@
               </div>
             </div>
           </b-collapse>
+          <br>
         </section>
-        <br>
+
+        <!-- Navigation -->
         <div class="is-flex is-flex-direction-row is-justify-content-space-between">
-          <b-button type="is-primary" outlined icon-left="angle-left">
-            Le précedent chapitre
+          <!-- Previous -->
+          <b-button v-if="previousItem != null" type="is-primary" outlined icon-left="angle-left">
+            <span class="is-hidden-mobile">{{ previousItem?.title }}</span>
           </b-button>
-          <b-dropdown aria-role="list" position="is-top-right">
+          <!-- Sommaire -->
+          <b-dropdown aria-role="list" position="is-top-right" style="margin-left: auto; margin-right: auto;">
             <template #trigger="{ active }">
               <b-button
                 label="Sommaire"
@@ -177,17 +202,16 @@
               />
             </template>
             <b-dropdown-item aria-role="listitem">
-              Action
+              <b-icon icon="book-open" />
+              {{ summary?.title }}
             </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem">
-              Another action
-            </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem">
-              Something else
+            <b-dropdown-item v-for="(chapter, index) in summary?.chapters" :key="index" aria-role="listitem">
+              {{ chapter.title }}
             </b-dropdown-item>
           </b-dropdown>
-          <b-button type="is-primary" outlined icon-right="angle-right">
-            Le prochain chapitre
+          <!-- Next -->
+          <b-button v-if="nextItem != null" type="is-primary" outlined icon-right="angle-right">
+            <span class="is-hidden-mobile">{{ nextItem?.title }}</span>
           </b-button>
         </div>
         <div><p>Liste des reviews</p></div>
@@ -227,15 +251,16 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { SerialiseClass } from "@/serialiser-decorator";
+import FanfictionEntity from "~/components/Fanfiction.vue";
 import { getFanfictions } from "~/api/fanfictions";
-import { FanfictionModel } from "~/models/fanfictions";
+import { FanfictionModel, FanfictionEntityConfig, ChapterModel, FanfictionModelLight, ChapterModelLight } from "~/models/fanfictions";
 import TipTapEditor from "~/components/TipTapEditor.vue";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 
 @Component({
   name: "Fanfiction",
   components: {
-    TipTapEditor
+    TipTapEditor, FanfictionEntity
   },
   fetchOnServer: true,
   fetchKey: "fanfiction-page"
@@ -245,6 +270,15 @@ export default class extends Vue {
   // #region  Data
   @SerialiseClass(FanfictionModel)
   public fiction: FanfictionModel | null = null;
+
+  @SerialiseClass(ChapterModel)
+  public chapter: ChapterModel | null = null;
+
+  @SerialiseClass(FanfictionModelLight)
+  public summary: FanfictionModelLight | null = null;
+
+  public previousItem: FanfictionModelLight | ChapterModelLight | null = null;
+  public nextItem: FanfictionModelLight | ChapterModelLight | null = null;
 
   public fictionLoading = false;
   public reviewEditorVisible = false;
@@ -256,12 +290,57 @@ export default class extends Vue {
     readOnly: true,
     fixedHeight: false
   };
+
+  public fanfictionEntityConfig: FanfictionEntityConfig = {
+    inList: false
+  };
+  // #endregion
+
+  // #region Watchers
+  // @Watch("currentItem")
+  // public onChapterChanged(): void {
+  //   if (this.currentItem == null) {
+  //     // On verra
+  //     this.previousItem = null;
+  //     this.nextItem = null;
+  //   } else if (this.currentItem instanceof FanfictionModel) {
+  //     this.previousItem = null;
+  //     this.nextItem = this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === 1) ?? null;
+  //   } else if (this.currentItem instanceof ChapterModel) {
+  //     if (this.currentItem.order === 1)
+  //       this.previousItem = this.summary;
+  //     else
+  //       this.previousItem = this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === (this.currentItem.order - 1)) ?? null;
+  //     this.nextItem = this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === (this.currentItem.order + 1)) ?? null;
+  //   }
+  // }
   // #endregion
 
   // #region Hooks
+
   private async fetch(): Promise<void> {
     this.fictionLoading = true;
     try {
+      if (this.summary == null) {
+        this.summary = new FanfictionModelLight();
+        this.summary.id = 240;
+        this.summary.creation_date = new Date();
+        this.summary.creation_user_id = null;
+        this.summary.modification_date = new Date();
+        this.summary.modification_user_id = null;
+        this.summary.title = "Le titre de la fiction";
+        this.summary.chapters = [];
+        let chapter = new ChapterModelLight();
+        chapter.id = 1;
+        chapter.title = "Chapitre 1: Le début";
+        chapter.order = 1;
+        this.summary.chapters.push(chapter);
+        chapter = new ChapterModelLight();
+        chapter.id = 2;
+        chapter.title = "Chapitre 2: La suite";
+        chapter.order = 2;
+        this.summary.chapters.push(chapter);
+      }
       this.fiction = (await getFanfictions(parseInt(this.$route.params.id)));
     } catch (error) {
       if (process.client) {
@@ -279,6 +358,18 @@ export default class extends Vue {
       }
     } finally {
       this.fictionLoading = false;
+      console.log(this.fiction instanceof FanfictionModel);
+      if (this.fiction != null) {
+        this.previousItem = null;
+        this.nextItem = this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === 1) ?? null;
+      } else if (this.chapter != null) {
+        this.previousItem = (this.chapter.order === 1) ? this.summary : (this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((this.chapter?.order ?? 0) - 1)) ?? null);
+        this.nextItem = this.summary?.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((this.chapter?.order ?? 0) + 1)) ?? null;
+      } else {
+        // On verra
+        this.previousItem = null;
+        this.nextItem = null;
+      }
     }
   }
   // #endregion

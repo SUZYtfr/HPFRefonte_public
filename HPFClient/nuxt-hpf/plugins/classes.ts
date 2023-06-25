@@ -7,7 +7,7 @@ import { FanfictionData, ReviewData, SerieData } from "@/types/fanfictions";
 import { UserModel } from "@/models/users";
 import { CharacteristicModel, CharacteristicTypeModel } from "@/models/characteristics";
 import { NewsModel, CommentModel } from "@/models/news";
-import { FanfictionModel, ReviewModel, SerieModel } from "@/models/fanfictions";
+import { FanfictionModel, ReviewModel, SerieModel, ChapterModel } from "@/models/fanfictions";
 
 import { FanfictionListType } from "@/types/other";
 
@@ -32,6 +32,7 @@ Vue.prototype.NewsModel = NewsModel;
 Vue.prototype.FanfictionModel = FanfictionModel;
 Vue.prototype.ReviewModel = ReviewModel;
 Vue.prototype.SerieModel = SerieModel;
+Vue.prototype.ChapterModel = ChapterModel;
 
 // Enum
 Vue.prototype.FanfictionListType = FanfictionListType;

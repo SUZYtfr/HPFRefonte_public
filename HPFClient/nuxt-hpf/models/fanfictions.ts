@@ -1,6 +1,7 @@
 
-import { Type } from "class-transformer";
-import { FanfictionData, ReviewData, SerieData } from "~/types/fanfictions";
+import { Type, Exclude } from "class-transformer";
+import { BasicClass } from "~/types/basics";
+import { FanfictionData, ReviewData, SerieData, ChapterData } from "~/types/fanfictions";
 import { AuthorData } from "~/types/users";
 import { CharacteristicData } from "~/types/characteristics";
 
@@ -34,5 +35,45 @@ export class FanfictionModel extends FanfictionData {
 
   public chapter_count: number | null = null;
   public word_count: number | null = null;
+}
+
+export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
+  @Exclude()
+  public get fanfiction_id(): number {
+    return this.id;
+  }
+
+  public title: string | null = null;
+
+  @Type(() => ChapterModelLight)
+  public chapters: ChapterModelLight[] | null = null;
+}
+
+export class FanfictionEntityConfig {
+  public inList: boolean = true;
+
+  public constructor(init?: Partial<FanfictionEntityConfig>) {
+    Object.assign(this, init);
+  }
+}
+// #endregion
+
+// #region Chapter
+export class ChapterModel extends ChapterData {
+  @Type(() => AuthorData)
+  public authors: AuthorData[] | null = null;
+
+  @Type(() => ReviewModel)
+  public reviews: ReviewModel[] | null = null;
+}
+
+export class ChapterModelLight extends BasicClass<ChapterModelLight> {
+  @Exclude()
+  public get chapter_id(): number {
+    return this.id;
+  }
+
+  public title: string | null = null;
+  public order: number = 0;
 }
 // #endregion

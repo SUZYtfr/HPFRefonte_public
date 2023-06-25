@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[{ 'fanfiction-hover': hover }, 'fanfiction', 'mx-1 px-1 pb-1']"
+    :class="[{ 'fanfiction-hover': hover }, 'fanfiction', 'mx-1 px-1 pb-1', {'fanfiction-with-border': (config?.inList ?? true)}]"
     @mouseover="hover = true"
     @mouseleave="hover = false"
   >
@@ -148,7 +148,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { FanfictionModel } from "@/models/fanfictions";
+import { FanfictionModel, FanfictionEntityConfig } from "@/models/fanfictions";
 import { getClassTypeColor } from "@/utils/characteristics";
 import { CharacteristicData } from "@/types/characteristics";
 
@@ -158,6 +158,7 @@ import { CharacteristicData } from "@/types/characteristics";
 export default class Fanfiction extends Vue {
   // #region Props
   @Prop() public fanfiction!: FanfictionModel;
+  @Prop({ default: null }) public config!: FanfictionEntityConfig;
   // #endregion
 
   // #region Datas
@@ -215,6 +216,8 @@ export default class Fanfiction extends Vue {
 
 .fanfiction {
   background-color: #ffffff;
+}
+.fanfiction-with-border {
   border-bottom: 2px solid $primary;
 }
 

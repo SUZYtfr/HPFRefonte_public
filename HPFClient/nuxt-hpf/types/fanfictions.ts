@@ -125,3 +125,45 @@ export class SerieData extends BasicClass<SerieData> {
   public status: SerieStatusEnum = SerieStatusEnum.Closed;
 }
 // #endregion
+
+// #region  Chapter
+enum ChapterValidationStatusEnum {
+  Draft = 1,
+  BetaPending = 2,
+  BetaCompleted = 3,
+  AwaitingValidation = 4,
+  AwaitingModification = 5,
+  Modified = 6,
+  Published = 7,
+}
+
+export class ChapterData extends BasicClass<ChapterData> {
+  @Exclude()
+  public get chapter_id(): number {
+    return this.id;
+  }
+
+  public title: string = "";
+  public fiction: number | null = null;
+
+  public creation_user: number | null = null;
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public creation_date: Date = new Date();
+
+  public modification_user: number | null = null;
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  public modification_date: Date = new Date();
+
+  public startnote: string = "";
+  public endnote: string = "";
+  public order: number | null = null;
+
+  public validation_status: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;
+  public word_count: number | null = null;
+  public read_count: number | null = null;
+  public review_count: number | null = null;
+  public average: number | null = null;
+}
+// #endregion
