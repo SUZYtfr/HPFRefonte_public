@@ -39,6 +39,9 @@ export class BasicClass<T> {
   constructor(basicClass?: T) {
     Object.assign(this, basicClass); // or set each prop individually
   }
+  // constructor(basicClass?: Partial<T>) {
+  //   Object.assign(this, basicClass); // or set each prop individually
+  // }
 
   public toJSON (): any {
     return { ...this }; // POJO's copy of the class instance
