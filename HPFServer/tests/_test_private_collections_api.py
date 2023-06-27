@@ -52,8 +52,8 @@ class TestsMyCollectionsAPI(APITestCase):
 
     def test_user_can_create_collection(self):
         """Teste qu'un utilisateur authentifié peut créer une nouvelle série"""
-        fiction1 = sample_fiction(creation_user=self.author, generate_chapters=2)
-        fiction2 = sample_fiction(creation_user=self.author, generate_chapters=2)
+        fiction1 = sample_fiction(creation_user=self.author, chapter_count=2)
+        fiction2 = sample_fiction(creation_user=self.author, chapter_count=2)
 
         # Insertion d'un chapitre isolé entre deux chapitre d'une même fiction
         starting_chapters_id = [fiction1.chapters.first().id, fiction2.chapters.last().id, fiction1.chapters.first().id]
