@@ -85,7 +85,7 @@ class TestsMyFictionsAPI(APITestCase):
 
     def test_user_can_edit_fiction(self):
         """Teste qu'un utilisateur authentifié peut modifier une de ses fictions"""
-        fiction = sample_fiction(creation_user=self.author, generate_chapters=1)
+        fiction = sample_fiction(creation_user=self.author, chapter_count=1)
 
         payload = {
             "title": "Titre modifié",
@@ -141,7 +141,7 @@ class TestsFictionChapterOrdering(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.author = sample_user()
-        cls.fiction = sample_fiction(creation_user=cls.author, generate_chapters=4)
+        cls.fiction = sample_fiction(creation_user=cls.author, chapter_count=4)
         cls.client = APIClient()
 
     def setUp(self) -> None:

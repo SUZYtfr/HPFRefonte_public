@@ -15,6 +15,15 @@ from news.models import NewsArticle, NewsComment, NewsStatus
 french_faker = faker.Faker("fr_FR")
 
 
+def format_editor_content(text: str = None) -> str:
+    opening_tag = "<p style=\"margin-left: 0px!important;\"><span style=\"font-family: Arial\">"
+    closing_tag = "</span></p>"
+
+    return opening_tag + text + closing_tag
+
+
+# MODÈLES ALÉATOIRES
+
 def random_characteristic_type():
     characteristic_types = CharacteristicType.objects.all()
     if characteristic_types.count() > 0:
@@ -28,6 +37,13 @@ def get_random_user():
 
 
 # MODÈLES AUTO-GÉNÉRÉS
+
+def sample_image_url(width: int =None, height: int = None) -> str:
+    image_width = width or french_faker.random_int(100, 500)
+    image_height = height or french_faker.random_int(100, 250)
+
+    return f"https://picsum.photos/{image_width}/{image_height}"
+
 
 def sample_user(**kwargs):
     def sample_profile_picture():
@@ -61,10 +77,49 @@ def sample_user(**kwargs):
     return user
 
 
-def sample_fiction(generate_chapters=None, **kwargs):
+@transaction.atomic
+def sample_chapter(image_count: int = 0, **kwargs):
+    creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
+    text = kwargs.pop("text", None)
+    chapter = Chapter.objects.create(
+        creation_user_id=creation_user_id,
+        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
+        title=kwargs.pop("title", None) or french_faker.sentence(),
+        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
+        **kwargs,
+    )
+    text_parts = [format_editor_content(text or french_faker.paragraph(3))]
+    for i in range(1, image_count + 1):
+        width = french_faker.random_int(100, 500)
+        height = french_faker.random_int(100, 250)
+        image_url = sample_image_url(width, height)
+
+        chapter.text_images.create(
+            src_url=image_url,
+            display_width=width,
+            display_height=height,
+            is_user_property=True,
+            is_adult_only=False,
+            creation_user_id=creation_user_id,
+            index=i,
+        )
+
+        hpf_image_tag = f"<hpf-image index=\"{i}\"></hpf-image>"
+        text_parts.extend([hpf_image_tag, format_editor_content(text or french_faker.paragraph(3))])
+
+    chapter.create_text_version(
+        creation_user_id=creation_user_id,
+        text="".join(text_parts),
+        touch=False,
+    )
+
+    return chapter
+
+
+def sample_fiction(chapter_count: int = None, image_count: int = 0, **kwargs):
     with transaction.atomic():
         fiction = Fiction.objects.create(
-            creation_user=kwargs.pop("creation_user", None) or get_random_user(),
+            creation_user_id=kwargs.pop("creation_user_id", None) or getattr(get_random_user(), "id"),
             title=kwargs.pop("title", None) or french_faker.sentence(),
             summary=kwargs.pop("summary", None) or french_faker.paragraph(10),
             storynote=kwargs.pop("storynote", None) or french_faker.paragraph(10),
@@ -87,40 +142,16 @@ def sample_fiction(generate_chapters=None, **kwargs):
 
         fiction.characteristics.set(random_characteristics)
 
-        for i in range(1, generate_chapters or french_faker.random_int(1, 5)):
-            chapter = Chapter.objects.create(
-                creation_user=fiction.creation_user,
-                fiction=fiction,
-                title=french_faker.sentence(),
-                startnote=french_faker.paragraph(10),
-                endnote=french_faker.paragraph(10),
+        for i in range(1, chapter_count or french_faker.random_int(1, 5)):
+            sample_chapter(
+                creation_user_id=fiction.creation_user_id,
+                fiction_id=fiction.id,
                 validation_status=ChapterValidationStage.PUBLISHED,
+                image_count=image_count,
             )
-            chapter.create_text_version(
-                creation_user_id=chapter.creation_user_id,
-                text=french_faker.paragraph(100),
-                touch=False,
-            )
+
     return fiction
 
-
-def sample_chapter(**kwargs):
-    creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
-    text = kwargs.pop("text", None)
-    chapter = Chapter.objects.create(
-        creation_user_id=creation_user_id,
-        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(creation_user_id), "id"),
-        title=kwargs.pop("title", None) or french_faker.sentence(),
-        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
-        **kwargs,
-    )
-    chapter.create_text_version(
-        creation_user_id=creation_user_id,
-        text=text or french_faker.paragraph(3),
-        touch=False,
-    )
-
-    return chapter
 
 """
 def sample_collection(creation_user=None, title=None, summary=None,

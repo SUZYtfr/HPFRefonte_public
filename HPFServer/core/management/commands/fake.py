@@ -44,6 +44,14 @@ class Command(BaseCommand):
             metavar="CRÉATEUR",
             help="ID de l'utilisateur créateur",
         )
+        parser.add_argument(
+            "-i",
+            "--images",
+            default=None,
+            type=int,
+            metavar="IMAGES",
+            help="Nombre d'images de contenu à insérer",
+        )
 
     def handle(self, *args, **options):
         corres = {
@@ -59,6 +67,7 @@ class Command(BaseCommand):
         count = options["count"]
         parent_id = options["parent"]
         creation_user_id = options["user"]
+        image_count = options["images"]
         sample_func, parent = corres[model]
 
         kwargs = {}
@@ -76,9 +85,12 @@ class Command(BaseCommand):
         if creation_user_id:
             kwargs["creation_user_id"] = creation_user_id
 
+        if image_count:
+            kwargs["image_count"] = image_count
+
         for i in range(count):
             try:
                 element = sample_func(**kwargs)
-                self.stdout.write(self.style.SUCCESS(f"Création de {str(element)}."))
+                self.stdout.write(self.style.SUCCESS(f"Création de « {str(element)} »."))
             except Exception as e:
                 raise CommandError(f"Échec de la création de fausses données: {e}.")

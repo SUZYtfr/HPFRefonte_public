@@ -20,6 +20,7 @@ from .serializers import (
     # FictionExtraAuthorSerializer,
     ChapterSerializer,
     # ChapterCardSerializer,
+    FictionTableOfContentsSerializer,
     FictionChapterOrderSerializer,
 )
 from .permissions import (
@@ -89,6 +90,17 @@ class FictionViewSet(
 
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user)
+
+    @decorators.action(
+        detail=True,
+        methods=["GET"],
+        url_path="table-of-contents",
+        serializer_class=FictionTableOfContentsSerializer,
+    )
+    def get_table_of_contents(self, request, *args, **kwargs):
+        fiction = self.get_object()
+        serializer = self.get_serializer(instance=fiction)
+        return response.Response(data=serializer.data)
 
     @decorators.action(
         detail=True,
@@ -199,11 +211,11 @@ class ChapterViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
 
         if self.request.user.has_perm("fictions.view_chapter"):
-            return queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+            return queryset.exclude(validation_status=ChapterValidationStage.DRAFT)
         elif self.request.query_params.get("self"):
             return queryset.filter(creation_user_id=self.request.user.id)
         else:
-            return queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+            return queryset.filter(validation_status=ChapterValidationStage.PUBLISHED)
 
         # base_queryset = Chapter.objects.filter(fiction_id=self.kwargs["fiction_pk"])
 
@@ -212,9 +224,9 @@ class ChapterViewSet(viewsets.ModelViewSet):
         # elif self.kwargs.pop("mine", False):
         #     return base_queryset.filter(creation_user=self.request.user.id)
         # elif self.request.user.has_perm("fictions.view_chapter"):
-        #     return base_queryset.exclude(validation_status=Chapter.ValidationStage.DRAFT)
+        #     return base_queryset.exclude(validation_status.ChapterValidationStage.DRAFT)
         # else:
-        #     return base_queryset.filter(validation_status=Chapter.ValidationStage.PUBLISHED)
+        #     return base_queryset.filter(validation_status=ChapterValidationStage.PUBLISHED)
 
     def get_object(self):
         """Renvoie le chapitre correspondant à l'ordre, incrémente son compte de lectures."""

@@ -207,8 +207,8 @@ class TestsFictionModel(TestCase):
 
     def test_fiction_published_status(self):
         """Teste qu'une fiction est publique quand au moins un chapitre est validé"""
-        unpublished_fiction = sample_fiction(creation_user=self.author, generate_chapters=1)
-        published_fiction = sample_fiction(creation_user=self.author, generate_chapters=2)
+        unpublished_fiction = sample_fiction(creation_user=self.author, chapter_count=1)
+        published_fiction = sample_fiction(creation_user=self.author, chapter_count=2)
         first_chapter = published_fiction.chapters.first()
         first_chapter.validation_status = 7
         first_chapter.save()

@@ -37,7 +37,7 @@ class TestsMyChaptersAPI(APITestCase):
 
     def test_user_can_create_new_chapter(self):
         """Teste qu'un utilisateur authentifié peut créer un nouveau chapitre pour sa fiction"""
-        fiction = sample_fiction(creation_user=self.author, generate_chapters=0)
+        fiction = sample_fiction(creation_user=self.author, chapter_count=0)
         payload = {
             "title": "Exemple de titre de chapitre",
             "startnote": "Exemple de note de fiction",

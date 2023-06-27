@@ -1,12 +1,14 @@
 from rest_framework import serializers, exceptions
 from drf_extra_fields import relations as extra_relations
 
-from .models import Fiction, Chapter, Collection
 from characteristics.models import CharacteristicType, Characteristic
 from users.serializers import UserCardSerializer
 from core.serializers import ListableModelSerializer
 from core.text_functions import read_text_file
 from reviews.models import Review
+from images.serializers import ContentImageSerializer
+
+from .models import Fiction, Chapter, Collection
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -31,6 +33,12 @@ class FictionListSerializer(serializers.ModelSerializer):
     authors = serializers.SerializerMethodField()
     series = CollectionSerializer(read_only=True, many=True, source="collections")
 
+    summary_images = ContentImageSerializer(
+        many=True,
+        max_length=1,
+        required=False,
+    )
+
     class Meta:
         model = Fiction
         fields = [
@@ -41,6 +49,7 @@ class FictionListSerializer(serializers.ModelSerializer):
             "last_update_date",
             "average",
             "summary",
+            "summary_images",
             "storynote",
             "status",
             "read_count",
@@ -81,6 +90,11 @@ class FictionSerializer(ListableModelSerializer):
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
 
+    summary_images = ContentImageSerializer(
+        many=True,
+        required=False,
+    )
+
     class Meta:
         model = Fiction
         fields = [
@@ -94,6 +108,7 @@ class FictionSerializer(ListableModelSerializer):
             "last_update_date",
             "average",
             "summary",
+            "summary_images",
             "storynote",
             "status",
             "read_count",
@@ -198,7 +213,11 @@ class ChapterSerializer(ListableModelSerializer):
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
-    order = serializers.SerializerMethodField()
+    
+    text_images = ContentImageSerializer(
+        many=True,
+        required=False,
+    )
 
     # text = serializers.CharField(allow_blank=True, style={'base_template': 'textarea.html'})
 
@@ -229,6 +248,8 @@ class ChapterSerializer(ListableModelSerializer):
             "read_count",
             "review_count",
             "average",
+            "text",
+            "text_images",
             # "reviews_url",
             # "member_review_policy",
             # "anonymous_review_policy",
@@ -279,18 +300,33 @@ class ChapterSerializer(ListableModelSerializer):
         )
         return instance
 
-    def get_order(self, obj) -> int:
-        return obj._order + 1  # index 0 -> 1
 
-
-class ChapterCardSerializer(ChapterSerializer):
+class ChapterCardSerializer(serializers.ModelSerializer):
     """Sérialiseur de carte de chapitre"""
 
-    class Meta(ChapterSerializer.Meta):
+    class Meta:
+        model = Chapter
         fields = [
             "id",
             "title",
             "order",
+        ]
+
+
+class FictionTableOfContentsSerializer(serializers.ModelSerializer):
+    """Sérialiseur de table des matières de fiction"""
+
+    chapters = ChapterCardSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    class Meta:
+        model = Fiction
+        fields = [
+            "id",
+            "title",
+            "chapters",
         ]
 
 

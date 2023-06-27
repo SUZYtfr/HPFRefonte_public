@@ -108,6 +108,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         related_name="coauthored_fictions",
     )
 
+    summary_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="fiction_summaries",
+    )
+
     objects = FictionQuerySet.as_manager()
 
     def __str__(self):
@@ -267,10 +272,18 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         default=ChapterValidationStage.DRAFT,
     )
 
+    text_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="chapter_text_images",
+    )
+
     objects = ChapterQuerySet.as_manager()
 
     def __str__(self):
         return self.title
+
+    def order(self) -> int:
+        return self._order + 1
 
     @property
     def published_reviews(self):

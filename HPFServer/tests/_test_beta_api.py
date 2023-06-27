@@ -181,7 +181,7 @@ class TestsBetaViews(APITestCase):
         cls.beta_user = sample_user()
         cls.fiction = sample_fiction(
             creation_user=cls.author,
-            generate_chapters=3,
+            chapter_count=3,
         )
 
     def test_beta_list_does_not_contain_closed_betas(self):
