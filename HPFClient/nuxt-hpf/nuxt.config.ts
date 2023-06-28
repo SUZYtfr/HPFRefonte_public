@@ -3,6 +3,7 @@ import { instanceToPlain } from "class-transformer";
 
 const config: NuxtConfig = {
   build: {
+    transpile: ['defu'],
     loaders: {
       vue: {
         compiler: require("vue-template-babel-compiler")
