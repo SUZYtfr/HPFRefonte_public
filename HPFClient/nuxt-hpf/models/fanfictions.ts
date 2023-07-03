@@ -37,7 +37,7 @@ export class FanfictionModel extends FanfictionData {
   public word_count: number | null = null;
 }
 
-export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
+export class TableOfContent extends BasicClass<TableOfContent> {
   @Exclude()
   public get fanfiction_id(): number {
     return this.id;
@@ -47,6 +47,11 @@ export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
 
   @Type(() => ChapterModelLight)
   public chapters: ChapterModelLight[] | null = null;
+
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfiction_id.toString();
+  }
 }
 
 export class FanfictionEntityConfig {
@@ -75,5 +80,10 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
 
   public title: string | null = null;
   public order: number = 0;
+
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.chapter_id.toString();
+  }
 }
 // #endregion

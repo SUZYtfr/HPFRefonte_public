@@ -32,11 +32,11 @@ export class UserData extends BasicClass<UserData> {
   public is_beta: boolean = false;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public first_seen: Date | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public last_login: Date | null = null;
 }
 
@@ -51,7 +51,7 @@ export class UserProfileData extends BasicClass<UserProfileData> {
   public realname: string = "";
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public birthdate: Date = new Date();
 
   public website: string | null = null;

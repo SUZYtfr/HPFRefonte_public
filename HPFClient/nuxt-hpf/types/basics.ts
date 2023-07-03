@@ -24,13 +24,13 @@ export class BasicClass<T> {
   public creation_user_id: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public creation_date: Date | null = null;
 
   public modification_user_id: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public modification_date: Date | null = null;
 
   constructor()
