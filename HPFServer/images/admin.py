@@ -5,10 +5,10 @@ from .models import (
     # NewsPicture,
     ContentImage,
 )
-from core.admin import BaseAdminAccess
+from core.admin import BaseAdminPage
 
 
-class AdminAccess(BaseAdminAccess):
+class AdminAccess(BaseAdminPage):
     pass
 
 

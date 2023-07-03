@@ -28,7 +28,7 @@ class CreatedModel(models.Model):
         verbose_name="créateur",
         related_name="created_%(class)ss",
         on_delete=models.SET(get_user_deleted_sentinel),
-        editable=False,
+        editable=True,
     )
     modification_user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
@@ -38,7 +38,7 @@ class CreatedModel(models.Model):
         on_delete=models.SET(get_user_deleted_sentinel),
         null=True,
         blank=True,
-        editable=False,
+        editable=True,
     )
 
     class Meta:
@@ -51,7 +51,7 @@ class AuthoredModel(models.Model):
     # https://docs.djangoproject.com/fr/3.1/topics/db/models/#be-careful-with-related-name-and-related-query-name
     authors = models.ManyToManyField(
         to=settings.AUTH_USER_MODEL,
-        verbose_name="auteurs",
+        verbose_name="auteur·ices",
         related_name="authored_%(class)ss",
     )
 
@@ -80,8 +80,13 @@ class TextDependentModel(models.Model):
     @property
     def text(self):
         """Renvoie la dernière version en date du texte"""
-        if version := self.versions.last():
-            return version.text
+
+        return getattr(self.versions.latest("creation_date"), "text", "")
+
+    @property
+    def word_count(self) -> int | None:
+        return getattr(self, "_word_count", None) or getattr(self.versions.last(), "word_count", None)
+    word_count.fget.short_description = "compte de mots"
 
     # TODO - Implémenter ces méthodes
     def get_text_version(self, date=None, step=None):
@@ -101,16 +106,16 @@ class BaseTextVersionModel(models.Model):
 
     text = models.TextField(
         verbose_name="texte",
-        editable=False,
+        editable=True,
     )
     creation_date = models.DateTimeField(
         verbose_name="création",
         auto_now_add=True,
-        editable=False,
+        editable=True,
     )
     creation_user = models.ForeignKey(
         verbose_name="créateur",
-        editable=False,
+        editable=True,
         related_name="+",
         to=settings.AUTH_USER_MODEL,
         on_delete=models.SET(get_user_deleted_sentinel),

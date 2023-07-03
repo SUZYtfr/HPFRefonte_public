@@ -118,7 +118,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(
         verbose_name="dernière connexion",
         null=True,
-        editable=False,
+        editable=True,
     )
 
     objects = UserManager()
@@ -260,7 +260,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         verbose_name="utilisateur",
         related_name="user_profile",
         primary_key=True,
-        editable=False,
+        editable=True,
     )
     modification_user = models.ForeignKey(
         to=User,
@@ -269,7 +269,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         related_name="+",
         on_delete=models.SET(get_user_deleted_sentinel),
         null=True,
-        editable=False,
+        editable=True,
     )
     realname = models.CharField(
         max_length=200,
@@ -365,7 +365,7 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         verbose_name="utilisateur",
         related_name="user_preferences",
         primary_key=True,
-        editable=False,
+        editable=True,
     )
     age_consent = models.BooleanField(
         verbose_name="accès au contenu +18 ans",

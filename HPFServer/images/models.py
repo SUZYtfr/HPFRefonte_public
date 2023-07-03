@@ -117,10 +117,9 @@ class Banner(BaseImage):
         null=True,
         blank=True,
         related_name="user_banner",
-        editable=False,
+        editable=True,
     )
-    category = models.TextField(
-        max_length=32,
+    category = models.IntegerField(
         choices=BannerType.choices,
         verbose_name="catégorie",
     )
@@ -151,7 +150,7 @@ Mais du moins pour commencer, utiliser plutôt ContentImage
 #     newsarticle = models.ForeignKey(
 #         to="news.NewsArticle",
 #         on_delete=models.CASCADE,
-#         editable=False,
+#         editable=True,
 #         verbose_name="news",
 #     )
 
@@ -202,7 +201,7 @@ class ProfilePicture(BaseUserImage):
         on_delete=models.CASCADE,
         verbose_name="image de profil",
         related_name="user_profile_picture",
-        editable=False,
+        editable=True,
     )
 
     class Meta:

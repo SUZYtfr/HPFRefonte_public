@@ -1,91 +1,202 @@
+from django import forms
 from django.contrib import admin
-from core.admin import BaseAdminAccess
-from fictions.models import Fiction, Chapter
+from django.utils import timezone
+from ordered_model import admin as ordered_admin
+
+from core.admin import BaseAdminPage
+from .models import (
+    Collection,
+    CollectionItem,
+    Fiction,
+    Chapter,
+    ChapterTextVersion,
+)
 
 
-class FictionAdminAccess(BaseAdminAccess):
-    """Accès d'administration aux fictions"""
+class CollectionItemForm(forms.ModelForm):
+    def clean(self):
+        super().clean()
 
-    ordering = ("-id",)
-    list_display = ("id", "title", "creation_date", "read_count", "word_count", "last_update_date", "status", "average", "published",)
+        collection = self.cleaned_data.get("collection")
+        fiction = self.cleaned_data.get("fiction")
+        chapter = self.cleaned_data.get("chapter")
+        items = list(filter(lambda x: x, [collection, fiction, chapter]))
+        
+        if len(items) < 1:
+            raise forms.ValidationError("Un objet est requis pour l'élément de série.")
+        elif len(items) > 1:
+            raise forms.ValidationError("Un élément de série ne peut pas contenir plus d'un objet.")
+
+        return self.cleaned_data
+
+
+class CollectionItemInline(ordered_admin.OrderedTabularInline):
+    verbose_name = "élément"
+    form = CollectionItemForm
+    model = CollectionItem
+    fk_name = "parent"
+    extra = 0
+    min_num = 1
+    fields = [
+        "id",
+        "collection",
+        "fiction",
+        "chapter",
+        "move_up_down_links",
+    ]
+    readonly_fields = ["move_up_down_links"]
+    ordering = ["order"]
+    autocomplete_fields = ["collection", "fiction", "chapter"]
+
+
+@admin.register(Collection)
+class CollectionAdminPage(ordered_admin.OrderedInlineModelAdminMixin, BaseAdminPage):
+    """Accès d'administration des séries"""
+
+    ordering = ["-id"]
     list_per_page = 20
-    list_filter = ("status", "creation_date",)
+    list_display = ["id", "title", "creation_user", "access"]
+    list_display_links = ["title"]
+    list_filter =  ["access"]
+    search_fields = ["title"]
+    fieldsets = [
+        (None, {
+            "fields": ("title", "summary", "access"),
+        }),
+        ("Caractéristiques", {
+            "fields": ("characteristics",),
+            "classes": ["collapse"],
+        }),
+        ("Statistiques", {
+            "fields": ("average",),
+            "classes": ["collapse"],
+        }),
+    ]
+    inlines = [CollectionItemInline]
+    readonly_fields = ["average"]
+    autocomplete_fields = ["characteristics"]
 
-    fieldsets = (
-        ("Détails", {"fields": ("title",
-                                "storynote",
-                                "summary",
-                                "average",
-                                "status",
-                                "featured",)}),
-        ("Autorat", {"classes": ("collapse",),
-                     "fields": ("coauthors",)}),
-        ("Métadonnées", {"description": "Ces informations sont protégées.",
-                         "fields": (("creation_user", "creation_date",),
-                                    ("modification_user", "modification_date",),
-                                    "published",
-                                    "read_count",
-                                    "word_count",
-                                    "last_update_date",)}),
-    )
-    filter_horizontal = ("coauthors",)
-    readonly_fields = ("creation_user", "creation_date", "modification_user", "modification_date",
-                       "read_count", "last_update_date", "published", "average", "word_count",)
 
-    # Seulement pour fournir une traduction en français de la cellule et des valeurs pour True/False...
+@admin.register(Fiction)
+class FictionAdminPage(BaseAdminPage):
+    """Accès d'administration des fictions"""
+
+    ordering = ["-id"]
+    list_per_page = 20
+    list_display = ["id", "title", "creation_user", "last_update_date", "status", "published"]
+    list_display_links = ["title"]
+    list_filter =  ["status", "last_update_date"]
+    search_fields = ["title"]
+    fieldsets = [
+        (None, {
+            "fields": ("title", "storynote", "summary", "status", "featured", "published"),
+        }),
+        ("Caractéristiques", {
+            "fields": ("characteristics",),
+            "classes": ["collapse"],
+        }),
+        ("Statistiques", {
+            "fields": ("average", "chapter_count", "word_count", "read_count"),
+            "classes": ["collapse"],
+        }),
+        ("Autres", {
+            "fields": ("coauthors",),
+            "classes": ["collapse"],
+        })
+    ]
+    autocomplete_fields = ["coauthors", "characteristics"]
+    readonly_fields = ["read_count", "last_update_date", "published", "average", "word_count", "chapter_count"]
+
+    @admin.display(description="publiée", boolean=True)
     def published(self, obj):
-        return "Oui" if obj.is_published else "Non"
-    published.short_description = "publiée"
-
-    def average(self, obj):
-        return obj.average
-    average.short_description = "moyenne"
-
-    def word_count(self, obj):
-        return obj.word_count
-    word_count.short_description = "mots"
-
-    def read_count(self, obj):
-        return obj.read_count
-    read_count.short_description = "lectures"
+        return obj.is_published
 
 
-class ChapterAdminAccess(BaseAdminAccess):
-    """Accès d'administration aux chapitres"""
-
-    ordering = ("-id",)
-    list_display = ("id", "title", "validation_status", "read_count", "word_count", "creation_date", "average",)
-    list_filter = ("validation_status", "creation_date")
-    list_per_page = 20
-    fieldsets = (
-        ("Informations", {"fields": ("title",
-                                     "startnote",
-                                     "endnote",
-                                     "average",
-                                     "validation_status",)}),
-        ("Métadonnées", {"description": "Ces informations sont protégées.",
-                         "fields": ("word_count",
-                                    ("creation_date", "creation_user",),
-                                    ("modification_date", "modification_user",),)}),
+class ChapterForm(forms.ModelForm):
+    text = forms.fields.CharField(
+        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+        label="Dernière version"
     )
-    readonly_fields = ("word_count", "creation_date", "creation_user", "modification_user",
-                       "modification_date", "average",)
 
-    def average(self, obj):
-        return obj.average
-    average.short_description = "moyenne"
-
-    def word_count(self, obj):
-        return obj.word_count
-    word_count.short_description = "mots"
+    class Meta:
+        model = Chapter
+        fields = ["text"]
 
 
-class BetaAdminAccess(BaseAdminAccess):
-    """Accès d'administration aux bêtatages"""
+@admin.register(Chapter)
+class ChapterAdminPage(BaseAdminPage):
+    """Page d'administration des chapitres"""
 
-    ordering = ("-id",)
-    list_display = ("id", "__str__", "stage",)
+    ordering = ["-id"]
+    list_per_page = 20
+    list_display = ["id", "title", "creation_user", "creation_date", "validation_status"]
+    list_display_links = ["title"]
+    list_filter = ["validation_status", "creation_date"]
+    search_fields = ["title"]
+    fieldsets = [
+        (None, {
+            "fields": ("fiction", "title", "startnote", "endnote", "validation_status", "read_count", "text"),
+        }),
+        ("Statistiques", {
+            "fields": ("average", "word_count"),
+            "classes": ["collapse"],
+        })
+    ]
+    readonly_fields = ["word_count", "average"]
+    autocomplete_fields = ["fiction"]
+    form = ChapterForm
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super().get_readonly_fields(request, obj)
+        if obj:
+            return readonly_fields + ["fiction"]
+        else:
+            return readonly_fields
+
+    def get_form(self, request, obj, change, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        if change:
+            form.base_fields["text"].initial = obj.text
+        return form
+
+    def save_model(self, request, obj, form, change):
+        text = request._post["text"]
+
+        if change:
+            obj.modification_user = request.user
+            obj.modification_date = timezone.now()
+            obj.save()
+            if text != obj.text:
+                obj.create_text_version(text=text, creation_user_id=obj.creation_user_id)
+
+        else:
+            obj.creation_user = request.user
+            obj.creation_date = timezone.now()
+            obj.save()
+            obj.create_text_version(text=text, creation_user_id=obj.creation_user_id)
 
 
-admin.site.register(Fiction, FictionAdminAccess)
-admin.site.register(Chapter, ChapterAdminAccess)
+@admin.register(ChapterTextVersion)
+class ChapterTextVersionAdminPage(admin.ModelAdmin):
+    ordering = ["-id"]
+    list_per_page = 20
+    list_display = ["id", "chapter", "creation_user", "creation_date", "word_count"]
+    list_display_links = ["chapter"]
+    search_fields = ["chapter"]
+    fieldsets = [
+        (None, {
+            "fields": ["chapter", "text", "word_count"],
+        }),
+        ("Métadonnées", {
+            "fields": [
+                ("creation_user", "creation_date"),
+            ],
+            "classes": ["collapse"]
+        })
+    ]
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False

@@ -33,8 +33,10 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     )
 
     teams = models.ManyToManyField(
+        verbose_name="équipes",
         to=Group,
         related_name="authored_newsarticles",
+        blank=True,
     )
 
     content_images = models.ManyToManyField(
@@ -70,6 +72,7 @@ class NewsComment(DatedModel, CreatedModel):
         verbose_name="actualité",
         related_name="comments",
         on_delete=models.CASCADE,
+        editable=True,
         limit_choices_to={"status": NewsStatus.PUBLISHED},
     )
 

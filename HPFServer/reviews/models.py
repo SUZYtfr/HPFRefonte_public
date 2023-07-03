@@ -128,14 +128,14 @@ class ReviewReply(DatedModel, CreatedModel):
         to=Review,
         null=True,
         on_delete=models.CASCADE,
-        editable=False,
+        editable=True,
     )
     parent = models.ForeignKey(
         verbose_name="parent",
         to="self", null=True,
         related_name="replies",
         on_delete=models.CASCADE,
-        editable=False,
+        editable=True,
     )
     text = models.TextField(
         verbose_name="texte",
@@ -156,7 +156,7 @@ class FictionReview(Review):
         on_delete=models.CASCADE,
         verbose_name="fiction",
         related_name="reviews",
-        editable=False,
+        editable=True,
     )
 
     class Meta:
@@ -172,7 +172,7 @@ class ChapterReview(Review):
         on_delete=models.CASCADE,
         verbose_name="chapitre",
         related_name="reviews",
-        editable=False,
+        editable=True,
     )
 
     class Meta:
@@ -188,7 +188,7 @@ class CollectionReview(Review):
         on_delete=models.CASCADE,
         verbose_name="série",
         related_name="reviews",
-        editable=False,
+        editable=True,
     )
 
     class Meta:
@@ -205,7 +205,7 @@ class ReviewTextVersion(BaseTextVersionModel):
 
     review = models.ForeignKey(
         verbose_name="review",
-        editable=False,
+        editable=True,
         related_name="versions",
         to="reviews.Review",
         on_delete=models.CASCADE,

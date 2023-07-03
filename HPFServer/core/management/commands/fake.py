@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from tests.samples import (
     sample_user,
+    sample_collection,
     sample_fiction,
     sample_chapter,
     sample_news,
@@ -23,7 +24,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "model",
-            choices=["users", "fictions", "chapters", "news", "comments", "fictionreviews"],
+            choices=["users", "collections", "fictions", "chapters", "news", "comments", "fictionreviews"],
             type=str,
             metavar="MODÈLE",
             help="Modèle à générer"
@@ -56,6 +57,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         corres = {
             "users": (sample_user, None),
+            "collections": (sample_collection, None),
             "fictions": (sample_fiction, None),
             "chapters": (sample_chapter, "fiction_id"),
             "news": (sample_news, None),

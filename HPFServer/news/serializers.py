@@ -46,6 +46,12 @@ class NewsCommentSerializer(serializers.ModelSerializer):
             "modification_user",
             "content_images",
         ]
+        read_only_fields = [
+            "creation_date",
+            "creation_user",
+            "modification_date",
+            "modification_user",
+        ]
 
     @transaction.atomic
     def create(self, validated_data):        
@@ -132,6 +138,12 @@ class NewsArticleSerializer(ListableModelSerializer):
             "comments",
             "comment_count",
             "content_images",
+        ]
+        read_only_fields = [
+            "creation_date",
+            "creation_user",
+            "modification_date",
+            "modification_user",
         ]
 
     @transaction.atomic

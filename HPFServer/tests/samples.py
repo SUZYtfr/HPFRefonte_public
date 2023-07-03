@@ -1,13 +1,13 @@
 import faker
 
 from django.contrib.auth.hashers import make_password
-from django.db import transaction
+from django.db import transaction, models
 from django.utils import timezone
 
 from core.utils import get_moderation_account
 from users.models import User
 from characteristics.models import Characteristic, CharacteristicType
-from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage
+from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage, CollectionAccess
 from reviews.models import FictionReview, ChapterReview, CollectionReview
 from news.models import NewsArticle, NewsComment, NewsStatus
 
@@ -15,7 +15,7 @@ from news.models import NewsArticle, NewsComment, NewsStatus
 french_faker = faker.Faker("fr_FR")
 
 
-def format_editor_content(text: str = None) -> str:
+def format_editor_content(text: str = "") -> str:
     opening_tag = "<p style=\"margin-left: 0px!important;\"><span style=\"font-family: Arial\">"
     closing_tag = "</span></p>"
 
@@ -38,7 +38,7 @@ def get_random_user():
 
 # MODÈLES AUTO-GÉNÉRÉS
 
-def sample_image_url(width: int =None, height: int = None) -> str:
+def sample_image_url(width: int = 0, height: int = 0) -> str:
     image_width = width or french_faker.random_int(100, 500)
     image_height = height or french_faker.random_int(100, 250)
 
@@ -76,7 +76,6 @@ def sample_user(**kwargs):
     )
     return user
 
-
 @transaction.atomic
 def sample_chapter(image_count: int = 0, **kwargs):
     creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
@@ -84,7 +83,7 @@ def sample_chapter(image_count: int = 0, **kwargs):
     chapter = Chapter.objects.create(
         creation_user_id=creation_user_id,
         fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
-        title=kwargs.pop("title", None) or french_faker.sentence(),
+        title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
         validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
         **kwargs,
     )
@@ -116,11 +115,11 @@ def sample_chapter(image_count: int = 0, **kwargs):
     return chapter
 
 
-def sample_fiction(chapter_count: int = None, image_count: int = 0, **kwargs):
+def sample_fiction(chapter_count: int = 0, image_count: int = 0, **kwargs):
     with transaction.atomic():
         fiction = Fiction.objects.create(
             creation_user_id=kwargs.pop("creation_user_id", None) or getattr(get_random_user(), "id"),
-            title=kwargs.pop("title", None) or french_faker.sentence(),
+            title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
             summary=kwargs.pop("summary", None) or french_faker.paragraph(10),
             storynote=kwargs.pop("storynote", None) or french_faker.paragraph(10),
             status=kwargs.pop("status", None) or french_faker.random_int(1, 4),
@@ -153,19 +152,42 @@ def sample_fiction(chapter_count: int = None, image_count: int = 0, **kwargs):
     return fiction
 
 
-"""
-def sample_collection(creation_user=None, title=None, summary=None,
-                      **extra_fields):
-    creation_user = creation_user or sample_user()
+@transaction.atomic
+def sample_collection(**kwargs):
+    creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
     collection = Collection.objects.create(
-        creation_user=creation_user,
-        title=lorem.get_sentence() if title is None else title,
-        summary=lorem.get_paragraph() if summary is None else summary,
-        **extra_fields
+        creation_user_id=creation_user_id,
+        title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
+        summary=kwargs.pop("summary", None) or french_faker.paragraph(3),
+        access=kwargs.pop("access", CollectionAccess.MODERATED),
+        **kwargs
     )
 
+    random_characteristics = []
+
+    for characteristic_type in CharacteristicType.objects.all():
+        min_limit = characteristic_type.min_limit
+        max_limit = characteristic_type.max_limit or 5
+        random_chartype_chars = set()
+        while len(random_chartype_chars) < french_faker.random_int(min_limit, max_limit):
+            random_chartype_chars.add(characteristic_type.characteristics.filter(is_forbidden=False).order_by("?").first())
+        random_characteristics.extend(random_chartype_chars)
+
+    collection.characteristics.set(random_characteristics)
+
+    random_chapters = (
+        Chapter.objects
+        .published()
+        .order_by("?")
+        .annotate(type=models.Value("chapter", output_field=models.CharField()))
+        .values("type", "id")[:10]
+    )
+    for chapter in random_chapters:
+        collection.items.create(
+            chapter_id=chapter["id"],
+        )
+
     return collection
-"""
 
 
 def sample_characteristic_type(**kwargs):
@@ -224,7 +246,7 @@ def sample_fiction_review(**kwargs):
 def sample_news(**kwargs):
     news_article = NewsArticle.objects.create(
         creation_user=kwargs.pop("creation_user", None) or get_random_user(),
-        title=kwargs.pop("title", None) or french_faker.paragraph(),
+        title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
         content=kwargs.pop("content", None) or french_faker.paragraph(10),
         category=kwargs.pop("category", None) or french_faker.random_int(min=0, max=6),
         status=kwargs.pop("status", None) or NewsStatus.PUBLISHED,
