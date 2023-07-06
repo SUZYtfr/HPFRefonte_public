@@ -17,7 +17,7 @@
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
           <NuxtLink
             :key="'fiction_' + fanfiction.fanfiction_id.toString()"
-            :to="{ name: 'fictions-fiction_title', params: { id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug } }"
+            :to="{ name: 'fictions-fiction_title-sommaire', params: { id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug } }"
           >
             {{ fanfiction.title }}
           </NuxtLink>

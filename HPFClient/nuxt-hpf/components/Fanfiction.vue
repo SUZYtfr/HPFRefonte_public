@@ -6,13 +6,15 @@
   >
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
-        <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
+        <h3 :class="['h3', 'has-text-weight-semibold', 'text-ellipsis-one-line', {'has-text-centered': ((config?.inList ?? true) == false)}]">
           <NuxtLink
+            v-if="(config?.inList ?? true)"
             :key="'fiction_' + fanfiction.fanfiction_id.toString()"
-            :to="{ name: 'fictions-id', params: { id: fanfiction.fanfiction_id } }"
+            :to="{ name: 'fictions-fiction_title-sommaire', params: { id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug } }"
           >
             {{ fanfiction.title }}
           </NuxtLink>
+          <span v-else class="is-uppercase">{{ fanfiction.title }}</span>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
