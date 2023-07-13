@@ -12,7 +12,7 @@ class AdminAccess(BaseAdminPage):
     pass
 
 
-admin.site.register(Banner, AdminAccess)
-admin.site.register(ProfilePicture, AdminAccess)
+# admin.site.register(Banner, AdminAccess)
+# admin.site.register(ProfilePicture, AdminAccess)
 # admin.site.register(NewsPicture, AdminAccess)
-admin.site.register(ContentImage, AdminAccess)
+# admin.site.register(ContentImage, AdminAccess)

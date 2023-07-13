@@ -22,9 +22,15 @@ class NewsAdminPage(BaseAdminPage):
     ]
     autocomplete_fields = ["authors"]
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if not change:
+            obj.authors.add(request.user)
+
 
 @admin.register(NewsComment)
-class NewsCommentPage(BaseAdminPage):
+class NewsCommentAdminPage(BaseAdminPage):
     """Page d'administration des commentaires d'actualités"""
 
     ordering = ["-creation_date"]

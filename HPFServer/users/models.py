@@ -274,7 +274,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
     realname = models.CharField(
         max_length=200,
         verbose_name="nom",
-        null=False, 
+        null=True, 
         blank=True,
         default="",
     )

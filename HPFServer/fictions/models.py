@@ -20,9 +20,13 @@ from .enums import (
 
 class FictionQuerySet(models.QuerySet):
     def published(self):
+        """Ajoute le statut de publication"""
+
         return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
     def with_averages(self):
+        """Ajoute le total des moyennes des reviews publiées"""
+
         average = models.Sum(
             "reviews__grading",
             filter=models.Q(reviews__draft=False),
@@ -30,6 +34,8 @@ class FictionQuerySet(models.QuerySet):
         return self.annotate(_average=average)
 
     def with_read_counts(self):
+        """Ajoute le total des comptes de lectures des chapitres publiés"""
+
         read_count = models.Sum(
             "chapters__read_count",
             filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
@@ -37,7 +43,7 @@ class FictionQuerySet(models.QuerySet):
         return self.annotate(_read_count=read_count)
 
     def with_word_counts(self):
-        """Ajoute le total des comptes de mots des chapitres publiés des fictions"""
+        """Ajoute le total des comptes de mots des chapitres publiés"""
 
         grouped_published_chapters = Chapter.objects.with_word_counts().filter(
             fiction_id=models.OuterRef("id"),
@@ -123,6 +129,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def published_chapters(self):
         """Renvoie les chapitres publiés"""
+    
         return self.chapters.filter(validation_status=ChapterValidationStage.PUBLISHED)
     published_chapters.fget.short_description = "chapitres publiés"
 
@@ -152,10 +159,9 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         """Renvoie le compte de mots des chapitres publiés"""
 
         return getattr(self, "_word_count", None) or (
-            self.chapters.
-            published().
-            with_word_counts().
-            aggregate(word_count=models.Sum("_word_count"))
+            self.published_chapters
+            .with_word_counts()
+            .aggregate(word_count=models.Sum("_word_count"))
         )["word_count"]
     word_count.fget.short_description = "compte de mots"
 
@@ -213,15 +219,16 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 class ChapterQuerySet(models.QuerySet):
     def with_word_counts(self):
+        """Ajoute le total des comptes de mots"""
 
         last_version_word_count = (
             ChapterTextVersion.objects
-            .filter(chapter_id=models.OuterRef('id'))
-            .order_by('-id')
-            .values('word_count')
+            .filter(chapter_id=models.OuterRef("id"))
+            .order_by("-id")
+            .values("word_count")
         )[:1]
 
-        chapters_with_word_counts = Chapter.objects.annotate(
+        chapters_with_word_counts = self.annotate(
             _word_count=models.Subquery(last_version_word_count)
         )
 

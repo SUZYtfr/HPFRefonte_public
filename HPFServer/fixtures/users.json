@@ -116,7 +116,7 @@
         "pk": 0,
         "fields": {
             "user": 0,
-            "creation_date": "2023-05-05",
+            "creation_date": "2022-02-19T16:15:57.527Z",
             "realname": null,
             "birthdate": null,
             "bio": "",
@@ -128,7 +128,7 @@
         "pk": 2,
         "fields": {
             "user": 2,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.166Z",
             "realname": null,
             "birthdate": null,
             "bio": "",
@@ -140,7 +140,7 @@
         "pk": 3,
         "fields": {
             "user": 3,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.234Z",
             "realname": null,
             "birthdate": "1970-01-01",
             "bio": "",
@@ -152,7 +152,7 @@
         "pk": 4,
         "fields": {
             "user": 4,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.321Z",
             "realname": null,
             "birthdate": "1986-06-06",
             "bio": "",
@@ -164,7 +164,7 @@
         "pk": 5,
         "fields": {
             "user": 5,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.394Z",
             "realname": "Lucien Dupain",
             "birthdate": "1986-06-06",
             "bio": "Chacal est un animal. Chacal n'est pas sale.",
@@ -176,7 +176,7 @@
         "pk": 6,
         "fields": {
             "user": 6,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.467Z",
             "realname": "tempor ullamco",
             "birthdate": "1958-06-04",
             "bio": "",
@@ -188,7 +188,7 @@
         "pk": 7,
         "fields": {
             "user": 7,
-            "creation_date": "2023-05-05",
+            "creation_date": "2021-08-12T10:12:21.550Z",
             "realname": "Paul Moëlle",
             "birthdate": "2852-06-15",
             "bio": "Salut moi c'est Pollo l'octopus à puces",

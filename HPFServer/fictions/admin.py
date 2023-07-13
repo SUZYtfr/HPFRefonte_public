@@ -111,7 +111,6 @@ class FictionAdminPage(BaseAdminPage):
     def published(self, obj):
         return obj.is_published
 
-
 class ChapterForm(forms.ModelForm):
     text = forms.fields.CharField(
         widget=forms.Textarea({"cols": "100", "rows": "20"}),
@@ -160,20 +159,14 @@ class ChapterAdminPage(BaseAdminPage):
         return form
 
     def save_model(self, request, obj, form, change):
-        text = request._post["text"]
+        super().save_model(request, obj, form, change)
 
-        if change:
-            obj.modification_user = request.user
-            obj.modification_date = timezone.now()
-            obj.save()
-            if text != obj.text:
-                obj.create_text_version(text=text, creation_user_id=obj.creation_user_id)
-
-        else:
-            obj.creation_user = request.user
-            obj.creation_date = timezone.now()
-            obj.save()
-            obj.create_text_version(text=text, creation_user_id=obj.creation_user_id)
+        text = form.cleaned_data.get("text")
+        if not change or (change and text != obj.text):
+            obj.create_text_version(
+                text,
+                creation_user_id=request.user.id,
+            )
 
 
 @admin.register(ChapterTextVersion)

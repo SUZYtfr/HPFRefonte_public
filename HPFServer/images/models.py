@@ -199,7 +199,7 @@ class ProfilePicture(BaseUserImage):
     user_profile = models.OneToOneField(
         to="users.UserProfile",
         on_delete=models.CASCADE,
-        verbose_name="image de profil",
+        verbose_name="profil",
         related_name="user_profile_picture",
         editable=True,
     )
