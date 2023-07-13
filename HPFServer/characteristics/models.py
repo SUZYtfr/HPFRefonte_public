@@ -93,14 +93,17 @@ class Characteristic(DatedModel, CreatedModel):
     )  # s'applique aux formulaires seulement
     is_highlighted = models.BooleanField(
         verbose_name="mise en avant",
+        blank=True,
         default=False,
     )
     is_personal = models.BooleanField(
         verbose_name="personnelle",
+        blank=True,
         default=False,
     )
     is_forbidden = models.BooleanField(
         verbose_name="interdite",
+        blank=True,
         default=False,
     )
     replace_with = models.ForeignKey(

@@ -5,14 +5,14 @@ from .models import (
     # NewsPicture,
     ContentImage,
 )
-from core.admin import BaseAdminAccess
+from core.admin import BaseAdminPage
 
 
-class AdminAccess(BaseAdminAccess):
+class AdminAccess(BaseAdminPage):
     pass
 
 
-admin.site.register(Banner, AdminAccess)
-admin.site.register(ProfilePicture, AdminAccess)
+# admin.site.register(Banner, AdminAccess)
+# admin.site.register(ProfilePicture, AdminAccess)
 # admin.site.register(NewsPicture, AdminAccess)
-admin.site.register(ContentImage, AdminAccess)
+# admin.site.register(ContentImage, AdminAccess)

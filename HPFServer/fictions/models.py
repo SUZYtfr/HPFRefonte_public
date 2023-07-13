@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from ordered_model import models as ordered_models
 
 from core.models import (
     DatedModel,
@@ -19,9 +20,13 @@ from .enums import (
 
 class FictionQuerySet(models.QuerySet):
     def published(self):
+        """Ajoute le statut de publication"""
+
         return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
 
     def with_averages(self):
+        """Ajoute le total des moyennes des reviews publiées"""
+
         average = models.Sum(
             "reviews__grading",
             filter=models.Q(reviews__draft=False),
@@ -29,6 +34,8 @@ class FictionQuerySet(models.QuerySet):
         return self.annotate(_average=average)
 
     def with_read_counts(self):
+        """Ajoute le total des comptes de lectures des chapitres publiés"""
+
         read_count = models.Sum(
             "chapters__read_count",
             filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
@@ -36,7 +43,7 @@ class FictionQuerySet(models.QuerySet):
         return self.annotate(_read_count=read_count)
 
     def with_word_counts(self):
-        """Ajoute le total des comptes de mots des chapitres publiés des fictions"""
+        """Ajoute le total des comptes de mots des chapitres publiés"""
 
         grouped_published_chapters = Chapter.objects.with_word_counts().filter(
             fiction_id=models.OuterRef("id"),
@@ -106,6 +113,12 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         verbose_name="co-auteurs",
         to="users.User",
         related_name="coauthored_fictions",
+        blank=True,
+    )
+
+    summary_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="fiction_summaries",
     )
 
     summary_images = models.ManyToManyField(
@@ -121,36 +134,41 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def published_chapters(self):
         """Renvoie les chapitres publiés"""
+    
         return self.chapters.filter(validation_status=ChapterValidationStage.PUBLISHED)
+    published_chapters.fget.short_description = "chapitres publiés"
 
     @property
     def is_published(self) -> bool:
         """Détermine si la fiction est publiée, c'est-à-dire si elle a au moins un chapitre publié"""
 
         return self.published_chapters.exists()
+    is_published.fget.short_description = "publiée"
 
     @property
     def chapter_count(self) -> int:
         """Renvoie le compte de chapitres publiés"""
 
         return getattr(self, "_chapter_count", None) or self.published_chapters.count()
+    chapter_count.fget.short_description = "compte de chapitres"
 
     @property
     def collection_count(self) -> int:
         """Renvoie le compte de séries"""
 
         return self.collections.count()
+    collection_count.fget.short_description = "compte de séries"
 
     @property
     def word_count(self) -> int:
         """Renvoie le compte de mots des chapitres publiés"""
 
         return getattr(self, "_word_count", None) or (
-            self.chapters.
-            published().
-            with_word_counts().
-            aggregate(word_count=models.Sum("_word_count"))
+            self.published_chapters
+            .with_word_counts()
+            .aggregate(word_count=models.Sum("_word_count"))
         )["word_count"]
+    word_count.fget.short_description = "compte de mots"
 
     @property
     def read_count(self) -> int:
@@ -161,10 +179,12 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
             .filter(read_count__isnull=False)
             .values_list("read_count", flat=True)
         )
+    read_count.fget.short_description = "compte de lectures"
 
     @property
     def published_reviews(self):
         return self.reviews.filter(draft=False)
+    published_reviews.fget.short_description = "reviews publiées"
 
     @property
     def average(self) -> float | None:
@@ -178,12 +198,14 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         #     return sum(filter(None, all_gradings)) / len(all_gradings)
         # else:
         #     return None
+    average.fget.short_description = "moyenne"
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
 
         return getattr(self, "_review_count", None) or self.published_reviews.count()
+    review_count.fget.short_description = "compte de reviews"
 
     def delete(self, using=None, keep_parents=False):
         """Supprime la fiction
@@ -202,15 +224,16 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 class ChapterQuerySet(models.QuerySet):
     def with_word_counts(self):
+        """Ajoute le total des comptes de mots"""
 
         last_version_word_count = (
             ChapterTextVersion.objects
-            .filter(chapter_id=models.OuterRef('id'))
-            .order_by('-id')
-            .values('word_count')
+            .filter(chapter_id=models.OuterRef("id"))
+            .order_by("-id")
+            .values("word_count")
         )[:1]
 
-        chapters_with_word_counts = Chapter.objects.annotate(
+        chapters_with_word_counts = self.annotate(
             _word_count=models.Subquery(last_version_word_count)
         )
 
@@ -262,9 +285,9 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         default="",
     )
     read_count = models.PositiveIntegerField(
-        verbose_name="lectures",
+        verbose_name="compte de lectures",
         default=0,
-        editable=False,
+        editable=True,
     )
     validation_status = models.SmallIntegerField(
         verbose_name="étape de validation",
@@ -288,6 +311,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     @property
     def published_reviews(self):
         return self.reviews.filter(draft=False)
+    published_reviews.fget.short_description = "reviews publiées"
 
     @property
     def average(self) -> float | None:
@@ -301,29 +325,23 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
         # if all_gradings:  # pour éviter une division par 0
         #     return sum(filter(None, all_gradings)) / len(all_gradings)
-
-    @property
-    def text(self) -> str:
-        return getattr(self.versions.first(), "text", "")
-
-    @property
-    def word_count(self) -> int:
-        return getattr(self, "_word_count", None) or getattr(self.versions.first(), "word_count", None)
+    average.fget.short_description = "moyenne"
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews"""
 
         return getattr(self, "_review_count", None) or self.published_reviews.count()
+    review_count.fget.short_description = "compte de reviews"
 
-    def create_text_version(self, creation_user_id, text, touch=True):
+    def create_text_version(self, text, creation_user_id=None, touch=True):
         """Crée une nouvelle version du texte du chapitre par l'utilisateur passé"""
 
         version = ChapterTextVersion.objects.create(
             chapter=self,
             text=text,
             word_count=count_words(text),
-            creation_user_id=creation_user_id,
+            creation_user_id=creation_user_id or self.creation_user_id,
             creation_date=timezone.now(),
         )
         version.save()
@@ -398,26 +416,29 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
 class ChapterTextVersion(BaseTextVersionModel):
     """Modèle de version de texte de chapitre"""
-
+    
     class Meta:
         verbose_name = "version de texte de chapitre"
         verbose_name_plural = "versions de textes de chapitres"
 
     chapter = models.ForeignKey(
         verbose_name="chapitre",
-        editable=False,
+        editable=True,
         related_name="versions",
         to="fictions.Chapter",
         on_delete=models.CASCADE,
     )
     word_count = models.IntegerField(
-        editable=False,
+        editable=True,
         verbose_name="compte de mots",
     )
 
 
-class Collection(DatedModel, CreatedModel, AuthoredModel, CharacteristicModel):
+class Collection(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de série"""
+
+    class Meta:
+        verbose_name = "série"
 
     title = models.CharField(
         verbose_name="titre",
@@ -426,29 +447,21 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, CharacteristicModel):
     summary = models.TextField(
         verbose_name="résumé",
     )
-    status = models.SmallIntegerField(
+    summary_images = models.ManyToManyField(
+        verbose_name="images de résumé",
+        to="images.ContentImage",
+        related_name="collection_summaries",
+    )
+    access = models.SmallIntegerField(
         verbose_name="état",
         choices=CollectionAccess.choices,
         default=CollectionAccess.CLOSED,
-    )
-    parent = models.ForeignKey(
-        verbose_name="série parente",
-        to="self",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="subcollections",
-    )
-
-    fictions = models.ManyToManyField(
-        verbose_name="fictions",
-        to="fictions.Fiction",
-        # through="FictionCollectionPosition",
-        related_name="collections",
     )
 
     @property
     def published_reviews(self):
         return self.reviews.filter(draft=False)
+    published_reviews.fget.short_description = "reviews publiées"
 
     @property
     def average(self) -> float | None:
@@ -464,54 +477,78 @@ class Collection(DatedModel, CreatedModel, AuthoredModel, CharacteristicModel):
         #     return sum(filter(None, all_gradings)) / len(all_gradings)
         # else:
         #     return None
+    average.fget.short_description = "moyenne"
 
     @property
     def review_count(self) -> int:
         """Renvoie le nombre de reviews publiées"""
 
         return getattr(self, "_review_count", None) or self.published_reviews.count()
+    review_count.fget.short_description = "compte de reviews"
 
-    @property
-    def fiction_count(self) -> int:
-        """Renvoie le compte de fictions"""
-
-        return getattr(self, "_fiction_count", None) or self.fictions.count()
-
-    class Meta:
-        verbose_name = "série"
-
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
-# class FictionCollectionPosition(OrderedModel):
+class CollectionItem(ordered_models.OrderedModel):
+    """Modèle de série"""
 
-#     collection = models.ForeignKey(
-#         to=Collection,
-#         on_delete=models.CASCADE,
-#     )
-#     fiction = models.ForeignKey(
-#         to="fictions.Fiction",
-#         on_delete=models.CASCADE,
-#     )
+    class Meta(ordered_models.OrderedModel.Meta):
+        verbose_name = "série"
+        ordering = ["parent", "order"]
+        constraints = [
+            models.UniqueConstraint(
+                name="UQ_fictions_collectionitem_parent_collection",
+                fields=["parent", "collection"],
+            ),
+            models.UniqueConstraint(
+                name="UQ_fictions_collectionitem_parent_fiction",
+                fields=["parent", "fiction"],
+            ),
+            models.UniqueConstraint(
+                name="UQ_fictions_collectionitem_parent_chapter",
+                fields=["parent", "chapter"],
+            ),
+        ]
 
-#     order_with_respect_to = "collection"
+    parent = models.ForeignKey(
+        verbose_name="série parente",
+        to=Collection,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    collection = models.ForeignKey(
+        verbose_name="série",
+        to=Collection,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="collection_items",
+    )
+    fiction = models.ForeignKey(
+        to=Fiction,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="collection_items",
+    )
+    chapter = models.ForeignKey(
+        verbose_name="chapitre",
+        to=Chapter,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="collection_items",
+    )
 
-#     class Meta:
-#         ordering = ["collection", "order"]
-#         constraints = [
-#             models.UniqueConstraint(
-#                 name="UQ_colls_fictioncollectionposition_collection_fiction",
-#                 fields=["collection", "fiction"],
-#             ),
-#             models.UniqueConstraint(
-#                 name="UQ_colls_fictioncollectionposition_collection_order",
-#                 fields=["collection", "fiction"],
-#             )
-#         ]
+    order_with_respect_to = "parent"  # NOTE - django-ordered-model nécessite que ce paramètre se trouve sur le modèle et non dans Meta
 
-#     def __repr__(self):
-#         return self.collection.title[:15] + " <-> " + self.fiction.title[:15]
+    @property
+    def position(self) -> int | None:
+        if self.order is not None:
+            return self.order + 1
+        else:
+            return None
 
-#     def __str__(self):
-#         return self.__repr__()
+    def __str__(self) -> str:
+        return f"Élément n°{self.position} de la série {str(self.parent)}"

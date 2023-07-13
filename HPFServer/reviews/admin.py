@@ -1,9 +1,9 @@
 from django.contrib import admin
-from core.admin import BaseAdminAccess
+from core.admin import BaseAdminPage
 from reviews.models import Review, ReviewReply
 
 
-class ReviewAdminAccess(BaseAdminAccess):
+class ReviewAdminAccess(BaseAdminPage):
     """Accès d'administration aux reviews"""
 
     list_display = ("id", "creation_user", "creation_date", "grading")
@@ -19,7 +19,7 @@ class ReviewAdminAccess(BaseAdminAccess):
     depend_on.short_description = "répond à"
 
 
-class ReviewReplyAdminAccess(BaseAdminAccess):
+class ReviewReplyAdminAccess(BaseAdminPage):
     """Accès d'administration aux réponses à reviews"""
 
     list_display = ("id", "text", "creation_user",)
@@ -32,4 +32,4 @@ class ReviewReplyAdminAccess(BaseAdminAccess):
 
 
 # admin.site.register(Review, ReviewAdminAccess)
-admin.site.register(ReviewReply, ReviewReplyAdminAccess)
+# admin.site.register(ReviewReply, ReviewReplyAdminAccess)

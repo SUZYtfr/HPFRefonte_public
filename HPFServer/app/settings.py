@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "rest_framework_simplejwt",
+    "ordered_model",
     "django_extensions",
     "django_filters",
     "drf_spectacular",
@@ -189,7 +190,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", BASE_DIR / 'media/')
-STATIC_ROOT = os.getenv("STATIC_ROOT")
+STATIC_ROOT = os.getenv("STATIC_ROOT", BASE_DIR / "static/")
 
 AUTH_USER_MODEL = 'users.User'
 

@@ -28,7 +28,7 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public storynote: string | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public last_update_date: Date = new Date();
 
   public read_count: number | null = null;
@@ -57,6 +57,11 @@ export class FanfictionData extends BasicClass<FanfictionData> {
         break;
     }
     return result;
+  }
+
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title.toLowerCase().replace(/ /g, "-");
   }
 }
 
@@ -101,7 +106,7 @@ export class ReviewData extends BasicClass<ReviewData> {
   public parent_id: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public post_date: Date | null = null;
 }
 // #endregion
@@ -148,12 +153,12 @@ export class ChapterData extends BasicClass<ChapterData> {
 
   public creation_user: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public creation_date: Date = new Date();
 
   public modification_user: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public modification_date: Date = new Date();
 
   public startnote: string = "";
@@ -165,5 +170,10 @@ export class ChapterData extends BasicClass<ChapterData> {
   public read_count: number | null = null;
   public review_count: number | null = null;
   public average: number | null = null;
+
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title.toLowerCase().replace(/ /g, "-");
+  }
 }
 // #endregion

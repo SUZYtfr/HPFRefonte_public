@@ -20,7 +20,7 @@ export class NewsData extends BasicClass<NewsData> {
   public status: NewsStatus = NewsStatus.Pending;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public post_date: Date | null = null;
 }
 
@@ -46,7 +46,7 @@ export class CommentData extends BasicClass<CommentData> {
   public content: string = "";
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => (value?.toISOString() ?? ""), { toPlainOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public post_date: Date | null = null;
 }
 // #endregion
