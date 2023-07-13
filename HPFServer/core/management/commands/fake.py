@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tests.samples import (
+from core.management.utils.samples import (
     sample_user,
     sample_collection,
     sample_fiction,
