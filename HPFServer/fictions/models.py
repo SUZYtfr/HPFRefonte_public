@@ -207,6 +207,9 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
 
+    def first_chapter(self):
+        return self.published_chapters.first()
+
     def delete(self, using=None, keep_parents=False):
         """Supprime la fiction
 
