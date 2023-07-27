@@ -87,6 +87,11 @@ class FictionListSerializer(serializers.ModelSerializer):
         required=False,
     )
 
+    first_chapter = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.ChapterCardSerializer",
+    )
+
     class Meta:
         model = Fiction
         fields = [
@@ -109,6 +114,7 @@ class FictionListSerializer(serializers.ModelSerializer):
             "series",
             "chapter_count",
             "review_count",
+            "first_chapter",
         ]
 
     def get_authors(self, obj):
@@ -134,6 +140,10 @@ class FictionSerializer(ListableModelSerializer):
         many=True,
         read_only=True,
         presentation_serializer="fictions.serializers.CollectionCardSerializer",
+    )
+    first_chapter = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="fictions.serializers.ChapterCardSerializer",
     )
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
@@ -168,6 +178,7 @@ class FictionSerializer(ListableModelSerializer):
             "series",
             "chapter_count",
             "review_count",
+            "first_chapter",
             "member_review_policy",
             "anonymous_review_policy",
         ]
