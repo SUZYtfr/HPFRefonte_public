@@ -308,5 +308,6 @@ class FictionTableOfContentsSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "storynote",
             "chapters",
         ]
