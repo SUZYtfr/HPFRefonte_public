@@ -282,6 +282,7 @@ class ChapterSerializer(ListableModelSerializer):
     def get_order(self, obj) -> int:
         return obj._order + 1  # index 0 -> 1
 
+
 class ChapterCardSerializer(serializers.ModelSerializer):
     """Sérialiseur de carte de chapitre"""
 
@@ -307,5 +308,6 @@ class FictionTableOfContentsSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "storynote",
             "chapters",
         ]
