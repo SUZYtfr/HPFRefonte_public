@@ -1,10 +1,13 @@
-from rest_framework import serializers
+from django.db import transaction
+from rest_framework import serializers, exceptions
 from drf_extra_fields import relations as extra_relations
 
 from .models import Fiction, Chapter, Collection
 from core.serializers import ListableModelSerializer
 from users.serializers import UserCardSerializer
+from images.models import ContentImage
 from images.serializers import ContentImageSerializer
+from characteristics.models import Characteristic, CharacteristicType
 
 
 class CollectionCardSerializer(serializers.ModelSerializer):
@@ -62,6 +65,37 @@ class CollectionSerializer(ListableModelSerializer):
             "modification_date",
         ]
         list_serializer_child_class = CollectionListSerializer
+
+
+class FirstChapterSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(
+        required=True,
+        write_only=True,
+    )
+    text_images = ContentImageSerializer(
+        many=True,
+        required=False,
+        write_only=True,
+    )
+
+    class Meta:
+        model = Chapter
+        fields = [
+            "id",
+            "title",
+            "startnote",
+            "endnote",
+            "text",
+            "text_images",
+        ]
+        extra_kwargs = {
+            "startnote": {
+                "write_only": True,
+            },
+            "endnote": {
+                "write_only": True,
+            },
+        }
 
 
 class FictionListSerializer(serializers.ModelSerializer):
@@ -127,7 +161,7 @@ class FictionSerializer(ListableModelSerializer):
 
     characteristics = extra_relations.PresentablePrimaryKeyRelatedField(
         many=True,
-        read_only=True,
+        queryset=Characteristic.objects.allowed(),
         presentation_serializer="characteristics.serializers.CharacteristicCardSerializer",
     )
     creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
@@ -135,15 +169,15 @@ class FictionSerializer(ListableModelSerializer):
         presentation_serializer="users.serializers.UserCardSerializer",
     )
     authors = serializers.SerializerMethodField()
+    # TODO - renommer franchement en collections, faire sauter read_only
     series = extra_relations.PresentablePrimaryKeyRelatedField(
         source="collections",
         many=True,
         read_only=True,
         presentation_serializer="fictions.serializers.CollectionCardSerializer",
     )
-    first_chapter = extra_relations.PresentablePrimaryKeyRelatedField(
-        read_only=True,
-        presentation_serializer="fictions.serializers.ChapterCardSerializer",
+    first_chapter = FirstChapterSerializer(
+        required=True,
     )
     member_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.member_review_policy")
     anonymous_review_policy = serializers.IntegerField(read_only=True, source="creation_user.preferences.anonymous_review_policy")
@@ -200,6 +234,80 @@ class FictionSerializer(ListableModelSerializer):
     def get_authors(self, obj):
         author = obj.creation_user
         return [UserCardSerializer(instance=author).data]
+
+    def validate_characteristics(self, value):
+        """
+        Valide les caractéristiques données pour la création de la fiction
+        
+        Compte le nombre de caractéristiques données dans chaque type de caractéristiques.
+        Compare ce compte avec les bornes de chaque type de caractéristiques.
+        """
+
+        characteristic_types = CharacteristicType.objects.open().values("id", "min_limit", "max_limit")
+        chartype_ids = [characteristic.characteristic_type_id for characteristic in set(value)]
+        chartype_counts = {chartype_id: chartype_ids.count(chartype_id) for chartype_id in set(chartype_ids)}
+
+        errors = []
+
+        for characteristic_type in characteristic_types:
+            characteristic_type_id = characteristic_type["id"]
+            chartype_count = chartype_counts.get(characteristic_type_id, 0)
+            min_limit = characteristic_type["min_limit"]
+            max_limit = characteristic_type["max_limit"] or float("inf")
+            if not (min_limit <= chartype_count <= max_limit):
+                errors.append(f"chartype {characteristic_type_id} : {chartype_count} occurences (min {min_limit}, max {max_limit})")
+
+        if errors:
+            errors = "\n".join(errors)
+            msg = f"Vérifier le nombre de caractéristiques :\n{errors}"
+            raise exceptions.ValidationError(msg)
+ 
+        return value
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Les infos du premier chapitre sont imbriquées"""
+
+        summary_images = validated_data.pop("summary_images", None)
+
+        first_chapter_validated_data = validated_data.pop("first_chapter")
+        text_images = first_chapter_validated_data.pop("text_images", None)
+        text = first_chapter_validated_data.pop("text")
+
+        fiction = super().create(validated_data)
+
+        if summary_images:
+            images = [
+                ContentImage(
+                    **_hpf_image,
+                    creation_user=validated_data["creation_user"],                
+                ) for _hpf_image in summary_images
+            ]
+            images = ContentImage.objects.bulk_create(images)
+            fiction.summary_images.set(images)
+        
+        chapter = Chapter(
+            fiction=fiction,
+            creation_user=fiction.creation_user,
+            **first_chapter_validated_data,
+        )
+        chapter.save()
+        chapter.create_text_version(
+            creation_user_id=chapter.creation_user_id,
+            text=text,
+        )
+
+        if text_images:
+            images = [
+                ContentImage(
+                    **_hpf_image,
+                    creation_user=validated_data["creation_user"],                
+                ) for _hpf_image in text_images
+            ]
+            images = ContentImage.objects.bulk_create(images)
+            chapter.text_images.set(images)
+
+        return fiction
 
 
 class FictionCardSerializer(serializers.ModelSerializer):

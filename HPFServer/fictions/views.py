@@ -53,7 +53,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = CollectionSerializer
     queryset = Collection.objects.order_by("-creation_date")
-    search_fields = ["title", "fictions__title", "summary", "fictions__summary"]
+    search_fields = ["title", "summary"]
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user)
@@ -78,7 +78,7 @@ class FictionViewSet(
         .order_by("-creation_date")
     )
     serializer_class = FictionSerializer
-    permission_classes = [IsAuthenticated & (IsCreationUser | IsFictionCoAuthor) | ReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = FictionFilterSet
 

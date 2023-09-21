@@ -5,7 +5,7 @@ app_name = "characteristics"
 
 characteristic_router = SimpleRouter()
 characteristic_router.register(r"characteristics", CharacteristicViewSet, basename="characteristic")
-characteristic_router.register(r"characteristic-types", CharacteristicTypeViewSet, basename="characteristictype")
+characteristic_router.register(r"characteristic-types", CharacteristicTypeViewSet, basename="characteristic-type")
 
 urlpatterns = characteristic_router.urls
 
