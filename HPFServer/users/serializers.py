@@ -15,7 +15,7 @@ from images.serializers import ContentImageSerializer
 class UserStatsSerializer(serializers.ModelSerializer):
     """Sérialiseur de statistiques d'utilisateur"""
 
-    review_drafts_left = serializers.SerializerMethodField()
+    # review_drafts_left = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -28,15 +28,15 @@ class UserStatsSerializer(serializers.ModelSerializer):
             "word_count",
             "comment_count",
             "review_reply_count",
-            "review_drafts_left",
+            # "review_drafts_left",
         ]
 
-    def get_review_drafts_left(self, obj) -> int:
-        if obj.has_perm("reviews.extra_review_drafts"):
-            base_drafts = settings.PREMIUM_MAX_REVIEW_DRAFTS
-        else:
-            base_drafts = settings.MEMBERS_MAX_REVIEW_DRAFTS
-        return base_drafts - obj.created_reviews.filter(draft=True).count()
+    # def get_review_drafts_left(self, obj) -> int:
+    #     if obj.has_perm("reviews.extra_review_drafts"):
+    #         base_drafts = settings.PREMIUM_MAX_REVIEW_DRAFTS
+    #     else:
+    #         base_drafts = settings.MEMBERS_MAX_REVIEW_DRAFTS
+    #     return base_drafts - obj.created_reviews.filter(draft=True).count()
 
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
