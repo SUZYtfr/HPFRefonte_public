@@ -2,7 +2,9 @@ import type { NuxtConfig } from "@nuxt/types";
 import { instanceToPlain } from "class-transformer";
 
 const config: NuxtConfig = {
+  bridge: false,
   build: {
+    transpile: ["defu"],
     loaders: {
       vue: {
         compiler: require("vue-template-babel-compiler")
@@ -13,6 +15,11 @@ const config: NuxtConfig = {
     extractCSS: process.env.NODE_ENV === "production",
     optimizeCSS: process.env.NODE_ENV === "production",
     extend(config2, ctx) {
+      if (ctx.isServer === false) {
+        config2.node = {
+          fs: "empty"
+        };
+      }
       if (ctx.isDev) {
         config2.devtool = ctx.isClient ? "source-map" : "inline-source-map";
       }
