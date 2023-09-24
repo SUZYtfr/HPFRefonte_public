@@ -7,6 +7,9 @@ from core.management.utils.samples import (
     sample_chapter,
     sample_news,
     sample_comment,
+    sample_collection_review,
+    sample_fiction_review,
+    sample_chapter_review,
     format_editor_content,
 )
 from core.text_functions import count_words
@@ -211,6 +214,81 @@ class TestSampleFunctions(TestCase):
 
         self.assertDictContainsSubset(test_data, vars(news_comment))
         self.assertEqual(format_editor_content(test_text), news_comment.text)
+
+    def test_basic_collection_review_sample(self):
+        collection_review = sample_collection_review()
+
+        self.assertIsNotNone(collection_review)
+    
+    def test_advanced_collection_review_sample(self):
+        collection = sample_collection()
+        collection_review = sample_collection_review()
+        test_text = "test text"
+
+        test_data = {
+            "creation_user_id": self.random_user_id,
+            "collection_id": collection.id,
+            "grading": 5,
+            "is_draft": True,
+        }
+
+        collection_review = sample_collection_review(
+            text=test_text,
+            **test_data,
+        )
+
+        self.assertDictContainsSubset(test_data, vars(collection_review))
+        self.assertEqual(test_text, collection_review.text)
+
+    def test_basic_fiction_review_sample(self):
+        fiction_review = sample_fiction_review()
+
+        self.assertIsNotNone(fiction_review)
+    
+    def test_advanced_fiction_review_sample(self):
+        fiction = sample_fiction()
+        fiction_review = sample_fiction_review()
+        test_text = "test text"
+
+        test_data = {
+            "creation_user_id": self.random_user_id,
+            "fiction_id": fiction.id,
+            "grading": 5,
+            "is_draft": True,
+        }
+
+        fiction_review = sample_fiction_review(
+            text=test_text,
+            **test_data,
+        )
+
+        self.assertDictContainsSubset(test_data, vars(fiction_review))
+        self.assertEqual(test_text, fiction_review.text)
+
+    def test_basic_chapter_review_sample(self):
+        chapter_review = sample_chapter_review()
+
+        self.assertIsNotNone(chapter_review)
+    
+    def test_advanced_chapter_review_sample(self):
+        chapter = sample_chapter()
+        chapter_review = sample_chapter_review()
+        test_text = "test text"
+
+        test_data = {
+            "creation_user_id": self.random_user_id,
+            "chapter_id": chapter.id,
+            "grading": 5,
+            "is_draft": True,
+        }
+
+        chapter_review = sample_chapter_review(
+            text=test_text,
+            **test_data,
+        )
+
+        self.assertDictContainsSubset(test_data, vars(chapter_review))
+        self.assertEqual(test_text, chapter_review.text)
 
     @classmethod
     def tearDownClass(cls) -> None:

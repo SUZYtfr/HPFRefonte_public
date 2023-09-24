@@ -1,16 +1,29 @@
 from django.utils import timezone
 from django.db.models import F
-from rest_framework import viewsets, response, decorators, mixins, permissions
+from django.conf import settings
+from rest_framework import (
+    viewsets,
+    response,
+    decorators,
+    mixins,
+    permissions,
+    status,
+)
 from django_filters import rest_framework as filters
 
+from core.pagination import CurrentPagePagination
 from users.models import UserPreferences
-from reviews.utils import can_post_reviews, can_see_reviews
 from reviews.serializers import (
-    ChapterReviewSerializer,
     FictionReviewSerializer,
+    ChapterReviewSerializer,
+    CollectionReviewSerializer,
 )
 
-from .models import Collection, Fiction, Chapter
+from .models import (
+    Collection,
+    Fiction,
+    Chapter,
+)
 from .enums import ChapterValidationStage
 from .serializers import (
     CollectionSerializer,
@@ -21,11 +34,8 @@ from .serializers import (
 from .permissions import (
     IsAuthenticated,
     ReadOnly,
-    IsCreationUser,
-    IsFictionCoAuthor,
     IsParentFictionCreationUser,
     IsParentFictionCoAuthor,
-    HasStaffValidation,
 )
 from .filters import FictionFilterSet
 
@@ -60,6 +70,27 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user)
+
+    @decorators.action(
+        detail=True,
+        methods=["POST", "GET"],
+        url_path="reviews",
+        serializer_class=CollectionReviewSerializer,
+    )
+    def manage_reviews(self, request, *args, **kwargs):
+        collection = self.get_object()
+
+        if request.method == "POST":
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(collection=collection)
+            return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            published_reviews = collection.reviews.published()
+            paginated_reviews = self.paginate_queryset(published_reviews)
+            serializer = self.get_serializer(paginated_reviews, many=True)
+            paginated_serializer = self.get_paginated_response(data=serializer.data)
+            return response.Response(data=paginated_serializer.data)
 
 
 class FictionViewSet(
@@ -113,25 +144,24 @@ class FictionViewSet(
 
     @decorators.action(
         detail=True,
-        methods=["GET", "POST"],
+        methods=["POST", "GET"],
         url_path="reviews",
         serializer_class=FictionReviewSerializer,
-        permission_classes=[IsAuthenticated | ReadOnly],
     )
     def manage_reviews(self, request, *args, **kwargs):
         fiction = self.get_object()
+
         if request.method == "POST":
-            if not can_post_reviews(fiction, request.user):
-                raise
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(creation_user=self.request.user, fiction=fiction)
-            return response.Response(data=serializer.validated_data)
+            serializer.save(fiction=fiction)
+            return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            reviews = fiction.reviews.published() if can_see_reviews(fiction, request.user) else fiction.reviews.none()
-            paginated_reviews = self.paginate_queryset(reviews)
+            published_reviews = fiction.reviews.published()
+            paginated_reviews = self.paginate_queryset(published_reviews)
             serializer = self.get_serializer(paginated_reviews, many=True)
-            return response.Response(data=serializer.data)
+            paginated_serializer = self.get_paginated_response(data=serializer.data)
+            return response.Response(data=paginated_serializer.data)
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
@@ -182,3 +212,24 @@ class ChapterViewSet(viewsets.ModelViewSet):
             modification_user=self.request.user,
             modification_date=timezone.now(),
         )
+
+    @decorators.action(
+        detail=True,
+        methods=["POST", "GET"],
+        url_path="reviews",
+        serializer_class=ChapterReviewSerializer,
+    )
+    def manage_reviews(self, request, *args, **kwargs):
+        chapter = self.get_object()
+
+        if request.method == "POST":
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(chapter=chapter)
+            return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            published_reviews = chapter.reviews.published()
+            paginated_reviews = self.paginate_queryset(published_reviews)
+            serializer = self.get_serializer(paginated_reviews, many=True)
+            paginated_serializer = self.get_paginated_response(data=serializer.data)
+            return response.Response(data=paginated_serializer.data)

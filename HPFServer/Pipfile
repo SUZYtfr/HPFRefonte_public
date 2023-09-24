@@ -16,6 +16,8 @@ docx2python = "*"
 django-ordered-model = "*"
 drf-extra-fields = "*"
 psycopg2 = "*"
+django-mptt = "*"
+djangorestframework-recursive = "*"
 
 [dev-packages]
 faker = "*"

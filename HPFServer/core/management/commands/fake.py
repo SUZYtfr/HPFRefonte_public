@@ -6,7 +6,9 @@ from core.management.utils.samples import (
     sample_chapter,
     sample_news,
     sample_comment,
+    sample_collection_review,
     sample_fiction_review,
+    sample_chapter_review,
 )
 
 
@@ -24,7 +26,17 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "model",
-            choices=["users", "collections", "fictions", "chapters", "news", "comments", "fictionreviews"],
+            choices=[
+                "users",
+                "collections",
+                "fictions",
+                "chapters",
+                "news",
+                "comments",
+                "collection-reviews",
+                "fiction-reviews",
+                "chapter-reviews",
+            ],
             type=str,
             metavar="MODÈLE",
             help="Modèle à générer"
@@ -62,7 +74,9 @@ class Command(BaseCommand):
             "chapters": (sample_chapter, "fiction_id"),
             "news": (sample_news, None),
             "comments": (sample_comment, "newsarticle_id"),
-            "fictionreviews": (sample_fiction_review, "fiction_id"),
+            "collection-reviews": (sample_collection_review, "collection_id"),
+            "fiction-reviews": (sample_fiction_review, "fiction_id"),
+            "chapter-reviews": (sample_chapter_review, "chapter_id"),
         }
 
         model = options["model"]

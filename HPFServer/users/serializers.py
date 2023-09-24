@@ -113,14 +113,28 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserCardSerializer(serializers.ModelSerializer):
-    """Sérialiseur du lien vers une présentation d'utilisateur"""
-
+    """
+    Sérialiseur du lien vers une présentation d'utilisateur
+    
+    Comme on veut seulement la photo de profil en plus, sans le reste du profil,
+    un sérialiseur imbriqué fait l'intermédiaire.
+    """
+    
     class Meta:
         model = User
         fields = [
             "id",
             "username",
+            "profile",
         ]
+    
+    class UserProfilePictureSerializer(serializers.Serializer):
+        profile_picture = extra_fields.Base64ImageField(
+            source="profile_picture.src_path",
+            allow_null=True,
+        )
+
+    profile = UserProfilePictureSerializer()
 
 
 class UserListSerializer(serializers.ModelSerializer):

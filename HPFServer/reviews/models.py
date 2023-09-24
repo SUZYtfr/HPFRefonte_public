@@ -1,12 +1,14 @@
-from django.db import models, utils, transaction
+from django.db import models, transaction
 from django.utils import timezone
-from django.conf import settings
 from django.core import validators
+from mptt import models as mptt_models
 
-from core.models import DatedModel, CreatedModel, TextDependentModel, BaseTextVersionModel
-from core.utils import get_moderation_account
-
-from users.models import User
+from core.models import (
+    DatedModel,
+    CreatedModel,
+    TextDependentModel,
+    BaseTextVersionModel,
+)
 from fictions.models import (
     Fiction,
     Chapter,
@@ -17,28 +19,37 @@ MIN_GRADING_VALUE = 1
 MAX_GRADING_VALUE = 10
 
 
+'''
 def check_draft_permission(creation_user):
     """Vérifie la permission de brouillon de l'utilisateur"""
 
-    draft_number = creation_user.created_reviews.filter(draft=True).count()
+    draft_number = creation_user.created_reviews.filter(is_draft=True).count()
     if creation_user.has_perm("extra_review_drafts"):
         if draft_number >= settings.PREMIUM_MAX_REVIEW_DRAFTS:
             raise PermissionError("Cet adhérent a atteint son nombre de brouillons de reviews maximal autorisé.")
     else:
         if draft_number >= settings.MEMBERS_MAX_REVIEW_DRAFTS:
             raise PermissionError("Ce membre a atteint son nombre de brouillons de reviews maximal autorisé.")
+'''
 
 
-class ReviewManager(models.Manager):
+class ReviewManager(mptt_models.TreeManager):
     @transaction.atomic
     def create(self, creation_user, text, **extra_fields):
-        if self.filter(creation_user=creation_user).exists():
-            raise utils.IntegrityError
-        instance = self.model(creation_user=creation_user, **extra_fields)
+        # if self.filter(creation_user=creation_user).exists():
+        #     raise utils.IntegrityError
+        instance = self.model(
+            creation_user=creation_user,
+            **extra_fields
+        )
         instance.save()
-        instance.text = text
+        instance.versions.create(
+            creation_user=creation_user,
+            text=text,
+        )
         return instance
-
+    
+    '''
     def create_anonymous(self, email, **extra_fields):
         creation_user = User.objects.filter(email=email).first()
         if creation_user:
@@ -47,15 +58,51 @@ class ReviewManager(models.Manager):
         else:
             creation_user = User.objects.create_anonymous_user(email, **extra_fields)
         return self.create(creation_user=creation_user, **extra_fields)
-
+    '''
+        
     def published(self):
-        return self.filter(draft=False)
+        return self.filter(is_draft=False)
 
 
-class Review(DatedModel, CreatedModel, TextDependentModel):
-    """Modèle de review"""
+class Review(mptt_models.MPTTModel, DatedModel, CreatedModel):
+    """
+    Modèle abstrait de review et réponse à review
+    
+    Ce modèle abstrait ordonne les reviews et réponses à reviews les unes aux autres
+    en arborescence à l'aide de la technique MPTT :
+    https://django-mptt.readthedocs.io/en/latest/index.html
+    Ce modèle abstrait comporte les champs communs à tous les types de reviews.
+    Il est concrétisé par les types particuliers de reviews qui ajoutent le lien
+    vers la ressource en question (fiction, chapitre, série).
+    Chaque type de review (et réponse à review) a donc sa propre table ainsi que sa
+    propre table de versions de texte associée, ce qui permet de pouvoir le
+    différencier des autres dans le futur, par exemple en rajoutant un champ
+    spécifique à ce type de review.
+    Les modèles concrets introduisent deux contraintes :
+    - Une review (de premier niveau) peut contenir une note mais pas un lien vers
+      une review parente ; réciproquement, une réponse à review doit comporter un 
+      lien vers un parent, mais pas une note.
+      Contrainte : (NOT (level>0 AND grading NOT NULL))
+    - Une réponse à review (de niveau supérieur) ne peut contenir un lien vers une 
+      ressource (fiction, chapitre, série), et vers un parent.
+      Cela permet de récupérer facilement les reviews de premier niveau depuis la 
+      ressource en question (ex. fiction.reviews.all()) plutôt que de devoir les
+      filtrer, et accentue la distinction entre review et réponse à review pour 
+      éviter la confusion par exemple d'une review et de sa réponse ne portant 
+      accidentellement pas sur la même ressource).
+      Contrainte : (level>0 XOR fiction NULL)
+    """
 
-    draft = models.BooleanField(
+    class Meta:
+        abstract = True
+
+    parent = mptt_models.TreeForeignKey(
+        to="self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    is_draft = models.BooleanField(
         verbose_name="brouillon",
         default=True,
     )
@@ -69,145 +116,163 @@ class Review(DatedModel, CreatedModel, TextDependentModel):
         ]
     )
 
-    class Meta:
-        permissions = [
-            ("can_post_review_as_staff", "Peut publier une review avec le compte de modération"),
-            ("extra_review_drafts", "Peut sauvegarder plus de brouillons de reviews")
-        ]
-
-    def __str__(self):
-        return self.with_scale
+    @property
+    def reply_count(self) -> int:
+        return self.get_descendant_count()
 
     @property
-    def reply_count(self):
-        return self.replies.count()
-
-    @property
-    def with_scale(self):
+    def with_scale(self) -> str:
         """Renvoie la notation suivie de la mesure de notation"""
 
         return f"{str(self.grading or '-')}/10"
 
-    # def create_text_version(self, creation_user, text, touch=True):
-    #     """Crée une nouvelle version du texte de review par l'utilisateur passé"""
-    #
-    #     version = ReviewTextVersion.objects.create(
-    #         review=self,
-    #         text=text,
-    #         creation_user=creation_user,
-    #         creation_date=timezone.now(),
-    #     )
-    #     version.save()
-    #
-    #     if touch:  # à utiliser en cas de modification
-    #         self.save()
+    def create_text_version(self, text: str, creation_user_id: int = None, touch: bool = True):
+        """Crée une nouvelle version du texte de review par l'utilisateur passé"""
+    
+        version = self.versions.create(
+            text=text,
+            creation_user_id=creation_user_id or self.creation_user_id,
+            creation_date=timezone.now(),
+        )
+        version.save()
+    
+        if touch:  # à utiliser en cas de modification
+            self.save()
 
     @property
-    def text(self):
-        if version := self.versions.first():
-            return version.text
-        return None
+    def text(self) -> str:
+        latest_version = self.versions.latest("creation_date")
+        return getattr(latest_version, "text", "")
 
-    @text.setter
-    def text(self, text):
-        if self.text != text:
-            version = ReviewTextVersion.objects.create(
-                review=self,
-                text=text,
-                creation_user=self.modification_user or self.creation_user,
-            )
-            version.save()
+    def __str__(self) -> str:
+        subtype = "review" if self.get_level() <= 0 else "réponse"
+        return f"« {self.text[:50]} » ({subtype})"
 
 
-class ReviewReply(DatedModel, CreatedModel):
-    """Modèle de réponse à review"""
-
-    review = models.ForeignKey(
-        verbose_name="review",
-        related_name="replies",
-        to=Review,
-        null=True,
-        on_delete=models.CASCADE,
-        editable=True,
-    )
-    parent = models.ForeignKey(
-        verbose_name="parent",
-        to="self", null=True,
-        related_name="replies",
-        on_delete=models.CASCADE,
-        editable=True,
-    )
-    text = models.TextField(
-        verbose_name="texte",
-        blank=False,
-    )
-
+class FictionReview(Review, TextDependentModel):
     class Meta:
-        verbose_name = "réponse à review"
-        verbose_name_plural = "réponses à reviews"
+        abstract = False
+        verbose_name = "review de fiction"
+        verbose_name_plural = "reviews de fictions"
+        constraints = [
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
+                check=~models.Q(level__gt=0, grading__isnull=False),
+            ),
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_leaf_xor_fiction_null",
+                check=models.Q(level__gt=0) ^ models.Q(fiction__isnull=False),
+            ),
+        ]
+    
+    objects = ReviewManager()
 
-    def __str__(self):
-        return self.text[:50]
-
-
-class FictionReview(Review):
     fiction = models.ForeignKey(
         to=Fiction,
         on_delete=models.CASCADE,
-        verbose_name="fiction",
+        null=True,
+        blank=True,
         related_name="reviews",
         editable=True,
     )
 
+
+class ChapterReview(Review, TextDependentModel):
     class Meta:
-        verbose_name = "review de fiction"
-        verbose_name_plural = "reviews de fictions"
+        verbose_name = "review de chapitre"
+        verbose_name_plural = "reviews de chapitres"
+        constraints = [
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
+                check=~models.Q(level__gt=0, grading__isnull=False),
+            ),
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_leaf_xor_chapter_null",
+                check=models.Q(level__gt=0) ^ models.Q(chapter__isnull=False),
+            ),
+        ]
 
     objects = ReviewManager()
 
-
-class ChapterReview(Review):
     chapter = models.ForeignKey(
         to=Chapter,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         verbose_name="chapitre",
         related_name="reviews",
         editable=True,
     )
 
-    class Meta:
-        verbose_name = "review de chapitre"
-        verbose_name_plural = "reviews de chapitres"
 
+class CollectionReview(Review, TextDependentModel):
+    class Meta:
+        verbose_name = "review de série"
+        verbose_name_plural = "reviews de séries"
+        constraints = [
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
+                check=~models.Q(level__gt=0, grading__isnull=False),
+            ),
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_leaf_xor_collection_null",
+                check=models.Q(level__gt=0) ^ models.Q(collection__isnull=False),
+            ),
+        ]
+    
     objects = ReviewManager()
 
-
-class CollectionReview(Review):
     collection = models.ForeignKey(
         to=Collection,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         verbose_name="série",
         related_name="reviews",
         editable=True,
     )
 
-    class Meta:
-        verbose_name = "review de série"
-        verbose_name_plural = "reviews de séries"
 
-
-class ReviewTextVersion(BaseTextVersionModel):
-    """Modèle de version de texte de review"""
+class FictionReviewTextVersion(BaseTextVersionModel):
+    """Modèle de version de texte de review de fiction"""
 
     class Meta:
-        verbose_name = "version de texte de review"
-        verbose_name_plural = "versions de textes de reviews"
+        verbose_name = "version de texte de review de fiction"
+        verbose_name_plural = "versions de textes de reviews de fictions"
 
     review = models.ForeignKey(
-        verbose_name="review",
         editable=True,
         related_name="versions",
-        to="reviews.Review",
+        to="reviews.FictionReview",
         on_delete=models.CASCADE,
     )
 
+
+class ChapterReviewTextVersion(BaseTextVersionModel):
+    """Modèle de version de texte de review de chapitre"""
+
+    class Meta:
+        verbose_name = "version de texte de review de chapitre"
+        verbose_name_plural = "versions de textes de reviews de chapitres"
+
+    review = models.ForeignKey(
+        editable=True,
+        related_name="versions",
+        to="reviews.ChapterReview",
+        on_delete=models.CASCADE,
+    )
+
+
+class CollectionReviewTextVersion(BaseTextVersionModel):
+    """Modèle de version de texte de review de série"""
+
+    class Meta:
+        verbose_name = "version de texte de review de série"
+        verbose_name_plural = "versions de textes de reviews de séries"
+
+    review = models.ForeignKey(
+        editable=True,
+        related_name="versions",
+        to="reviews.CollectionReview",
+        on_delete=models.CASCADE,
+    )

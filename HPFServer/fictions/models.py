@@ -29,7 +29,7 @@ class FictionQuerySet(models.QuerySet):
 
         average = models.Sum(
             "reviews__grading",
-            filter=models.Q(reviews__draft=False),
+            filter=models.Q(reviews__is_draft=False),
         ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
@@ -66,7 +66,7 @@ class FictionQuerySet(models.QuerySet):
         review_count = models.Count(
             "reviews",
             distinct=True,
-            filter=models.Q(reviews__draft=False),
+            filter=models.Q(reviews__is_draft=False),
         )
 
         return self.annotate(
@@ -178,7 +178,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
     @property
     def published_reviews(self):
-        return self.reviews.filter(draft=False)
+        return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 
     @property
@@ -308,7 +308,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
     @property
     def published_reviews(self):
-        return self.reviews.filter(draft=False)
+        return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 
     @property
@@ -458,7 +458,7 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
 
     @property
     def published_reviews(self):
-        return self.reviews.filter(draft=False)
+        return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 
     @property

@@ -1,35 +1,109 @@
+from django import forms
 from django.contrib import admin
+from mptt import admin as mptt_admin
+
 from core.admin import BaseAdminPage
-from reviews.models import Review, ReviewReply
+from reviews.models import (
+    FictionReview,
+    ChapterReview,
+    CollectionReview,
+)
 
 
-class ReviewAdminAccess(BaseAdminPage):
-    """Accès d'administration aux reviews"""
+class TextFieldMixin:
+    def get_form(self, request, obj, change, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        if change:
+            form.base_fields["text"].initial = obj.text
+        return form
 
-    list_display = ("id", "creation_user", "creation_date", "grading")
-    fields = ("creation_user", "creation_date", "grading", "work",)
-    readonly_fields = ("creation_user", "creation_date", "creation_date", "work",)
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
 
-    def work(self, obj):
-        return obj.work
-    work.short_description = "sur"
-
-    def depend_on(self, obj):
-        return getattr(obj, "review") or getattr(obj, "parent")
-    depend_on.short_description = "répond à"
-
-
-class ReviewReplyAdminAccess(BaseAdminPage):
-    """Accès d'administration aux réponses à reviews"""
-
-    list_display = ("id", "text", "creation_user",)
-    fields = ("text", "creation_user", "depend_on",)
-    readonly_fields = ("creation_user", "depend_on",)
-
-    def depend_on(self, obj):
-        return getattr(obj, "review") or getattr(obj, "parent")
-    depend_on.short_description = "répond à"
+        text = form.cleaned_data.get("text")
+        if not change or (change and text != obj.text):
+            obj.versions.create(
+                text=text,
+                creation_user_id=request.user.id,
+            )
 
 
-# admin.site.register(Review, ReviewAdminAccess)
-# admin.site.register(ReviewReply, ReviewReplyAdminAccess)
+class FictionReviewForm(forms.ModelForm):
+    text = forms.fields.CharField(
+        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+        label="Dernière version"
+    )
+
+    class Meta:
+        model = FictionReview
+        fields = ["text"]
+
+
+class ChapterReviewForm(forms.ModelForm):
+    text = forms.fields.CharField(
+        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+        label="Dernière version"
+    )
+
+    class Meta:
+        model = ChapterReview
+        fields = ["text"]
+
+
+class CollectionReviewForm(forms.ModelForm):
+    text = forms.fields.CharField(
+        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+        label="Dernière version"
+    )
+
+    class Meta:
+        model = CollectionReview
+        fields = ["text"]
+
+
+@admin.register(FictionReview)
+class FictionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+    """Accès d'administration aux reviews et réponses à reviews de fictions"""
+
+    mptt_indent_field = "__str__"
+    list_display = ("id", "__str__", "fiction", "creation_user", "creation_date", "grading", "reply_count")
+    fieldsets = [
+        (None, {
+            "fields": ("fiction", "grading", "parent", "is_draft", "text"),
+        }),
+    ]
+    autocomplete_fields = ["fiction", "parent"]
+    search_fields = ["fiction", "parent"]
+    form = FictionReviewForm
+
+
+@admin.register(ChapterReview)
+class ChapterReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+    """Accès d'administration aux reviews et réponses à reviews de chapitres"""
+
+    mptt_indent_field = "__str__"
+    list_display = ("id", "__str__", "chapter", "creation_user", "creation_date", "grading", "reply_count")
+    fieldsets = [
+        (None, {
+            "fields": ("chapter", "grading", "parent", "is_draft", "text"),
+        }),
+    ]
+    autocomplete_fields = ["chapter", "parent"]
+    search_fields = ["chapter", "parent"]
+    form = ChapterReviewForm
+
+
+@admin.register(CollectionReview)
+class CollectionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+    """Accès d'administration aux reviews et réponses à reviews de séries"""
+
+    mptt_indent_field = "__str__"
+    list_display = ("id", "__str__", "collection", "creation_user", "creation_date", "grading", "reply_count")
+    fieldsets = [
+        (None, {
+            "fields": ("collection", "grading", "parent", "is_draft", "text"),
+        }),
+    ]
+    autocomplete_fields = ["collection", "parent"]
+    search_fields = ["collection", "parent"]
+    form = CollectionReviewForm

@@ -56,6 +56,14 @@ def get_random_characteristic_type() -> CharacteristicType:
         return sample_characteristic_type()
 
 
+def get_random_characteristic() -> Characteristic:
+    characteristics = Characteristic.objects.all()
+    if characteristics.count() > 0:
+        return french_faker.random_element(characteristics)
+    else:
+        return sample_characteristic()
+
+
 def get_random_user() -> User | None:
     return User.objects.exclude(pk__lte=0).order_by("?").first()
 
@@ -242,12 +250,56 @@ def sample_fiction_review(**kwargs) -> FictionReview:
     fiction_review = FictionReview.objects.create(
         fiction_id=fiction_id,
         creation_user=creation_user,
-        draft=kwargs.pop("draft", False),
+        is_draft=kwargs.pop("is_draft", False),
         grading=kwargs.pop("grading", None) or french_faker.random_int(min=1, max=10),
         text=kwargs.pop("text", None) or french_faker.paragraph(2),
         **kwargs,
     )
     return fiction_review
+
+
+def sample_chapter_review(**kwargs) -> ChapterReview:
+    if chapter_id := kwargs.pop("chapter_id", None):
+        pass
+    else:
+        chapter_id = sample_chapter().id
+
+    if creation_user_id := kwargs.pop("creation_user_id", None):
+        creation_user = User.objects.get(id=creation_user_id)
+    else:
+        creation_user = get_random_user()
+
+    chapter_review = ChapterReview.objects.create(
+        chapter_id=chapter_id,
+        creation_user=creation_user,
+        is_draft=kwargs.pop("is_draft", False),
+        grading=kwargs.pop("grading", None) or french_faker.random_int(min=1, max=10),
+        text=kwargs.pop("text", None) or french_faker.paragraph(2),
+        **kwargs,
+    )
+    return chapter_review
+
+
+def sample_collection_review(**kwargs) -> CollectionReview:
+    if collection_id := kwargs.pop("collection_id", None):
+        pass
+    else:
+        collection_id = sample_collection().id
+
+    if creation_user_id := kwargs.pop("creation_user_id", None):
+        creation_user = User.objects.get(id=creation_user_id)
+    else:
+        creation_user = get_random_user()
+
+    collection_review = CollectionReview.objects.create(
+        collection_id=collection_id,
+        creation_user=creation_user,
+        is_draft=kwargs.pop("is_draft", False),
+        grading=kwargs.pop("grading", None) or french_faker.random_int(min=1, max=10),
+        text=kwargs.pop("text", None) or french_faker.paragraph(2),
+        **kwargs,
+    )
+    return collection_review
 
 
 def sample_news(**kwargs) -> NewsArticle:
