@@ -210,6 +210,8 @@ ANONYMOUS_ACCOUNT = {
     "username": "",
     "email": "anonyme@hpf.fr",
 }
+# TODO faire des trigger warnings une table à part
+TW_CHARTYPE_ID = 4
 
 BANNER_MAX_SIZE = (468, 60)  # (largeur, hauteur)
 MEMBERS_MAX_REVIEW_DRAFTS = 2

@@ -134,7 +134,7 @@ class ChapterAdminPage(BaseAdminPage):
     search_fields = ["title"]
     fieldsets = [
         (None, {
-            "fields": ("fiction", "title", "startnote", "endnote", "validation_status", "read_count", "text"),
+            "fields": ("fiction", "title", "startnote", "endnote", "validation_status", "read_count", "text", "trigger_warnings"),
         }),
         ("Statistiques", {
             "fields": ("average", "word_count"),

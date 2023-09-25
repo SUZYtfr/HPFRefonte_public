@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from ordered_model import models as ordered_models
@@ -77,6 +78,12 @@ class FictionQuerySet(models.QuerySet):
 class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de fiction"""
 
+    objects = FictionQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = "fiction"
+        ordering = ["-creation_date"]
+
     title = models.CharField(
         verbose_name="titre",
         max_length=200,
@@ -120,8 +127,6 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         to="images.ContentImage",
         related_name="fiction_summaries",
     )
-
-    objects = FictionQuerySet.as_manager()
 
     def __str__(self):
         return self.title
@@ -215,10 +220,6 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         if self.id:
             super().delete(using, keep_parents)
 
-    class Meta:
-        verbose_name = "fiction"
-        ordering = ["-creation_date"]
-
 
 class ChapterQuerySet(models.QuerySet):
     def with_word_counts(self):
@@ -259,6 +260,8 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     class InvalidChapterAction(Exception):
         message = "Cette action est invalide."
 
+    objects = ChapterQuerySet.as_manager()
+
     title = models.CharField(
         verbose_name="titre",
         max_length=250,
@@ -292,13 +295,17 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         choices=ChapterValidationStage.choices,
         default=ChapterValidationStage.DRAFT,
     )
+    # TODO faire des trigger warnings une table à part
+    trigger_warnings = models.ManyToManyField(
+        verbose_name="avertissements",
+        to="characteristics.Characteristic",
+        limit_choices_to={"characteristic_type": settings.TW_CHARTYPE_ID},
+    )
 
     text_images = models.ManyToManyField(
         to="images.ContentImage",
         related_name="chapter_text_images",
     )
-
-    objects = ChapterQuerySet.as_manager()
 
     def __str__(self):
         return self.title
@@ -456,6 +463,9 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         default=CollectionAccess.CLOSED,
     )
 
+    def __str__(self) -> str:
+        return self.title
+
     @property
     def published_reviews(self):
         return self.reviews.filter(is_draft=False)
@@ -483,9 +493,6 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
 
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
-
-    def __str__(self) -> str:
-        return self.title
 
 
 class CollectionItem(ordered_models.OrderedModel):
@@ -541,12 +548,12 @@ class CollectionItem(ordered_models.OrderedModel):
 
     order_with_respect_to = "parent"  # NOTE - django-ordered-model nécessite que ce paramètre se trouve sur le modèle et non dans Meta
 
+    def __str__(self) -> str:
+        return f"Élément n°{self.position} de la série {str(self.parent)}"
+
     @property
     def position(self) -> int | None:
         if self.order is not None:
             return self.order + 1
         else:
             return None
-
-    def __str__(self) -> str:
-        return f"Élément n°{self.position} de la série {str(self.parent)}"

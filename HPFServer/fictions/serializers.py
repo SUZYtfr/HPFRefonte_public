@@ -77,6 +77,11 @@ class FirstChapterSerializer(serializers.ModelSerializer):
         required=False,
         write_only=True,
     )
+    trigger_warnings = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        presentation_serializer="characteristics.serializers.CharacteristicSerializer",
+        queryset=Characteristic.objects.filter(characteristic_type_id=4),
+    )
 
     class Meta:
         model = Chapter
@@ -87,6 +92,7 @@ class FirstChapterSerializer(serializers.ModelSerializer):
             "endnote",
             "text",
             "text_images",
+            "trigger_warnings",
         ]
         extra_kwargs = {
             "startnote": {
@@ -286,12 +292,14 @@ class FictionSerializer(ListableModelSerializer):
             images = ContentImage.objects.bulk_create(images)
             fiction.summary_images.set(images)
         
+        trigger_warnings = first_chapter_validated_data.pop("trigger_warnings", None)
         chapter = Chapter(
             fiction=fiction,
             creation_user=fiction.creation_user,
             **first_chapter_validated_data,
         )
         chapter.save()
+        chapter.trigger_warnings.set(trigger_warnings)
         chapter.create_text_version(
             creation_user_id=chapter.creation_user_id,
             text=text,
@@ -337,7 +345,11 @@ class ChapterSerializer(ListableModelSerializer):
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
-    
+    trigger_warnings = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        presentation_serializer="characteristics.serializers.CharacteristicSerializer",
+        queryset=Characteristic.objects.filter(characteristic_type_id=4),
+    )
     text_images = ContentImageSerializer(
         many=True,
         required=False,
@@ -372,6 +384,7 @@ class ChapterSerializer(ListableModelSerializer):
             "average",
             "text",
             "text_images",
+            "trigger_warnings",
             # "member_review_policy",
             # "anonymous_review_policy",
         ]
@@ -400,6 +413,7 @@ class ChapterCardSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "order",
+            "trigger_warnings",
         ]
 
 

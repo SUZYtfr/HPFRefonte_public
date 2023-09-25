@@ -172,7 +172,10 @@ class TestFictionsAPI(APITestCase):
                         "display_height": 250,
                         "display_width": 250
                     }
-                ]
+                ],
+                "trigger_warnings": [
+                    159,
+                ],
             }
         }
 
