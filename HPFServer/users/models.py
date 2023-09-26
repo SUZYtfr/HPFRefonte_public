@@ -9,7 +9,13 @@ from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterTextVersion
 from images.models import ProfilePicture, Banner, ContentImage
 from images.enums import BannerType
-from .enums import Gender, WebsiteType
+from .enums import (
+    Gender,
+    WebsiteType,
+    ReviewPolicy,
+    ColorScheme,
+    Sort,
+)
 
 
 class UserQuerySet(models.QuerySet):
@@ -77,6 +83,15 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Modèle d'utilisateur"""
 
+    class Meta:
+        verbose_name = "utilisateur·ice"
+        verbose_name_plural = "utilisateur·ice·s"
+        permissions = [
+            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
+        ]
+
+    objects = UserManager()
+
     # NOTE : username laissé NULL pour les comptes anonymes
     # blank=False permet d'obliger l'UI à demander ces infos : seul le moteur peut créer des comptes anonymes
     username = models.CharField(
@@ -121,8 +136,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         editable=True,
     )
 
-    objects = UserManager()
-
     # Il faut définir "à la main" quel champ est utilisé comme identifiant
     # La définition du champ "email" n'est pas nécessaire, mais on n'est jamais trop prudent
     # La définition de REQUIRED_FIELDS est nécessaire pour la création d'un superutilisateur via shell
@@ -131,12 +144,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
 
-    class Meta:
-        verbose_name = "utilisateur·ice"
-        verbose_name_plural = "utilisateur·ice·s"
-        permissions = [
-            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
-        ]
+    def __str__(self):
+        return self.username
 
     @property
     def profile(self):
@@ -145,9 +154,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def preferences(self):
         return getattr(self, "user_preferences", None)
-
-    def __str__(self):
-        return self.username
 
     @property
     def read_count(self) -> int:
@@ -254,6 +260,11 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(DatedModel):  # TODO - renverser le O2O
+    class Meta:
+        verbose_name = "profil"
+    
+    objects = UserProfileManager()
+    
     user = models.OneToOneField(
         to=User,
         on_delete=models.CASCADE,
@@ -306,11 +317,10 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         blank=True,
         default="",
     )
-
-    objects = UserProfileManager()
-
-    class Meta:
-        verbose_name = "profil"
+    age_consent = models.BooleanField(
+        verbose_name="accès au contenu +18 ans",
+        default=False,
+    )
 
     def __str__(self) -> str:
         return f"Profil de {str(self.user)}"
@@ -351,13 +361,16 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         )
 
 
-class UserPreferences(models.Model):  # TODO - renverser le O2O
-    class ReviewPolicy(models.IntegerChoices):
-        OFF = 0, "désactivé"
-        WRITE_TEXT = 1, "écriture de review"
-        SEE_TEXT = 2, "affichage de texte"  # + écriture
-        WRITE_GRADING = 3, "notation de review"  # + écriture et visibilité
-        SEE_GRADING = 4, "affichage de notation"  # + écriture et visibilité et notation
+class UserPreferences(models.Model):  # TODO - renverser le O2O  
+    class Meta:
+        verbose_name = "préférences"
+        verbose_name_plural = "préférences"
+        constraints = [
+            models.CheckConstraint(
+                name="CK_%(app_label)s_%(class)s_anonymous_review_policy_lte_member_review_policy",
+                check=models.Q(anonymous_review_policy__lte=models.F("member_review_policy")),
+            ),
+        ]
 
     user = models.OneToOneField(
         to=User,
@@ -367,24 +380,45 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         primary_key=True,
         editable=True,
     )
-    age_consent = models.BooleanField(
-        verbose_name="accès au contenu +18 ans",
-        default=False,
-    )
-    font = models.CharField(
+
+    # APPARENCE
+    skin = models.CharField(
         max_length=50,
-        verbose_name="police d'écriture",
-        null=True,
-        blank=True,
-        default="Tahoma",
+        verbose_name="thème",
+        # null=False,
+        # blank=True,
+        default="default",
     )
-    font_size = models.DecimalField(
-        verbose_name="taille de police",
-        max_digits=3,
-        decimal_places=2,
+    color_scheme = models.PositiveSmallIntegerField(
+        verbose_name="mode d'affichage",
+        choices=ColorScheme.choices,
+        default=ColorScheme.AUTO,
+    )
+    color_scheme_in_reader = models.BooleanField(
+        verbose_name="mode d'affichage dans le lecteur",
+        choices=ColorScheme.choices,
+        default=ColorScheme.AUTO,
+    )
+    show_animations = models.BooleanField(
+        verbose_name="jouer les animations",
+        default=True,
+    )
+    show_profile_pictures = models.BooleanField(
+        verbose_name="afficher les avatars",
+        default=True,
+    )
+
+    # LECTURE / ACCESSIBILITÉ
+    font = models.CharField(
+        verbose_name="police d'écriture",
+        max_length=50,
         null=True,
         blank=True,
-        default=Decimal(7.5),
+    )
+    font_size = models.PositiveSmallIntegerField(
+        verbose_name="taille de police",
+        default=100,
+        help_text="Taille de la police d'écriture en pourcentage de la taille d'origine."
     )
     line_spacing = models.DecimalField(
         verbose_name="taille d'interligne",
@@ -394,23 +428,70 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         blank=True,
         default=Decimal(1.0),
     )
-    dark_mode = models.BooleanField(
-        verbose_name="mode sombre",
+    letter_spacing = models.DecimalField(
+        verbose_name="taille d'interlettre",
+        max_digits=3,
+        decimal_places=2,
         null=True,
         blank=True,
+        default=Decimal(1.0),
     )
-    skin = models.CharField(
-        max_length=50,
-        verbose_name="thème",
-        null=False,
+    paragraph_spacing = models.DecimalField(
+        verbose_name="taille d'inter-paragraphe",
+        max_digits=3,
+        decimal_places=2,
+        null=True,
         blank=True,
-        default="default",
+        default=Decimal(1.0),
     )
-    show_reaction = models.BooleanField(
-        verbose_name="affichage des réactions",
-        null=False,
+    redirect_to_summary = models.BooleanField(
+        verbose_name="rediriger vers la table des matières",
+        default=True,
+        help_text="Indique si cliquer sur le titre d'une fiction ouvre la page de fiction ou de premier chapitre.",
+    )
+    show_trigger_warnings = models.BooleanField(
+        verbose_name="afficher les avertissements",
+        default=True,
+        help_text="Indique si les avertissements doivent être affichés en début de chapitre.",
+    )
+    show_review_editor = models.BooleanField(
+        verbose_name="afficher l'éditeur de reviews",
+        default=True,
+        help_text="Indique si l'éditeur de reviews doit être affiché par défaut dans le lecteur.",
+    )
+    # show_reaction = models.BooleanField(
+    #     verbose_name="affichage des réactions",
+    #     null=False,
+    #     default=True,
+    # )
+
+    # NOTIFICATIONS
+    email_for_review = models.BooleanField(
+        verbose_name="nouvelle review",
         default=True,
     )
+    email_for_reply = models.BooleanField(
+        verbose_name="nouvelle réponse",
+        default=True,
+    )
+    email_for_news = models.BooleanField(
+        verbose_name="nouvelle news",
+        default=True,
+    )
+    email_for_favorite_activity = models.BooleanField(
+        verbose_name="nouveau favori",
+        default=True,
+    )
+    email_for_favorite = models.BooleanField(
+        verbose_name="nouvelle mise en favoris",
+        default=True,
+    )
+    email_for_chapter_status = models.BooleanField(
+        verbose_name="changement de statut de publication",
+        default=True,
+    )
+
+    # ACCÈS ET DROITS DE REVIEWS
     member_review_policy = models.SmallIntegerField(
         verbose_name="droits des membres",
         choices=ReviewPolicy.choices,
@@ -422,15 +503,12 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         default=ReviewPolicy.SEE_TEXT,
     )
 
-    class Meta:
-        verbose_name = "préférences"
-        verbose_name_plural = "préférences"
-        constraints = [
-            models.CheckConstraint(
-                name="CK_users_userpreferences_anonymous_review_policy_lte_member_review_policy",
-                check=models.Q(anonymous_review_policy__lte=models.F("member_review_policy")),
-            ),
-        ]
+    # RECHERCHE
+    result_order = models.PositiveSmallIntegerField(
+        verbose_name="ordre de tri",
+        choices=Sort.choices,
+        default=Sort.ALPHA_ASC,
+    )
 
     def __str__(self) -> str:
         return f"Préférences de {str(self.user)}"
@@ -438,6 +516,10 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
 
 class ExternalProfile(models.Model):
     """Modèle de lien de profil d'utilisateur externe"""
+
+    class Meta:
+        verbose_name = "profil externe"
+        verbose_name_plural = "profils externes"
 
     user_profile = models.ForeignKey(
         to=UserProfile,
@@ -460,10 +542,6 @@ class ExternalProfile(models.Model):
         default=True,
         verbose_name="visible",
     )
-
-    class Meta:
-        verbose_name = "profil externe"
-        verbose_name_plural = "profils externes"
 
     def __str__(self):
         return f"{self.external_username} sur {str(self.website_type)}"

@@ -200,13 +200,10 @@
         "pk": 0,
         "fields": {
             "user": 0,
-            "age_consent": false,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -214,13 +211,10 @@
         "pk": 2,
         "fields": {
             "user": 2,
-            "age_consent": false,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -228,13 +222,10 @@
         "pk": 3,
         "fields": {
             "user": 3,
-            "age_consent": true,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -242,13 +233,10 @@
         "pk": 4,
         "fields": {
             "user": 4,
-            "age_consent": false,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -256,13 +244,10 @@
         "pk": 5,
         "fields": {
             "user": 5,
-            "age_consent": true,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -270,13 +255,10 @@
         "pk": 6,
         "fields": {
             "user": 6,
-            "age_consent": false,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     },
     {
@@ -284,13 +266,10 @@
         "pk": 7,
         "fields": {
             "user": 7,
-            "age_consent": false,
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "dark_mode": null,
-            "skin": "default",
-            "show_reaction": true
+            "skin": "default"
         }
     }
 ]

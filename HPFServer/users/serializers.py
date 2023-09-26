@@ -45,15 +45,29 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreferences
         fields = [
-            "age_consent",
             "font",
             "font_size",
             "line_spacing",
-            "dark_mode",
+            "color_scheme",
+            "color_scheme_in_reader",
             "skin",
-            "show_reaction",
+            "show_animations",
+            "show_profile_pictures",
+            # "show_reaction",
             "member_review_policy",
             "anonymous_review_policy",
+            "letter_spacing",
+            "paragraph_spacing",
+            "redirect_to_summary",
+            "show_trigger_warnings",
+            "show_review_editor",
+            "email_for_review",
+            "email_for_reply",
+            "email_for_news",
+            "email_for_favorite_activity",
+            "email_for_favorite",
+            "email_for_chapter_status",
+            "result_order",
         ]
 
 
@@ -105,6 +119,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "external_profiles",
             "profile_picture",
             "banner",
+            "age_consent",
         ]
 
     # FIXME - temporaire branchement

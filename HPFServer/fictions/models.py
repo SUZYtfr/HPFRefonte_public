@@ -300,6 +300,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         verbose_name="avertissements",
         to="characteristics.Characteristic",
         limit_choices_to={"characteristic_type": settings.TW_CHARTYPE_ID},
+        blank=True,
     )
 
     text_images = models.ManyToManyField(
