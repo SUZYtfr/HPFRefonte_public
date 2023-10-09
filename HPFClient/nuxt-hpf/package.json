@@ -4,7 +4,7 @@
   "version": "2.14.12",
   "private": true,
   "dependencies": {
-    "@creativebulma/bulma-badge": "^1.0.1",
+    "@creativebulma/bulma-badge": "https://github.com/francesco-loreti/bulma-badge.git",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/vue-fontawesome": "^2.0.6",
     "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
@@ -29,7 +29,6 @@
     "@tiptap/vue-2": "^2.0.0-beta.79",
     "@types/simplebar": "^5.3.3",
     "@types/webpack-env": "^1.17.0",
-    "@vue/compiler-dom": "^3.2.45",
     "@vue/runtime-dom": "^3.2.45",
     "animate.css": "^4.1.1",
     "class-transformer": "^0.5.1",
@@ -62,7 +61,6 @@
     "@nuxt/types": "^2.15.8",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@vue/compiler-dom": "^3.2.45",
-    "yarn-upgrade-all": "^0.7.1"
+    "@vue/compiler-dom": "^3.3.4"
   }
 }
