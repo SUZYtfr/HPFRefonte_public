@@ -1,12 +1,12 @@
 @import "~/assets/scss/custom_bulma_core.scss";
 
 // Import Bulma and Buefy styles
-@import "~bulma";
-@import "~buefy/src/scss/buefy";
+@import "bulma/bulma.sass";
+@import "buefy/src/scss/buefy";
 $badge-height: 16px;
 $badge-padding: 0.05rem 0.15rem;
 $badge-font-size: 0.7rem;
-@import "~@creativebulma/bulma-badge/src/sass/index.sass";
+@import "@creativebulma/bulma-badge/src/sass/index.sass";
 //@import "../../node_modules/@creativebulma/bulma-badge/src/sass/index.sass"
 
 // Responsive Menu Tabs

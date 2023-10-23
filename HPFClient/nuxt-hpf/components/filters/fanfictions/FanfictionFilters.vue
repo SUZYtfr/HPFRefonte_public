@@ -55,9 +55,8 @@
           append-to-body
           ticks
         >
-          <template v-for="val in sliderTicks">
+          <template v-for="val in sliderTicks" :key="val.displayValue">
             <b-slider-tick
-              :key="val.displayValue"
               :value="val.sliderValue"
               class="has-text-weight-semibold"
             >
@@ -211,7 +210,7 @@ import { CharacteristicModel, CharacteristicTypeModel } from "~/models/character
   fetchOnServer: true,
   fetchKey: "fanfiction-filter"
 })
-export default class extends Vue {
+export default class FanfictionFilters extends Vue {
   // #region Props
   @Prop() public fanfictionFilters!: IFanfictionFilters;
   @Prop({ default: false }) public loading!: boolean;

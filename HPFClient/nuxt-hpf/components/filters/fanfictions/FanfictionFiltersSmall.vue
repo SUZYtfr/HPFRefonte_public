@@ -19,9 +19,6 @@
         <ThreeStateCheckbox
           class="py-1 pl-1"
           :external-value="fanfictionFilters.status"
-          :checked-value="4"
-          :excluded-value="1"
-          :unchecked-value="null"
           title="Histoires terminées"
           @change="fanfictionFilters.status = $event"
         />
@@ -151,7 +148,7 @@ import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
     ThreeStateCheckbox
   }
 })
-export default class extends Vue {
+export default class FanfictionFiltersSmall extends Vue {
   // #region Props
   @Prop() private authorFieldVisible!: boolean;
   @Prop() public fanfictionFilters!: IFanfictionFilters;

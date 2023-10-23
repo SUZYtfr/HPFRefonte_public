@@ -491,7 +491,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
+import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Underline } from "@tiptap/extension-underline";
 import { TextAlign } from "@tiptap/extension-text-align";
@@ -519,7 +519,7 @@ import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
     BubbleMenu
   }
 })
-export default class extends Vue {
+export default class TipTapEditor extends Vue {
   // #region Props
   @Prop({ default: null }) public config!: TipTapEditorConfig;
   // #endregion

@@ -4,6 +4,7 @@ import { BasicClass } from "~/types/basics";
 import { FanfictionData, ReviewData, SerieData, ChapterData } from "~/types/fanfictions";
 import { AuthorData } from "~/types/users";
 import { CharacteristicData } from "~/types/characteristics";
+import "reflect-metadata"
 
 // #region Review
 export class ReviewModel extends ReviewData {

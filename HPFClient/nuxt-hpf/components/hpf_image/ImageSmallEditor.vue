@@ -58,7 +58,7 @@ import { ImageHPFData } from "@/types/images";
 @Component({
   name: "ImageSmallEditor"
 })
-export default class extends Vue {
+export default class ImageSmallEditor extends Vue {
   // #region Props
   @Prop() public image!: ImageHPFData;
   // #endregion

@@ -63,7 +63,7 @@ import { SortByEnum } from "~/types/basics";
     NewsFilters
   }
 })
-export default class extends Vue {
+export default class Nouveautés extends Vue {
   // #region Data
   public filtersOpened: boolean = false;
 

@@ -1,4 +1,6 @@
 {
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
@@ -14,31 +16,6 @@
     "strict": true,
     "noEmit": true,
     "baseUrl": ".",
-    "importsNotUsedAsValues": "preserve",
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
-    "types": [
-      "@types/node",
-      "@nuxt/types",
-      "@nuxtjs/axios",
-      "@nuxtjs/auth-next",
-      "buefy/types",
-      "webpack-env", 
-    ]
-  },
-  "vueCompilerOptions": {
-    "extensions": [
-      ".vue"
-    ],
-    "target": 2
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "importsNotUsedAsValues": "preserve"
+  }
 }

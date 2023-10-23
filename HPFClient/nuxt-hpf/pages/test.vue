@@ -57,7 +57,7 @@ import { searchFanfictions } from "@/api/fanfictions";
   fetchOnServer: true,
   fetchKey: "test-key"
 })
-export default class extends Vue {
+export default class Test extends Vue {
   // @SerialiseClass(CharacteristicModel)
   // public characteristics: CharacteristicModel[] = [];
 

@@ -122,7 +122,7 @@ import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
   fetchKey: "chapter-page"
 })
 
-export default class extends Vue {
+export default class Chapter extends Vue {
   // #region Props
   @SerialiseClass(ChapterModel)
   @Prop() public chapterProp: ChapterModel | null = null;

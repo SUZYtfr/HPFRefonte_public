@@ -194,12 +194,12 @@ import { UserRegisterData } from "@/types/users";
 import { TipTapEditorConfig } from "@/types/tiptap";
 
 @Component({
-  name: "Inscription",
+  name: "Register",
   components: {
     TipTapEditor
   }
 })
-export default class extends Vue {
+export default class Register extends Vue {
   // #region Props
   @Prop() public active!: boolean;
   // #endregion

@@ -189,7 +189,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-2";
+import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
 import { ImageHPFData } from "@/types/images";
 
 @Component({
@@ -199,7 +199,7 @@ import { ImageHPFData } from "@/types/images";
     NodeViewContent
   }
 })
-export default class extends Vue {
+export default class ImageEditor extends Vue {
   // #region Props
   @Prop() private deleteNode!: Function;
   @Prop() private editor!: any;

@@ -5,7 +5,7 @@
       <template #brand>
         <b-navbar-item>
           <img
-            :src="require('@/assets/img/logo_hpfanfic_court_300.png')"
+            src="@/assets/img/logo_hpfanfic_court_300.png"
             width="56"
             height="36"
             alt="Logo forum HPF"
@@ -251,7 +251,7 @@ import ModalsStates from "~/store/modules/ModalsStates";
     Contact
   }
 })
-export default class extends Vue {
+export default class Navbar extends Vue {
   // #region Data
 
   // #endregion

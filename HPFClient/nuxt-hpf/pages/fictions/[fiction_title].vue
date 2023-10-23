@@ -279,7 +279,7 @@ import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
   fetchKey: "fanfiction-page"
 })
 
-export default class extends Vue {
+export default class Fanfiction extends Vue {
   // #region  Data
   @SerialiseClass(FanfictionModel)
   public fiction: FanfictionModel | null = null;

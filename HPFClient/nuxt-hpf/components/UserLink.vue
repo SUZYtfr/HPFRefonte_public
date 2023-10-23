@@ -36,7 +36,7 @@ import { UserLinkData } from "@/types/users";
 @Component({
   name: "UserLink"
 })
-export default class extends Vue {
+export default class UserLink extends Vue {
   // #region Props
   @Prop() public link!: UserLinkData;
   @Prop() private fullLength!: boolean;

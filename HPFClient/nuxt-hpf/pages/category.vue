@@ -92,7 +92,7 @@ import { SortByEnum } from "~/types/basics";
   },
   fetchOnServer: true
 })
-export default class extends Vue {
+export default class Category extends Vue {
   // #region Data
   public breadcrumbStack: any[] = [];
 

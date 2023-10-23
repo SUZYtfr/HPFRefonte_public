@@ -242,7 +242,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.fiction_count ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.fiction_count ?? 0) }}
                         </p>
                         <p class="heading">
                           {{
@@ -257,7 +257,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.chapter_count ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.chapter_count ?? 0) }}
                         </p>
                         <p class="heading">
                           {{
@@ -271,7 +271,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.word_count ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.word_count ?? 0) }}
                         </p>
                         <p class="heading">
                           {{ "Mot" + ((user?.stats?.word_count ?? 0) > 1 ? "s" : "") }}
@@ -283,7 +283,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.collection_count ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.collection_count ?? 0) }}
                         </p>
                         <p class="heading">
                           {{ "Série" + ((user?.stats?.collection_count ?? 0) > 1 ? "s" : "") }}
@@ -295,7 +295,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.challenges ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.challenges ?? 0) }}
                         </p>
                         <p class="heading">
                           {{
@@ -309,7 +309,7 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.review_count ?? 0) | numberToString }}
+                          {{ numberToString(user?.stats?.review_count ?? 0) }}
                         </p>
                         <p class="heading">
                           {{ "Review" + ((user?.stats?.review_count ?? 0) > 1 ? "s" : "") }}
@@ -336,10 +336,11 @@
       <div id="author-bio" class="column is-8">
         <div class="card">
           <div class="card-content p-0">
-            <simplebar
+            <!-- TODO remettre la Simplebar -->
+            <!-- <simplebar
               class="custom-scrollbar-bio"
               data-simplebar-auto-hide="false"
-            >
+            > -->
               <div class="content">
                 <b-loading
                   v-if="userLoading || user == undefined"
@@ -348,7 +349,7 @@
                 />
                 <span v-else v-html="user.profile?.bio" />
               </div>
-            </simplebar>
+            <!-- </simplebar> -->
           </div>
         </div>
       </div>
@@ -358,116 +359,121 @@
       <div class="column is-12">
         <div id="author-detail" class="card">
           <div class="card-content pt-3 pb-0">
-            <b-tabs type="is-boxed">
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="broom" />
-                  <span>
-                    Fanfictions<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded>
-                      {{ user?.stats?.fiction_count }}
-                    </b-tag>
-                  </span>
-                </template>
-                <FanfictionFiltersSmall :fanfiction-filters="fanfictionFilters" />
-                <div class="columns mt-2">
-                  <div class="column is-12">
-                    <FanfictionList
-                      :is-card="false"
-                      :fanfiction-filters="fanfictionFilters"
-                    />
+            <!-- TODO - trouver pourquoi Buefy Tabs cherche à accéder à window en ssr -->
+            <ClientOnly>
+              <b-tabs type="is-boxed">
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="broom" />
+                    <span>
+                      Fanfictions<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded>
+                        {{ user?.stats?.fiction_count }}
+                      </b-tag>
+                    </span>
+                  </template>
+                  <FanfictionFiltersSmall :fanfiction-filters="fanfictionFilters" />
+                  <div class="columns mt-2">
+                    <div class="column is-12">
+                      <FanfictionList
+                        :is-card="false"
+                        :fanfiction-filters="fanfictionFilters"
+                        @changeSortBy="fanfictionFilters.sortBy = $event"
+                        @changeSortOn="fanfictionFilters.sortOn = $event"
+                      />
+                    </div>
                   </div>
-                </div>
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="book" />
-                  <span>
-                    Séries
-                    <b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.collection_count }} </b-tag>
-                  </span>
-                </template>
-                2
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="feather" />
-                  <span>
-                    Reviews<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.review_count }} </b-tag>
-                  </span>
-                </template>
-                3
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="trophy" />
-                  <span>
-                    Challenges<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.challenges }} </b-tag>
-                  </span>
-                </template>
-                4
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="star" />
-                  <span>
-                    Fanfictions favorites<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_fanfictions }}
-                    </b-tag>
-                  </span>
-                </template>
-                5
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="star" />
-                  <span>
-                    Séries favorites<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_series }}
-                    </b-tag>
-                  </span>
-                </template>
-                6
-              </b-tab-item>
-              <b-tab-item>
-                <template #header>
-                  <b-icon icon="star" />
-                  <span>
-                    Auteurs favoris<b-loading
-                      v-if="userLoading || user == undefined"
-                      :is-full-page="false"
-                      :model="true"
-                    /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_author }}
-                    </b-tag>
-                  </span>
-                </template>
-                7
-              </b-tab-item>
-            </b-tabs>
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="book" />
+                    <span>
+                      Séries
+                      <b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded> {{ user?.stats?.collection_count }} </b-tag>
+                    </span>
+                  </template>
+                  2
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="feather" />
+                    <span>
+                      Reviews<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded> {{ user?.stats?.review_count }} </b-tag>
+                    </span>
+                  </template>
+                  3
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="trophy" />
+                    <span>
+                      Challenges<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded> {{ user?.stats?.challenges }} </b-tag>
+                    </span>
+                  </template>
+                  4
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="star" />
+                    <span>
+                      Fanfictions favorites<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded>
+                        {{ user?.stats?.favorites_fanfictions }}
+                      </b-tag>
+                    </span>
+                  </template>
+                  5
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="star" />
+                    <span>
+                      Séries favorites<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded>
+                        {{ user?.stats?.favorites_series }}
+                      </b-tag>
+                    </span>
+                  </template>
+                  6
+                </b-tab-item>
+                <b-tab-item>
+                  <template #header>
+                    <b-icon icon="star" />
+                    <span>
+                      Auteurs favoris<b-loading
+                        v-if="userLoading || user == undefined"
+                        :is-full-page="false"
+                        :model="true"
+                      /><b-tag v-else rounded>
+                        {{ user?.stats?.favorites_author }}
+                      </b-tag>
+                    </span>
+                  </template>
+                  7
+                </b-tab-item>
+              </b-tabs>
+            </ClientOnly>
           </div>
         </div>
       </div>
@@ -475,13 +481,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-import simplebar from "simplebar-vue";
-import "simplebar/dist/simplebar.min.css";
-import "simplebar/dist/simplebar.min.js";
-import SimpleBar from "simplebar";
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import UserLink from "@/components/UserLink.vue";
 import FanfictionFiltersSmall from "~/components/filters/fanfictions/FanfictionFiltersSmall.vue";
 import { UserModel } from "@/models/users";
@@ -489,110 +489,61 @@ import { IFanfictionFilters } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import { SortByEnum } from "~/types/basics";
+import { UseFetchWrapperResponse } from "~/utils/api"
 
-@Component({
-  name: "Author",
-  components: {
-    simplebar,
-    UserLink,
-    FanfictionFiltersSmall,
-    FanfictionList
-  },
-  filters: {
-    parseTime: (timestamp: string) => {
-      return new Date(timestamp).toLocaleDateString();
-    },
-    numberToString: (number: number) => {
-      if (number > 9999) return (number / 1000).toString() + " K";
-      else return number.toString();
-    }
-  }
-})
-export default class extends Vue {
-  // #region  Data
-  @SerialiseClass(UserModel)
-  public user: UserModel | null = null;
+const route = useRoute()
 
-  public userLoading = false;
+// Filtres de recherche
+const fanfictionFilters: IFanfictionFilters = {
+  searchTerm: "",
+  searchAuthor: "",
+  searchAuthorId: Number(route.params.id),
+  multipleAuthors: null,
+  status: null,
+  wordCount_min: null,
+  wordCount_max: null,
+  includedTags: [],
+  excludedTags: [],
+  customTags: [],
+  featured: false,
+  inclusive: false,
+  fromDate: null,
+  toDate: null,
+  page: 1,
+  pageSize: 10,
+  totalPages: true,
+  sortOn: "last_update_date",
+  sortBy: SortByEnum.Descending
+};
 
-  // Filtres de recherche
-  public fanfictionFilters: IFanfictionFilters = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: Number(this.$route.params.id),
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: false,
-    inclusive: false,
-    fromDate: null,
-    toDate: null,
-    page: 1,
-    pageSize: 10,
-    totalPages: true,
-    sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending
-  };
+// TODO - rétablir la snackbar d'erreur (useFetch fournit error)
+const { data: user, pending: userLoading }: UseFetchWrapperResponse<UserModel> = await getUser(Number(route.params.id))
 
-  // #endregion
+const parseTime = (timestamp: string) => { return new Date(timestamp).toLocaleDateString()}
+const numberToString = (number: number) => { return number > 9999 ? (number / 1000).toString() + " K" : number.toString() }
 
-  // #region Hooks
-  mounted(): void {
-    const tabs = document.getElementsByClassName("tabs is-boxed")[0];
-    console.log(tabs);
-    tabs.insertAdjacentHTML(
-      "beforebegin",
-      '<div class="custom-scrollbar-tabs"></div>'
-    );
-    const scrollbarTabs = document.getElementsByClassName(
-      "custom-scrollbar-tabs"
-    )[0];
-    scrollbarTabs.appendChild(tabs);
-    new SimpleBar(
-      document.getElementsByClassName(
-        "custom-scrollbar-tabs"
-      )[0] as HTMLElement,
-      {
-        autoHide: false,
-        forceVisible: true
-      }
-    );
-  }
-
-  private async fetch(): Promise<void> {
-    this.userLoading = true;
-    try {
-      this.user = (await getUser(parseInt(this.$route.params.id)));
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération de l'utilisateur",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.userLoading = false;
-    }
-  }
-  // #endregion
-
-  // #region Computed
-  // #endregion
-
-  // #region Methods
-  // #endregion
-}
+// TODO - adapter ça
+// mounted(): void {
+//   const tabs = document.getElementsByClassName("tabs is-boxed")[0];
+//   console.log(tabs);
+//   tabs.insertAdjacentHTML(
+//     "beforebegin",
+//     '<div class="custom-scrollbar-tabs"></div>'
+//   );
+//   const scrollbarTabs = document.getElementsByClassName(
+//     "custom-scrollbar-tabs"
+//   )[0];
+//   scrollbarTabs.appendChild(tabs);
+//   new SimpleBar(
+//     document.getElementsByClassName(
+//       "custom-scrollbar-tabs"
+//     )[0] as HTMLElement,
+//     {
+//       autoHide: false,
+//       forceVisible: true
+//     }
+//   );
+// }
 </script>
 
 <style lang="scss" scoped>

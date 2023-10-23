@@ -65,7 +65,7 @@ import { SortByEnum } from "~/types/basics";
     FanfictionFilters
   }
 })
-export default class extends Vue {
+export default class Recherche extends Vue {
   // #region Data
   public filtersOpened: boolean = false;
 

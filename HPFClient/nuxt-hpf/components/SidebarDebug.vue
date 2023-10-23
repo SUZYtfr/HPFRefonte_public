@@ -29,7 +29,7 @@ import { Component, Vue } from "vue-property-decorator";
 @Component({
   name: "SidebarDebug"
 })
-export default class extends Vue {
+export default class SidebarDebug extends Vue {
   public open: boolean = false;
   public connectedValue: boolean = false;
 

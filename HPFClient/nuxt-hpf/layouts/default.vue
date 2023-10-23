@@ -6,7 +6,7 @@
     <Navbar />
     <div id="wrapper">
       <!-- Main Content -->
-      <nuxt />
+      <slot />
     </div>
     <!-- Footer -->
     <Footer />
@@ -26,7 +26,7 @@ import SidebarDebug from "@/components/SidebarDebug.vue";
     SidebarDebug
   }
 })
-export default class extends Vue {}
+export default class Layout extends Vue {}
 </script>
 
 <style lang="scss" scoped>

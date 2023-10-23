@@ -10,44 +10,39 @@
   </b-checkbox>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
+<script setup lang="ts">
+interface threeStateCheckboxProps {
+  externalValue?: any | undefined
+  title: string | undefined
+  checkedValue?: true
+  excludedValue?: any
+  uncheckedValue?: any
+}
 
-@Component({
-  name: "ThreeStateCheckbox"
+const props = withDefaults(defineProps<threeStateCheckboxProps>(), {
+  checkedValue: true,
+  excludedValue: false,
+  uncheckedValue: null
 })
-export default class extends Vue {
-  // #region Props
-  @Prop() private externalValue!: any | undefined;
-  @Prop() public title: string | undefined;
-  @Prop({ default: true }) private checkedValue: any;
-  @Prop({ default: false }) private excludedValue: any;
-  @Prop({ default: null }) private uncheckedValue: any;
-  // #endregion
 
-  // #region Computed
-  get checkboxStatus(): boolean {
-    return this.externalValue === this.checkedValue;
-  }
+interface threeStateCheckboxEmits {
+  (e: 'change', internalState: boolean): void
+}
 
-  get indeterminate(): boolean {
-    return this.externalValue === this.excludedValue;
-  }
-  // #endregion
+const emit = defineEmits<threeStateCheckboxEmits>()
 
-  // #region Methods
-  public checkBoxClicked(event: any): void {
+const checkboxStatus: boolean = props.externalValue === props.checkedValue
+const indeterminate: boolean = props.externalValue === props.excludedValue
+const checkBoxClicked = (event: any) => {
     let internalState;
-    if (this.indeterminate) {
-      internalState = this.uncheckedValue;
-    } else if (this.checkboxStatus) {
-      internalState = this.excludedValue;
+    if (indeterminate) {
+      internalState = props.uncheckedValue;
+    } else if (checkboxStatus) {
+      internalState = props.excludedValue;
     } else {
-      internalState = this.checkedValue;
+      internalState = props.checkedValue;
     }
-    this.$emit("change", internalState);
-  }
-  // #endregion
+    emit("change", internalState)
 }
 </script>
 

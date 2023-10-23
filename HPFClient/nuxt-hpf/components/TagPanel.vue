@@ -73,7 +73,7 @@ import { getCaracteristicTypeColor } from "@/utils/characteristics";
 @Component({
   name: "TagPanel"
 })
-export default class extends Vue {
+export default class TagPanel extends Vue {
   // #region Props
   @Prop() public characteristic_type_id!: number | undefined;
   @Prop() public characteristic_id!: number | undefined;

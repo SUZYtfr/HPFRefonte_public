@@ -3,7 +3,7 @@
     <div class="container is-fluid">
       <div id="footer-background-image-wrapper">
         <img
-          :src="require('@/assets/img/logo_forum_horizontal_300.png')"
+          src='@/assets/img/logo_forum_horizontal_300.png'
           alt="Logo forum HPF"
         >
       </div>
@@ -46,7 +46,7 @@ import { Component, Vue } from "vue-property-decorator";
 @Component({
   name: "Footer"
 })
-export default class extends Vue {}
+export default class Footer extends Vue {}
 </script>
 
 <style scoped>

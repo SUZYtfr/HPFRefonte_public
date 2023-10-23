@@ -94,151 +94,92 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import Fanfiction from "~/components/Fanfiction.vue";
-import { IFanfictionFilters } from "@/types/fanfictions";
+import type { IFanfictionFilters } from "@/types/fanfictions";
 import { FanfictionModel } from "@/models/fanfictions";
 import { searchFanfictions } from "@/api/fanfictions";
 import { SortByEnum } from "~/types/basics";
+import { UseFetchWrapperResponse } from "~/utils/api"
 
-@Component({
-  name: "FanfictionList",
-  components: {
-    Fanfiction
-  },
-  fetchOnServer: true,
-  fetchKey: "fanfiction-list"
+interface fanfictionListProps {
+  isCard?: boolean
+  showRefreshButton?: boolean
+  isLoading?: boolean
+  fanfictionFilters: IFanfictionFilters
+}
+
+const props = withDefaults(defineProps<fanfictionListProps>(), {
+  isCard: true,
+  showRefreshButton: true,
+  isLoading: false
 })
-export default class FanfictionList extends Vue {
-  // #region Props
-  @Prop({ default: true }) public isCard!: boolean;
-  @Prop({ default: true }) public showRefreshButton!: boolean;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public fanfictionFilters!: IFanfictionFilters;
-  // #endregion
 
-  // #region Data
-  @SerialiseClass(FanfictionModel)
-  public fanfictions: FanfictionModel[] = [];
+let fanfictionFilters: IFanfictionFilters = ref(props.fanfictionFilters).value
 
-  public totalFanfictions: number = 0;
-  private timerId: number = 0;
-  // #endregion
+interface fanfictionListEmits {
+  (e: 'changeSortBy', sortBy: SortByEnum): void
+  (e: 'changeSortOn', sortOn: string): void
+}
 
-  // #region Hooks
-  private async fetch(): Promise<void> {
-    this.listLoading = true;
-    // Récupération des fictions
-    await this.getFanfictions();
-    this.listLoading = false;
-  }
-  // #endregion
+const emit = defineEmits<fanfictionListEmits>()
 
-  // #region Computed
-  get fanfictionResultLabel(): string {
-    let result = "Aucun résultat";
-    if (this.totalFanfictions === 0) return result;
-    result = this.totalFanfictions.toString() + " résultat";
-    result += this.totalFanfictions > 1 ? "s" : "";
-    return result;
-  }
 
-  get listLoading(): boolean {
-    return this.isLoading;
-  }
+// TODO - rétablir ça
+// get fanfictionResultLabel(): string {
+  //   let result = "Aucun résultat";
+  //   if (this.totalFanfictions === 0) return result;
+  //   result = this.totalFanfictions.toString() + " résultat";
+  //   result += this.totalFanfictions > 1 ? "s" : "";
+  //   return result;
+  // }
+const totalFanfictions: number = 0;
+const fanfictionResultLabel = "Aucun résultat"
 
-  set listLoading(value) {
-    this.$emit("loadingChange", value);
-  }
-  // #endregion
+// TODO - rétablir la snackbar d'erreur (useFetch fournit error)
+const { data: fanfictions, refresh, pending: listLoading }: UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(props.fanfictionFilters || null)
 
-  // #region Watchers
-  @Watch("fanfictionFilters", { deep: true })
-  public onFiltersChanged(): void {
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.$fetch, 500);
-  }
-  // #endregion
-
-  // #region Hooks
-  mounted(): void {
-    // Déclenche une recherche à l'affichage
-    // clearTimeout(this.timerId);
-    // this.timerId = window.setTimeout(this.$fetch, 500);
-  }
-  // #endregion
-
-  // #region Methods
-  private async getFanfictions(): Promise<void> {
-    // this.listLoading = true;
-    try {
-      const response = (await searchFanfictions(this.fanfictionFilters));
-      this.fanfictions = response.results;
-      this.fanfictionFilters.page = response.current;
-      this.totalFanfictions = response.count;
-      // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
-      // console.log("Date type: " + ((new Date()) instanceof Date));
-      // console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
-      // console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
-      // console.log("Characteristic type: " + (this.fanfictions[0].characteristics[0] instanceof CharacteristicData));
-      // console.log(this.fanfictions[0]?.creation_date);
-      // console.log(new Date(this.fanfictions[0]?.creation_date));
-      // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString());
-      // console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des fictions",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      // this.listLoading = false;
+const SelectSortBy_OnInputChanged = (value: string): void => {
+  switch (value) {
+    case "alpha":
+      fanfictionFilters.sortBy = SortByEnum.Ascending;
+      fanfictionFilters.sortOn = "title";
+      break;
+    case "most_recent":
+      fanfictionFilters.sortBy = SortByEnum.Descending;
+      fanfictionFilters.sortOn = "last_update_date";
+      break;
+    case "less_recent":
+      fanfictionFilters.sortBy = SortByEnum.Ascending;
+      fanfictionFilters.sortOn = "last_update_date";
+      break;
+    case "most_reviews":
+      fanfictionFilters.sortBy = SortByEnum.Descending;
+      fanfictionFilters.sortOn = "comments";
+      break;
+    case "less_reviews":
+      fanfictionFilters.sortBy = SortByEnum.Ascending;
+      fanfictionFilters.sortOn = "comments";
+      break;
+    case "most_rating":
+      fanfictionFilters.sortBy = SortByEnum.Ascending;
+      fanfictionFilters.sortOn = "rating";
+      break;
+    case "less_rating":
+      fanfictionFilters.sortBy = SortByEnum.Ascending;
+      fanfictionFilters.sortOn = "rating";
+      break;
     }
-  }
+  emit("changeSortBy", fanfictionFilters.sortBy)
+  emit("changeSortOn", fanfictionFilters.sortOn)
+}
 
-  public SelectSortBy_OnInputChanged(value: string): void {
-    switch (value) {
-      case "alpha":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "title";
-        break;
-      case "most_recent":
-        this.fanfictionFilters.sortBy = SortByEnum.Descending;
-        this.fanfictionFilters.sortOn = "last_update_date";
-        break;
-      case "less_recent":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "last_update_date";
-        break;
-      case "most_reviews":
-        this.fanfictionFilters.sortBy = SortByEnum.Descending;
-        this.fanfictionFilters.sortOn = "comments";
-        break;
-      case "less_reviews":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "comments";
-        break;
-      case "most_rating":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "rating";
-        break;
-      case "less_rating":
-        this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "rating";
-        break;
-    }
-  }
-  // #endregion
+// TODO - rétablir le watch
+// @Watch("fanfictionFilters", { deep: true })
+let timerId: number = 0;
+const onFiltersChanged = (): void => {
+  clearTimeout(timerId);
+  timerId = window.setTimeout(() => refresh, 500);
 }
 </script>
 

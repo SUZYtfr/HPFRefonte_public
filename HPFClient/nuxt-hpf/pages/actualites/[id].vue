@@ -26,7 +26,7 @@ import CommentList from "~/components/list/comments/CommentList.vue";
   fetchOnServer: true,
   fetchKey: "news-page"
 })
-export default class extends Vue {
+export default class News extends Vue {
   // #region  Data
   @SerialiseClass(NewsModel)
   public news: NewsModel | null = null;

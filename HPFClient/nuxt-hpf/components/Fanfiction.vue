@@ -9,7 +9,7 @@
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
           <NuxtLink
             :key="'fiction_' + fanfiction.fanfiction_id.toString()"
-            :to="{ name: 'fictions-id', params: { id: fanfiction.fanfiction_id } }"
+            :to="{ name: 'fictions-fiction_title', params: { fiction_title: fanfiction.titleAsSlug } }"
           >
             {{ fanfiction.title }}
           </NuxtLink>
@@ -39,12 +39,14 @@
         <span class="is-size-6"><strong>{{
           "Auteur" + ((fanfiction?.authors?.length ?? 0) > 1 ? "s" : "") + " : "
         }}</strong></span>
-        <template v-for="(author, index) in fanfiction?.authors">
+        <template
+          v-for="(author, index) in fanfiction?.authors"
+          :key="'author_' + author.user_id.toString()"
+        >
           <template v-if="index > 0">
             ,
           </template>
           <a
-            :key="'author_' + author.user_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
             :href="'auteurs/' + author.user_id"
           >{{ author.username }}
@@ -68,12 +70,14 @@
         <span><strong>{{
           "Série" + ((fanfiction?.collection_count ?? 0) > 1 ? "s" : "") + " : "
         }}</strong></span>
-        <template v-for="(serie, index) in fanfiction?.series">
+        <template
+          v-for="(serie, index) in fanfiction?.series"
+          :key="'serie_' + serie.serie_id.toString()"  
+        >
           <template v-if="index > 0">
             ,
           </template>
           <a
-            :key="'serie_' + serie.serie_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
             :href="'series/' + serie.serie_id"
           >{{ serie.title }}

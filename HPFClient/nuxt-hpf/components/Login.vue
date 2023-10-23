@@ -53,7 +53,7 @@ import { UserLoginData } from "@/types/users";
 @Component({
   name: "Connexion"
 })
-export default class extends Vue {
+export default class Connexion extends Vue {
   // #region Data
   public loginForm: UserLoginData = {
     username: "",

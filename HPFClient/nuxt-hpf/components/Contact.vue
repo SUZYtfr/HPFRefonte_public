@@ -104,7 +104,7 @@ import { ContactFormData } from "@/types/other";
 @Component({
   name: "NousContacter"
 })
-export default class extends Vue {
+export default class NousContacter extends Vue {
   // #region Props
   @Prop() public active!: boolean;
   // #endregion

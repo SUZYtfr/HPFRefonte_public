@@ -1,30 +1,5 @@
-import type { NuxtAxiosInstance } from "@nuxtjs/axios";
 import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
-import qs from "qs";
-
-let $axios: NuxtAxiosInstance;
-
-export function initializeAxios(axiosInstance: NuxtAxiosInstance): void {
-  $axios = axiosInstance;
-  $axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
-    timeout: 5000,
-    withCredentials: (process.env.NODE_ENV === "production")
-  });
-
-  $axios.defaults.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
-
-  $axios.interceptors.request.use((request) => {
-    // console.log("Starting Request", JSON.stringify(request, null, 2));
-    return request;
-  });
-
-  $axios.interceptors.response.use((response) => {
-    // console.log("Response:", JSON.stringify(response, null, 2));
-    return response;
-  });
-}
 
 // Est-ce qu'on a vraiment besoin de ça ?
 export interface ListResponseWrapper<T> {
@@ -35,14 +10,13 @@ export interface ListResponseWrapper<T> {
   current: number;
 }
 
-export { $axios };
+export interface UseFetchWrapperResponse<T> {
+  data: T
+  pending: boolean
+  refresh: Promise<void>
+}
 
-export class AxiosWrapper {
-  /**
-   * Get axios instance if additional configuration is needed
-   */
-  get axiosInstance(): NuxtAxiosInstance { return $axios; }
-
+export class UseFetchWrapper {
   /**
    * HTTP GET request
    * Returns Promise
@@ -52,29 +26,18 @@ export class AxiosWrapper {
    * @param config AxiosRequestConfig. Additional axios configuration. Optional.
    */
   public async get<T>(url: string, params: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        let { data } = await $axios.request({
-          url: url,
+    try {
+      return useCustomFetch(
+        url,
+        {
           method: "get",
-          params: params
-        });
-        // Transformer en instance
-        if (data.results != null) {
-          // Contenu paginé
-          data.results = this.parseData2(type, data.results);
-        } else {
-          // Contenu unique
-          data = this.parseData2(type, data);
-        }
-        return data;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.get(url);
+          params: params,
+        },
+        type
+      )
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
 
@@ -87,29 +50,16 @@ export class AxiosWrapper {
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
   public async delete<T>(url: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.delete(url);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        return error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.delete(url);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.delete(url);
+    try {
+      return useCustomFetch(
+        url,
+        {
+          method: "delete"
+        }
+      );
+    } catch (error) {
+      console.log(error)
+      throw error;
     }
   }
 
@@ -122,29 +72,17 @@ export class AxiosWrapper {
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
   public async post<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.post(url, payload);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        return error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.post(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.post(url, payload);
+    try {
+      return useCustomFetch(
+        url,
+        {
+          method: "post",
+          body: payload
+        }
+      );
+    } catch (error) {
+      console.log(error)
+      throw error;
     }
   }
 
@@ -157,29 +95,17 @@ export class AxiosWrapper {
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
   public async put<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.put(url, payload);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        return error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.put(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.put(url, payload);
+    try {
+      return useCustomFetch(
+        url,
+        {
+          method: "put",
+          body: payload,
+        }
+      );
+    } catch (error) {
+      console.log(error)
+      throw error;
     }
   }
 
@@ -216,6 +142,6 @@ export class AxiosWrapper {
   }
 }
 
-const $AxiosWrapper: AxiosWrapper = new AxiosWrapper();
+const $UseFetchWrapper: UseFetchWrapper = new UseFetchWrapper()
 
-export default $AxiosWrapper;
+export default $UseFetchWrapper;

@@ -88,7 +88,7 @@ import { INewsFilters } from "~/types/news";
 @Component({
   name: "NewsFilters"
 })
-export default class extends Vue {
+export default class NewsFilters extends Vue {
   // #region Props
   @Prop() public newsFilters!: INewsFilters;
   // #endregion

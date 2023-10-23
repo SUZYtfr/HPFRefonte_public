@@ -24,7 +24,7 @@ import { CharacteristicData } from "@/types/characteristics";
 @Component({
   name: "CharThreeStateCheckbox"
 })
-export default class extends Vue {
+export default class CharThreeStateCheckbox extends Vue {
   // #region Props
   @Prop() public characteristic!: CharacteristicData | undefined;
   @Prop() private externalState!: number | undefined;
