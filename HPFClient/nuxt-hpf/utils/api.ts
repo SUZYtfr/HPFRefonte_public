@@ -11,9 +11,12 @@ export interface ListResponseWrapper<T> {
 }
 
 export interface UseFetchWrapperResponse<T> {
-  data: T
-  pending: boolean
+  data: Ref<T>
+  pending: Ref<boolean>
+  execute: Promise<void>
   refresh: Promise<void>
+  error: Ref<any>
+  status: Ref<string>
 }
 
 export class UseFetchWrapper {
@@ -25,13 +28,14 @@ export class UseFetchWrapper {
    * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false). Optional.
    * @param config AxiosRequestConfig. Additional axios configuration. Optional.
    */
-  public async get<T>(url: string, params: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
+  public async get<T>(url: string, params: any, type?: (new (arg: any) => T), options?: any/* , useConstructor?: boolean */): Promise<any> {
     try {
       return useCustomFetch(
         url,
         {
           method: "get",
           params: params,
+          ...options
         },
         type
       )
@@ -49,12 +53,13 @@ export class UseFetchWrapper {
    * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
-  public async delete<T>(url: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
+  public async delete<T>(url: string, type?: (new (arg: any) => T), options?: any/* , useConstructor?: boolean */): Promise<any> {
     try {
       return useCustomFetch(
         url,
         {
-          method: "delete"
+          method: "delete",
+          ...options
         }
       );
     } catch (error) {
@@ -71,13 +76,14 @@ export class UseFetchWrapper {
    * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
-  public async post<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
+  public async post<T>(url: string, payload: any, type?: (new (arg: any) => T), options?: any/* , useConstructor?: boolean */): Promise<any> {
     try {
       return useCustomFetch(
         url,
         {
           method: "post",
-          body: payload
+          body: payload,
+          ...options
         }
       );
     } catch (error) {
@@ -94,13 +100,14 @@ export class UseFetchWrapper {
    * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
-  public async put<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
+  public async put<T>(url: string, payload: any, type?: (new (arg: any) => T), options?: any/* , useConstructor?: boolean */): Promise<any> {
     try {
       return useCustomFetch(
         url,
         {
           method: "put",
           body: payload,
+          ...options
         }
       );
     } catch (error) {

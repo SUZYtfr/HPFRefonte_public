@@ -1,6 +1,6 @@
 <template>
   <b-modal v-model="modalActive" scroll="clip">
-    <form ref="signupForm" class="fullheight">
+    <form ref="htmlSignupForm" class="fullheight">
       <div id="registerCard" class="modal-card mx-5 fullheight">
         <header class="modal-card-head">
           <p class="modal-card-title">
@@ -101,7 +101,7 @@
                   type="password"
                   required
                   :pattern="regexPasswordPattern"
-                  validation-message="Une majuscule, une miniscule, un chiffre, un caractère spécial, minimum 8 caractères requis, maximum 32."
+                  validation-message="Une majuscule, une minuscule, un chiffre, un caractère spécial, minimum 8 caractères requis, maximum 32."
                 />
               </b-field>
 
@@ -183,139 +183,104 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import { signup } from "@/api/users";
-import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
+<script setup lang="ts">
+import { signup as sendSignup } from "@/api/users";
+import { VForm, regexPasswordPattern as rgxPasswordPattern, OpenToast } from "@/utils/formHelper";
 import TipTapEditor from "@/components/TipTapEditor.vue";
 import { UserRegisterData } from "@/types/users";
 import { TipTapEditorConfig } from "@/types/tiptap";
 
-@Component({
-  name: "Register",
-  components: {
-    TipTapEditor
+interface RegisterProps {
+  active?: boolean
+}
+const { active } = defineProps<RegisterProps>()
+
+// TODO - Repasser sur un store ?
+const modalActive = useState<boolean>("registerModalActive")
+
+const uploadedFile = ref<Blob | null>(null)
+// private previewAvatar!: Blob;
+const checkPass = ref<string>("")
+
+const signupForm = reactive<UserRegisterData>({
+  email: "",
+  password: "",
+  username: "",
+  profile: {
+    realname: "",
+    bio: "",
+    website: "",
+    profile_picture: null
   }
 })
-export default class Register extends Vue {
-  // #region Props
-  @Prop() public active!: boolean;
-  // #endregion
 
-  // #region Data
-  public uploadedFile: Blob | null = null;
-  // private previewAvatar!: Blob;
-  public checkPass: string = "";
+const formIsValid = ref<boolean>(false)
 
-  public signupForm: UserRegisterData = {
-    email: "",
-    password: "",
-    username: "",
-    profile: {
-      realname: "",
-      bio: "",
-      website: "",
-      profile_picture: null
-    }
-  };
+const tiptapConfig: TipTapEditorConfig = {
+  showFooter: false,
+  placeholder: "Votre description",
+  readOnly: false,
+  fixedHeight: true
+};
 
-  public formIsValid: boolean = false;
+const rgxConfirmPassword = computed<string>(() => {
+  return (
+    "^" +
+    signupForm.password.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
+    "$"
+  );
+})
 
-  public loading: boolean = false;
+const regexPasswordPattern = computed<string>(() => {
+  return rgxPasswordPattern.source;
+})
 
-  public tiptapConfig: TipTapEditorConfig = {
-    showFooter: false,
-    placeholder: "Votre description",
-    readOnly: false,
-    fixedHeight: true
-  };
-  // #endregion
+// NOTE https://stackoverflow.com/questions/72139221/how-to-use-template-refs-in-nuxt-3
+const htmlSignupForm = ref<HTMLInputElement | null>(null)
+const form = computed<VForm>(() => htmlSignupForm.value as VForm)
+watch([signupForm, checkPass], () => {
+  formIsValid.value = form.value.checkValidity()
+})
 
-  // #region Computed
-  get rgxConfirmPassword(): string {
-    return (
-      "^" +
-      this.signupForm.password.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
-      "$"
-    );
+watch(uploadedFile, () => {
+  const reader = new FileReader();
+  reader.onloadend = e => (signupForm.profile.profile_picture = reader.result);
+  if (uploadedFile.value != null) reader.readAsDataURL(uploadedFile.value);
+  // reader.readAsDataURL(
+  //   this.uploadedFile != null ? this.uploadedFile : new Blob()
+  // );
+  console.log(uploadedFile);
+  console.log(reader);
+  console.log(signupForm.profile.profile_picture);
+})
+
+// Supprimer l'avatar uploadé
+function deleteDropFile(): void {
+  uploadedFile.value = null;
+  signupForm.profile.profile_picture = "";
+}
+
+// Vérifier le formulaire avant l'envoi
+function checkAndSubmitForm(): void {
+  if (form.value.checkValidity()) signup()
+}
+
+const loading = ref<boolean>(false)
+const { status, execute } = await sendSignup(signupForm)
+watch(status, async (value: string) => {
+  loading.value = false
+  if (value === "success") {
+    OpenToast("Inscription réussie", "is-primary", 5000, false, true, "is-bottom");
+  } else if (value === "error") {
+    OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+  } else if (value === "pending") {
+    loading.value = true
   }
+})
 
-  get regexPasswordPattern(): string {
-    return regexPasswordPattern.source;
-  }
-
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.registerModalActive;
-  }
-
-  set modalActive(value) {
-    this.ModalsStatesModule.setRegisterModalActive(value);
-  }
-
-  get form(): VForm {
-    return this.$refs.signupForm as VForm;
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("signupForm", { deep: true })
-  @Watch("checkPass", { deep: true })
-  public onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
-  }
-
-  @Watch("uploadedFile", { deep: true })
-  public onChanged(): void {
-    const reader = new FileReader();
-    reader.onloadend = e => (this.signupForm.profile.profile_picture = reader.result);
-    if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
-    // reader.readAsDataURL(
-    //   this.uploadedFile != null ? this.uploadedFile : new Blob()
-    // );
-    console.log(this.uploadedFile);
-    console.log(reader);
-    console.log(this.signupForm.profile.profile_picture);
-  }
-  // #endregion
-
-  // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm(): void {
-    if (this.form.checkValidity()) this.signup();
-  }
-
-  // Supprimer l'avatar uploadé
-  public deleteDropFile(): void {
-    this.uploadedFile = null;
-    this.signupForm.profile.profile_picture = "";
-  }
-
-  // Envoyer le formulaire
-  private async signup(): Promise<void> {
-    try {
-      this.loading = true;
-      const data = await signup(this.signupForm);
-      OpenToast(
-        "Inscription réussie",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
-    } catch (exception) {
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
+// Envoyer le formulaire
+async function signup(): Promise<void> {
+  execute()
 }
 </script>
 

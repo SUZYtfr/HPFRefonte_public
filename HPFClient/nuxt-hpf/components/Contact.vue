@@ -1,6 +1,6 @@
 <template>
   <b-modal v-model="modalActive" width="600px" scroll="keep">
-    <form ref="contactForm">
+    <form ref="htmlContactForm">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
           <p class="modal-card-title">
@@ -93,79 +93,53 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import { contact } from "@/api/other";
+<script setup lang="ts">
+import { contact as sendContact } from "@/api/other";
 import { VForm, OpenToast } from "@/utils/formHelper";
 import { ContactFormData } from "@/types/other";
 
-@Component({
-  name: "NousContacter"
+interface ContactProps {
+  active?: boolean
+}
+const { active } = defineProps<ContactProps>()
+
+// TODO - Repasser sur un store ?
+const modalActive = useState<boolean>("contactModalActive")
+
+const contactForm = reactive<ContactFormData>({
+  email: "",
+  subject_id: "",
+  content: ""
 })
-export default class NousContacter extends Vue {
-  // #region Props
-  @Prop() public active!: boolean;
-  // #endregion
 
-  // #region Data
-  public contactForm: ContactFormData = {
-    email: "",
-    subject_id: "",
-    content: ""
-  };
+const formIsValid = ref<boolean>(false)
 
-  public formIsValid: boolean = false;
+// NOTE https://stackoverflow.com/questions/72139221/how-to-use-template-refs-in-nuxt-3
+const htmlContactForm = ref<HTMLInputElement | null>(null)
+const form = computed<VForm>(() => htmlContactForm.value as VForm)
+watch(contactForm, () => { formIsValid.value = form.value.checkValidity() })
 
-  public loading: boolean = false;
-  // #endregion
-
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
+const loading = ref<boolean>(false)
+const { status, execute } = await sendContact(contactForm)
+watch(status, async (value: string) => {
+  loading.value = false
+  if (value === "success") {
+    OpenToast("Envoi réussi", "is-primary", 5000, false, true, "is-bottom");
+  } else if (value === "error") {
+    OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+  } else if (value === "pending") {
+    loading.value = true
   }
+})
 
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.contactModalActive;
-  }
+// Vérifier le formulaire avant l'envoi
+function checkAndSubmitForm(): void {
+  if (form.value.checkValidity()) contact()
+}
 
-  set modalActive(value) {
-    this.ModalsStatesModule.setContactModalActive(value);
-  }
-
-  get form(): VForm {
-    return this.$refs.contactForm as VForm;
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("contactForm", { deep: true })
-  public onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
-  }
-  // #endregion
-
-  // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm(): void {
-    if (this.form.checkValidity()) this.contact();
-  }
-
-  // Envoyer le formulaire
-  private async contact(): Promise<void> {
-    this.loading = true;
-    try {
-      const { data } = await contact(this.contactForm);
-      OpenToast("Envoi réussi", "is-primary", 5000, false, true, "is-bottom");
-    } catch (exception) {
-      console.log(exception);
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
+// Envoyer le formulaire
+async function contact(): Promise<void> {
+  execute()
 }
 </script>
 

@@ -69,10 +69,10 @@
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
+              <a class="button is-light" @click="loginModalActive = true">
                 Se connecter
               </a>
-              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
+              <a class="button" @click="registerModalActive = true">
                 S'inscrire
               </a>
             </div>
@@ -146,7 +146,7 @@
         <b-navbar-item href="#">
           Partenaires
         </b-navbar-item>
-        <b-navbar-item href="#" @click="ModalsStatesModule.setContactModalActive(true)">
+        <b-navbar-item href="#" @click="contactModalActive = true">
           Contact
         </b-navbar-item>
       </template>
@@ -207,10 +207,10 @@
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
+              <a class="button is-light" @click="loginModalActive = true">
                 Se connecter
               </a>
-              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
+              <a class="button" @click="registerModalActive = true">
                 S'inscrire
               </a>
             </div>
@@ -235,38 +235,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
+<script setup lang="ts">
 import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
-import ModalsStates from "~/store/modules/ModalsStates";
 
-@Component({
-  name: "Navbar",
-  components: {
-    Login,
-    Register,
-    Contact
-  }
-})
-export default class Navbar extends Vue {
-  // #region Data
+// TODO - Repasser sur un store ?
+const contactModalActive = useState("contactModalActive", () => false)
+const registerModalActive = useState("registerModalActive", () => false)
+const loginModalActive = useState("loginModalActive", () => false)
 
-  // #endregion
-
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-  // #endregion
-
-  // #region Methods
-  public async logout(): Promise<void> {
-    await this.$auth.logout();
-  }
-  // #endregion
+async function logout(): Promise<void> {
+  const $auth = { async logout() {} }
+  await $auth.logout();
 }
 </script>
 

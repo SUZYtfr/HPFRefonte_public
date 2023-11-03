@@ -19,30 +19,37 @@ interface threeStateCheckboxProps {
   uncheckedValue?: any
 }
 
-const props = withDefaults(defineProps<threeStateCheckboxProps>(), {
+const {
+  checkedValue,
+  excludedValue,
+  uncheckedValue,
+  externalValue,
+  title,
+} = withDefaults(defineProps<threeStateCheckboxProps>(), {
   checkedValue: true,
   excludedValue: false,
   uncheckedValue: null
 })
 
 interface threeStateCheckboxEmits {
-  (e: 'change', internalState: boolean): void
+  (e: 'change', internalState: boolean | null): void
 }
 
 const emit = defineEmits<threeStateCheckboxEmits>()
 
-const checkboxStatus: boolean = props.externalValue === props.checkedValue
-const indeterminate: boolean = props.externalValue === props.excludedValue
+const checkboxStatus: boolean = computed(() => externalValue === checkedValue).value
+const indeterminate: boolean = computed(() => externalValue === excludedValue).value
+
 const checkBoxClicked = (event: any) => {
-    let internalState;
-    if (indeterminate) {
-      internalState = props.uncheckedValue;
-    } else if (checkboxStatus) {
-      internalState = props.excludedValue;
-    } else {
-      internalState = props.checkedValue;
-    }
-    emit("change", internalState)
+  let internalState;
+  if (indeterminate) {
+    internalState = uncheckedValue;
+  } else if (checkboxStatus) {
+    internalState = excludedValue;
+  } else {
+    internalState = checkedValue;
+  }
+  emit("change", internalState)
 }
 </script>
 

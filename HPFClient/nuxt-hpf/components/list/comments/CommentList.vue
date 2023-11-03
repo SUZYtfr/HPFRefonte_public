@@ -41,8 +41,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import { getModule } from "vuex-module-decorators";
 import Comment from "~/components/entities/comment.vue";
 import { CommentModel } from "@/models/news";
@@ -50,48 +49,49 @@ import { postComment } from "~/api/news";
 import TipTapEditor from "~/components/TipTapEditor.vue";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import ModalsStates from "~/store/modules/ModalsStates";
+import { useStore } from "vuex";
 
-@Component({ name: "CommentList", components: { Comment, TipTapEditor } })
-export default class CommentList extends Vue {
-  // #region Props
-  @Prop({ default: [] }) public comments!: CommentModel[];
-  @Prop({ default: null }) public news_id!: number;
-  // #endregion
-
-  // #region Datas
-  public editorContent: TipTapEditorContent | null = null;
-
-  public tiptapConfig: TipTapEditorConfig = {
-    showFooter: false,
-    placeholder: "Ecrire un commentaire",
-    readOnly: false,
-    fixedHeight: true
-  };
-  // #endregion
-
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-  // #endregion
-
-  // #region Methods
-  public async PostComment(): Promise<void> {
-    if (this.news_id === null) return;
-    if ((this.editorContent?.wordcount ?? 0) < 3) return;
-    if (this.editorContent?.content == null) return;
-    try {
-      let comment: CommentModel = new CommentModel();
-      comment.content = this.editorContent?.content;
-      comment.content_images = this.editorContent?.content_images;
-      comment = (await postComment(this.news_id, comment)).items;
-      if (comment != null) this.comments?.push(comment);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  // #endregion
+interface commentListProps {
+  comments?: CommentModel[]
+  news_id?: number
 }
+
+const { comments, news_id } = withDefaults(defineProps<commentListProps>(), {
+  comments: [],
+  news_id: null
+})
+let { value: localComments } = ref(comments);
+
+let editorContent: TipTapEditorContent | null = null;
+
+const tiptapConfig: TipTapEditorConfig = {
+  showFooter: false,
+  placeholder: "Ecrire un commentaire",
+  readOnly: false,
+  fixedHeight: true
+};
+
+const ModalsStatesModule = (): ModalsStates => {
+  const store = useStore()
+  return getModule(ModalsStates, store)
+}
+
+// TODO tester ça quand auth et store sont réparés
+const PostComment = (): void => {
+  if (news_id === null) return;
+  if ((editorContent?.wordcount ?? 0) < 3) return;
+  if (editorContent?.content == null) return;
+  try {
+    let comment: CommentModel = new CommentModel();
+    comment.content = editorContent?.content;
+    comment.content_images = editorContent?.content_images;
+    comment = (postComment(news_id, comment)).items;
+    if (comment != null) localComments?.push(comment);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 </script>
 
 <style lang="scss" scoped>

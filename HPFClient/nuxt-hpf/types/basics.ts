@@ -5,12 +5,24 @@ export enum SortByEnum {
   Descending = 1,
 }
 
+export enum SortOrderEnum {
+  MostRecentFirst = "-creation_date",
+  MostRecentLast = "creation_date",
+  LastUpdatedFirst = "-last_update_date",
+  LastUpdatedLast = "last_update_date",
+  TitleAlphabetic = "title",
+  TitleUnalphabetic = "-title",
+  MostReviewsFirst = "-review_count",
+  MostReviewsLast = "review_count",
+  GreatestAverageFirst = "-average",
+  GreatestAverageLast = "average"
+}
+
 export interface IBasicQuery {
   page: number,
   totalPages: boolean,
   pageSize: number,
-  sortOn: string,
-  sortBy: SortByEnum
+  sortOrder: SortOrderEnum
 }
 
 export interface BasicResponse {

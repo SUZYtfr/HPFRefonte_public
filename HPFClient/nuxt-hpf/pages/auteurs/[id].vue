@@ -381,8 +381,6 @@
                       <FanfictionList
                         :is-card="false"
                         :fanfiction-filters="fanfictionFilters"
-                        @changeSortBy="fanfictionFilters.sortBy = $event"
-                        @changeSortOn="fanfictionFilters.sortOn = $event"
                       />
                     </div>
                   </div>
@@ -488,36 +486,51 @@ import { UserModel } from "@/models/users";
 import { IFanfictionFilters } from "@/types/fanfictions";
 import { getUser } from "@/api/users";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
-import { SortByEnum } from "~/types/basics";
+import { SortOrderEnum } from "~/types/basics";
 import { UseFetchWrapperResponse } from "~/utils/api"
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 
 const route = useRoute()
 
 // Filtres de recherche
-const fanfictionFilters: IFanfictionFilters = {
+const fanfictionFilters: IFanfictionFilters = reactive({
   searchTerm: "",
   searchAuthor: "",
   searchAuthorId: Number(route.params.id),
   multipleAuthors: null,
-  status: null,
+  // status: null,
+  finished: null,
   wordCount_min: null,
   wordCount_max: null,
   includedTags: [],
   excludedTags: [],
   customTags: [],
-  featured: false,
+  featured: null,
   inclusive: false,
   fromDate: null,
   toDate: null,
   page: 1,
   pageSize: 10,
   totalPages: true,
-  sortOn: "last_update_date",
-  sortBy: SortByEnum.Descending
-};
+  sortOrder: SortOrderEnum.LastUpdatedFirst
+})
 
-// TODO - rétablir la snackbar d'erreur (useFetch fournit error)
-const { data: user, pending: userLoading }: UseFetchWrapperResponse<UserModel> = await getUser(Number(route.params.id))
+const { data: user, pending: userLoading, error: userError }: UseFetchWrapperResponse<UserModel> = await getUser(Number(route.params.id))
+
+watch(userError, async (value) => {
+  if (value && process.client) {
+    console.error(value)
+    Snackbar.open({
+      duration: 5000,
+      message: "Une erreur s'est produite lors de la récupération des données",
+      type: "is-danger",
+      position: "is-bottom-right",
+      actionText: null,
+      pauseOnHover: true,
+      queue: true
+    });
+  }
+})
 
 const parseTime = (timestamp: string) => { return new Date(timestamp).toLocaleDateString()}
 const numberToString = (number: number) => { return number > 9999 ? (number / 1000).toString() + " K" : number.toString() }

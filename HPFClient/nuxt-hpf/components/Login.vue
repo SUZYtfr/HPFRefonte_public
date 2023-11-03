@@ -1,6 +1,6 @@
 <template>
   <b-modal v-model="modalActive" width="300px" scroll="keep">
-    <form ref="loginForm">
+    <form ref="htmlLoginForm">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
           <p class="modal-card-title">
@@ -43,85 +43,54 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import { VForm, OpenToast } from "@/utils/formHelper";
+<script setup lang="ts">
+import { VForm } from "@/utils/formHelper";
 import { UserLoginData } from "@/types/users";
 
-@Component({
-  name: "Connexion"
+// TODO - Repasser sur un store ?
+const modalActive: Ref<boolean> = useState("loginModalActive")
+
+const loginForm = reactive<UserLoginData>({
+  username: "",
+  password: ""
 })
-export default class Connexion extends Vue {
-  // #region Data
-  public loginForm: UserLoginData = {
-    username: "",
-    password: ""
-  };
 
-  public formIsValid: boolean = false;
+const formIsValid = ref<boolean>(false)
 
-  public loading: boolean = false;
-  // #endregion
+// NOTE https://stackoverflow.com/questions/72139221/how-to-use-template-refs-in-nuxt-3
+const htmlLoginForm = ref<HTMLInputElement | null>(null)
+const form = computed<VForm>(() => htmlLoginForm.value as VForm)
+watch(loginForm, () => { formIsValid.value = form.value.checkValidity() })
 
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.loginModalActive;
-  }
-
-  set modalActive(value) {
-    this.ModalsStatesModule.setLoginModalActive(value);
-  }
-
-  get form(): VForm {
-    return this.$refs.loginForm as VForm;
-  }
-
-  // #endregion
-
-  // #region Watchers
-  @Watch("loginForm", { deep: true })
-  private onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
-  }
-  // #endregion
-
-  // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm():void {
-    if (this.form.checkValidity()) this.login();
-  }
-
-  // Envoyer le formulaire
-  private async login(): Promise<void> {
-    this.loading = true;
-    try {
-      await this.$auth.loginWith("cookie", { data: this.loginForm });
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la tentative de connexion",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
+// FIXME - adapter quand le module d'authentification est implémenté
+// Vérifier le formulaire avant l'envoi
+function checkAndSubmitForm(): void {
+  if (form.value.checkValidity()) {/*login()*/}
 }
+let loading: boolean = false;
+// Envoyer le formulaire
+// private async login(): Promise<void> {
+//   this.loading = true;
+//   try {
+//       await this.$auth.loginWith("cookie", { data: this.loginForm });
+//   } catch (error) {
+//     if (process.client) {
+//       this.$buefy.snackbar.open({
+//         duration: 5000,
+//         message: "Une erreur s'est produite lors de la tentative de connexion",
+//         type: "is-danger",
+//         position: "is-bottom-right",
+//         actionText: null,
+//         pauseOnHover: true,
+//         queue: true
+//       });
+//     } else {
+//       console.log(error);
+//     }
+//   } finally {
+//     this.loading = false;
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>

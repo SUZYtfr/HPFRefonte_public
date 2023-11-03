@@ -13,7 +13,7 @@
           v-if="showRefreshButton"
           type="is-primary"
           icon-left="redo-alt"
-          @click="onFiltersChanged"
+          @click="refresh"
         >
           <span class="is-italic">
             {{ fanfictionResultLabel }}
@@ -30,27 +30,27 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            @input="SelectSortBy_OnInputChanged"
+            @input="(e: InputEvent) => fanfictionFilters.sortOrder = e?.target?.value"
           >
-            <option value="alpha">
+            <option :value="SortOrderEnum.TitleAlphabetic">
               Ordre alphabétique
             </option>
-            <option value="most_recent">
+            <option :value="SortOrderEnum.MostRecentFirst">
               Plus récent au plus ancien
             </option>
-            <option value="less_recent">
+            <option :value="SortOrderEnum.MostRecentLast">
               Plus ancien au plus récent
             </option>
-            <option value="most_reviews">
+            <option :value="SortOrderEnum.MostReviewsFirst">
               Nombre de reviews - croissant
             </option>
-            <option value="less_reviews">
+            <option :value="SortOrderEnum.MostReviewsLast">
               Nombre de reviews - décroissant
             </option>
-            <option value="most_rating">
+            <option :value="SortOrderEnum.GreatestAverageFirst">
               Rating - croissant
             </option>
-            <option value="less_rating">
+            <option :value="SortOrderEnum.GreatestAverageLast">
               Rating - décroissant
             </option>
           </b-select>
@@ -99,8 +99,10 @@ import Fanfiction from "~/components/Fanfiction.vue";
 import type { IFanfictionFilters } from "@/types/fanfictions";
 import { FanfictionModel } from "@/models/fanfictions";
 import { searchFanfictions } from "@/api/fanfictions";
-import { SortByEnum } from "~/types/basics";
+import { SortOrderEnum } from "~/types/basics";
 import { UseFetchWrapperResponse } from "~/utils/api"
+import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { debounce } from "~/utils/es6-utils";
 
 interface fanfictionListProps {
   isCard?: boolean
@@ -109,23 +111,13 @@ interface fanfictionListProps {
   fanfictionFilters: IFanfictionFilters
 }
 
-const props = withDefaults(defineProps<fanfictionListProps>(), {
+const { isCard, showRefreshButton, isLoading, fanfictionFilters } = withDefaults(defineProps<fanfictionListProps>(), {
   isCard: true,
   showRefreshButton: true,
   isLoading: false
 })
 
-let fanfictionFilters: IFanfictionFilters = ref(props.fanfictionFilters).value
-
-interface fanfictionListEmits {
-  (e: 'changeSortBy', sortBy: SortByEnum): void
-  (e: 'changeSortOn', sortOn: string): void
-}
-
-const emit = defineEmits<fanfictionListEmits>()
-
-
-// TODO - rétablir ça
+// TODO - rétablir ça quand on aura les données méta d'une réponse paginée
 // get fanfictionResultLabel(): string {
   //   let result = "Aucun résultat";
   //   if (this.totalFanfictions === 0) return result;
@@ -134,53 +126,29 @@ const emit = defineEmits<fanfictionListEmits>()
   //   return result;
   // }
 const totalFanfictions: number = 0;
-const fanfictionResultLabel = "Aucun résultat"
+const fanfictionResultLabel = "Rafraîchir"
 
-// TODO - rétablir la snackbar d'erreur (useFetch fournit error)
-const { data: fanfictions, refresh, pending: listLoading }: UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(props.fanfictionFilters || null)
+const { data: fanfictions, refresh, pending: listLoading, error: fanfictionError }: UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(fanfictionFilters)
 
-const SelectSortBy_OnInputChanged = (value: string): void => {
-  switch (value) {
-    case "alpha":
-      fanfictionFilters.sortBy = SortByEnum.Ascending;
-      fanfictionFilters.sortOn = "title";
-      break;
-    case "most_recent":
-      fanfictionFilters.sortBy = SortByEnum.Descending;
-      fanfictionFilters.sortOn = "last_update_date";
-      break;
-    case "less_recent":
-      fanfictionFilters.sortBy = SortByEnum.Ascending;
-      fanfictionFilters.sortOn = "last_update_date";
-      break;
-    case "most_reviews":
-      fanfictionFilters.sortBy = SortByEnum.Descending;
-      fanfictionFilters.sortOn = "comments";
-      break;
-    case "less_reviews":
-      fanfictionFilters.sortBy = SortByEnum.Ascending;
-      fanfictionFilters.sortOn = "comments";
-      break;
-    case "most_rating":
-      fanfictionFilters.sortBy = SortByEnum.Ascending;
-      fanfictionFilters.sortOn = "rating";
-      break;
-    case "less_rating":
-      fanfictionFilters.sortBy = SortByEnum.Ascending;
-      fanfictionFilters.sortOn = "rating";
-      break;
-    }
-  emit("changeSortBy", fanfictionFilters.sortBy)
-  emit("changeSortOn", fanfictionFilters.sortOn)
-}
+watch(fanfictionError, async (value) => {
+  if (value && process.client) {
+    console.error(value)
+    Snackbar.open({
+      duration: 5000,
+      message: "Une erreur s'est produite lors de la récupération des fanfictions",
+      type: "is-danger",
+      position: "is-bottom-right",
+      actionText: null,
+      pauseOnHover: true,
+      queue: true
+    })
+  }
+})
 
-// TODO - rétablir le watch
-// @Watch("fanfictionFilters", { deep: true })
-let timerId: number = 0;
-const onFiltersChanged = (): void => {
-  clearTimeout(timerId);
-  timerId = window.setTimeout(() => refresh, 500);
-}
+const debouncedRefresh = debounce(() => refresh(), 500)
+watch(fanfictionFilters, () => {
+  debouncedRefresh()
+})
 </script>
 
 <style lang="scss" scoped>

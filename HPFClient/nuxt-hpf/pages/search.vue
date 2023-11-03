@@ -30,8 +30,7 @@
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <FanfictionList
           :fanfiction-filters="fanfictionFilters"
-          :is-loading="listLoading"
-          @loadingChange="(value) => (listLoading = value)"
+          @loadingChange="(value: boolean) => (listLoading = value)"
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->
@@ -51,58 +50,39 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
+<script setup lang="ts">
 import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilters.vue";
-import { SortByEnum } from "~/types/basics";
+import { SortOrderEnum } from "~/types/basics";
 
-@Component({
-  name: "Recherche",
-  components: {
-    FanfictionList,
-    FanfictionFilters
-  }
+let filtersOpened: boolean = false;
+
+const fanfictionFilters: IFanfictionFilters = reactive({
+  searchTerm: null,
+  searchAuthor: null,
+  searchAuthorId: null,
+  multipleAuthors: null,
+  // status: null,
+  finished: null,
+  wordCount_min: null,
+  wordCount_max: null,
+  includedTags: [],
+  excludedTags: [],
+  customTags: [],
+  featured: null,
+  inclusive: false,
+  fromDate: null,
+  toDate: null,
+  page: 1,
+  pageSize: 10,
+  totalPages: true,
+  // sortBy: SortByEnum.Descending,
+  // sortOn: "last_update_date"
+  sortOrder: SortOrderEnum.LastUpdatedFirst
 })
-export default class Recherche extends Vue {
-  // #region Data
-  public filtersOpened: boolean = false;
 
-  public fanfictionFilters: IFanfictionFilters = {
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: null,
-    inclusive: false,
-    fromDate: null,
-    toDate: null,
-    page: 1,
-    pageSize: 10,
-    totalPages: true,
-    sortBy: SortByEnum.Descending,
-    sortOn: "last_update_date"
-  };
-
-  public listLoading: boolean = false;
-
-  // #endregion
-
-  // #region Hooks
-
-  // #endregion
-
-  // #region Methods
-
-  // #endregion
-}
+let listLoading: boolean = false;
 </script>
 
 <style lang="scss" scoped>

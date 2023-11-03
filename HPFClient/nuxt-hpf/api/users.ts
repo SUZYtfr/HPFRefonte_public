@@ -11,5 +11,5 @@ import { UserModel } from "~/models/users";
 
 export const getUser = (user_id: number): Promise<any> => $UseFetchWrapper.get<UserModel>("/users/" + user_id.toString() + "/", null, UserModel);
 
-export const signup = (data: UserRegisterData): Promise<any> => $UseFetchWrapper.post<UserModel>("/account/", data, UserModel)
+export const signup = (data: UserRegisterData): Promise<any> => $UseFetchWrapper.post<UserModel>("/account/", data, UserModel, { immediate: false })
 

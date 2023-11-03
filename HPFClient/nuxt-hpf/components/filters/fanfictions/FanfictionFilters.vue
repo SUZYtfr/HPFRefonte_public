@@ -51,7 +51,7 @@
           :max="6"
           :step="1"
           lazy
-          :custom-formatter="(val) => sliderCustomFormatter(val)"
+          :custom-formatter="(val: number | null) => sliderCustomFormatter(val)"
           append-to-body
           ticks
         >
@@ -67,12 +67,9 @@
       </b-field>
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :external-value="fanfictionFilters.status"
-        :checked-value="4"
-        :excluded-value="1"
-        :unchecked-value="null"
+        :external-value="fanfictionFilters.finished"
         title="Histoires terminées"
-        @change="fanfictionFilters.status = $event"
+        @change="fanfictionFilters.finished = $event"
       />
       <ThreeStateCheckbox
         class="py-1 pl-1"
@@ -190,161 +187,111 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import Config from "~/store/modules/Config";
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 import CharacteristicPanel from "@/components/CharacteristicPanel.vue";
 import { IFanfictionFilters } from "~/types/fanfictions";
 import { groupBy } from "@/utils/es6-utils";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
+import { getCharacteristics, getCharacteristicsTypes } from "~/api/characteristics";
 
-@Component({
-  name: "FanfictionFilters",
-  components: {
-    ThreeStateCheckbox,
-    CharacteristicPanel
-  },
-  fetchOnServer: true,
-  fetchKey: "fanfiction-filter"
+interface FanfictionFiltersProps {
+  fanfictionFilters: IFanfictionFilters
+  loading?: boolean
+  isFixedHeightCard?: boolean
+  tooltipPosition?: string
+}
+const { fanfictionFilters, loading, isFixedHeightCard, tooltipPosition } = withDefaults(defineProps<FanfictionFiltersProps>(), {
+  loading: false,
+  isFixedHeightCard: false,
+  tooltipPosition: "is-right"
 })
-export default class FanfictionFilters extends Vue {
-  // #region Props
-  @Prop() public fanfictionFilters!: IFanfictionFilters;
-  @Prop({ default: false }) public loading!: boolean;
-  @Prop({ default: false }) public isFixedHeightCard!: boolean;
-  @Prop({ default: "is-right" }) public tooltipPosition!: string;
-  // #endregion
 
-  // #region Datas
-  public sliderTicks = [
-    { sliderValue: 1, realValue: 500, displayValue: "<500" },
-    { sliderValue: 2, realValue: 1000, displayValue: "1k" },
-    { sliderValue: 3, realValue: 5000, displayValue: "5k" },
-    { sliderValue: 4, realValue: 10000, displayValue: "10k" },
-    { sliderValue: 5, realValue: 50000, displayValue: "50k" },
-    { sliderValue: 6, realValue: 100000, displayValue: ">100k" }
-  ];
+const sliderTicks = [
+  { sliderValue: 1, realValue: 500, displayValue: "<500" },
+  { sliderValue: 2, realValue: 1000, displayValue: "1k" },
+  { sliderValue: 3, realValue: 5000, displayValue: "5k" },
+  { sliderValue: 4, realValue: 10000, displayValue: "10k" },
+  { sliderValue: 5, realValue: 50000, displayValue: "50k" },
+  { sliderValue: 6, realValue: 100000, displayValue: ">100k" }
+];
 
-  @SerialiseClass(CharacteristicModel)
-  public filteredTags: CharacteristicModel[] = [];
+const sliderWords: Ref<number[]> = ref([1, 6])
 
-  @SerialiseClass(CharacteristicModel)
-  private characteristics: CharacteristicModel[] = [];
+watch(sliderWords, (value) => {
+  fanfictionFilters.wordCount_min = sliderTicks[value[0] - 1].realValue;
+  fanfictionFilters.wordCount_max = sliderTicks[value[1] - 1].realValue;
+  // Valeurs min et max -> null
+  if (fanfictionFilters.wordCount_min === 500) fanfictionFilters.wordCount_min = null;
+  if (fanfictionFilters.wordCount_max === 100000) fanfictionFilters.wordCount_max = null;
+})
 
-  @SerialiseClass(CharacteristicTypeModel)
-  public characteristics_types: CharacteristicTypeModel[] = [];
-
-  public sliderWords: number[] = [1, 6];
-  // #endregion
-
-  // #region Computed
-  get ConfigModule(): Config {
-    return getModule(Config, this.$store);
-  }
-  // #endregion
-
-  // #region Hooks
-  async fetch(): Promise<void> {
-    // Récupération des caractéristiques
-    await this.getCharacteristics();
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("sliderWords")
-  public onSliderChanged(): void {
-    this.fanfictionFilters.wordCount_min = this.sliderTicks[this.sliderWords[0] - 1].realValue;
-    this.fanfictionFilters.wordCount_max = this.sliderTicks[this.sliderWords[1] - 1].realValue;
-    // Valeurs min et max -> null
-    if (this.fanfictionFilters.wordCount_min === 500) this.fanfictionFilters.wordCount_min = null;
-    if (this.fanfictionFilters.wordCount_max === 100000) this.fanfictionFilters.wordCount_max = null;
-  }
-  // #endregion
-
-  // #region Methods
-  private async getCharacteristics(): Promise<void> {
-    if (
-      this.ConfigModule.characteristicTypes.length === 0 ||
-      this.ConfigModule.characteristics.length === 0
-    ) {
-      await this.ConfigModule.LoadConfig();
-    }
-    this.characteristics = this.ConfigModule.characteristics;
-    this.characteristics_types = this.ConfigModule.characteristicTypes;
-  }
-
-  public sliderCustomFormatter(sliderValue: number): string {
-    let result = "";
+function sliderCustomFormatter(sliderValue: number | null): string {
+  let result = "";
+  if (sliderValue) {
     if (sliderValue === 1) result += "< ";
     if (sliderValue === 6) result += "> ";
-    result += this.sliderTicks[sliderValue - 1].realValue;
+    result += sliderTicks[sliderValue - 1].realValue;
     return result + " mots";
+  } else {
+    return result
   }
-
-  public filteredCharacteristics(characteristic_type_id: number): CharacteristicModel[] {
-    const itemsSorted: CharacteristicModel[] = this.characteristics
-      .filter(
-        (t: CharacteristicModel) =>
-          t.characteristic_type_id === characteristic_type_id &&
-          t.parent_id == null
-      )
-      .sort((a: CharacteristicModel, b: CharacteristicModel) => {
-        return a.order - b.order;
-      });
-    groupBy(
-      this.characteristics.filter(
-        (t: CharacteristicModel) =>
-          t.characteristic_type_id === characteristic_type_id
-      ),
-      (g: CharacteristicModel) => g.parent_id
-    ).forEach((value: CharacteristicModel[], key: number) => {
-      if (key != null) {
-        const index = itemsSorted.findIndex(c => c.id === key);
-        if (index === -1) itemsSorted.splice(0, 0, ...value);
-        else itemsSorted.splice(index + 1, 0, ...value);
-      }
-    });
-    return itemsSorted;
-  }
-
-  // Récupération des tags utilisateurs
-  public async getFilteredTags(text: string): Promise<void> {
-    // this.filteredTags =
-  }
-
-  // Mise à jour des filtres des caractéristiques incluses / excluses
-  public characteristicsChanged(
-    allIds: Set<number>,
-    includedIds: number[],
-    excludedIds: number[]
-  ): void {
-    this.fanfictionFilters.excludedTags =
-      this.fanfictionFilters.excludedTags.filter(
-        excludedId => !allIds.has(excludedId)
-      );
-    this.fanfictionFilters.excludedTags =
-      this.fanfictionFilters.excludedTags.concat(excludedIds);
-    this.fanfictionFilters.includedTags =
-      this.fanfictionFilters.includedTags.filter(
-        includedId => !allIds.has(includedId)
-      );
-    this.fanfictionFilters.includedTags =
-      this.fanfictionFilters.includedTags.concat(includedIds);
-  }
-
-  // Déclencher le Watcher des filtres sur le clique recherche
-  public toggleFilterChanged(): void {
-    this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm + " ";
-    this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm.slice(
-      0,
-      -1
-    );
-  }
-  // #endregion
 }
+
+// TODO - remettre dans un store / plugin
+const { data: characteristics } = await getCharacteristics(null)
+const { data: characteristics_types } = await getCharacteristicsTypes()
+const filteredTags: CharacteristicModel[] = []
+
+function filteredCharacteristics(characteristic_type_id: number): CharacteristicModel[] {
+  const itemsSorted: CharacteristicModel[] = characteristics.value
+    .filter(
+      (t: CharacteristicModel) =>
+        t.characteristic_type_id === characteristic_type_id &&
+        t.parent_id == null
+    )
+    .sort((a: CharacteristicModel, b: CharacteristicModel) => {
+      return a.order - b.order;
+    });
+  groupBy(
+    characteristics.value.filter(
+      (t: CharacteristicModel) =>
+        t.characteristic_type_id === characteristic_type_id
+    ),
+    (g: CharacteristicModel) => g.parent_id
+  ).forEach((value: CharacteristicModel[], key: number) => {
+    if (key != null) {
+      const index = itemsSorted.findIndex(c => c.id === key);
+      if (index === -1) itemsSorted.splice(0, 0, ...value);
+      else itemsSorted.splice(index + 1, 0, ...value);
+    }
+  });
+  return itemsSorted;
+}
+
+// Récupération des tags utilisateurs
+async function getFilteredTags(text: string): Promise<void> {
+  // this.filteredTags =
+}
+
+// Mise à jour des filtres des caractéristiques incluses / excluses
+function characteristicsChanged(
+  allIds: Set<number>,
+  includedIds: number[],
+  excludedIds: number[]
+): void {
+  fanfictionFilters.excludedTags = fanfictionFilters.excludedTags.filter(excludedId => !allIds.has(excludedId));
+  fanfictionFilters.excludedTags = fanfictionFilters.excludedTags.concat(excludedIds);
+  fanfictionFilters.includedTags = fanfictionFilters.includedTags.filter(includedId => !allIds.has(includedId));
+  fanfictionFilters.includedTags = fanfictionFilters.includedTags.concat(includedIds);
+}
+
+// Déclencher le Watcher des filtres sur le clique recherche
+function toggleFilterChanged(): void {
+  fanfictionFilters.searchTerm = fanfictionFilters.searchTerm + " ";
+  fanfictionFilters.searchTerm = fanfictionFilters.searchTerm.slice(0, -1);
+}
+// #endregion
 </script>
 
 <style lang="scss" scoped>

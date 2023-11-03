@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     //   }
     // }
   },
+  components: false,
   alias: {
     "~/*": "./*",
     "@/*": "./*"

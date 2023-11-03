@@ -19,6 +19,7 @@ export function useCustomFetch<T, U> (url: string | (() => string), options: Use
     params: (input) => {
       return qs.stringify(input, { arrayFormat: "repeat", skipNulls: true })
     },
+    watch: false,
     transform: (input) => {
       if (type != null) {
         if (input.results != null) {

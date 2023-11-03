@@ -12,7 +12,7 @@
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList :is-loading="newsLoading" :news="recentNews" />
+        <NewsThumbnailList :is-loading="newsLoading" :news="news" />
       </div>
     </div>
     <br>
@@ -24,24 +24,25 @@ import { searchNews } from "@/api/news";
 import { NewsModel } from "@/models/news";
 import { searchFanfictions } from "@/api/fanfictions";
 import { FanfictionModel } from "@/models/fanfictions";
-import { IBasicQuery, SortByEnum } from "@/types/basics";
+import { IBasicQuery, SortOrderEnum } from "@/types/basics";
 import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
 import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
 import { FanfictionListType } from "~/types/other";
 import type { UseFetchWrapperResponse } from "~/utils/api"
+import { SnackbarProgrammatic as Snackbar } from "buefy"
 
 const recentFanfictionFilters: IFanfictionFilters = {
   page: 1,
   pageSize: 20,
   totalPages: false,
-  sortOn: "last_update_date",
-  sortBy: SortByEnum.Descending,
+  sortOrder: SortOrderEnum.LastUpdatedFirst,
   searchTerm: null,
   searchAuthor: null,
   searchAuthorId: null,
   multipleAuthors: null,
-  status: null,
+  // status: null,
+  finished: null,
   wordCount_min: null,
   wordCount_max: null,
   includedTags: [],
@@ -57,13 +58,13 @@ const selectionsFanfictionFilters : IFanfictionFilters = {
   page: 1,
   pageSize: 20,
   totalPages: false,
-  sortOn: "last_update_date",
-  sortBy: SortByEnum.Descending,
+  sortOrder: SortOrderEnum.LastUpdatedFirst,
   searchTerm: null,
   searchAuthor: null,
   searchAuthorId: null,
   multipleAuthors: null,
-  status: null,
+  // status: null,
+  finished: null,
   wordCount_min: null,
   wordCount_max: null,
   includedTags: [],
@@ -79,14 +80,27 @@ const newsFilters : IBasicQuery = {
   page: 1,
   pageSize: 20,
   totalPages: true,
-  sortOn: "post_date",
-  sortBy: SortByEnum.Descending
+  sortOrder: SortOrderEnum.MostRecentFirst
 };
 
-// TODO - rétablir la snackbar d'erreur (useFetch fournit error)
-const { data: recentNews, pending: newsLoading } : UseFetchWrapperResponse<NewsModel[]> = await searchNews(newsFilters)
-const { data: recentFanfictions, pending: recentFanfictionsLoading} : UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(recentFanfictionFilters)
-const { data: selectionsFanfictions, pending: selectionsFanfictionsLoading} : UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(selectionsFanfictionFilters)
+const { data: news, pending: newsLoading, error: newsError } : UseFetchWrapperResponse<NewsModel[]> = await searchNews(newsFilters)
+const { data: recentFanfictions, pending: recentFanfictionsLoading, error: recentFanfictionsError} : UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(recentFanfictionFilters)
+const { data: selectionsFanfictions, pending: selectionsFanfictionsLoading, error: selectionsFanfictionsError} : UseFetchWrapperResponse<FanfictionModel[]> = await searchFanfictions(selectionsFanfictionFilters)
+
+watch([newsError, recentFanfictionsError, selectionsFanfictionsError], async (value) => {
+  console.error(value)
+  if (value && process.client) {
+    Snackbar.open({
+      duration: 5000,
+      message: "Une erreur s'est produite lors de la récupération des données",
+      type: "is-danger",
+      position: "is-bottom-right",
+      actionText: null,
+      pauseOnHover: true,
+      queue: true
+    });
+  }
+})
 
 </script>
 

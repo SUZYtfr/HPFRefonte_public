@@ -23,7 +23,7 @@
           v-if="showRefreshButton"
           type="is-primary"
           icon-left="redo-alt"
-          @click="onFiltersChanged"
+          @click="refreshNews"
         >
           <span class="is-italic">
             {{ newsResultLabel }}
@@ -40,12 +40,12 @@
             placeholder="Trier par"
             icon="sort"
             expanded
-            @input="SelectSortBy_OnInputChanged"
+            @input="(e: InputEvent) => newsFilters.sortOrder = e?.target?.value"
           >
-            <option value="most_recent">
+            <option :value="SortOrderEnum.MostRecentFirst">
               Plus récent au plus ancien
             </option>
-            <option value="less_recent">
+            <option :value="SortOrderEnum.MostRecentLast">
               Plus ancien au plus récent
             </option>
           </b-select>
@@ -91,112 +91,69 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import News_2 from "~/components/News_2.vue";
 import { INewsFilters } from "@/types/news";
 import { NewsModel } from "@/models/news";
 import { searchNews } from "@/api/news";
-import { SortByEnum } from "~/types/basics";
+import { SortOrderEnum } from "~/types/basics";
+import { UseFetchWrapperResponse } from "~/utils/api";
+import { debounce } from '~/utils/es6-utils'
+import { SnackbarProgrammatic as Snackbar } from 'buefy'
 
-@Component({
-  name: "NewsList",
-  components: {
-    News_2
-  },
-  fetchOnServer: true,
-  fetchKey: "news-list"
-})
-export default class NewsList extends Vue {
-  // #region Props
-  @Prop({ default: true }) public isCard!: boolean;
-  @Prop({ default: true }) public showRefreshButton!: boolean;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public newsFilters!: INewsFilters;
-  // #endregion
-
-  // #region Data
-  @SerialiseClass(NewsModel)
-  public news: NewsModel[] = [];
-
-  public totalNews: number = 0;
-  private timerId: number = 0;
-  // #endregion
-
-  // #region Computed
-  get newsResultLabel(): string {
-    let result = "Aucun résultat";
-    if (this.totalNews === 0) return result;
-    result = this.totalNews.toString() + " résultat";
-    result += this.totalNews > 1 ? "s" : "";
-    return result;
-  }
-
-  get listLoading(): boolean {
-    return this.isLoading;
-  }
-
-  set listLoading(value) {
-    this.$emit("loadingChange", value);
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("newsFilters", { deep: true })
-  public onFiltersChanged(): void {
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.$fetch, 500);
-  }
-  // #endregion
-
-  // #region Hooks
-  private async fetch(): Promise<void> {
-    this.listLoading = true;
-    // Récupération des fictions
-    await this.searchNews();
-    this.listLoading = false;
-  }
-  // #endregion
-
-  // #region Methods
-  private async searchNews(): Promise<void> {
-    try {
-      const response = (await searchNews(this.newsFilters));
-      this.news = response.results;
-      this.newsFilters.page = response.current;
-      this.totalNews = response.count;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des actualités",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    }
-  }
-
-  public SelectSortBy_OnInputChanged(value: string): void {
-    switch (value) {
-      case "most_recent":
-        this.newsFilters.sortBy = SortByEnum.Descending;
-        this.newsFilters.sortOn = "last_update_date";
-        break;
-      case "less_recent":
-        this.newsFilters.sortBy = SortByEnum.Ascending;
-        this.newsFilters.sortOn = "last_update_date";
-        break;
-    }
-  }
-  // #endregion
+interface NewsListProps {
+  isCard?: boolean
+  showRefreshButton?: boolean
+  // isLoading?: boolean  // on utilise la référence pending de useFetch directement
+  newsFilters: INewsFilters
 }
+const { isCard, showRefreshButton, newsFilters } = withDefaults(defineProps<NewsListProps>(), {
+  isCard: true,
+  showRefreshButton: true,
+  // isLoading: false,
+})
+
+const { data: news, pending: listLoading, refresh: refreshNews, error: newsError }: UseFetchWrapperResponse<NewsModel[]> = await searchNews(newsFilters)
+
+watch(newsError, async (value) => {
+  if (value && process.client) {
+    console.error(value)
+    Snackbar.open({
+      duration: 5000,
+      message: "Une erreur s'est produite lors de la récupération des actualités",
+      type: "is-danger",
+      position: "is-bottom-right",
+      actionText: null,
+      pauseOnHover: true,
+      queue: true
+    })
+  }
+})
+
+interface NewsListEmits {
+  (e: "loadingChange", value: boolean): void
+}
+const emit = defineEmits<NewsListEmits>()
+watch(listLoading, async (value) => {
+  emit("loadingChange", value)
+})
+
+const totalNews: number = 0; // TODO searchNews, ajouter ".meta" avec données de pagination ?
+
+// FIXME - réparer ça quand on a les données méta de pagination
+// const newsResultLabel = (): string => {
+//   let result = "Aucun résultat";
+//   if (totalNews === 0) return result;
+//   result = totalNews.toString() + " résultat";
+//   result += totalNews > 1 ? "s" : "";
+//   return result;
+// }
+const newsResultLabel = "Rafraîchir"
+
+const debouncedFilterChange = debounce(() => refreshNews(), 500)
+watch(newsFilters, () => {
+  debouncedFilterChange()
+}, { deep: true })
 </script>
 
 <style lang="scss" scoped>

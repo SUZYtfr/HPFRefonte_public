@@ -81,36 +81,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+<script setup lang="ts">
 import { INewsFilters } from "~/types/news";
 
-@Component({
-  name: "NewsFilters"
-})
-export default class NewsFilters extends Vue {
-  // #region Props
-  @Prop() public newsFilters!: INewsFilters;
-  // #endregion
+const { newsFilters } = defineProps<{
+  newsFilters: INewsFilters
+}>()
 
-  // #region Datas
-
-  // #endregion
-
-  // #region Hooks
-
-  // #endregion
-
-  // #region Methods
-  // Déclencher le Watcher des filtres sur le clique recherche
-  public toggleFilterChanged(): void {
-    this.newsFilters.searchTerm = this.newsFilters.searchTerm + " ";
-    this.newsFilters.searchTerm = this.newsFilters.searchTerm.slice(
-      0,
-      -1
-    );
-  }
-  // #endregion
+// Déclencher le Watcher des filtres sur le clique recherche
+function toggleFilterChanged(): void {
+  newsFilters.searchTerm = newsFilters.searchTerm + " ";
+  newsFilters.searchTerm = newsFilters.searchTerm.slice(
+    0,
+    -1
+  );
 }
 </script>
 

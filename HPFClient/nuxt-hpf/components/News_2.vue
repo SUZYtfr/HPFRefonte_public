@@ -54,28 +54,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import { NewsModel } from "~/models/news";
 
-@Component({
-  name: "News_2"
-})
-export default class News_2 extends Vue {
-  // #region Props
-  @Prop() public news!: NewsModel;
-  @Prop() public activeColor!: string;
-  // #endregion
-
-  public mounted(): void {
-    // console.log("News type: " + (this.news instanceof NewsModel));
-    // console.log("Date type: " + ((new Date()) instanceof Date));
-    // console.log("Creation date type: " + (this.news?.creation_date instanceof Date));
-    // console.log("Last update date type: " + (this.news?.post_date instanceof Date));
-    // console.log(this.news);
-    // console.log(this.news?.post_date?.toLocaleDateString());
-  }
+interface NewsProps {
+  news: NewsModel
+  activeColor: string
 }
+const { news, activeColor } = defineProps<NewsProps>()
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

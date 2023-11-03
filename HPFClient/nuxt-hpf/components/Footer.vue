@@ -31,7 +31,7 @@
         </div>
         <div class="is-flex is-justify-content-center has-text-centered pb-1">
           <p>
-            Tous droits réservés @Association Héros de Papiers Froissés | Site
+            Tous droits réservés @Association Héros de Papier Froissé | Site
             réalisé par Pierre, SUZYftr, Tsilla Aumigny
           </p>
         </div>
@@ -40,13 +40,7 @@
   </footer>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-
-@Component({
-  name: "Footer"
-})
-export default class Footer extends Vue {}
+<script setup lang="ts">
 </script>
 
 <style scoped>

@@ -49,52 +49,28 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
+<script setup lang="ts">
 import { INewsFilters } from "@/types/news";
 import NewsList from "~/components/list/news/NewsList.vue";
 import NewsFilters from "~/components/filters/news/NewsFilters.vue";
-import { SortByEnum } from "~/types/basics";
+import { SortOrderEnum } from "~/types/basics";
 
-@Component({
-  name: "Nouveautés",
-  components: {
-    NewsList,
-    NewsFilters
-  }
+let filtersOpened: boolean = false;
+
+let newsFilters = reactive<INewsFilters>({
+  searchTerm: "",
+  searchAuthor: "",
+  searchAuthorId: 0,
+  status: null,
+  fromDate: null,
+  toDate: null,
+  page: 1,
+  pageSize: 10,
+  totalPages: false,
+  sortOrder: SortOrderEnum.MostRecentFirst
 })
-export default class Nouveautés extends Vue {
-  // #region Data
-  public filtersOpened: boolean = false;
 
-  public newsFilters: INewsFilters = {
-    searchTerm: "",
-    searchAuthor: "",
-    searchAuthorId: 0,
-    status: null,
-    fromDate: null,
-    toDate: null,
-    page: 1,
-    pageSize: 10,
-    totalPages: false,
-    sortBy: SortByEnum.Descending,
-    sortOn: "post_date"
-  };
-
-  public listLoading: boolean = false;
-
-  // #endregion
-
-  // #region Hooks
-  mounted(): void {
-    console.log("mounted");
-  }
-  // #endregion
-
-  // #region Methods
-
-  // #endregion
-}
+let listLoading: boolean = false;
 </script>
 
 <style lang="scss" scoped>

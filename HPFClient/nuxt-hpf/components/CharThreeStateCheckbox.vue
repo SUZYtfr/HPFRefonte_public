@@ -6,53 +6,44 @@
     :class="[{ excluded: indeterminate }]"
     @click.native.prevent="checkBoxClicked($event)"
   >
-    <font-awesome-icon v-if="characteristic?.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
+    <font-awesome-icon v-if="characteristic.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
       :class="[
-        characteristic?.parent_id != null
+        characteristic.parent_id != null
           ? 'is-italic has-text-weight-light'
           : 'has-text-weight-medium',
       ]"
-    >{{ characteristic?.name }}</span>
+    >{{ characteristic.name }}</span>
   </b-checkbox>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
+<script setup lang="ts">
 import { CharacteristicData } from "@/types/characteristics";
 
-@Component({
-  name: "CharThreeStateCheckbox"
-})
-export default class CharThreeStateCheckbox extends Vue {
-  // #region Props
-  @Prop() public characteristic!: CharacteristicData | undefined;
-  @Prop() private externalState!: number | undefined;
-  // #endregion
+interface CharThreeStateCheckboxProps {
+  characteristic: CharacteristicData
+  externalState: number
+}
+const { characteristic, externalState } = defineProps<CharThreeStateCheckboxProps>()
 
-  // #region Computed
-  get checkboxStatus(): boolean {
-    return this.externalState === 1;
-  }
+interface CharThreeStateCheckboxEmits {
+  (e: "change", characteristic_id: number, state: number): void
+}
+const $emit = defineEmits<CharThreeStateCheckboxEmits>()
 
-  get indeterminate(): boolean {
-    return this.externalState === -1;
-  }
-  // #endregion
+const checkboxStatus = computed(() => externalState === 1).value
+const indeterminate = computed(() => externalState === -1 ).value
 
-  // #region Methods
-  public checkBoxClicked(event: any): void {
-    let internalState;
-    if (this.indeterminate) {
-      internalState = 0;
-    } else if (this.checkboxStatus) {
-      internalState = -1;
-    } else {
-      internalState = 1;
-    }
-    this.$emit("change", this.characteristic?.id, internalState);
+function checkBoxClicked(event: any): void {
+  let internalState;
+  if (indeterminate) {
+    internalState = 0;
+  } else if (checkboxStatus) {
+    internalState = -1;
+  } else {
+    internalState = 1;
   }
-  // #endregion
+  $emit("change", characteristic.id, internalState);
 }
 </script>
 

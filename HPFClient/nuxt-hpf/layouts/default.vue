@@ -13,20 +13,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import SidebarDebug from "@/components/SidebarDebug.vue";
-
-@Component({
-  components: {
-    Navbar,
-    Footer,
-    SidebarDebug
-  }
-})
-export default class Layout extends Vue {}
 </script>
 
 <style lang="scss" scoped>
