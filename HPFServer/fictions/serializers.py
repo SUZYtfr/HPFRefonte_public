@@ -77,11 +77,6 @@ class FirstChapterSerializer(serializers.ModelSerializer):
         required=False,
         write_only=True,
     )
-    trigger_warnings = extra_relations.PresentablePrimaryKeyRelatedField(
-        many=True,
-        presentation_serializer="characteristics.serializers.CharacteristicSerializer",
-        queryset=Characteristic.objects.filter(characteristic_type_id=4),
-    )
 
     class Meta:
         model = Chapter
@@ -114,11 +109,14 @@ class FictionListSerializer(serializers.ModelSerializer):
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
-    authors = serializers.SerializerMethodField()
+    authors = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        many=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     series = CollectionCardSerializer(
         read_only=True,
         many=True,
-        source="collections",
     )
 
     summary_images = ContentImageSerializer(
@@ -157,10 +155,6 @@ class FictionListSerializer(serializers.ModelSerializer):
             "first_chapter",
         ]
 
-    def get_authors(self, obj):
-        author = obj.creation_user
-        return [UserCardSerializer(instance=author).data]
-
 
 class FictionSerializer(ListableModelSerializer):
     """Sérialiseur privé de fiction"""
@@ -174,10 +168,13 @@ class FictionSerializer(ListableModelSerializer):
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
-    authors = serializers.SerializerMethodField()
+    authors = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        many=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
     # TODO - renommer franchement en collections, faire sauter read_only
     series = extra_relations.PresentablePrimaryKeyRelatedField(
-        source="collections",
         many=True,
         read_only=True,
         presentation_serializer="fictions.serializers.CollectionCardSerializer",
@@ -202,7 +199,7 @@ class FictionSerializer(ListableModelSerializer):
             "creation_date",
             "modification_user",
             "modification_date",
-            "coauthors",
+            # "coauthors",
             "last_update_date",
             "average",
             "summary",
@@ -223,7 +220,7 @@ class FictionSerializer(ListableModelSerializer):
             "anonymous_review_policy",
         ]
         read_only_fields = [
-            "coauthors",
+            # "coauthors",
             "word_count",
             "average",
             "status",
@@ -236,10 +233,6 @@ class FictionSerializer(ListableModelSerializer):
             "modification_user",
         ]
         list_serializer_child_class = FictionListSerializer
-
-    def get_authors(self, obj):
-        author = obj.creation_user
-        return [UserCardSerializer(instance=author).data]
 
     def validate_characteristics(self, value):
         """
@@ -345,11 +338,6 @@ class ChapterSerializer(ListableModelSerializer):
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
-    trigger_warnings = extra_relations.PresentablePrimaryKeyRelatedField(
-        many=True,
-        presentation_serializer="characteristics.serializers.CharacteristicSerializer",
-        queryset=Characteristic.objects.filter(characteristic_type_id=4),
-    )
     text_images = ContentImageSerializer(
         many=True,
         required=False,
@@ -399,9 +387,6 @@ class ChapterSerializer(ListableModelSerializer):
             "modification_user",
         ]
         list_serializer_child_class = ChapterListSerializer
-
-    def get_order(self, obj) -> int:
-        return obj._order + 1  # index 0 -> 1
 
 
 class ChapterCardSerializer(serializers.ModelSerializer):

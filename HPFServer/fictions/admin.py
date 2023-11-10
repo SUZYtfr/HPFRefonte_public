@@ -99,17 +99,19 @@ class FictionAdminPage(BaseAdminPage):
             "fields": ("average", "chapter_count", "word_count", "read_count"),
             "classes": ["collapse"],
         }),
-        ("Autres", {
-            "fields": ("coauthors",),
-            "classes": ["collapse"],
-        })
+        # ("Autres", {
+        #     "fields": ("coauthors",),
+        #     "classes": ["collapse"],
+        # })
     ]
-    autocomplete_fields = ["coauthors", "characteristics"]
+    # autocomplete_fields = ["coauthors", "characteristics"]
+    autocomplete_fields = ["characteristics"]
     readonly_fields = ["read_count", "last_update_date", "published", "average", "word_count", "chapter_count"]
 
     @admin.display(description="publiée", boolean=True)
     def published(self, obj):
         return obj.is_published
+
 
 class ChapterForm(forms.ModelForm):
     text = forms.fields.CharField(

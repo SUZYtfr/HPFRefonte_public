@@ -116,12 +116,12 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         blank=True,
     )
 
-    coauthors = models.ManyToManyField(
-        verbose_name="co-auteurs",
-        to="users.User",
-        related_name="coauthored_fictions",
-        blank=True,
-    )
+    # coauthors = models.ManyToManyField(
+    #     verbose_name="co-auteurs",
+    #     to="users.User",
+    #     related_name="coauthored_fictions",
+    #     blank=True,
+    # )
 
     summary_images = models.ManyToManyField(
         to="images.ContentImage",
@@ -219,6 +219,16 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
             chapter.delete()
         if self.id:
             super().delete(using, keep_parents)
+
+    # TODO - sera remplacé par un M2M pour le co-autorat
+    @property
+    def authors(self) -> list:
+        return [self.creation_user]
+
+    # TODO - renommer franchement "collections" en "series" ou l'inverse dans le frontend
+    @property
+    def series(self) -> list:
+        return self.collections.all()
 
 
 class ChapterQuerySet(models.QuerySet):
