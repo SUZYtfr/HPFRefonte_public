@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from core.utils import get_user_deleted_sentinel
+from core.text_functions import count_words
 
 
 class DatedModel(models.Model):
@@ -78,26 +79,39 @@ class TextDependentModel(models.Model):
         abstract = True
 
     @property
-    def text(self):
+    def text(self) -> str:
         """Renvoie la dernière version en date du texte"""
+        
+        try:
+            return getattr(self.versions.latest("creation_date"), "text", "")
+        except self.versions.model.DoesNotExist:
+            return ""
 
-        return getattr(self.versions.latest("creation_date"), "text", "")
+    @text.setter
+    def text(self, text) -> str:
+        if (self.id and self.text != text) or not self.id:
+            self._new_text = text
 
     @property
     def word_count(self) -> int | None:
         return getattr(self, "_word_count", None) or getattr(self.versions.last(), "word_count", None)
     word_count.fget.short_description = "compte de mots"
 
-    # TODO - Implémenter ces méthodes
-    def get_text_version(self, date=None, step=None):
-        """Renvoie la version du texte la plus proche ultérieure à une date ou une étape"""
-        pass
+    def save(self, *args, **kwargs) -> None:
+        super().save(*args, **kwargs)
+        if new_text := getattr(self, "_new_text", None):
+            # TODO - gère le fait que tous les modèles de versions de texte n'ont pas le compte de mots
+            #  Ajouter le compte de mots sur tous ces modèles pour simplifier cette logique ?
+            attrs = {
+                "creation_user": self.modification_user or self.creation_user,
+                "text": new_text,
+            }
+            if hasattr(self.versions.model, "word_count"):
+                attrs["word_count"] = count_words(new_text)
+            self.versions.create(**attrs)
 
-    def compare_text_versions(self, date=None, step=None):
-        """Renvoie la comparaison du texte actuel avec la version la plus proche ultérieure à une date, etc"""
-        pass
 
-
+# TODO - ajouter word_count dans le modèle de base, quitte à ne pas l'utiliser dans certains modèles concrets ?
 class BaseTextVersionModel(models.Model):
     """Modèle de base pour les versions de textes"""
 

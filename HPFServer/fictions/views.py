@@ -75,6 +75,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["POST", "GET"],
         url_path="reviews",
+        url_name="reviews",
         serializer_class=CollectionReviewSerializer,
     )
     def manage_reviews(self, request, *args, **kwargs):
@@ -83,7 +84,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(collection=collection)
+            serializer.save(collection=collection, creation_user=self.request.user)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             published_reviews = collection.reviews.published()
@@ -135,6 +136,7 @@ class FictionViewSet(
         detail=True,
         methods=["GET"],
         url_path="table-of-contents",
+        url_name="table-of-contents",
         serializer_class=FictionTableOfContentsSerializer,
     )
     def get_table_of_contents(self, request, *args, **kwargs):
@@ -146,6 +148,7 @@ class FictionViewSet(
         detail=True,
         methods=["POST", "GET"],
         url_path="reviews",
+        url_name="reviews",
         serializer_class=FictionReviewSerializer,
     )
     def manage_reviews(self, request, *args, **kwargs):
@@ -154,7 +157,7 @@ class FictionViewSet(
         if request.method == "POST":
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(fiction=fiction)
+            serializer.save(fiction=fiction, creation_user=self.request.user)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             published_reviews = fiction.reviews.published()
@@ -217,6 +220,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["POST", "GET"],
         url_path="reviews",
+        url_name="reviews",
         serializer_class=ChapterReviewSerializer,
     )
     def manage_reviews(self, request, *args, **kwargs):
@@ -225,7 +229,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(chapter=chapter)
+            serializer.save(chapter=chapter, creation_user=self.request.user)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             published_reviews = chapter.reviews.published()

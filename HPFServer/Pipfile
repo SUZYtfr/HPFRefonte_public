@@ -18,6 +18,8 @@ drf-extra-fields = "*"
 psycopg2 = "*"
 django-mptt = "*"
 djangorestframework-recursive = "*"
+django-polymorphic-tree = "*"
+django-rest-polymorphic = "*"
 
 [dev-packages]
 faker = "*"

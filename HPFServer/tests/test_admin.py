@@ -4,6 +4,7 @@ from core.management.utils.samples import (
     sample_news,
     sample_fiction,
     sample_chapter,
+    sample_fiction_review,
     get_random_characteristic_type,
 )
 from users.models import User
@@ -12,7 +13,7 @@ from news.enums import NewsCategory, NewsStatus
 from fictions.models import Chapter, Fiction, Collection
 from fictions.enums import ChapterValidationStage, FictionStatus, CollectionAccess
 from characteristics.models import CharacteristicType, Characteristic
-
+from reviews.models import BaseReview, FictionReview
 
 """
 Teste le bon fonctionnement de la plate-forme d'administration
@@ -141,7 +142,7 @@ class TestAdminPages(TestCase):
         self.assertEqual(200, news_comment_change.status_code)
 
     def test_chapter_admin_page(self) -> None:
-        fiction = sample_fiction()
+        fiction = sample_fiction(chapter_count=1)
         original_text = "original text"
         data = {
             "fiction": fiction.id,
@@ -174,7 +175,7 @@ class TestAdminPages(TestCase):
 
         self.assertEqual(self.admin_user, chapter.creation_user)
         self.assertEqual(self.random_superuser, chapter.modification_user)
-        self.assertEqual(modified_text, chapter.versions.last().text)
+        self.assertEqual(modified_text, chapter.versions.last().text)  # TODO - latest
         self.assertEqual(original_text, chapter.versions.first().text)
 
         # Récupération
@@ -304,6 +305,90 @@ class TestAdminPages(TestCase):
         )
         self.assertEqual(200, characteristic_changelist.status_code)
         self.assertEqual(200, characteristic_change.status_code)
+
+    def test_fiction_review_admin_page(self):
+        fiction = sample_fiction(chapter_count=1)
+
+        test_text = "test fiction review admin page"
+        data = {
+            "fiction": fiction.id,
+            "text": test_text,
+            "grading": 6,
+            "is_draft": False,
+        }
+        
+        # Création
+        self.client.post(
+            path="/admin/reviews/fictionreview/add/",
+            data=data,
+        )
+        fiction_review = FictionReview.objects.last()
+
+        self.assertEqual(self.admin_user, fiction_review.creation_user)
+        self.assertIsNone(fiction_review.modification_user)
+        self.assertEqual(test_text, fiction_review.text)
+
+        # Modification
+        self.another_client.post(
+            path=f"/admin/reviews/fictionreview/{fiction_review.id}/change/",
+            data=data,
+        )
+        fiction_review.refresh_from_db()
+
+        self.assertEqual(self.admin_user, fiction_review.creation_user)
+        self.assertEqual(self.random_superuser, fiction_review.modification_user)
+
+        # Récupération
+        fiction_review_changelist = self.client.get(
+            path="/admin/reviews/fictionreview/",
+        )
+        fiction_review_change = self.client.get(
+            path=f"/admin/reviews/fictionreview/{fiction_review.id}/change/",
+        )
+        self.assertEqual(200, fiction_review_changelist.status_code)
+        self.assertEqual(200, fiction_review_change.status_code)
+
+    def test_review_reply_admin_page(self):
+        fiction_review = sample_fiction_review()
+
+        test_text = "test fiction review admin page"
+        data = {
+            "parent": fiction_review.id,
+            "text": test_text,
+            "is_draft": False,
+        }
+        
+        # Création
+        self.client.post(
+            path="/admin/reviews/basereview/add/",
+            data=data,
+        )
+        review_reply = BaseReview.objects.last()
+
+        self.assertEqual(self.admin_user, review_reply.creation_user)
+        self.assertIsNone(review_reply.modification_user)
+        self.assertEqual(test_text, review_reply.text)
+
+        # Modification
+        self.another_client.post(
+            path=f"/admin/reviews/basereview/{review_reply.id}/change/",
+            data=data,
+        )
+        review_reply.refresh_from_db()
+
+        self.assertEqual(self.admin_user, review_reply.creation_user)
+        self.assertEqual(self.random_superuser, review_reply.modification_user)
+
+        # Récupération
+        review_reply_changelist = self.client.get(
+            path="/admin/reviews/basereview/",
+        )
+        review_reply_change = self.client.get(
+            path=f"/admin/reviews/basereview/{review_reply.id}/change/",
+        )
+        self.assertEqual(200, review_reply_changelist.status_code)
+        self.assertEqual(200, review_reply_change.status_code)
+
 
     """
     # TODO - trouver un moyen de tester les inlines

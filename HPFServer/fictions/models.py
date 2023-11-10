@@ -11,7 +11,6 @@ from core.models import (
     TextDependentModel,
     BaseTextVersionModel,
 )
-from core.text_functions import count_words
 from .enums import (
     FictionStatus,
     ChapterValidationStage,
@@ -350,20 +349,6 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
 
-    def create_text_version(self, text, creation_user_id=None, touch=True):
-        """Crée une nouvelle version du texte du chapitre par l'utilisateur passé"""
-
-        version = ChapterTextVersion.objects.create(
-            chapter=self,
-            text=text,
-            word_count=count_words(text),
-            creation_user_id=creation_user_id or self.creation_user_id,
-            creation_date=timezone.now(),
-        )
-        version.save()
-
-        if touch:  # à utiliser en cas de modification
-            self.save()
 
     def change_status(self, status, modification_user=None, modification_time=None):
         """Change le status de validation du chapitre"""

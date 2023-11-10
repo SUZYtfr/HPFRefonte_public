@@ -161,14 +161,9 @@ class ChapterAdminPage(BaseAdminPage):
         return form
 
     def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-
         text = form.cleaned_data.get("text")
-        if not change or (change and text != obj.text):
-            obj.create_text_version(
-                text,
-                creation_user_id=request.user.id,
-            )
+        obj.text = text
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(ChapterTextVersion)

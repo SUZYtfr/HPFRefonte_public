@@ -271,7 +271,6 @@ class FictionSerializer(ListableModelSerializer):
 
         first_chapter_validated_data = validated_data.pop("first_chapter")
         text_images = first_chapter_validated_data.pop("text_images", None)
-        text = first_chapter_validated_data.pop("text")
 
         fiction = super().create(validated_data)
 
@@ -293,10 +292,6 @@ class FictionSerializer(ListableModelSerializer):
         )
         chapter.save()
         chapter.trigger_warnings.set(trigger_warnings)
-        chapter.create_text_version(
-            creation_user_id=chapter.creation_user_id,
-            text=text,
-        )
 
         if text_images:
             images = [
@@ -333,7 +328,9 @@ class ChapterListSerializer(serializers.ModelSerializer):
 
 class ChapterSerializer(ListableModelSerializer):
     """Sérialiseur de chapitre"""
-
+    text = serializers.CharField(
+        required=True,
+    )
     creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",

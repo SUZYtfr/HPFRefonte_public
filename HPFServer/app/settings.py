@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "mptt",
+    "polymorphic_tree",
     "rest_framework",
     "rest_framework_simplejwt",
     "ordered_model",
@@ -86,8 +87,12 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
-        "NewsStatusEnum": "news.models.NewsArticle.Status",
-        "FictionStatusEnum": "fictions.models.Fiction.Status",
+        "NewsStatusEnum": "news.enums.NewsStatus",
+        "FictionStatusEnum": "fictions.enums.FictionStatus",
+        "GenderEnum": "users.enums.Gender",
+        "WebsiteTypeEnum": "users.enums.WebsiteType",
+        "ColorSchemeInReaderEnum": "users.enums.ColorScheme",
+        "AnonymousReviewPolicyEnum": "users.enums.ReviewPolicy",
         # "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
     }
 }

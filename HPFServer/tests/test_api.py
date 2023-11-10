@@ -5,16 +5,17 @@ from rest_framework import status
 from core.management.utils.samples import (
     sample_user,
     sample_fiction,
+    sample_fiction_review,
     get_random_characteristic_type,
     get_random_characteristic,
 )
 
 from users.models import User
+from reviews.models import BaseReview
 
 """
 TODO
 users API
-reviews API
 news API
 images API
 """
@@ -119,7 +120,7 @@ class TestFictionsAPI(APITestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         cls.sample_user = sample_user()
-        cls.sample_fiction = sample_fiction()
+        cls.sample_fiction = sample_fiction(chapter_count=1)
 
     def setUp(self) -> None:
         super().setUp()
@@ -199,3 +200,107 @@ class TestFictionsAPI(APITestCase):
     def test_create_collection(self):
         self.fail()
     '''
+
+@override_settings(STORAGES={"default": {"BACKEND": "django.core.files.storage.InMemoryStorage"}})
+class TestReviewsAPI(APITestCase):
+    fixtures = [
+        "fixtures/users.json",
+        "fixtures/characteristics.json",
+    ]
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.sample_user = sample_user()
+        cls.sample_fiction = sample_fiction(chapter_count=1)
+        cls.sample_fiction_review = sample_fiction_review(
+            creation_user_id=cls.sample_user.id,
+            fiction=cls.sample_fiction,
+            is_draft=False,
+        )
+        cls.sample_review_reply = BaseReview.objects.create(
+            parent=cls.sample_fiction_review,
+            text="Test text réponse à review",
+            creation_user=sample_user(),
+            is_draft=False,
+        )
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.client.force_authenticate(self.sample_user)
+
+    def test_get_fiction_reviews(self):
+        fiction_review_list_response = self.client.get(
+            path=reverse("reviews:fiction-review-list"),
+        )
+        self.assertEqual(status.HTTP_200_OK, fiction_review_list_response.status_code)
+        
+        fiction_review_detail_response = self.client.get(
+            path=reverse("reviews:fiction-review-detail", kwargs={"pk": self.sample_fiction_review.id}),
+        )
+        self.assertEqual(status.HTTP_200_OK, fiction_review_detail_response.status_code)
+
+    def test_create_fiction_review(self):
+        test_text = "test fiction review text"
+
+        test_payload = {
+            "text": test_text,
+            "grading": "6",
+            "is_draft": False,
+        }
+
+        fiction_review_create_response = self.client.post(
+            path=reverse("fictions:fiction-reviews", kwargs={"pk": self.sample_fiction.id}),
+            data=test_payload,
+        )
+        self.assertEqual(status.HTTP_201_CREATED, fiction_review_create_response.status_code)
+        self.assertEqual(test_text, fiction_review_create_response.data.get("text"))
+
+    def test_get_fiction_review_replies(self):
+        fiction_review_reply_tree_response = self.client.get(
+            path=reverse("reviews:fiction-review-replies", kwargs={"pk": self.sample_fiction_review.id}),
+        )
+        self.assertEqual(status.HTTP_200_OK, fiction_review_reply_tree_response.status_code)
+
+    def test_create_fiction_review_reply(self):
+        test_text = "test texte réponse à réponse à review"
+        test_payload = {
+            "text": test_text,
+        }
+
+        fiction_review_reply_tree_response = self.client.post(
+            path=reverse("reviews:review-reply-replies", kwargs={"pk": self.sample_review_reply.id}),
+            data=test_payload,
+        )
+        self.assertEqual(status.HTTP_201_CREATED, fiction_review_reply_tree_response.status_code)
+        self.assertEqual(test_text, fiction_review_reply_tree_response.data.get("text"))
+
+    def test_get_fiction_review_reply_context(self):
+        fiction_review_reply_context_response = self.client.get(
+            path=reverse("reviews:review-reply-context", kwargs={"pk": self.sample_review_reply.id}),
+        )
+        self.assertEqual(status.HTTP_200_OK, fiction_review_reply_context_response.status_code)
+
+    def test_get_account_received_reviews(self):
+        account_received_reviews_response = self.client.get(
+            path=reverse("account:received-review-list"),
+        )
+        self.assertEqual(status.HTTP_200_OK, account_received_reviews_response.status_code)
+
+    def test_get_account_published_reviews(self):
+        account_published_reviews_response = self.client.get(
+            path=reverse("account:published-review-list"),
+        )
+        self.assertEqual(status.HTTP_200_OK, account_published_reviews_response.status_code)
+    
+    def test_get_account_draft_reviews(self):
+        account_draft_reviews_response = self.client.get(
+            path=reverse("account:draft-review-list"),
+        )
+        self.assertEqual(status.HTTP_200_OK, account_draft_reviews_response.status_code)
+
+    def test_get_account_unanswered_reviews(self):
+        account_unanswered_reviews_response = self.client.get(
+            path=reverse("account:unanswered-review-list"),
+        )
+        self.assertEqual(status.HTTP_200_OK, account_unanswered_reviews_response.status_code)

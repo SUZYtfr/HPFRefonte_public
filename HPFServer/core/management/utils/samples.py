@@ -101,20 +101,16 @@ def sample_user(with_profile_picture: bool = True, **kwargs) -> User:
 def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
     creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
     text = kwargs.pop("text", None)
-    chapter = Chapter.objects.create(
-        creation_user_id=creation_user_id,
-        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
-        title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
-        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
-        **kwargs,
-    )
     text_parts = [format_editor_content(text or french_faker.paragraph(3))]
+    
+    text_images = []
+    TextImageModel = Chapter.text_images.through
     for i in range(1, image_count + 1):
         width = french_faker.random_int(100, 500)
         height = french_faker.random_int(100, 250)
         image_url = generate_image_url(width, height)
 
-        chapter.text_images.create(
+        TextImageModel(
             src_url=image_url,
             display_width=width,
             display_height=height,
@@ -127,11 +123,15 @@ def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
         hpf_image_tag = f"<hpf-image index=\"{i}\"></hpf-image>"
         text_parts.extend([hpf_image_tag, format_editor_content(text or french_faker.paragraph(3))])
 
-    chapter.create_text_version(
+    chapter = Chapter.objects.create(
         creation_user_id=creation_user_id,
+        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
+        title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
+        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
         text="".join(text_parts),
-        touch=False,
+        **kwargs,
     )
+    TextImageModel.objects.bulk_create(text_images)
 
     return chapter
 

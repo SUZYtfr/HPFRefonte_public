@@ -1,8 +1,13 @@
 from django.db import models, transaction
+from django.db.models import F
 from django.utils import timezone
 from django.core import validators
-from mptt import models as mptt_models
-
+from polymorphic_tree.models import (
+    PolymorphicMPTTModel,
+    PolymorphicTreeForeignKey,
+)
+from polymorphic_tree.managers import PolymorphicMPTTQuerySet
+ 
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -33,7 +38,7 @@ def check_draft_permission(creation_user):
 '''
 
 
-class ReviewManager(mptt_models.TreeManager):
+class ReviewQuerySet(PolymorphicMPTTQuerySet):
     @transaction.atomic
     def create(self, creation_user, text, **extra_fields):
         # if self.filter(creation_user=creation_user).exists():
@@ -59,11 +64,171 @@ class ReviewManager(mptt_models.TreeManager):
             creation_user = User.objects.create_anonymous_user(email, **extra_fields)
         return self.create(creation_user=creation_user, **extra_fields)
     '''
-        
+
     def published(self):
         return self.filter(is_draft=False)
 
+    def non_archived(self):
+        return self.filter(is_archived=False)
 
+    def reviews(self):
+        return self.filter(level=0)
+
+    def leaves(self):
+        return self.alias(
+            boundaries_range=F("rght") - F("lft"),
+        ).filter(
+            boundaries_range=1,
+        )
+
+
+class BaseReview(DatedModel, CreatedModel, TextDependentModel, PolymorphicMPTTModel):
+    """
+    Modèle de base de review et réponse à review.
+    Si cette base est étendue, c'est une review (porte la notation et le lien vers la ressource)
+    Sinon, c'est une réponse à review
+
+    TODO - Les paramètres de classe ne sont pas garantis par la BDD. Pas très probants. Enquêter.
+    """
+
+    class Meta:
+        verbose_name = "réponse à review"
+        verbose_name_plural = "réponses à reviews"
+
+    objects = ReviewQuerySet().as_manager()
+
+    # Paramètres pour les réponses à reviews (à redéclarer dans les sous-classes !)
+    can_be_root = False
+    can_have_children = True
+    child_types = ["self"]
+
+    parent = PolymorphicTreeForeignKey(
+        to="self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    is_draft = models.BooleanField(
+        verbose_name="brouillon",
+        default=True,
+    )
+    is_archived = models.BooleanField(
+        verbose_name="archivé",
+        default=False,
+        help_text="Indique que le destinataire de ce message l'a explicitement marqué comme archivé."
+    )
+
+    # TODO - réparer ça
+    def __str__(self) -> str:
+        subtype = "ReviewReply" if self.get_real_instance_class() == self.__class__.__name__ else self.__class__.__name__
+        return f"« {self.text[:50]} » ({subtype})"
+
+    @property
+    def reply_count(self) -> int:
+        return self.get_descendant_count()
+
+    @property
+    def with_scale(self) -> str:
+        """Renvoie la notation suivie de la mesure de notation"""
+
+        return f"{str(self.grading or '-')}/10"
+
+
+class CollectionReview(BaseReview):
+    class Meta:
+        verbose_name = "review de série"
+        verbose_name_plural = "reviews de séries"
+
+    # Paramètres pour les reviews
+    can_be_root = True
+    can_have_children = True
+    child_types = [BaseReview]
+
+    collection = models.ForeignKey(
+        to=Collection,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    grading = models.PositiveSmallIntegerField(
+        verbose_name="notation",
+        null=True,
+        blank=True,
+        validators=[
+            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+        ]
+    )
+
+
+class FictionReview(BaseReview):
+    class Meta:
+        verbose_name = "review de fiction"
+        verbose_name_plural = "reviews de fictions"
+
+    # Paramètres pour les reviews
+    can_be_root = True
+    can_have_children = True
+    child_types = [BaseReview]
+
+    fiction = models.ForeignKey(
+        to=Fiction,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    grading = models.PositiveSmallIntegerField(
+        verbose_name="notation",
+        null=True,
+        blank=True,
+        validators=[
+            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+        ]
+    )
+
+
+class ChapterReview(BaseReview):
+    class Meta:
+        verbose_name = "review de chapitre"
+        verbose_name_plural = "reviews de chapitres"
+
+    # Paramètres pour les reviews
+    can_be_root = True
+    can_have_children = True
+    child_types = [BaseReview]
+
+    chapter = models.ForeignKey(
+        to=Chapter,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    grading = models.PositiveSmallIntegerField(
+        verbose_name="notation",
+        null=True,
+        blank=True,
+        validators=[
+            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+        ]
+    )
+
+
+class BaseReviewTextVersion(BaseTextVersionModel):
+    """Modèle de version de texte de review et réponse à review"""
+
+    class Meta:
+        verbose_name = "version de texte de base de review"
+        verbose_name_plural = "versions de textes de bases de reviews"
+
+    base_review = models.ForeignKey(
+        editable=True,
+        related_name="versions",
+        to="reviews.BaseReview",
+        on_delete=models.CASCADE,
+    )
+
+
+# TODO - ancien modèle non polymorphique, à virer
+'''
 class Review(mptt_models.MPTTModel, DatedModel, CreatedModel):
     """
     Modèle abstrait de review et réponse à review
@@ -92,187 +257,4 @@ class Review(mptt_models.MPTTModel, DatedModel, CreatedModel):
       accidentellement pas sur la même ressource).
       Contrainte : (level>0 XOR fiction NULL)
     """
-
-    class Meta:
-        abstract = True
-
-    parent = mptt_models.TreeForeignKey(
-        to="self",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    is_draft = models.BooleanField(
-        verbose_name="brouillon",
-        default=True,
-    )
-    grading = models.PositiveSmallIntegerField(
-        verbose_name="notation",
-        null=True,
-        blank=True,
-        validators=[
-            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
-            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
-        ]
-    )
-
-    @property
-    def reply_count(self) -> int:
-        return self.get_descendant_count()
-
-    @property
-    def with_scale(self) -> str:
-        """Renvoie la notation suivie de la mesure de notation"""
-
-        return f"{str(self.grading or '-')}/10"
-
-    def create_text_version(self, text: str, creation_user_id: int = None, touch: bool = True):
-        """Crée une nouvelle version du texte de review par l'utilisateur passé"""
-    
-        version = self.versions.create(
-            text=text,
-            creation_user_id=creation_user_id or self.creation_user_id,
-            creation_date=timezone.now(),
-        )
-        version.save()
-    
-        if touch:  # à utiliser en cas de modification
-            self.save()
-
-    @property
-    def text(self) -> str:
-        latest_version = self.versions.latest("creation_date")
-        return getattr(latest_version, "text", "")
-
-    def __str__(self) -> str:
-        subtype = "review" if self.get_level() <= 0 else "réponse"
-        return f"« {self.text[:50]} » ({subtype})"
-
-
-class FictionReview(Review, TextDependentModel):
-    class Meta:
-        abstract = False
-        verbose_name = "review de fiction"
-        verbose_name_plural = "reviews de fictions"
-        constraints = [
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
-                check=~models.Q(level__gt=0, grading__isnull=False),
-            ),
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_leaf_xor_fiction_null",
-                check=models.Q(level__gt=0) ^ models.Q(fiction__isnull=False),
-            ),
-        ]
-    
-    objects = ReviewManager()
-
-    fiction = models.ForeignKey(
-        to=Fiction,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="reviews",
-        editable=True,
-    )
-
-
-class ChapterReview(Review, TextDependentModel):
-    class Meta:
-        verbose_name = "review de chapitre"
-        verbose_name_plural = "reviews de chapitres"
-        constraints = [
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
-                check=~models.Q(level__gt=0, grading__isnull=False),
-            ),
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_leaf_xor_chapter_null",
-                check=models.Q(level__gt=0) ^ models.Q(chapter__isnull=False),
-            ),
-        ]
-
-    objects = ReviewManager()
-
-    chapter = models.ForeignKey(
-        to=Chapter,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="chapitre",
-        related_name="reviews",
-        editable=True,
-    )
-
-
-class CollectionReview(Review, TextDependentModel):
-    class Meta:
-        verbose_name = "review de série"
-        verbose_name_plural = "reviews de séries"
-        constraints = [
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_not_leaf_and_grading",
-                check=~models.Q(level__gt=0, grading__isnull=False),
-            ),
-            models.CheckConstraint(
-                name="CK_%(app_label)s_%(class)s_leaf_xor_collection_null",
-                check=models.Q(level__gt=0) ^ models.Q(collection__isnull=False),
-            ),
-        ]
-    
-    objects = ReviewManager()
-
-    collection = models.ForeignKey(
-        to=Collection,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="série",
-        related_name="reviews",
-        editable=True,
-    )
-
-
-class FictionReviewTextVersion(BaseTextVersionModel):
-    """Modèle de version de texte de review de fiction"""
-
-    class Meta:
-        verbose_name = "version de texte de review de fiction"
-        verbose_name_plural = "versions de textes de reviews de fictions"
-
-    review = models.ForeignKey(
-        editable=True,
-        related_name="versions",
-        to="reviews.FictionReview",
-        on_delete=models.CASCADE,
-    )
-
-
-class ChapterReviewTextVersion(BaseTextVersionModel):
-    """Modèle de version de texte de review de chapitre"""
-
-    class Meta:
-        verbose_name = "version de texte de review de chapitre"
-        verbose_name_plural = "versions de textes de reviews de chapitres"
-
-    review = models.ForeignKey(
-        editable=True,
-        related_name="versions",
-        to="reviews.ChapterReview",
-        on_delete=models.CASCADE,
-    )
-
-
-class CollectionReviewTextVersion(BaseTextVersionModel):
-    """Modèle de version de texte de review de série"""
-
-    class Meta:
-        verbose_name = "version de texte de review de série"
-        verbose_name_plural = "versions de textes de reviews de séries"
-
-    review = models.ForeignKey(
-        editable=True,
-        related_name="versions",
-        to="reviews.CollectionReview",
-        on_delete=models.CASCADE,
-    )
+'''
