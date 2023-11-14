@@ -18,10 +18,12 @@ from .models import (
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 
+
 class CollectionReviewFilterset(FilterSet):
     class Meta:
         model = CollectionReview
         fields = [
+            "creation_user",
             "content",
         ]
 
@@ -44,6 +46,7 @@ class FictionReviewFilterset(FilterSet):
     class Meta:
         model = FictionReview
         fields = [
+            "creation_user",
             "content",
         ]
 
@@ -66,6 +69,7 @@ class ChapterReviewFilterset(FilterSet):
     class Meta:
         model = ChapterReview
         fields = [
+            "creation_user",
             "content",
         ]
 
@@ -88,25 +92,13 @@ class AllReviewFilterset(FilterSet):
     class Meta:
         model = BaseReview
         fields = [
-            "posted_by",
-            "received_by",
+            "creation_user",
             "content",
             "include",
         ]
 
-    content_type_dict = ContentType.objects.get_for_models(CollectionReview, BaseReview, ChapterReview)
+    content_type_dict = ContentType.objects.get_for_models(CollectionReview, FictionReview, ChapterReview)
     content_type_choices = tuple((int(v.id), str(k.__name__)) for k, v in content_type_dict.items())
-
-    posted_by = ModelChoiceFilter(
-        label="Reviews postées par l'utilisateur·ice.",
-        queryset=User.objects.all(),
-        method="filter_posted_by",
-    )
-    received_by = ModelChoiceFilter(
-        label="Reviews reçues par l'utilisateur·ice.",
-        queryset=User.objects.all(),
-        method="filter_received_by",
-    )
     content = CharFilter(
         label="Recherche partielle dans les titres et pseudonymes.",
         method="filter_content",
@@ -116,22 +108,6 @@ class AllReviewFilterset(FilterSet):
         method="include_models",
         choices=content_type_choices,
     )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_posted_by(self, queryset, name, value):
-        return queryset.filter(
-            creation_user=value,
-        )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_received_by(self, queryset, name, value):
-        return queryset.filter(
-            Q(CollectionReview___collection__creation_user=value)
-            |
-            Q(FictionReview___fiction__creation_user=value)
-            |
-            Q(ChapterReview___chapter__creation_user=value)
-        )
 
     def filter_content(self, queryset, name, value):
         return queryset.filter(
