@@ -2,12 +2,14 @@ import Vue from "vue";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 import { UserData, UserLinkData, AuthorData } from "@/types/users";
 import { NewsData, CommentData } from "@/types/news";
-import { FanfictionData, ReviewData, SerieData } from "@/types/fanfictions";
+import { FanfictionData, SerieData } from "@/types/fanfictions";
+import { ReviewData } from "~/types/reviews";
 
 import { UserModel } from "@/models/users";
 import { CharacteristicModel, CharacteristicTypeModel } from "@/models/characteristics";
 import { NewsModel, CommentModel } from "@/models/news";
-import { FanfictionModel, ReviewModel, SerieModel, ChapterModel } from "@/models/fanfictions";
+import { FanfictionModel, SerieModel, ChapterModel } from "@/models/fanfictions";
+import { ReviewModel } from "~/models/reviews";
 
 import { FanfictionListType } from "@/types/other";
 

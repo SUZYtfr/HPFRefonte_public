@@ -1,10 +1,10 @@
-from django.db import transaction
-from rest_framework import serializers
-from drf_extra_fields import relations as extra_relations
+from django.db.transaction import atomic
+from rest_framework.serializers import ModelSerializer, CharField, ListField
+from drf_extra_fields.relations import PresentablePrimaryKeyRelatedField
 from rest_framework_recursive.fields import RecursiveField
 from rest_polymorphic.serializers import PolymorphicSerializer
 
-from reviews.models import (
+from .models import (
     BaseReview,
     FictionReview,
     ChapterReview,
@@ -12,14 +12,12 @@ from reviews.models import (
 )
 from core.serializers import ListableModelSerializer
 
+"""
+TODO - corriger le schema pour faire apparaître FictionCardSerializer par ex.
+"""
 
-class ReviewReplySerializer(serializers.ModelSerializer):
-    """Sérialiseur de réponse à review"""
-
-    text = serializers.CharField(allow_blank=False, style={'base_template': 'textarea.html'})
-
+class BaseReviewSerializer(ModelSerializer):
     class Meta:
-        model = BaseReview
         fields = [
             "id",
             "text",
@@ -29,7 +27,7 @@ class ReviewReplySerializer(serializers.ModelSerializer):
             "creation_date",
             "modification_user",
             "modification_date",
-            "replies",
+            "publication_date",
             # "as_staff",
         ]
         # extra_kwargs = {
@@ -37,119 +35,99 @@ class ReviewReplySerializer(serializers.ModelSerializer):
         # }
         # list_serializer_child_class = ReviewListSerializer
 
-    replies = serializers.ListField(
-        source="get_children",
-        read_only=True,
-        child=RecursiveField(),
-    )
-
-    text = serializers.CharField(
-        allow_blank=False,
-        style={"base_template": "textarea.html"},
-    )
-    # as_staff = serializers.HiddenField(default=False, label="Publication par le compte de modération", write_only=True)
-    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+    text = CharField(allow_blank=False, style={"base_template": "textarea.html"})
+    creation_user = PresentablePrimaryKeyRelatedField(
         read_only=True,
         presentation_serializer="users.serializers.UserCardSerializer",
     )
+    modification_user = PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.UserCardSerializer",
+    )
+    # as_staff = serializers.HiddenField(default=False, label="Publication par le compte de modération", write_only=True)
 
     # def validate(self, attrs):
     #     if attrs.get("as_staff") and attrs.get("is_draft"):
     #         raise serializers.ValidationError("Une review par le compte de modération ne peut pas avoir de brouillon.")
     #     return attrs
 
-    @transaction.atomic
-    def create(self, validated_data):
-        # if validated_data.pop("as_staff"):
-        #     validated_data["creation_user"] = get_moderation_account()
-        instance = self.Meta.model.objects.create(
-            **validated_data,
-        )
-        return instance
 
+class ReviewReplySerializer(BaseReviewSerializer):
+    """Sérialiseur de réponse à review"""
 
-class FictionReviewSerializer(serializers.ModelSerializer):
-    text = serializers.CharField(allow_blank=False, style={'base_template': 'textarea.html'})
-
-    class Meta:
-        model = FictionReview
-        fields = [
-            "id",
-            "fiction",
-            "text",
-            "grading",
-            "is_draft",
-            "is_archived",
-            "creation_user",
-            "creation_date",
-            "modification_user",
-            "modification_date",
+    class Meta(BaseReviewSerializer.Meta):
+        model = BaseReview
+        fields = BaseReviewSerializer.Meta.fields + [
+            "replies",
         ]
 
-    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+    replies = ListField(
+        source="get_children",
         read_only=True,
-        presentation_serializer="users.serializers.UserCardSerializer",
+        child=RecursiveField(),
     )
-    fiction = extra_relations.PresentablePrimaryKeyRelatedField(
+
+
+class FictionReviewSerializer(BaseReviewSerializer):
+    class Meta(BaseReviewSerializer.Meta):
+        model = FictionReview
+        fields = BaseReviewSerializer.Meta.fields + [
+            "grading",
+            "fiction",
+            "fiction_id",
+        ]
+        extra_kwargs = {
+            "fiction_id": {
+                "write_only": True,
+                "source": "fiction",
+            },
+        }
+
+    fiction = PresentablePrimaryKeyRelatedField(
         read_only=True,
         presentation_serializer="fictions.serializers.FictionCardSerializer",
     )
 
 
-class ChapterReviewSerializer(serializers.ModelSerializer):
-    text = serializers.CharField(allow_blank=False, style={'base_template': 'textarea.html'})
-
-    class Meta:
+class ChapterReviewSerializer(BaseReviewSerializer):
+    class Meta(BaseReviewSerializer):
         model = ChapterReview
-        fields = [
-            "id",
-            "chapter",
-            # "parent_fiction",
-            "text",
+        fields = BaseReviewSerializer.Meta.fields + [
             "grading",
-            "is_draft",
-            "is_archived",
-            "creation_user",
-            "creation_date",
-            "modification_user",
-            "modification_date",
+            "chapter",
+            "chapter_id",
+            # "parent_fiction",
         ]
+        extra_kwargs = {
+            "chapter_id": {
+                "write_only": True,
+                "source": "chapter",
+            },
+        }
 
-    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
-        read_only=True,
-        presentation_serializer="users.serializers.UserCardSerializer",
-    )
-    chapter = extra_relations.PresentablePrimaryKeyRelatedField(
+    chapter = PresentablePrimaryKeyRelatedField(
         read_only=True,
         presentation_serializer="fictions.serializers.ChapterCardSerializer",
     )
-    # chapter = ChapterSerializer()
     # parent_fiction = FictionSerializer(source="chapter.fiction")
 
 
-class CollectionReviewSerializer(serializers.ModelSerializer):
-    text = serializers.CharField(allow_blank=False, style={'base_template': 'textarea.html'})
-
-    class Meta:
+class CollectionReviewSerializer(BaseReviewSerializer):
+    class Meta(BaseReviewSerializer.Meta):
         model = CollectionReview
-        fields = [
-            "id",
-            "collection",
-            "text",
+        fields = BaseReviewSerializer.Meta.fields + [
             "grading",
-            "is_draft",
-            "is_archived",
-            "creation_user",
-            "creation_date",
-            "modification_user",
-            "modification_date",
+            "collection",
+            "collection_id",
         ]
+        extra_kwargs = {
+            "collection_id": {
+                "write_only": True,
+                "source": "collection",
+            },
+        }
 
-    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
-        read_only=True,
-        presentation_serializer="users.serializers.UserCardSerializer",
-    )
-    collection = extra_relations.PresentablePrimaryKeyRelatedField(
+    collection = PresentablePrimaryKeyRelatedField(
         read_only=True,
         presentation_serializer="fictions.serializers.CollectionCardSerializer",
     )

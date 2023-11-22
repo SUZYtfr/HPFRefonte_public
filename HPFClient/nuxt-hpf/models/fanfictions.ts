@@ -1,16 +1,10 @@
 
 import { Type, Exclude } from "class-transformer";
 import { BasicClass } from "~/types/basics";
-import { FanfictionData, ReviewData, SerieData, ChapterData } from "~/types/fanfictions";
+import { FanfictionData, SerieData, ChapterData } from "~/types/fanfictions";
 import { AuthorData } from "~/types/users";
 import { CharacteristicData } from "~/types/characteristics";
-
-// #region Review
-export class ReviewModel extends ReviewData {
-  @Type(() => AuthorData)
-  public authors: AuthorData[] | null = null;
-}
-// #endregion
+import { ReviewModel } from "./reviews";
 
 // #region Serie
 export class SerieModel extends SerieData {
@@ -35,6 +29,20 @@ export class FanfictionModel extends FanfictionData {
 
   public chapter_count: number | null = null;
   public word_count: number | null = null;
+}
+
+export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
+  @Exclude()
+  public get fanfiction_id(): number {
+    return this.id;
+  }
+
+  public title: string | null = null;
+
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfiction_id.toString();
+  }
 }
 
 export class TableOfContent extends BasicClass<TableOfContent> {

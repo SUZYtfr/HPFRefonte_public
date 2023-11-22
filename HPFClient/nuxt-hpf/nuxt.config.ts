@@ -3,6 +3,7 @@ import { instanceToPlain } from "class-transformer";
 
 const config: NuxtConfig = {
   build: {
+    transpile: ["defu"],
     loaders: {
       vue: {
         compiler: require("vue-template-babel-compiler")
@@ -13,6 +14,11 @@ const config: NuxtConfig = {
     extractCSS: process.env.NODE_ENV === "production",
     optimizeCSS: process.env.NODE_ENV === "production",
     extend(config2, ctx) {
+      if (ctx.isServer === false) {
+        config2.node = {
+          fs: "empty"
+        };
+      }
       if (ctx.isDev) {
         config2.devtool = ctx.isClient ? "source-map" : "inline-source-map";
       }
@@ -102,7 +108,8 @@ const config: NuxtConfig = {
     "~/plugins/classes"
   ],
   axios: {
-    baseURL: process.env.VUE_APP_BASE_API, // Used as fallback if no runtime config is provided,
+    baseURL: process.env.SERVER_BASE_API, // Used as fallback if no runtime config is provided,
+    browserBaseURL: process.env.CLIENT_BASE_API,
     credentials: (process.env.NODE_ENV === "production")
   },
   ssr: true,

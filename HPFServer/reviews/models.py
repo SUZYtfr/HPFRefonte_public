@@ -1,7 +1,14 @@
-from django.db import models, transaction
-from django.db.models import F
-from django.utils import timezone
-from django.core import validators
+from django.db import IntegrityError
+from django.db.transaction import atomic
+from django.db.models import (
+    BooleanField,
+    PositiveSmallIntegerField,
+    DateTimeField,
+    ForeignKey,
+    CASCADE,
+    F,
+)
+from django.core.validators import MinValueValidator, MaxValueValidator
 from polymorphic_tree.models import (
     PolymorphicMPTTModel,
     PolymorphicTreeForeignKey,
@@ -39,8 +46,13 @@ def check_draft_permission(creation_user):
 
 
 class ReviewQuerySet(PolymorphicMPTTQuerySet):
-    @transaction.atomic
-    def create(self, creation_user, text, **extra_fields):
+    @atomic
+    def create(self, creation_user, text, parent=None, **extra_fields):
+        if not parent and not self.model.can_be_root: 
+            raise IntegrityError("Une réponse à review doit avoir un parent.")
+        if parent and self.model.can_be_root:
+            raise IntegrityError("Une review ne peut pas avoir de parent.")
+
         # if self.filter(creation_user=creation_user).exists():
         #     raise utils.IntegrityError
         instance = self.model(
@@ -106,16 +118,21 @@ class BaseReview(DatedModel, CreatedModel, TextDependentModel, PolymorphicMPTTMo
         to="self",
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
     )
-    is_draft = models.BooleanField(
+    is_draft = BooleanField(
         verbose_name="brouillon",
         default=True,
     )
-    is_archived = models.BooleanField(
+    is_archived = BooleanField(
         verbose_name="archivé",
         default=False,
         help_text="Indique que le destinataire de ce message l'a explicitement marqué comme archivé."
+    )
+    publication_date = DateTimeField(
+        verbose_name="publication",
+        null=True,
+        blank=True,
     )
 
     # TODO - réparer ça
@@ -144,18 +161,18 @@ class CollectionReview(BaseReview):
     can_have_children = True
     child_types = [BaseReview]
 
-    collection = models.ForeignKey(
+    collection = ForeignKey(
         to=Collection,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
         related_name="reviews",
     )
-    grading = models.PositiveSmallIntegerField(
+    grading = PositiveSmallIntegerField(
         verbose_name="notation",
         null=True,
         blank=True,
         validators=[
-            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
-            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+            MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            MaxValueValidator(limit_value=MAX_GRADING_VALUE),
         ]
     )
 
@@ -170,18 +187,18 @@ class FictionReview(BaseReview):
     can_have_children = True
     child_types = [BaseReview]
 
-    fiction = models.ForeignKey(
+    fiction = ForeignKey(
         to=Fiction,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
         related_name="reviews",
     )
-    grading = models.PositiveSmallIntegerField(
+    grading = PositiveSmallIntegerField(
         verbose_name="notation",
         null=True,
         blank=True,
         validators=[
-            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
-            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+            MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            MaxValueValidator(limit_value=MAX_GRADING_VALUE),
         ]
     )
 
@@ -196,18 +213,18 @@ class ChapterReview(BaseReview):
     can_have_children = True
     child_types = [BaseReview]
 
-    chapter = models.ForeignKey(
+    chapter = ForeignKey(
         to=Chapter,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
         related_name="reviews",
     )
-    grading = models.PositiveSmallIntegerField(
+    grading = PositiveSmallIntegerField(
         verbose_name="notation",
         null=True,
         blank=True,
         validators=[
-            validators.MinValueValidator(limit_value=MIN_GRADING_VALUE),
-            validators.MaxValueValidator(limit_value=MAX_GRADING_VALUE),
+            MinValueValidator(limit_value=MIN_GRADING_VALUE),
+            MaxValueValidator(limit_value=MAX_GRADING_VALUE),
         ]
     )
 
@@ -219,11 +236,11 @@ class BaseReviewTextVersion(BaseTextVersionModel):
         verbose_name = "version de texte de base de review"
         verbose_name_plural = "versions de textes de bases de reviews"
 
-    base_review = models.ForeignKey(
+    base_review = ForeignKey(
         editable=True,
         related_name="versions",
         to="reviews.BaseReview",
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
     )
 
 

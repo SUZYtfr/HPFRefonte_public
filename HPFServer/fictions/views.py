@@ -71,6 +71,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(modification_user=self.request.user)
 
+    # TODO - dégager ça, passer par /reviews/reviews/
     @decorators.action(
         detail=True,
         methods=["POST", "GET"],
@@ -144,6 +145,7 @@ class FictionViewSet(
         serializer = self.get_serializer(instance=fiction)
         return response.Response(data=serializer.data)
 
+    # TODO - dégager ça, passer par /reviews/reviews/
     @decorators.action(
         detail=True,
         methods=["POST", "GET"],
@@ -216,6 +218,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
             modification_date=timezone.now(),
         )
 
+    # TODO - dégager ça, passer par /reviews/reviews/
     @decorators.action(
         detail=True,
         methods=["POST", "GET"],

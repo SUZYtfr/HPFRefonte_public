@@ -83,34 +83,6 @@ export interface IFanfictionFilters extends IBasicQuery {
 }
 // #endregion
 
-// #region Reviews
-enum ReviewItemTypeEnum {
-  Fanfiction = 1,
-  Chapter = 2,
-  Serie = 3,
-  Author = 4,
-}
-
-export class ReviewData extends BasicClass<ReviewData> {
-  @Exclude()
-  public get review_id(): number {
-    return this.id;
-  }
-
-  public item_id: number = 0;
-  public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
-  public user_id: number | null = null;
-  public group_id: number | null = null;
-  public rating: number | null = null;
-  public content: string = "";
-  public parent_id: number | null = null;
-
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public post_date: Date | null = null;
-}
-// #endregion
-
 // #region  Serie
 enum SerieStatusEnum {
   Closed = 1,

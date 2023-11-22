@@ -231,12 +231,12 @@ class TestReviewsAPI(APITestCase):
 
     def test_get_fiction_reviews(self):
         fiction_review_list_response = self.client.get(
-            path=reverse("reviews:fiction-review-list"),
+            path=reverse("reviews:review-list"), kwargs={"item_type": "FictionReview"}
         )
         self.assertEqual(status.HTTP_200_OK, fiction_review_list_response.status_code)
         
         fiction_review_detail_response = self.client.get(
-            path=reverse("reviews:fiction-review-detail", kwargs={"pk": self.sample_fiction_review.id}),
+            path=reverse("reviews:review-detail", kwargs={"pk": self.sample_fiction_review.id}),
         )
         self.assertEqual(status.HTTP_200_OK, fiction_review_detail_response.status_code)
 
@@ -247,18 +247,27 @@ class TestReviewsAPI(APITestCase):
             "text": test_text,
             "grading": "6",
             "is_draft": False,
+            "item_type": "FictionReview",
+            "fiction_id": self.sample_fiction.id,
         }
 
         fiction_review_create_response = self.client.post(
-            path=reverse("fictions:fiction-reviews", kwargs={"pk": self.sample_fiction.id}),
+            path=reverse("reviews:review-list"),
             data=test_payload,
         )
         self.assertEqual(status.HTTP_201_CREATED, fiction_review_create_response.status_code)
         self.assertEqual(test_text, fiction_review_create_response.data.get("text"))
 
+        fiction_review_get_response = self.client.get(
+            path=reverse("reviews:review-list"),
+            kwargs={"include_item_types": ["FictionReview"], "item_id": self.sample_fiction.id},
+        )
+        self.assertEqual(status.HTTP_200_OK, fiction_review_get_response.status_code)
+        self.assertIn(fiction_review_create_response.data, fiction_review_get_response.data.get("results"))
+        
     def test_get_fiction_review_replies(self):
         fiction_review_reply_tree_response = self.client.get(
-            path=reverse("reviews:fiction-review-replies", kwargs={"pk": self.sample_fiction_review.id}),
+            path=reverse("reviews:review-replies", kwargs={"pk": self.sample_fiction_review.id}),
         )
         self.assertEqual(status.HTTP_200_OK, fiction_review_reply_tree_response.status_code)
 
@@ -266,10 +275,11 @@ class TestReviewsAPI(APITestCase):
         test_text = "test texte réponse à réponse à review"
         test_payload = {
             "text": test_text,
+            "item_type": "BaseReview",
         }
 
         fiction_review_reply_tree_response = self.client.post(
-            path=reverse("reviews:review-reply-replies", kwargs={"pk": self.sample_review_reply.id}),
+            path=reverse("reviews:review-replies", kwargs={"pk": self.sample_review_reply.id}),
             data=test_payload,
         )
         self.assertEqual(status.HTTP_201_CREATED, fiction_review_reply_tree_response.status_code)
@@ -277,7 +287,7 @@ class TestReviewsAPI(APITestCase):
 
     def test_get_fiction_review_reply_context(self):
         fiction_review_reply_context_response = self.client.get(
-            path=reverse("reviews:review-reply-context", kwargs={"pk": self.sample_review_reply.id}),
+            path=reverse("reviews:review-context", kwargs={"pk": self.sample_review_reply.id}),
         )
         self.assertEqual(status.HTTP_200_OK, fiction_review_reply_context_response.status_code)
 

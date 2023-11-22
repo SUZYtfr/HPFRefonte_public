@@ -8,7 +8,7 @@ let $axios: NuxtAxiosInstance;
 export function initializeAxios(axiosInstance: NuxtAxiosInstance): void {
   $axios = axiosInstance;
   $axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
+    baseURL: process.env.SERVER_BASE_API,
     timeout: 5000,
     withCredentials: (process.env.NODE_ENV === "production")
   });

@@ -1,9 +1,13 @@
-from django import forms
-from django.contrib import admin
-from mptt import admin as mptt_admin
+from django.forms import (
+    ModelForm,
+    Textarea,
+)
+from django.forms.fields import CharField
+from django.contrib.admin import ModelAdmin, register
+from mptt.admin import MPTTModelAdmin
 
 from core.admin import BaseAdminPage
-from reviews.models import (
+from .models import (
     BaseReview,
     BaseReviewTextVersion,
     FictionReview,
@@ -25,9 +29,9 @@ class TextFieldMixin:
         super().save_model(request, obj, form, change)
 
 
-class FictionReviewForm(forms.ModelForm):
-    text = forms.fields.CharField(
-        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+class FictionReviewForm(ModelForm):
+    text = CharField(
+        widget=Textarea({"cols": "100", "rows": "20"}),
         label="Dernière version"
     )
 
@@ -36,9 +40,9 @@ class FictionReviewForm(forms.ModelForm):
         fields = ["text"]
 
 
-class ChapterReviewForm(forms.ModelForm):
-    text = forms.fields.CharField(
-        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+class ChapterReviewForm(ModelForm):
+    text = CharField(
+        widget=Textarea({"cols": "100", "rows": "20"}),
         label="Dernière version"
     )
 
@@ -47,9 +51,9 @@ class ChapterReviewForm(forms.ModelForm):
         fields = ["text"]
 
 
-class CollectionReviewForm(forms.ModelForm):
-    text = forms.fields.CharField(
-        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+class CollectionReviewForm(ModelForm):
+    text = CharField(
+        widget=Textarea({"cols": "100", "rows": "20"}),
         label="Dernière version"
     )
 
@@ -58,9 +62,9 @@ class CollectionReviewForm(forms.ModelForm):
         fields = ["text"]
 
 
-class ReviewReplyForm(forms.ModelForm):
-    text = forms.fields.CharField(
-        widget=forms.Textarea({"cols": "100", "rows": "20"}),
+class ReviewReplyForm(ModelForm):
+    text = CharField(
+        widget=Textarea({"cols": "100", "rows": "20"}),
         label="Dernière version"
     )
 
@@ -69,10 +73,11 @@ class ReviewReplyForm(forms.ModelForm):
         fields = ["text"]
 
 
-@admin.register(FictionReview)
-class FictionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+@register(FictionReview)
+class FictionReviewAdminAccess(TextFieldMixin, BaseAdminPage, MPTTModelAdmin):
     """Accès d'administration aux reviews de fictions"""
 
+    ordering = ["-id"]
     mptt_indent_field = "__str__"
     list_display = ("id", "__str__", "fiction", "creation_user", "creation_date", "grading", "reply_count")
     fieldsets = [
@@ -85,10 +90,11 @@ class FictionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTMod
     form = FictionReviewForm
 
 
-@admin.register(ChapterReview)
-class ChapterReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+@register(ChapterReview)
+class ChapterReviewAdminAccess(TextFieldMixin, BaseAdminPage, MPTTModelAdmin):
     """Accès d'administration aux reviews de chapitres"""
 
+    ordering = ["-id"]
     mptt_indent_field = "__str__"
     list_display = ("id", "__str__", "chapter", "creation_user", "creation_date", "grading", "reply_count")
     fieldsets = [
@@ -101,10 +107,11 @@ class ChapterReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTMod
     form = ChapterReviewForm
 
 
-@admin.register(CollectionReview)
-class CollectionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+@register(CollectionReview)
+class CollectionReviewAdminAccess(TextFieldMixin, BaseAdminPage, MPTTModelAdmin):
     """Accès d'administration aux reviews de séries"""
 
+    ordering = ["-id"]
     mptt_indent_field = "__str__"
     list_display = ("id", "__str__", "collection", "creation_user", "creation_date", "grading", "reply_count")
     fieldsets = [
@@ -117,8 +124,8 @@ class CollectionReviewAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTT
     form = CollectionReviewForm
 
 
-@admin.register(BaseReview)
-class ReviewReplyAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModelAdmin):
+@register(BaseReview)
+class ReviewReplyAdminAccess(TextFieldMixin, BaseAdminPage, MPTTModelAdmin):
     """Accès d'administration aux réponses à reviews"""
 
     mptt_indent_field = "__str__"
@@ -132,12 +139,19 @@ class ReviewReplyAdminAccess(TextFieldMixin, BaseAdminPage, mptt_admin.MPTTModel
     search_fields = ["parent"]
     form = ReviewReplyForm
 
-    def get_queryset(self, request, *args, **kwargs):
-        return BaseReview.objects.filter(level__gt=0)
+    def has_change_permission(self, request, obj=None, *args, **kwargs):
+        if obj and obj.level > 0:
+            return True
+        return False
+
+    def has_delete_permission(self, request, obj=None, *args, **kwargs):
+        if obj and obj.level > 0:
+            return True
+        return False
 
 
-@admin.register(BaseReviewTextVersion)
-class BaseReviewTextVersionAdminPage(admin.ModelAdmin):
+@register(BaseReviewTextVersion)
+class BaseReviewTextVersionAdminPage(ModelAdmin):
     ordering = ["-id"]
     list_per_page = 20
     list_display = ["id", "base_review", "creation_user", "creation_date"]

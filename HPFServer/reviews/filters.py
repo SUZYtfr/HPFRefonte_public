@@ -1,112 +1,49 @@
-from django.forms import IntegerField
 from django_filters import (
     FilterSet,
     CharFilter,
-    ModelChoiceFilter,
+    NumberFilter,
     MultipleChoiceFilter,
 )
-from django.db.models import Q, F, Subquery
+from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-from users.models import User
 from .models import (
     BaseReview,
     CollectionReview,
     FictionReview,
     ChapterReview,
 )
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 
 
-class CollectionReviewFilterset(FilterSet):
-    class Meta:
-        model = CollectionReview
-        fields = [
-            "creation_user",
-            "content",
-        ]
-
-    content = CharFilter(
-        label="Recherche partielle dans les titres et pseudonymes.",
-        method="filter_content",
-    )
-
-    def filter_content(self, queryset, name, value):
-        return queryset.filter(
-            Q(creation_user__username__contains=value)
-            |
-            Q(collection__creation_user__username__contains=value)
-            |
-            Q(collection__title__contains=value)
-        )
-
-
-class FictionReviewFilterset(FilterSet):
-    class Meta:
-        model = FictionReview
-        fields = [
-            "creation_user",
-            "content",
-        ]
-
-    content = CharFilter(
-        label="Recherche partielle dans les titres et pseudonymes.",
-        method="filter_content",
-    )
-
-    def filter_content(self, queryset, name, value):
-        return queryset.filter(
-            Q(creation_user__username__contains=value)
-            |
-            Q(fiction__creation_user__username__contains=value)
-            |
-            Q(fiction__title__contains=value)
-        )
-
-
-class ChapterReviewFilterset(FilterSet):
-    class Meta:
-        model = ChapterReview
-        fields = [
-            "creation_user",
-            "content",
-        ]
-
-    content = CharFilter(
-        label="Recherche partielle dans les titres et pseudonymes.",
-        method="filter_content",
-    )
-
-    def filter_content(self, queryset, name, value):
-        return queryset.filter(
-            Q(creation_user__username__contains=value)
-            |
-            Q(chapter__creation_user__username__contains=value)
-            |
-            Q(chapter__title__contains=value)
-        )
-
-
-class AllReviewFilterset(FilterSet):
+class ReviewFilterset(FilterSet):
     class Meta:
         model = BaseReview
         fields = [
             "creation_user",
-            "content",
-            "include",
+            "searchTerm",
+            "include_item_types",
+            "item_id",
         ]
 
-    content_type_dict = ContentType.objects.get_for_models(CollectionReview, FictionReview, ChapterReview)
-    content_type_choices = tuple((int(v.id), str(k.__name__)) for k, v in content_type_dict.items())
-    content = CharFilter(
+    searchTerm = CharFilter(
         label="Recherche partielle dans les titres et pseudonymes.",
         method="filter_content",
     )
-    include = MultipleChoiceFilter(
+
+    # content_type_dict = ContentType.objects.get_for_models(CollectionReview, FictionReview, ChapterReview)
+    # content_type_choices = tuple((int(v.id), str(k.__name__)) for k, v in content_type_dict.items())
+    content_type_choices = [
+        ("ChapterReview", "ChapterReview"),
+        ("FictionReview", "FictionReview"),
+        ("CollectionReview", "CollectionReview"),
+    ]
+    include_item_types = MultipleChoiceFilter(
         label="Modèles de reviews inclus dans la recherche.",
         method="include_models",
         choices=content_type_choices,
+    )
+    item_id = NumberFilter(
+        method="filter_item_id",
     )
 
     def filter_content(self, queryset, name, value):
@@ -127,4 +64,15 @@ class AllReviewFilterset(FilterSet):
         )
 
     def include_models(self, queryset, name, value):
-        return queryset.filter(polymorphic_ctype__in=value)
+        content_type_dict = ContentType.objects.get_for_models(CollectionReview, FictionReview, ChapterReview)
+        ctypes = [v for k, v in content_type_dict.items() if k.__name__ in value]
+        return queryset.filter(polymorphic_ctype__in=ctypes)
+
+    def filter_item_id(self, queryset, name, value):
+        return queryset.filter(
+            Q(CollectionReview___collection_id=value)
+            |
+            Q(FictionReview___fiction_id=value)
+            |
+            Q(ChapterReview___chapter_id=value)
+        )

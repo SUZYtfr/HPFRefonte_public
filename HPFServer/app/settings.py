@@ -29,9 +29,9 @@ DEBUG = os.getenv("DEBUG", "1") == "1"  # astuce pour "parser" un boolean d'.env
 ALLOWED_HOSTS = [os.getenv("SERVER_HOST", "*")]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000/",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8000/",
+# ]
 
 
 # Application definition
