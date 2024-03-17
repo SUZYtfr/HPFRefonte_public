@@ -229,7 +229,14 @@ export default class extends Vue {
     showFooter: false,
     placeholder: "Votre description",
     readOnly: false,
-    fixedHeight: true
+    fixedHeight: true,
+    defaultValue: "",
+    canQuote: false,
+    quoteLimit: 0,
+    fontSize: 100,
+    height: 150,
+    oneLineToolbar: false,
+    canUseImage: true
   };
   // #endregion
 

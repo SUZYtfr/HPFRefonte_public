@@ -65,7 +65,14 @@ export default class CommentList extends Vue {
     showFooter: false,
     placeholder: "Ecrire un commentaire",
     readOnly: false,
-    fixedHeight: true
+    fixedHeight: true,
+    defaultValue: "",
+    canQuote: false,
+    quoteLimit: 0,
+    fontSize: 100,
+    height: 150,
+    oneLineToolbar: false,
+    canUseImage: false
   };
   // #endregion
 

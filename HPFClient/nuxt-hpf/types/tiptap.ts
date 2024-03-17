@@ -15,7 +15,13 @@ export class TipTapEditorConfig {
   public placeholder: string = "";
   public readOnly: boolean = true;
   public fixedHeight: boolean = true;
-
+  public height: number = 125;
+  public defaultValue: string = "";
+  public canQuote: boolean = false;
+  public quoteLimit: number = 250;
+  public fontSize: number = 100;
+  public oneLineToolbar: boolean = false;
+  public canUseImage: boolean = false;
   public constructor(init?: Partial<TipTapEditorConfig>) {
     Object.assign(this, init);
   }

@@ -84,7 +84,7 @@ export interface IFanfictionFilters extends IBasicQuery {
 // #endregion
 
 // #region Reviews
-enum ReviewItemTypeEnum {
+export enum ReviewItemTypeEnum {
   Fanfiction = 1,
   Chapter = 2,
   Serie = 3,
@@ -101,13 +101,20 @@ export class ReviewData extends BasicClass<ReviewData> {
   public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
   public user_id: number | null = null;
   public group_id: number | null = null;
-  public rating: number | null = null;
-  public content: string = "";
+  public grading: number | null = null;
+  public text: string = "";
   public parent_id: number | null = null;
+  public is_draft: boolean = false;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public post_date: Date | null = null;
+}
+
+// Est-ce que finalement ça sert à quelque chose ?
+export interface IReviewFilters extends IBasicQuery {
+  review_item_type_id: ReviewItemTypeEnum,
+  item_id: number,
 }
 // #endregion
 
