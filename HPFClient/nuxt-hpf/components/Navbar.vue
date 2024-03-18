@@ -46,8 +46,8 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    src="https://nsa39.casimages.com/img/2018/02/16/mini_180216012732482019.jpg"
-                    alt=""
+                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    alt="Image de profil"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"
                     :responsive="true"
@@ -187,7 +187,7 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    :src="$auth.user?.profile.profile_picture"
+                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"

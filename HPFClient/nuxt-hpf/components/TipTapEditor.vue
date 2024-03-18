@@ -8,7 +8,7 @@
     >
       <!-- Toolbar -->
       <div
-        v-if="config?.readOnly == false"
+        v-if="(config?.readOnly ?? false) == false"
         id="editor-header"
         :class="[
           'is-flex',
@@ -16,9 +16,309 @@
           'is-justify-content-flex-start',
           'is-flex-wrap-wrap',
           { 'editor-disabled': linkEditorModalActive },
+          { 'one-line-toolbar': (config?.oneLineToolbar ?? false) }
         ]"
       >
+        <!-- Menu burger regroupant toutes les fonctionnalités masqués dans le tooltip -->
+        <b-tooltip
+          v-if="(config?.oneLineToolbar ?? false) == true"
+          type="is-light"
+          :triggers="['click']"
+          :auto-close="['outside', 'escape']"
+          position="is-left"
+          style="position: absolute; left: 21px;"
+        >
+          <template #content>
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Bold"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="bold"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
+              @click="editor?.chain().focus().toggleBold().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Bold"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="italic"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
+              @click="editor?.chain().focus().toggleItalic().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Underline"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="underline"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
+              @click="editor?.chain().focus().toggleUnderline().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Strikethrough"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="strikethrough"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
+              @click="editor?.chain().focus().toggleStrike().run()"
+            />
+            <div v-if="ToolBarButtonsTooltipVisibility.Strikethrough" class="py-1">
+              <div class="vertical-line" />
+            </div>
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.AlignLeft"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="align-left"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
+              @click="editor?.chain().focus().setTextAlign('left').run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.AlignCenter"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="align-center"
+              :class="{
+                'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
+              }"
+              @click="editor?.chain().focus().setTextAlign('center').run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.AlignRight"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="align-right"
+              :class="{
+                'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
+              }"
+              @click="editor?.chain().focus().setTextAlign('right').run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.AlignJustify"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="align-justify"
+              :class="{
+                'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
+              }"
+              @click="editor?.chain().focus().setTextAlign('justify').run()"
+            />
+            <div v-if="ToolBarButtonsTooltipVisibility.AlignJustify" class="py-1">
+              <div class="vertical-line" />
+            </div>
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Indent"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="indent"
+              @click="editor?.chain().focus().indent().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Outdent"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="outdent"
+              @click="editor?.chain().focus().outdent().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.ListUl"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="list-ul"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
+              @click="editor?.chain().focus().toggleBulletList().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.ListOl"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="list-ol"
+              :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
+              @click="editor?.chain().focus().toggleOrderedList().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Undo"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="undo"
+              :disabled="!editorFunctionsActiveStatuses.undo"
+              @click="editor?.chain().focus().undo().run()"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Redo"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="redo"
+              :disabled="!editorFunctionsActiveStatuses.redo"
+              @click="editor?.chain().focus().redo().run()"
+            />
+            <div v-if="ToolBarButtonsTooltipVisibility.Redo" class="py-1">
+              <div class="vertical-line" />
+            </div>
+            <b-dropdown v-if="ToolBarButtonsTooltipVisibility.TextStyle" aria-role="list" :mobile-modal="false">
+              <template #trigger="{ active }">
+                <b-button
+                  type="is-primary"
+                  outlined
+                  size="is-small"
+                  icon-pack="fas"
+                  :icon-left="currentStyle.icon"
+                  :label="currentStyle.text"
+                  :icon-right="active ? 'angle-up' : 'angle-down'"
+                />
+              </template>
+              <b-dropdown-item
+                v-for="(menu, index) in menusStyle"
+                :key="index"
+                :value="menu"
+                aria-role="listitem"
+              >
+                <div class="media" @click="toggleStyle(menu.action)">
+                  <b-icon class="media-left" :icon="menu.icon" />
+                  <div class="media-content">
+                    <h3>{{ menu.text }}</h3>
+                  </div>
+                </div>
+              </b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown v-if="ToolBarButtonsTooltipVisibility.TextHeight" aria-role="list" :mobile-modal="false">
+              <template #trigger="{ active }">
+                <b-button
+                  type="is-primary"
+                  outlined
+                  size="is-small"
+                  icon-pack="fas"
+                  icon-left="text-height"
+                  :label="editorFunctionsTextStyleStatuses.fontSize"
+                  :icon-right="active ? 'angle-up' : 'angle-down'"
+                />
+              </template>
+              <b-dropdown-item
+                v-for="(fontSize, index) in menusFontSize"
+                :key="index"
+                :value="fontSize"
+                aria-role="listitem"
+              >
+                <div
+                  class="media"
+                  @click="
+                    editor?.chain().focus().setFontSize(fontSize + 'px').run()
+                  "
+                >
+                  <div class="media-content">
+                    <h3
+                      :style="{
+                        fontSize: fontSize + 'px',
+                      }"
+                    >
+                      {{ fontSize + " px" }}
+                    </h3>
+                  </div>
+                </div>
+              </b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown v-if="ToolBarButtonsTooltipVisibility.Font" aria-role="list" :mobile-modal="false">
+              <template #trigger="{ active }">
+                <b-button
+                  type="is-primary"
+                  outlined
+                  size="is-small"
+                  icon-pack="fas"
+                  icon-left="font"
+                  :label="editorFunctionsTextStyleStatuses.fontFamily"
+                  :icon-right="active ? 'angle-up' : 'angle-down'"
+                />
+              </template>
+              <b-dropdown-item
+                v-for="(fontFamily, index) in menusFontFamily"
+                :key="index"
+                :value="fontFamily"
+                aria-role="listitem"
+              >
+                <div class="media" @click="toggleFontFamily(fontFamily)">
+                  <div class="media-content">
+                    <h3
+                      :style="{
+                        fontFamily: fontFamily,
+                      }"
+                    >
+                      {{ fontFamily }}
+                    </h3>
+                  </div>
+                </div>
+              </b-dropdown-item>
+            </b-dropdown>
+            <div v-if="ToolBarButtonsTooltipVisibility.Font" class="py-1">
+              <div class="vertical-line" />
+            </div>
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Image && (config?.canUseImage ?? false)"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="image"
+              @click="addHPFImage(null, null, null, null)"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.Link"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="link"
+              @click="linkEditorModalActive = true"
+            />
+            <b-button
+              v-if="ToolBarButtonsTooltipVisibility.GripLines"
+              type="is-primary"
+              outlined
+              size="is-small"
+              icon-pack="fas"
+              icon-left="grip-lines"
+              @click="editor?.chain().focus().setHorizontalRule().run()"
+            />
+          </template>
+          <b-button
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="bars"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
+            @click="editor?.chain().focus().setTextAlign('left').run()"
+          />
+        </b-tooltip>
+        <!-- Toolbar, sur une ou plusieurs lignes selon la largeur -->
         <b-button
+          ref="btnBold"
           type="is-primary"
           outlined
           size="is-small"
@@ -28,6 +328,7 @@
           @click="editor?.chain().focus().toggleBold().run()"
         />
         <b-button
+          ref="btnItalic"
           type="is-primary"
           outlined
           size="is-small"
@@ -37,6 +338,7 @@
           @click="editor?.chain().focus().toggleItalic().run()"
         />
         <b-button
+          ref="btnUnderline"
           type="is-primary"
           outlined
           size="is-small"
@@ -46,6 +348,7 @@
           @click="editor?.chain().focus().toggleUnderline().run()"
         />
         <b-button
+          ref="btnStrikethrough"
           type="is-primary"
           outlined
           size="is-small"
@@ -58,6 +361,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
+          ref="btnAlignLeft"
           type="is-primary"
           outlined
           size="is-small"
@@ -67,6 +371,7 @@
           @click="editor?.chain().focus().setTextAlign('left').run()"
         />
         <b-button
+          ref="btnAlignCenter"
           type="is-primary"
           outlined
           size="is-small"
@@ -78,6 +383,7 @@
           @click="editor?.chain().focus().setTextAlign('center').run()"
         />
         <b-button
+          ref="btnAlignRight"
           type="is-primary"
           outlined
           size="is-small"
@@ -89,6 +395,7 @@
           @click="editor?.chain().focus().setTextAlign('right').run()"
         />
         <b-button
+          ref="btnAlignJustify"
           type="is-primary"
           outlined
           size="is-small"
@@ -103,6 +410,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
+          ref="btnIndent"
           type="is-primary"
           outlined
           size="is-small"
@@ -111,6 +419,7 @@
           @click="editor?.chain().focus().indent().run()"
         />
         <b-button
+          ref="btnOutdent"
           type="is-primary"
           outlined
           size="is-small"
@@ -122,6 +431,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
+          ref="btnListUl"
           type="is-primary"
           outlined
           size="is-small"
@@ -131,6 +441,7 @@
           @click="editor?.chain().focus().toggleBulletList().run()"
         />
         <b-button
+          ref="btnListOl"
           type="is-primary"
           outlined
           size="is-small"
@@ -143,6 +454,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
+          ref="btnUndo"
           type="is-primary"
           outlined
           size="is-small"
@@ -152,6 +464,7 @@
           @click="editor?.chain().focus().undo().run()"
         />
         <b-button
+          ref="btnRedo"
           type="is-primary"
           outlined
           size="is-small"
@@ -166,6 +479,7 @@
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
+              ref="btnTextstyle"
               type="is-primary"
               outlined
               size="is-small"
@@ -189,10 +503,10 @@
             </div>
           </b-dropdown-item>
         </b-dropdown>
-
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
+              ref="btnTextheight"
               type="is-primary"
               outlined
               size="is-small"
@@ -229,6 +543,7 @@
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
+              ref="btnFont"
               type="is-primary"
               outlined
               size="is-small"
@@ -261,6 +576,8 @@
           <div class="vertical-line" />
         </div>
         <b-button
+          v-if="(config?.canUseImage ?? false)"
+          ref="btnImage"
           type="is-primary"
           outlined
           size="is-small"
@@ -269,6 +586,7 @@
           @click="addHPFImage(null, null, null, null)"
         />
         <b-button
+          ref="btnLink"
           type="is-primary"
           outlined
           size="is-small"
@@ -277,6 +595,7 @@
           @click="linkEditorModalActive = true"
         />
         <b-button
+          ref="btnGripLines"
           type="is-primary"
           outlined
           size="is-small"
@@ -300,7 +619,6 @@
         ></b-button> -->
       </div>
       <!-- END: ToolBar -->
-
       <div
         id="editor-content"
         class="
@@ -326,41 +644,53 @@
             :tippy-options="{ duration: 100, placement: 'bottom' }"
             :should-show="bubbleMenuShouldShow"
           >
-            <b-button
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="bold"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
-              @click="editor?.chain().focus().toggleBold().run()"
-            />
-            <b-button
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="italic"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
-              @click="editor?.chain().focus().toggleItalic().run()"
-            />
-            <b-button
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="underline"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
-              @click="editor?.chain().focus().toggleUnderline().run()"
-            />
-            <b-button
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="link"
-              @click="linkEditorModalActive = true"
-            />
+            <div v-if="(config?.readOnly ?? false) == false">
+              <b-button
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="bold"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
+                @click="editor?.chain().focus().toggleBold().run()"
+              />
+              <b-button
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="italic"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
+                @click="editor?.chain().focus().toggleItalic().run()"
+              />
+              <b-button
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="underline"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
+                @click="editor?.chain().focus().toggleUnderline().run()"
+              />
+              <b-button
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="link"
+                @click="linkEditorModalActive = true"
+              />
+            </div>
+            <div v-else-if="((config?.canQuote ?? false) === true)">
+              <b-button
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="quote-right"
+                @click="emitQuote()"
+              />
+            </div>
           </bubble-menu>
           <!-- END: Bubble menu -->
 
@@ -444,8 +774,13 @@
             :class="[
               'is-flex-grow-5',
               { 'editor-disabled': linkEditorModalActive },
-              ((config?.fixedHeight ?? true) ? 'editor-content-main-pane-height' : '')
+              ((config?.fixedHeight ?? true) ? 'editor-content-main-pane-height' : ''),
+              { 'disable-text-selection' : (((config?.readOnly ?? false) == true) && ((config.canQuote ?? false) == false)) }
             ]"
+            :style="{
+              height: ((config?.fixedHeight ?? true) ? ((config?.height ?? 125).toString() + 'px') : ''),
+              fontSize: (config?.fontSize ?? 100) + '%',
+            }"
           />
           <!-- END: Editor -->
 
@@ -464,9 +799,9 @@
               editorFunctionsCharacterStatuses.wordCount > 1 ? "s" : ""
             }}</span>
           </div>
-          <!-- END: Footer -->
+        <!-- END: Footer -->
         </div>
-        <!-- <div
+      <!-- <div
         id="editor-content-right-pane"
         class="is-flex is-flex-direction-column is-justify-content-flex-start"
       >
@@ -510,6 +845,7 @@ import { FontSize } from "~/utils/tiptap_extensions/tiptap_font_size";
 import { ImageHPFData } from "@/types/images";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
+import { LimitedSelection } from "~/utils/tiptap_extensions/tiptap_limit_selection_mark";
 
 @Component({
   name: "TipTapEditor",
@@ -531,7 +867,33 @@ export default class extends Vue {
   // Timer Editor update
   private timerThrottleId: number = 0;
 
+  // Timer resize
+  private timerThrottleResizeId: number = 0;
+
   // #region Toolbar
+  public ToolBarButtonsTooltipVisibility = {
+    Bold: true,
+    Italic: true,
+    Underline: true,
+    Strikethrough: true,
+    AlignLeft: true,
+    AlignCenter: true,
+    AlignRight: true,
+    AlignJustify: true,
+    Indent: true,
+    Outdent: true,
+    ListUl: true,
+    ListOl: true,
+    Undo: true,
+    Redo: true,
+    TextStyle: true,
+    TextHeight: true,
+    Font: true,
+    Image: true,
+    Link: true,
+    GripLines: true
+  };
+
   public menusStyle: any = [
     { icon: "heading", text: "Titre 1", action: "h1" },
     { icon: "heading", text: "Titre 2", action: "h2" },
@@ -723,7 +1085,7 @@ export default class extends Vue {
   // #region Hooks
   private mounted(): void {
     this.editor = new Editor({
-      content: "",
+      content: this.config?.defaultValue,
       extensions: [
         StarterKit,
         TextStyle,
@@ -748,6 +1110,11 @@ export default class extends Vue {
         TableCell,
         Placeholder.configure({
           placeholder: this.config?.placeholder
+        }),
+        LimitedSelection.configure({
+          HTMLAttributes: {
+            class: "animate__animated animate__fast animate__flash"
+          }
         })
       ],
       editorProps: {
@@ -823,11 +1190,35 @@ export default class extends Vue {
     this.editor.on("update", () => this.onEditorUpdated());
     this.editor.on("selectionUpdate", () => this.onEditorUpdated());
 
+    // Evénement pour gérer la selection limitée
+    this.editor.view.dom.addEventListener("mouseup", () => {
+      if ((this.config?.canQuote ?? false) === false) return;
+      if (this.editor != null) {
+        const selection = this.editor.state.selection;
+        const maxSelectionLength = (this.config?.quoteLimit ?? 250);
+        if (selection.empty) return; // La sélection est vide, aucune action nécessaire
+        const { view } = this.editor;
+        const { from, to } = view.state.selection;
+        if ((to - from) > maxSelectionLength) {
+          const newTo = from + maxSelectionLength;
+          this.editor.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
+          const element = document.querySelector("limitedselection");
+          element?.addEventListener("animationend", () => {
+            this.editor?.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
+          });
+        }
+      }
+    });
+
     // Configuration par défaut
     this.editor?.chain().focus().setParagraph().setFontFamily("Arial").run();
+
+    // window.addEventListener("resize", this.detectWrappedItems);
+    // this.detectWrappedItems();
   }
 
   private beforeDestroy(): void {
+    // window.removeEventListener("resize", this.detectWrappedItems);
     this.editor?.destroy();
   }
   // #endregion
@@ -867,7 +1258,76 @@ export default class extends Vue {
   }
   // #endregion
 
-  // #region Methods
+  // #region Public Methods
+  // Changer le contenu de l'éditeur
+  public setContent(tiptapContent: TipTapEditorContent | null): void {
+    if (tiptapContent != null)
+      this.editor?.commands.setContent(tiptapContent.content);
+    else
+      this.editor?.commands.setContent("");
+    // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
+  }
+
+  // Ajouter une quote
+  public setQuote(quote: string): void {
+    // this.editor?.chain().focus().insertContent("[...] " + quote + "[...]").setBlockquote().enter().focus("end").run();
+    this.editor?.chain().focus().enter().insertContent(quote).setBlockquote().run();
+    this.editor?.commands.enter();
+    this.editor?.commands.enter();
+  }
+
+  // Tentative avortée, en css c'est aussi bien et plus rapide et beaucoup plus simple
+  // public upFontSize(): void {
+  //   // this.editor?.chain().focus().setFontSize(fontSize + "px").run();
+
+  //   // this.editor?.chain().focus().commands.forEach((command) => {
+  //   //   const { fontSize } = command.queryNodeAttributes("fontSize");
+  //   //   if (fontSize) {
+  //   //     const newSize = fontSize + 1; // Augmentation de 1 unité, ajustez selon vos besoins
+  //   //     command.updateNodeAttributes({ fontSize: newSize });
+  //   //   }
+  //   // }).run();
+
+  //   if (this.editor != null) {
+  //     const { state, view } = this.editor;
+  //     const tr = state.tr;
+
+  //     // Parcours de tous les nœuds du document
+  //     state.doc.descendants((node, pos) => {
+  //       if (node.isText) {
+  //         const currentSize = node.attrs.fontSize || 12; // Taille de police par défaut si non définie
+  //         console.log(node.attrs.fontSize);
+  //         const newSize = currentSize + 1; // Augmentation de 1 unité, ajustez selon vos besoins
+
+  //         // Mise à jour des attributs de la taille de police
+  //         tr.setNodeMarkup(pos, undefined, { ...node.attrs, fontSize: newSize });
+  //       }
+  //     });
+
+  //     // Appliquer les modifications au document
+  //     view.dispatch(tr);
+  //   }
+  // }
+  // #endregion
+
+  // #region Emit Function
+  public emitQuote(): void {
+    if (this.editor != null) {
+      const { view, state } = this.editor;
+      const { from, to } = view.state.selection;
+      // On check la longueur max émise
+      let newTo = to;
+      const maxSelectionLength = (this.config?.quoteLimit ?? 250);
+      if ((to - from) > maxSelectionLength) newTo = from + maxSelectionLength;
+      // Emet l'évènement quote
+      this.$emit("quote", state.doc.textBetween(from, newTo, ""));
+      this.editor.commands.setTextSelection(to);
+      window?.getSelection()?.empty();
+    }
+  }
+  // #endregion
+
+  // #region Private Methods
   // Toggle Alert Drop interdit
   private toggleForbiddenDropAlert(): void {
     this.$buefy.toast.open({
@@ -889,6 +1349,7 @@ export default class extends Vue {
     height: number | null,
     pos: any | null
   ): void {
+    if ((this.config?.canUseImage ?? false) === false) return;
     this.editor?.commands.insertContentAt(
       pos != null ? pos : this.editor.view.state.selection.$anchor.pos,
       "<hpf-image " +
@@ -1045,6 +1506,8 @@ export default class extends Vue {
   // Où doit apparaitre le Bubble Menu
   public bubbleMenuShouldShow(): boolean {
     if (this.editor != null) {
+      if ((this.config?.readOnly ?? false) === true && (this.config?.canQuote ?? false) === false) return false;
+
       const { view, state } = this.editor;
       const { from, to } = view.state.selection;
       const text = state.doc.textBetween(from, to, "");
@@ -1062,6 +1525,41 @@ export default class extends Vue {
       );
     }
     return false;
+  }
+
+  // Détecter le wrap des button de l'éditeur
+  public detectWrappedItems():void {
+    clearTimeout(this.timerThrottleResizeId);
+    this.timerThrottleResizeId = window.setTimeout(
+      () => {
+        console.log("Je doit passer une seule fois");
+        const container = document.querySelector("#editor-header");
+        const containerBottom = (container?.getBoundingClientRect()?.bottom ?? 0);
+        if (container == null) return;
+        this.ToolBarButtonsTooltipVisibility.Bold = ((this.$refs.btnBold as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Italic = ((this.$refs.btnItalic as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Underline = ((this.$refs.btnUnderline as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Strikethrough = ((this.$refs.btnStrikethrough as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.AlignLeft = ((this.$refs.btnAlignLeft as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.AlignCenter = ((this.$refs.btnAlignCenter as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.AlignRight = ((this.$refs.btnAlignRight as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.AlignJustify = ((this.$refs.btnAlignJustify as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Indent = ((this.$refs.btnIndent as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Outdent = ((this.$refs.btnOutdent as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.ListUl = ((this.$refs.btnListUl as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.ListOl = ((this.$refs.btnListOl as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Undo = ((this.$refs.btnUndo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Redo = ((this.$refs.btnRedo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.TextStyle = ((this.$refs.btnTextstyle as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.TextHeight = ((this.$refs.btnTextheight as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Font = ((this.$refs.btnFont as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Image = ((this.$refs.btnImage as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Link = ((this.$refs.btnLink as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.GripLines = ((this.$refs.btnGripLines as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+        this.ToolBarButtonsTooltipVisibility.Redo = ((this.$refs.btnRedo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
+      },
+      300
+    );
   }
   // #endregion
 }
@@ -1084,7 +1582,7 @@ export default class extends Vue {
   background-color: #fff;
   height: 100%;
   width: 100%;
-  min-width: 300px;
+  min-width: 180px;
   .button.is-primary,
   .button.is-danger {
     border-radius: 0.5rem !important;
@@ -1096,6 +1594,11 @@ export default class extends Vue {
     background-color: rgba(10, 10, 10, 0.7) !important;
     pointer-events: none !important;
     cursor: not-allowed !important;
+  }
+  .one-line-toolbar {
+    height: 38px;
+    overflow-y: hidden;
+    padding-left: 41px !important;
   }
   #editor-header {
     border-bottom: 3px solid $primary !important;
@@ -1124,7 +1627,7 @@ export default class extends Vue {
       height: 125px;
     }
     #editor-content-main-pane {
-      .ProseMirror {
+      ::v-deep .ProseMirror {
         //background-color: #f3e5a9;
         min-height: 100%;
         padding: 4px;
@@ -1194,6 +1697,16 @@ export default class extends Vue {
           margin-right: 0;
           font-weight: bold;
         }
+        blockquote {
+          padding-left: 1rem;
+          border-left: 3px solid rgba(#0D0D0D, 0.1);
+        }
+        limitedselection {
+          background-color: #ef476f;
+        }
+        p {
+          margin-bottom: 0px !important;
+        }
       }
       .ProseMirror p.is-editor-empty:first-child::before {
         content: attr(data-placeholder);
@@ -1203,6 +1716,10 @@ export default class extends Vue {
         height: 0;
       }
     }
+    .disable-text-selection {
+          user-select: none; /* Désactiver la sélection de texte */
+          pointer-events: none; /* Désactiver les interactions de pointeur */
+        }
     #editor-content-footer-pane {
       //border-top: 1px solid #dbdbdb !important;
       border-top: 2px solid $primary-light !important;

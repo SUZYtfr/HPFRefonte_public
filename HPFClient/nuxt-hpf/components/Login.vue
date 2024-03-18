@@ -24,6 +24,7 @@
               password-reveal
               placeholder="Votre mot de passe"
               required
+              @keydown.native.enter="login()"
             />
           </b-field>
           <b-checkbox>Se souvenir de moi</b-checkbox>
@@ -35,7 +36,7 @@
             label="Se connecter"
             type="is-primary"
             :loading="loading"
-            @click="checkAndSubmitForm()"
+            @click="login()"
           />
         </footer>
       </div>
@@ -44,10 +45,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "nuxt-property-decorator";
+import { Component, Vue } from "nuxt-property-decorator";
 import { getModule } from "vuex-module-decorators";
 import ModalsStates from "~/store/modules/ModalsStates";
-import { VForm, OpenToast } from "@/utils/formHelper";
 import { UserLoginData } from "@/types/users";
 
 @Component({
@@ -59,8 +59,6 @@ export default class extends Vue {
     username: "",
     password: ""
   };
-
-  public formIsValid: boolean = false;
 
   public loading: boolean = false;
   // #endregion
@@ -78,30 +76,18 @@ export default class extends Vue {
     this.ModalsStatesModule.setLoginModalActive(value);
   }
 
-  get form(): VForm {
-    return this.$refs.loginForm as VForm;
-  }
-
-  // #endregion
-
-  // #region Watchers
-  @Watch("loginForm", { deep: true })
-  private onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
+  get formIsValid(): boolean {
+    return ((this.loginForm?.username?.length ?? 0) > 0 && (this.loginForm?.password?.length ?? 0) > 0);
   }
   // #endregion
 
   // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm():void {
-    if (this.form.checkValidity()) this.login();
-  }
-
   // Envoyer le formulaire
-  private async login(): Promise<void> {
+  public async login(): Promise<void> {
     this.loading = true;
     try {
       await this.$auth.loginWith("cookie", { data: this.loginForm });
+      this.modalActive = false;
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({

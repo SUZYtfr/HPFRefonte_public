@@ -6,7 +6,7 @@
     <p v-else-if="$fetchState.error">
       Error while fetching
     </p>
-    <div Fv-else>
+    <div v-else>
       <!-- <p>
         {{ characteristics_types[0].name }}
         {{ ( characteristics_types[0] instanceof CharacteristicTypeModel) }}
@@ -15,7 +15,7 @@
         {{ characteristics[0].name }}
         {{ ( characteristics[0] instanceof CharacteristicModel) }}
       </p> -->
-      <p v-if="fanfictions[0] != null">
+      <!-- <p v-if="fanfictions[0] != null">
         {{ fanfictions[0].title }}
         {{ ( fanfictions[0] instanceof FanfictionModel) }}
         {{ ( fanfictions[0].creation_date instanceof Date) }}
@@ -30,11 +30,11 @@
       </p>
       <p>
         {{ new Date("2020-11-01T19:25:43.511Z") }}
-      </p>
+      </p> -->
     </div>
-    <!-- <client-only>
-      <TipTapEditor class="m-5" />
-    </client-only> -->
+    <client-only>
+      <TipTapEditor class="m-5" :config="tiptapConfig" />
+    </client-only>
   </div>
 </template>
 
@@ -47,13 +47,14 @@ import { SerialiseClass } from "@/serialiser-decorator";
 // import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { FanfictionModel } from "@/models/fanfictions";
 import { searchFanfictions } from "@/api/fanfictions";
+import { TipTapEditorConfig } from "@/types/tiptap";
 
-// import TipTapEditor from "~/components/TipTapEditor.vue";
+import TipTapEditor from "~/components/TipTapEditor.vue";
 
 @Component({
-  // components: {
-  //   TipTapEditor
-  // }
+  components: {
+    TipTapEditor
+  },
   fetchOnServer: true,
   fetchKey: "test-key"
 })
@@ -63,6 +64,20 @@ export default class extends Vue {
 
   // @SerialiseClass(CharacteristicTypeModel)
   // public characteristics_types: CharacteristicTypeModel[] = [];
+
+  public tiptapConfig: TipTapEditorConfig = {
+    showFooter: false,
+    placeholder: "Votre description",
+    readOnly: false,
+    fixedHeight: true,
+    defaultValue: "",
+    canQuote: false,
+    quoteLimit: 0,
+    fontSize: 100,
+    height: 150,
+    oneLineToolbar: false,
+    canUseImage: true
+  };
 
   @SerialiseClass(FanfictionModel)
   public fanfictions: FanfictionModel[] = [];
@@ -77,7 +92,7 @@ export default class extends Vue {
 
   async fetch(): Promise<void> {
     console.log("fetch");
-    await this.getFanfictions();
+    // await this.getFanfictions();
   }
 
   mounted(): void {

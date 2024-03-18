@@ -83,6 +83,43 @@ export interface IFanfictionFilters extends IBasicQuery {
 }
 // #endregion
 
+// #region Reviews
+export enum ReviewItemTypeEnum {
+  Fanfiction = 1,
+  Chapter = 2,
+  Serie = 3,
+  Author = 4,
+}
+
+export class ReviewData extends BasicClass<ReviewData> {
+  @Exclude()
+  public get review_id(): number {
+    return this.id;
+  }
+
+  public item_id: number = 0;
+  public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
+  public user_id: number | null = null;
+  public group_id: number | null = null;
+  public grading: number | null = null;
+  public text: string = "";
+  public parent_id: number | null = null;
+  public is_draft: boolean = false;
+  public is_archived: boolean = false;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public post_date: Date | null = null;
+}
+
+// Est-ce que finalement ça sert à quelque chose ?
+export interface IReviewFilters extends IBasicQuery {
+  searchTerm: string | null;
+  include_item_types: ReviewItemTypeEnum[] | null;
+  item_id: number | null;
+}
+// #endregion
+
 // #region  Serie
 enum SerieStatusEnum {
   Closed = 1,

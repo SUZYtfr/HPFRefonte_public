@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- Debug sidebar -->
-    <SidebarDebug />
+    <SidebarDebug v-if="false" />
     <!-- Header -->
     <Navbar />
     <div id="wrapper">
@@ -40,6 +40,8 @@ export default class extends Vue {}
 }
 #wrapper {
   flex-grow: 5;
+  // display: flex;
+  // flex-direction: column
 }
 
 body,

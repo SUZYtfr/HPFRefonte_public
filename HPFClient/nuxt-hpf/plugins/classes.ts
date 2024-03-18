@@ -2,14 +2,12 @@ import Vue from "vue";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 import { UserData, UserLinkData, AuthorData } from "@/types/users";
 import { NewsData, CommentData } from "@/types/news";
-import { FanfictionData, SerieData } from "@/types/fanfictions";
-import { ReviewData } from "~/types/reviews";
+import { FanfictionData, SerieData, ReviewData } from "@/types/fanfictions";
 
 import { UserModel } from "@/models/users";
 import { CharacteristicModel, CharacteristicTypeModel } from "@/models/characteristics";
 import { NewsModel, CommentModel } from "@/models/news";
-import { FanfictionModel, SerieModel, ChapterModel } from "@/models/fanfictions";
-import { ReviewModel } from "~/models/reviews";
+import { FanfictionModel, ReviewModel, SerieModel, ChapterModel, TableOfContent, ChapterModelLight } from "@/models/fanfictions";
 
 import { FanfictionListType } from "@/types/other";
 
@@ -35,6 +33,8 @@ Vue.prototype.FanfictionModel = FanfictionModel;
 Vue.prototype.ReviewModel = ReviewModel;
 Vue.prototype.SerieModel = SerieModel;
 Vue.prototype.ChapterModel = ChapterModel;
+Vue.prototype.ChapterModelLight = ChapterModelLight;
+Vue.prototype.TableOfContent = TableOfContent;
 
 // Enum
 Vue.prototype.FanfictionListType = FanfictionListType;

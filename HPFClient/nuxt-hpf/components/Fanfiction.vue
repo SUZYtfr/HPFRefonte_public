@@ -1,15 +1,16 @@
 <template>
   <div
-    :class="[{ 'fanfiction-hover': hover }, 'fanfiction', 'mx-1 px-1 pb-1', {'fanfiction-with-border': (config?.inList ?? true)}]"
+    :class="[{ 'fanfiction-hover': ((config?.inList ?? true) ? hover : false) }, 'fanfiction', 'mx-1 px-1 pb-1', {'fanfiction-with-border': (config?.inList ?? true)}]"
     @mouseover="hover = true"
     @mouseleave="hover = false"
   >
     <div class="columns is-mobile my-0 mx-0">
       <div class="column py-0 pl-0">
-        <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
+        <h3 :class="['h3', 'has-text-weight-semibold', 'text-ellipsis-one-line', {'has-text-centered': ((config?.inList ?? true) == false)}]">
           <NuxtLink
+            v-if="(config?.inList ?? true)"
             :key="'fiction_' + fanfiction.fanfiction_id.toString()"
-            :to="{ name: 'fictions-id', params: { id: fanfiction.fanfiction_id } }"
+            :to="{ name: 'fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title', params: { fiction_id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug, chapter_id: fanfiction.first_chapter?.id, chapter_title: fanfiction.first_chapter?.title } }"
           >
             {{ fanfiction.title }}
           </NuxtLink>
