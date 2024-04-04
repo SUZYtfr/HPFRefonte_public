@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
-import { UserData, UserLinkData, AuthorData } from "@/types/users";
+import { UserData, UserLinkData, AuthorData, UserStatus } from "@/types/users";
 import { NewsData, CommentData } from "@/types/news";
 import { FanfictionData, SerieData, ReviewData } from "@/types/fanfictions";
 
@@ -38,3 +38,4 @@ Vue.prototype.TableOfContent = TableOfContent;
 
 // Enum
 Vue.prototype.FanfictionListType = FanfictionListType;
+Vue.prototype.UserStatus = UserStatus;

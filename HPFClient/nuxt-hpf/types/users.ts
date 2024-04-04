@@ -1,12 +1,12 @@
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass } from "./basics";
+import { BasicClass, IBasicQuery } from "./basics";
 
 export enum UserStatus {
   Unvalidated = 1,
   Validated = 2,
   Moderator = 3,
   Administrator = 4,
-  Banned = 4,
+  Banned = 5,
 }
 
 export enum UserGender {
@@ -30,6 +30,11 @@ export class UserData extends BasicClass<UserData> {
 
   public is_premium: boolean = false;
   public is_beta: boolean = false;
+  public team: number[] | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public creation_date: Date | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
@@ -38,6 +43,18 @@ export class UserData extends BasicClass<UserData> {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public last_login: Date | null = null;
+}
+
+// Filtres utilisateurs
+export interface IUserFilters extends IBasicQuery {
+  name: string | null,
+  email: string | null,
+  authorId: number | null,
+  status: UserStatus | null,
+  premium: boolean | null,
+  published: boolean | null,
+  team: number[] | null,
+  creation_date: Date | null,
 }
 
 // Table UserProfile

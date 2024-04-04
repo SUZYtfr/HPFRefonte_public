@@ -4,6 +4,14 @@
     <SidebarDebug v-if="false" />
     <!-- Header -->
     <Navbar />
+    <!-- Bannière -->
+    <div id="banner" class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1>Harry Potter Fanfiction</h1>
+        </div>
+      </div>
+    </div>
     <div id="wrapper">
       <!-- Main Content -->
       <nuxt />
@@ -59,4 +67,17 @@ body {
 * {
   // outline: 1px solid #0f0 !important;
 }
+
+.hero-body {
+  background-image: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
+}
+#banner h1 {
+  font-size: 50px;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-family: "Amiri", serif;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0px 20px;
+}
+
 </style>

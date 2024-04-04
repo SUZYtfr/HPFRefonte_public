@@ -149,6 +149,9 @@
         <b-navbar-item href="#" @click="ModalsStatesModule.setContactModalActive(true)">
           Contact
         </b-navbar-item>
+        <b-navbar-item active tag="router-link" to="/settings">
+          Administration
+        </b-navbar-item>
       </template>
 
       <template #end>
@@ -218,14 +221,6 @@
         </div>
       </template>
     </b-navbar>
-    <!-- Bannière -->
-    <section id="banner" class="hero">
-      <div class="hero-body">
-        <div class="container">
-          <h1>Harry Potter Fanfiction</h1>
-        </div>
-      </div>
-    </section>
     <!-- Modal de contact -->
     <Contact />
     <!-- Modal de connexion -->
@@ -271,18 +266,6 @@ export default class extends Vue {
 </script>
 
 <style lang="css" scoped>
-.hero-body {
-  background-image: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
-}
-#banner h1 {
-  font-size: 50px;
-  background-color: rgba(255, 255, 255, 0.6);
-  font-family: "Amiri", serif;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 0px 20px;
-}
-
 @media screen and (max-width: 450px) {
   .username-visibility {
     display: none;
