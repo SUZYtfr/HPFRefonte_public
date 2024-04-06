@@ -2,7 +2,7 @@
   <div class="container is-fluid">
     <div class="columns">
       <div class="column is-auto">
-        <div>
+        <div style="/*height: 100%;*/">
           <b-table
             :data="users"
             :paginated="true"
@@ -203,7 +203,7 @@
             </p>
           </header>
           <div class="card-content px-3 py-3">
-            <div class="columns is-vcentered">
+            <div class="columns is-vcentered mb-0">
               <div class="column is-narrow">
                 <figure class="image is-64x64">
                   <img
@@ -248,25 +248,40 @@
                     type="search"
                     :expanded="true"
                   >
-                    <option value="1">
+                    <option :value="1">
                       Non validé
                     </option>
-                    <option value="2">
+                    <option :value="2">
                       Validé
                     </option>
-                    <option value="3">
+                    <option :value="3">
                       Modérateur
                     </option>
-                    <option value="4">
+                    <option :value="4">
                       Administrateur
                     </option>
-                    <option value="5">
+                    <option :value="5">
                       Banni
                     </option>
                   </b-select>
                 </b-field>
               </div>
             </div>
+
+            <b-field
+              v-if="selectedUser.status == UserStatus.Banned"
+              label="Raison bannissement"
+              label-position="on-border"
+              custom-class="has-text-primary"
+            >
+              <b-input
+                v-model="selectedUser.ban_reason"
+                type="textarea"
+                placeholder="Raison du bannissement"
+                required
+                maxlength="200"
+              />
+            </b-field>
 
             <div class="is-flex is-flex-direction-row is-align-items-center mb-3">
               <b-field>
@@ -403,8 +418,11 @@ export default class extends Vue {
 
   // #region Computed
   get formIsValid(): boolean {
-    return (((this.selectedUser?.username?.length ?? 0) > 0) &&
-    ((this.selectedUser?.email?.length ?? 0) > 0));
+    if (this.selectedUser == null) return false;
+
+    return (((this.selectedUser.username?.length ?? 0) > 0) &&
+    ((this.selectedUser.email?.length ?? 0) > 0) &&
+    ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.ban_reason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
   }
 
   get form(): VForm {

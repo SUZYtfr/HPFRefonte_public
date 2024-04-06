@@ -36,8 +36,8 @@ export default class extends Vue {}
   }
   #wrapper {
     flex-grow: 5;
-    // display: flex;
-    // flex-direction: column
+     display: flex;
+     flex-direction: column
   }
 
   body,
@@ -53,6 +53,6 @@ export default class extends Vue {}
   }
 
   * {
-    // outline: 1px solid #0f0 !important;
+    //outline: 1px solid #0f0 !important;
   }
   </style>

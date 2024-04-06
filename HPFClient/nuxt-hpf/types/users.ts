@@ -25,6 +25,7 @@ export class UserData extends BasicClass<UserData> {
   }
 
   public status: UserStatus = UserStatus.Unvalidated;
+  public ban_reason: string = "";
   public username: string = "";
   public email: string = "";
 

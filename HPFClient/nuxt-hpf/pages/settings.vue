@@ -1,8 +1,8 @@
 <template>
-  <div class="container is-fluid pt-5">
-    <div class="columns">
+  <div class="container is-fluid py-5 is-flex is-flex-direction-column">
+    <div class="columns is-flex-grow-5">
       <div class="column is-narrow">
-        <div class="card">
+        <div class="card fullheight">
           <header class="card-header sub-title">
             <p class="card-header-title is-centered">
               Réglages
@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="column is-auto">
-        <div class="card">
+        <div class="card fullheight">
           <header class="card-header sub-title">
             <p class="card-header-title is-centered">
               {{ activeItem }}
@@ -89,7 +89,7 @@ export default class extends Vue {
     { label: "Statistiques", icon: "chart-pie", tag: "nuxt-link", to: "/settings/", keywords: "stats statistiques graph", isactive: false },
     { label: "Thèmes et charte graphique", icon: "paint-brush", tag: "nuxt-link", to: "/settings/", keywords: "design charte graphique themes", isactive: false },
     { label: "Signalements", icon: "exclamation-triangle", tag: "nuxt-link", to: "/settings/", keywords: "moderation signalements", isactive: false },
-    { label: "Administration", icon: "tools", keywords: "admin", isactive: false, subitems: [{ label: "", icon: "", tag: "", to: "", keywords: "" }, { label: "", icon: "", tag: "", to: "", keywords: "" }] }
+    { label: "Administration", icon: "tools", keywords: "admin", isactive: false, subitems: [{ label: "", icon: "", tag: null, to: null, keywords: "" }, { label: "", icon: "", tag: null, to: null, keywords: "" }] }
   ];
 
   // Timer de debounce sur le filtre
@@ -131,5 +131,13 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~/assets/scss/custom.scss";
+.fullheight {
+  height: 100%;
+}
 
+@media screen and (max-width: 768px) {
+  li:not(.is-active) > a > span:not(.icon) {
+    visibility: visible !important;
+  }
+}
 </style>
