@@ -335,12 +335,35 @@
               class="mb-3"
               @click="sendResetPassword()"
             />
-            <b-button
-              :expanded="true"
-              label="Anonymiser ce compte"
-              type="is-danger"
-              @click="anonymiseUser()"
-            />
+            <div class="is-flex is-flex-direction-row is-align-items-center is-align-content-space-between">
+              <b-button
+                :expanded="true"
+                label="Anonymiser ce compte"
+                type="is-danger"
+                @click="anonymiseUser()"
+              />
+              <b-tooltip
+                position="is-left"
+                type="is-primary"
+                append-to-body
+                multilined
+              >
+                <b-icon
+                  pack="fas"
+                  class="is-clickable"
+                  type="is-primary"
+                  icon="question-circle"
+                />
+                <template #content>
+                  <p>
+                    Anonymiser l'utilisateur, ses fictions, séries, reviews, commmentaires.
+                  </p>
+                  <p>
+                    <strong class="has-text-white">Action irréversible.</strong>
+                  </p>
+                </template>
+              </b-tooltip>
+            </div>
           </div>
           <footer class="modal-card-foot p-3">
             <b-button
