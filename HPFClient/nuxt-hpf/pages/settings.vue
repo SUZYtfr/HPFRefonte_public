@@ -42,7 +42,7 @@
           </div>
         </div>
       </div>
-      <div class="column is-auto">
+      <div v-show="activeItem != ''" class="column is-auto">
         <div class="card fullheight">
           <header class="card-header sub-title">
             <p class="card-header-title is-centered">
@@ -83,7 +83,7 @@ export default class extends Vue {
     { label: "Modération des sélections", icon: "trophy", tag: "nuxt-link", to: "/settings/selections", keywords: "moderation selections podiums", isactive: false },
     { label: "Modération des utilisateurs", icon: "users", tag: "nuxt-link", to: "/settings/users", keywords: "moderation utilisateurs users", isactive: false },
     { label: "Modération des reviews", icon: "comments", tag: "nuxt-link", to: "/settings/reviews", keywords: "moderation commentaires reviews", isactive: false },
-    { label: "Gestion des catégories", icon: "list-alt", tag: "nuxt-link", to: "/settings/", keywords: "gestion categories", isactive: false },
+    { label: "Gestion des catégories", icon: "list-alt", tag: "nuxt-link", to: "/settings/characteristics", keywords: "gestion categories", isactive: false },
     { label: "Gestion des images", icon: "images", tag: "nuxt-link", to: "/settings/", keywords: "gestion images", isactive: false },
     { label: "Administration des pages", icon: "columns", tag: "nuxt-link", to: "/settings/", keywords: "page personalisees", isactive: false },
     { label: "Statistiques", icon: "chart-pie", tag: "nuxt-link", to: "/settings/", keywords: "stats statistiques graph", isactive: false },

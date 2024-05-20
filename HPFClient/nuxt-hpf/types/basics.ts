@@ -42,7 +42,7 @@ export class BasicClass<T> {
   //   Object.assign(this, basicClass); // or set each prop individually
   // }
 
-  public toJSON (): any {
+  public toJSON(): any {
     return { ...this }; // POJO's copy of the class instance
   }
 }

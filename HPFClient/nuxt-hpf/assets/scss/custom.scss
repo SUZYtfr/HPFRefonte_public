@@ -56,22 +56,29 @@ $characteristic-rating: #e0aaff;
 $characteristic-epoque: #4a4e69;
 $characteristic-personnage: #1d3557;
 $characteristic-relation: #a8dadc;
+$characteristic-excluded: #e63946;
 
+// Normal
 .characteristic-bg-litteraire {
   background: $characteristic-litteraire !important;
+  color: #4A4A4A !important;
 }
 .characteristic-bg-genre {
   background: $characteristic-genre !important;
+  color: #4A4A4A !important;
 }
 .characteristic-bg-langue {
   background: $characteristic-langue !important;
+  color: #4A4A4A !important;
 }
 .characteristic-bg-warning {
   /*background: #e63946 !important;*/
   background: $characteristic-warning !important;
+  color: #4A4A4A !important;
 }
 .characteristic-bg-rating {
   background: $characteristic-rating !important;
+  color: #4A4A4A !important;
 }
 .characteristic-bg-epoque {
   background: $characteristic-epoque !important;
@@ -83,10 +90,91 @@ $characteristic-relation: #a8dadc;
 }
 .characteristic-bg-relation {
   background: $characteristic-relation !important;
+  color: #4A4A4A !important;
 }
 
 .characteristic-bg-excluded {
-  background: #e63946 !important;
+  background: $characteristic-excluded !important;
+  color: whitesmoke !important;
+}
+
+// Light
+.characteristic-bg-litteraire-light {
+  background: lighten($characteristic-litteraire, 10%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-genre-light {
+  background: lighten($characteristic-genre, 10%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-langue-light {
+  background: lighten($characteristic-langue, 10%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-warning-light {
+  /*background: #e63946 !important;*/
+  background: lighten($characteristic-warning, 10%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-rating-light {
+  background: lighten($characteristic-rating, 10%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-epoque-light {
+  background: lighten($characteristic-epoque, 10%) !important;
+  color: whitesmoke !important;
+}
+.characteristic-bg-personnage-light {
+  background: lighten($characteristic-personnage, 10%) !important;
+  color: whitesmoke !important;
+}
+.characteristic-bg-relation-light {
+  background: lighten($characteristic-relation, 10%) !important;
+  color: #4A4A4A !important;
+}
+
+.characteristic-bg-excluded-light {
+  background: lighten($characteristic-excluded, 10%) !important;
+  color: whitesmoke !important;
+}
+
+// Lighter
+.characteristic-bg-litteraire-lighter {
+  background: lighten($characteristic-litteraire, 20%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-genre-lighter {
+  background: lighten($characteristic-genre, 20%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-langue-lighter {
+  background: lighten($characteristic-langue, 20%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-warning-lighter {
+  /*background: #e63946 !important;*/
+  background: lighten($characteristic-warning, 20%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-rating-lighter {
+  background: lighten($characteristic-rating, 20%) !important;
+  color: #4A4A4A !important;
+}
+.characteristic-bg-epoque-lighter {
+  background: lighten($characteristic-epoque, 20%) !important;
+  color: whitesmoke !important;
+}
+.characteristic-bg-personnage-lighter {
+  background: lighten($characteristic-personnage, 20%) !important;
+  color: whitesmoke !important;
+}
+.characteristic-bg-relation-lighter {
+  background: lighten($characteristic-relation, 20%) !important;
+  color: #4A4A4A !important;
+}
+
+.characteristic-bg-excluded-lighter {
+  background: lighten($characteristic-excluded, 20%) !important;
   color: whitesmoke !important;
 }
 
