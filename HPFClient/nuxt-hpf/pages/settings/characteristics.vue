@@ -356,8 +356,8 @@ export default class extends Vue {
   @Watch("maxOccurenceEnable")
   public onMaxOccurenceEnabledChanged(): void {
     if (this.selectedItem == null || (this.selectedItem instanceof CharacteristicTypeModel) === false) return;
-    if (this.maxOccurenceEnable) this.selectedItem.max_occurence = 0;
-    else this.selectedItem.max_occurence = null;
+    if (this.maxOccurenceEnable) (this.selectedItem as CharacteristicTypeModel).max_occurence = 0;
+    else (this.selectedItem as CharacteristicTypeModel).max_occurence = null;
   }
 
   @Watch("caracFilter")
@@ -665,7 +665,7 @@ export default class extends Vue {
     }
 
     // Demander une confirmation après drop pour valider le changement d'ordre
-    let parentObject = null;
+    let parentObject: CharacteristicModel | null = null;
     let newPos = this.droppedOnRow.object.order;
     if (this.droppedOnRow.dropAsChild) {
       parentObject = this.droppedOnRow.object;
@@ -795,7 +795,7 @@ export default class extends Vue {
     let currentItem: CharacteristicModel | null | undefined = item;
     while (currentItem != null && currentItem.parent_id !== null) {
       depth++;
-      currentItem = items.find(item => item.id === currentItem.parent_id);
+      currentItem = items.find(item => item.id === currentItem?.parent_id);
     }
     return depth;
   }
