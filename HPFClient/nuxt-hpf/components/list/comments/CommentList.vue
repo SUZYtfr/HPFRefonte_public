@@ -54,8 +54,11 @@ import ModalsStates from "~/store/modules/ModalsStates";
 @Component({ name: "CommentList", components: { Comment, TipTapEditor } })
 export default class CommentList extends Vue {
   // #region Props
-  @Prop({ default: [] }) public comments!: CommentModel[];
-  @Prop({ default: null }) public news_id!: number;
+  @Prop({ default: [] })
+  declare public comments?: CommentModel[];
+
+  @Prop({ default: null })
+  declare public news_id?: number;
   // #endregion
 
   // #region Datas
@@ -91,7 +94,7 @@ export default class CommentList extends Vue {
       let comment: CommentModel = new CommentModel();
       comment.content = this.editorContent?.content;
       comment.content_images = this.editorContent?.content_images;
-      comment = (await postComment(this.news_id, comment)).items;
+      comment = (await postComment((this.news_id as number), comment)).items;
       if (comment != null) this.comments?.push(comment);
     } catch (error) {
       console.log(error);

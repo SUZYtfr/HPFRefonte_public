@@ -95,7 +95,7 @@ import { CharacteristicData } from "@/types/characteristics";
   },
   directives: {
     plaintext: {
-      bind: function (el, binding, vnode) {
+      bind: function (el: any, binding: any, vnode: any) {
         el.innerHTML = el.innerText.trimStart();
       }
     }
@@ -103,7 +103,8 @@ import { CharacteristicData } from "@/types/characteristics";
 })
 export default class FanfictionThumbnail extends Vue {
   // #region Props
-  @Prop() public fanfiction!: FanfictionModel;
+  @Prop()
+  declare public fanfiction?: FanfictionModel;
   // #endregion
 
   // #region Datas

@@ -90,7 +90,8 @@ import { INewsFilters } from "~/types/news";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public newsFilters!: INewsFilters;
+  @Prop()
+  declare public newsFilters?: INewsFilters;
   // #endregion
 
   // #region Datas
@@ -104,6 +105,7 @@ export default class extends Vue {
   // #region Methods
   // Déclencher le Watcher des filtres sur le clique recherche
   public toggleFilterChanged(): void {
+    if (this.newsFilters == null) return;
     this.newsFilters.searchTerm = this.newsFilters.searchTerm + " ";
     this.newsFilters.searchTerm = this.newsFilters.searchTerm.slice(
       0,

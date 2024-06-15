@@ -30,7 +30,8 @@ import { CommentModel } from "~/models/news";
 @Component({ name: "Comment" })
 export default class Comment extends Vue {
   // #region Props
-  @Prop() public comment!: CommentModel;
+  @Prop()
+  declare public comment?: CommentModel;
   // #endregion
 }
 </script>

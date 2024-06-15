@@ -74,7 +74,7 @@
             </b-table-column>
 
             <!-- Statut du compte -->
-            <b-table-column field="status" label="Statut" width="10" sortable>
+            <b-table-column field="status" label="Statut" width="150" sortable>
               <template #subheading>
                 <b-select
                   v-model="userFilters.status"
@@ -109,7 +109,7 @@
             </b-table-column>
 
             <!-- Statut d'adhérent-->
-            <b-table-column field="is_premium" label="Adhérent" width="10" sortable centered>
+            <b-table-column field="is_premium" label="Adhérent" width="50" centered>
               <template #subheading>
                 <b-checkbox
                   v-model="userFilters.premium"

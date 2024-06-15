@@ -57,8 +57,11 @@ import { CharacteristicModel, CharacteristicTypeModel } from "~/models/character
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public characteristic_type!: CharacteristicTypeModel;
-  @Prop() public characteristics!: CharacteristicModel[];
+  @Prop()
+  declare public characteristic_type?: CharacteristicTypeModel;
+
+  @Prop()
+  declare public characteristics?: CharacteristicModel[];
   // #endregion
 
   mounted(): void {
@@ -95,7 +98,7 @@ export default class extends Vue {
 
     if (state === -1) this.excludedIds.push(caracteristic_id);
     else if (state === 1) this.includedIds.push(caracteristic_id);
-    this.$emit("change", new Set(this.characteristics.map(t => t.id)), this.includedIds, this.excludedIds);
+    this.$emit("change", new Set(this.characteristics?.map(t => t.id)), this.includedIds, this.excludedIds);
   }
 
   public stateForCheckbox(caracteristic_id: number): number {

@@ -113,10 +113,17 @@ import { SortByEnum } from "~/types/basics";
 })
 export default class FanfictionList extends Vue {
   // #region Props
-  @Prop({ default: true }) public isCard!: boolean;
-  @Prop({ default: true }) public showRefreshButton!: boolean;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public fanfictionFilters!: IFanfictionFilters;
+  @Prop({ default: true })
+  declare public isCard?: boolean;
+
+  @Prop({ default: true })
+  declare public showRefreshButton?: boolean;
+
+  @Prop({ default: false })
+  declare private isLoading?: boolean;
+
+  @Prop()
+  declare public fanfictionFilters?: IFanfictionFilters;
   // #endregion
 
   // #region Data
@@ -146,7 +153,7 @@ export default class FanfictionList extends Vue {
   }
 
   get listLoading(): boolean {
-    return this.isLoading;
+    return this.isLoading ?? false;
   }
 
   set listLoading(value) {
@@ -172,6 +179,7 @@ export default class FanfictionList extends Vue {
 
   // #region Methods
   private async getFanfictions(): Promise<void> {
+    if (this.fanfictionFilters == null) return;
     // this.listLoading = true;
     try {
       const response = (await searchFanfictions(this.fanfictionFilters));
@@ -207,6 +215,7 @@ export default class FanfictionList extends Vue {
   }
 
   public SelectSortBy_OnInputChanged(value: string): void {
+    if (this.fanfictionFilters == null) return;
     switch (value) {
       case "alpha":
         this.fanfictionFilters.sortBy = SortByEnum.Ascending;

@@ -18,11 +18,20 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() private externalValue!: any | undefined;
-  @Prop() public title: string | undefined;
-  @Prop({ default: true }) private checkedValue: any;
-  @Prop({ default: false }) private excludedValue: any;
-  @Prop({ default: null }) private uncheckedValue: any;
+  @Prop()
+  declare private externalValue?: any | undefined;
+
+  @Prop()
+  declare public title: string | undefined;
+
+  @Prop({ default: true })
+  declare private checkedValue: any;
+
+  @Prop({ default: false })
+  declare private excludedValue: any;
+
+  @Prop({ default: null })
+  declare private uncheckedValue: any;
   // #endregion
 
   // #region Computed

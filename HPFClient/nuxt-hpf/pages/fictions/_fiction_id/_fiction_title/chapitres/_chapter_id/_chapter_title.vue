@@ -339,7 +339,8 @@ import { ReviewItemTypeEnum } from "@/types/fanfictions";
 export default class extends Vue {
   // #region Props
   @SerialiseClass(TableOfContent)
-  @Prop() public tableOfContent!: TableOfContent;
+  @Prop()
+  declare public tableOfContent?: TableOfContent;
   // #endregion
 
   // #region Data

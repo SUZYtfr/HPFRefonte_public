@@ -158,8 +158,11 @@ import { CharacteristicData } from "@/types/characteristics";
 })
 export default class Fanfiction extends Vue {
   // #region Props
-  @Prop() public fanfiction!: FanfictionModel;
-  @Prop({ default: null }) public config!: FanfictionEntityConfig;
+  @Prop()
+  declare public fanfiction?: FanfictionModel;
+
+  @Prop({ default: null })
+  declare public config?: FanfictionEntityConfig;
   // #endregion
 
   // #region Datas

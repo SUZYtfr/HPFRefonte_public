@@ -201,11 +201,20 @@ import { ImageHPFData } from "@/types/images";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() private deleteNode!: Function;
-  @Prop() private editor!: any;
-  @Prop() private node!: any;
-  @Prop() private extension!: any;
-  @Prop() private updateAttributes!: Function;
+  @Prop()
+  declare private deleteNode?: Function;
+
+  @Prop()
+  declare private editor?: any;
+
+  @Prop()
+  declare private node?: any;
+
+  @Prop()
+  declare private extension?: any;
+
+  @Prop()
+  declare private updateAttributes?: Function;
   // #endregion
 
   // #region Datas
@@ -322,7 +331,7 @@ export default class extends Vue {
       ),
       1
     );
-    this.deleteNode();
+    if (this.deleteNode != null) this.deleteNode();
   }
   // #endregion
 }

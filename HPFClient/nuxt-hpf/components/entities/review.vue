@@ -66,8 +66,9 @@ import { ReviewModel } from "~/models/fanfictions";
   @Component({ name: "Review" })
 export default class Review extends Vue {
     // #region Props
-    @Prop() public review!: ReviewModel;
-    // #endregion
+    @Prop()
+  declare public review?: ReviewModel;
+  // #endregion
 }
 </script>
 

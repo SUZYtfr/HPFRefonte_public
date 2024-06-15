@@ -110,10 +110,17 @@ import { SortByEnum } from "~/types/basics";
 })
 export default class NewsList extends Vue {
   // #region Props
-  @Prop({ default: true }) public isCard!: boolean;
-  @Prop({ default: true }) public showRefreshButton!: boolean;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public newsFilters!: INewsFilters;
+  @Prop({ default: true })
+  declare public isCard?: boolean;
+
+  @Prop({ default: true })
+  declare public showRefreshButton?: boolean;
+
+  @Prop({ default: false })
+  declare private isLoading?: boolean;
+
+  @Prop()
+  declare public newsFilters?: INewsFilters;
   // #endregion
 
   // #region Data
@@ -134,7 +141,7 @@ export default class NewsList extends Vue {
   }
 
   get listLoading(): boolean {
-    return this.isLoading;
+    return this.isLoading ?? false;
   }
 
   set listLoading(value) {
@@ -161,6 +168,7 @@ export default class NewsList extends Vue {
 
   // #region Methods
   private async searchNews(): Promise<void> {
+    if (this.newsFilters == null) return;
     try {
       const response = (await searchNews(this.newsFilters));
       this.news = response.results;
@@ -184,6 +192,7 @@ export default class NewsList extends Vue {
   }
 
   public SelectSortBy_OnInputChanged(value: string): void {
+    if (this.newsFilters == null) return;
     switch (value) {
       case "most_recent":
         this.newsFilters.sortBy = SortByEnum.Descending;

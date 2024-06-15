@@ -75,11 +75,20 @@ import { getCaracteristicTypeColor } from "@/utils/characteristics";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public characteristic_type_id!: number | undefined;
-  @Prop() public characteristic_id!: number | undefined;
-  @Prop() public characteristic_name!: string | undefined;
-  @Prop() public characteristic_description!: string | undefined;
-  @Prop() public characteristic_count!: number | undefined;
+  @Prop()
+  declare public characteristic_type_id?: number | undefined;
+
+  @Prop()
+  declare public characteristic_id?: number | undefined;
+
+  @Prop()
+  declare public characteristic_name?: string | undefined;
+
+  @Prop()
+  declare public characteristic_description?: string | undefined;
+
+  @Prop()
+  declare public characteristic_count?: number | undefined;
   // #endregion
 
   // #region Datas

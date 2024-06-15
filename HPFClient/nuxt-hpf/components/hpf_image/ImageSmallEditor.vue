@@ -60,7 +60,8 @@ import { ImageHPFData } from "@/types/images";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public image!: ImageHPFData;
+  @Prop()
+  declare public image?: ImageHPFData;
   // #endregion
 
   // #region Datas

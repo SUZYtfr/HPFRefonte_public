@@ -26,8 +26,11 @@ import { CharacteristicData } from "@/types/characteristics";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public characteristic!: CharacteristicData | undefined;
-  @Prop() private externalState!: number | undefined;
+  @Prop()
+  declare public characteristic?: CharacteristicData | undefined;
+
+  @Prop()
+  declare private externalState?: number | undefined;
   // #endregion
 
   // #region Computed

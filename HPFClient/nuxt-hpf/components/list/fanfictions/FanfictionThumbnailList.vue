@@ -77,9 +77,14 @@ import { FanfictionListType } from "@/types/other";
 })
 export default class FanfictionThumbnailList extends Vue {
   // #region Props
-  @Prop({ default: false }) public isLoading!: boolean;
-  @Prop({ default: FanfictionListType.Recent }) public listType!: FanfictionListType;
-  @Prop({ default: [] }) public fanfictions!: FanfictionModel[];
+  @Prop({ default: false })
+  declare isLoading?: boolean;
+
+  @Prop({ default: FanfictionListType.Recent })
+  declare listType? : FanfictionListType;
+
+  @Prop({ default: [] })
+  declare fanfictions?: FanfictionModel[];
   // #endregion
 
   // #region Computed
@@ -98,6 +103,7 @@ export default class FanfictionThumbnailList extends Vue {
     }
     return result;
   }
+
   // #endregion
 }
 </script>
