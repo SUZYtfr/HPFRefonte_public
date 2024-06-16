@@ -30,7 +30,7 @@ const config: NuxtConfig = {
   components: false,
   css: [
     "@fortawesome/fontawesome-svg-core/styles.css",
-    "~/assets/scss/custom.scss",
+    "@/assets/scss/custom.scss",
     "@/node_modules/animate.css/animate.css"
   ],
   env: {},

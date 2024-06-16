@@ -45,10 +45,13 @@ import { NewsModel } from "@/models/news";
     fetchKey: "news-thumbnail-list"
   })
 export default class NewsList extends Vue {
-    // #region Props
-    @Prop({ default: false }) public isLoading!: boolean;
-    @Prop({ default: [] }) public news!: NewsModel[];
-    // #endregion
+  // #region Props
+  @Prop({ default: false })
+  declare public isLoading?: boolean;
+
+  @Prop({ default: [] })
+  declare public news?: NewsModel[];
+  // #endregion
 }
 </script>
 

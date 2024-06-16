@@ -153,8 +153,11 @@ import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() private authorFieldVisible!: boolean;
-  @Prop() public fanfictionFilters!: IFanfictionFilters;
+  @Prop()
+  declare private authorFieldVisible?: boolean;
+
+  @Prop()
+  declare public fanfictionFilters?: IFanfictionFilters;
   // #endregion
 
   // #region Data
@@ -185,6 +188,7 @@ export default class extends Vue {
 
   @Watch("includedTagsFull")
   private onFiltersincludedTagsChanged(): void {
+    if (this.fanfictionFilters == null) return;
     if ((this.includedTagsFull?.length ?? 0) > 0)
       this.fanfictionFilters.includedTags = this.includedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
     else
@@ -193,6 +197,7 @@ export default class extends Vue {
 
   @Watch("excludedTagsFull")
   private onFiltersexcludedTagsChanged(): void {
+    if (this.fanfictionFilters == null) return;
     if ((this.excludedTagsFull?.length ?? 0) > 0)
       this.fanfictionFilters.excludedTags = this.excludedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
     else
@@ -218,10 +223,10 @@ export default class extends Vue {
       }
       items = items.filter(
         (item: CharacteristicData) =>
-          !this.fanfictionFilters.includedTags.includes(
+          !this.fanfictionFilters?.includedTags.includes(
             item.id
           ) &&
-          !this.fanfictionFilters.excludedTags.includes(item.id)
+          !this.fanfictionFilters?.excludedTags.includes(item.id)
       );
 
       const itemsSorted: CharacteristicData[] = items

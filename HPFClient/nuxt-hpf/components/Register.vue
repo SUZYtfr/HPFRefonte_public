@@ -201,7 +201,8 @@ import { TipTapEditorConfig } from "@/types/tiptap";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public active!: boolean;
+  @Prop()
+  declare public active?: boolean;
   // #endregion
 
   // #region Data

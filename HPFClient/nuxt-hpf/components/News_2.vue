@@ -63,8 +63,11 @@ import { NewsModel } from "~/models/news";
 })
 export default class News_2 extends Vue {
   // #region Props
-  @Prop() public news!: NewsModel;
-  @Prop() public activeColor!: string;
+  @Prop()
+  declare public news?: NewsModel;
+
+  @Prop()
+  declare public activeColor?: string;
   // #endregion
 
   public mounted(): void {

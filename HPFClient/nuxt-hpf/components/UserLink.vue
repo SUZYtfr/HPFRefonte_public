@@ -38,8 +38,11 @@ import { UserLinkData } from "@/types/users";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public link!: UserLinkData;
-  @Prop() private fullLength!: boolean;
+  @Prop()
+  declare public link?: UserLinkData;
+
+  @Prop()
+  declare private fullLength?: boolean;
   // #endregion
 
   // #region Datas
@@ -50,7 +53,7 @@ export default class extends Vue {
   get linkIdImg(): string {
     const imgDir = require.context("@/assets/img/");
     let s = "placeholders/32x32.png";
-    switch (this.link.link_type_id) {
+    switch (this.link?.link_type_id) {
       case 1:
         s = "logo_forum_centre.png";
         break;

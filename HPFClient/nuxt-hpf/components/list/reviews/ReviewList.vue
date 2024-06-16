@@ -100,10 +100,17 @@ import { SortByEnum } from "~/types/basics";
 @Component({ name: "ReviewList", components: { Review, TipTapEditor } })
 export default class ReviewList extends Vue {
   // #region Props
-  @Prop({ default: null }) public item_id!: number;
-  @Prop({ default: 0 }) public totalReviews!: number;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public reviewListType!: ReviewItemTypeEnum;
+  @Prop({ default: null })
+  declare public item_id?: number;
+
+  @Prop({ default: 0 })
+  declare public totalReviews?: number;
+
+  @Prop({ default: false })
+  declare private isLoading?: boolean;
+
+  @Prop()
+  declare public reviewListType?: ReviewItemTypeEnum;
   // @Prop({ default: null }) public propEditorContent!: TipTapEditorContent | null;
   // #endregion
 
@@ -154,7 +161,7 @@ export default class ReviewList extends Vue {
   }
 
   get listLoading(): boolean {
-    return this.isLoading;
+    return this.isLoading ?? false;
   }
 
   set listLoading(value) {
@@ -191,6 +198,7 @@ export default class ReviewList extends Vue {
 
   // #region Methods
   private async getReviews(): Promise<void> {
+    if (this.item_id == null) return;
     try {
       // if (this.reviewFilters == null || this.reviewFilters.item_id <= 0) return;
       let response;
@@ -227,7 +235,8 @@ export default class ReviewList extends Vue {
   }
 
   public async PostReview(): Promise<void> {
-    if (this.item_id === null) return;
+    if (this.item_id == null) return;
+    if (this.reviewListType == null) return;
     if ((this.editorContent?.wordcount ?? 0) < 3) return;
     if (this.editorContent?.content == null) return;
     try {

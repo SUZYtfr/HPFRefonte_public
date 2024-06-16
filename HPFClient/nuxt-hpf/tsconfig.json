@@ -14,7 +14,7 @@
     "strict": true,
     "noEmit": true,
     "baseUrl": ".",
-    "importsNotUsedAsValues": "preserve",
+    "verbatimModuleSyntax": false,
     "paths": {
       "~/*": [
         "./*"
@@ -30,7 +30,7 @@
       "@nuxtjs/auth-next",
       "buefy/types",
       "webpack-env", 
-    ]
+    ],
   },
   "vueCompilerOptions": {
     "extensions": [

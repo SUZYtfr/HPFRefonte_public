@@ -395,13 +395,14 @@ export default class extends Vue {
   }
 
   private async getCharacteristics(): Promise<void> {
+    // TODO à récupérer depuis l'API, pas depuis le store
     if (
       this.ConfigModule.characteristicTypes.length === 0 ||
       this.ConfigModule.characteristics.length === 0
     ) {
       await this.ConfigModule.LoadConfig();
     }
-    this.characteristics = this.ConfigModule.characteristics;
+    this.characteristics = this.ConfigModule.characteristics.map(obj => new CharacteristicModel(obj));
     this.characteristics_types = this.ConfigModule.characteristicTypes;
     // this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
     //   parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {

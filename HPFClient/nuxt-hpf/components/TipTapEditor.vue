@@ -857,7 +857,8 @@ import { LimitedSelection } from "~/utils/tiptap_extensions/tiptap_limit_selecti
 })
 export default class extends Vue {
   // #region Props
-  @Prop({ default: null }) public config!: TipTapEditorConfig;
+  @Prop({ default: null })
+  declare public config?: TipTapEditorConfig;
   // #endregion
 
   // #region Datas

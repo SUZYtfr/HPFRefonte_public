@@ -172,7 +172,8 @@ import { ReviewItemTypeEnum } from "@/types/fanfictions";
 export default class extends Vue {
   // #region Props
   @SerialiseClass(TableOfContent)
-  @Prop() public tableOfContent!: TableOfContent;
+  @Prop()
+  declare public tableOfContent?: TableOfContent;
   // #endregion
 
   // #region Data
@@ -194,7 +195,7 @@ export default class extends Vue {
   // #region Computed
   public get fictionTriggerWarnings() : {id: number, caption: string }[] {
     let triggerWarningsGrouped: {id: number, caption: string }[] = [];
-    this.tableOfContent.chapters?.filter(
+    this.tableOfContent?.chapters?.filter(
       (t: ChapterModelLight) =>
         ((t.trigger_warnings?.length ?? 0) > 0)
     ).forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.trigger_warnings_loaded));
