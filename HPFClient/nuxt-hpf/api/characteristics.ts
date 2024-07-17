@@ -3,4 +3,9 @@ import { ICharacteristicFilters } from "@/types/characteristics";
 import { CharacteristicTypeModel, CharacteristicModel } from "~/models/characteristics";
 
 export const getCharacteristics = (filters: ICharacteristicFilters | null): Promise<any> => $AxiosWrapper.get<CharacteristicModel>("/characteristics/characteristics/", filters, CharacteristicModel);
+export const createCharacteristic = (characteristic: CharacteristicModel): Promise<any> => $AxiosWrapper.post<CharacteristicModel>("/characteristics/characteristics/", characteristic, CharacteristicModel);
+export const updateCharacteristic = (characteristic: CharacteristicModel): Promise<any> => $AxiosWrapper.put<CharacteristicModel>("/characteristics/characteristics/" + characteristic.characteristic_id + "/", characteristic, CharacteristicModel);
+export const deleteCharacteristic = (characteristic: CharacteristicModel): Promise<any> => $AxiosWrapper.delete<CharacteristicModel>("/characteristics/characteristics/" + characteristic.characteristic_id + "/", CharacteristicModel);
+
 export const getCharacteristicsTypes = (): Promise<any> => $AxiosWrapper.get<CharacteristicTypeModel>("/characteristics/characteristic-types/", null, CharacteristicTypeModel);
+export const updateCharacteristicsType = (characteristicType: CharacteristicTypeModel): Promise<any> => $AxiosWrapper.put<CharacteristicTypeModel>("/characteristics/characteristic-types/" + characteristicType.characteristic_type_id + "/", characteristicType, CharacteristicTypeModel);

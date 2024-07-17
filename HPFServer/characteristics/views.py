@@ -12,6 +12,7 @@ from .serializers import (
 from .models import Characteristic, CharacteristicType
 from .filters import CharacteristicFilterSet
 from core.permissions import DjangoPermissionOrReadOnly
+from core.utils import get_moderation_account
 
 
 class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
@@ -28,7 +29,7 @@ class DjangoPermissionOrCreateOnly(DjangoPermissionOrReadOnly):
 class CharacteristicViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les caractéristiques"""
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrCreateOnly]
     serializer_class = CharacteristicSerializer
     queryset = Characteristic.objects.allowed().with_fiction_counts().order_by("-_fiction_count")
     filter_backends = [filters.DjangoFilterBackend]
@@ -67,10 +68,18 @@ class CharacteristicViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data, status=characteristic_status, headers=headers)
 
     def perform_create(self, serializer):
-        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+        creation_user = get_moderation_account()
+        serializer.save(
+            creation_user=creation_user,
+            creation_date=timezone.now(),
+        )
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        modification_user = get_moderation_account()
+        serializer.save(
+            modification_user=modification_user,
+            modification_date=timezone.now(),
+        )
 
     def perform_create_or_retrieve(self, serializer):
         """Finalise l'action de création ou récupération de la caractéristique"""
@@ -86,16 +95,24 @@ class CharacteristicViewSet(viewsets.ModelViewSet):
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     """Ensemble de vues de modération pour les types de caractéristiques"""
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
     queryset = CharacteristicType.objects.all()
     serializer_class = StaffCharacteristicTypeSerializer
     pagination_class = None
 
     def perform_create(self, serializer):
-        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+        creation_user = get_moderation_account()
+        serializer.save(
+            creation_user=creation_user,
+            creation_date=timezone.now(),
+        )
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        modification_user = get_moderation_account()
+        serializer.save(
+            modification_user=modification_user,
+            modification_date=timezone.now(),
+        )
 
     @decorators.action(
         detail=True,
