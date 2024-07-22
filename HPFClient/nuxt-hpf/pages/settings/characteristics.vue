@@ -286,7 +286,7 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import Config from "~/store/modules/Config";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { getCaracteristicTypeColor, getCaracteristicTypeColorLight, getCaracteristicTypeColorLighter } from "@/utils/characteristics";
-import { getCharacteristics, getCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic } from "~/api/characteristics";
+import { getCharacteristics, getCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/characteristics";
 
 @Component({
   name: "SettingsCharateristics",
@@ -730,8 +730,9 @@ export default class extends Vue {
       // S'il faut  déplacer les enfants, on regénère la totalité du tree
       if (this.draggedRow.childs.length > 0) this.prepareFilteredCarac();
 
-      // Mettre à jour l'élément en base
-      this.updateItem();
+      // Réordonner dans la bdd
+      const newOrder = parent[0].characteristics.map(characteristic => characteristic.id);
+      reorderCharacteristics(parent[0], newOrder);
     };
   }
 

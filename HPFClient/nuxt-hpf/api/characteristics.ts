@@ -9,3 +9,4 @@ export const deleteCharacteristic = (characteristic: CharacteristicModel): Promi
 
 export const getCharacteristicsTypes = (): Promise<any> => $AxiosWrapper.get<CharacteristicTypeModel>("/characteristics/characteristic-types/", null, CharacteristicTypeModel);
 export const updateCharacteristicsType = (characteristicType: CharacteristicTypeModel): Promise<any> => $AxiosWrapper.put<CharacteristicTypeModel>("/characteristics/characteristic-types/" + characteristicType.characteristic_type_id + "/", characteristicType, CharacteristicTypeModel);
+export const reorderCharacteristics = (characteristicType: CharacteristicTypeModel, newOrder: Array<Number>): Promise<any> => $AxiosWrapper.put<Array<Number>>("/characteristics/characteristic-types/" + characteristicType.characteristic_type_id + " /order/", {order: newOrder});
