@@ -41,3 +41,11 @@ class Sort(IntegerChoices):
     ALPHA_DESC = 1, "Ordre alphabétique inversé"
     MOST_RECENT = 2, "Ordre chronologique"
     MOST_RECENT_DESC = 3, "Ordre chronologique inversé"
+
+
+class UserStatus(IntegerChoices):
+    UNVALIDATED = 1,
+    VALIDATED = 2,
+    MODERATOR = 3,
+    ADMINISTRATOR = 4,
+    BANNED = 5,

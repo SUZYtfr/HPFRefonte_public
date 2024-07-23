@@ -386,7 +386,7 @@ import { Component, Vue, Watch } from "nuxt-property-decorator";
 import { SerialiseClass } from "@/serialiser-decorator";
 import { UserModel } from "@/models/users";
 import { IUserFilters, UserStatus } from "@/types/users";
-import { searchUsers } from "@/api/users";
+import { searchUsers, putUser, anonymiseUser, sendPasswordResetEmail } from "@/api/users";
 import { SortByEnum } from "~/types/basics";
 import { VForm, OpenToast } from "@/utils/formHelper";
 
@@ -500,7 +500,9 @@ export default class extends Vue {
   public async sendResetPassword(): Promise<void> {
     try {
       this.loading = true;
-      // const data = await signup(this.signupForm);
+      if(this.selectedUser) {
+        sendPasswordResetEmail(this.selectedUser.user_id);
+      }
       OpenToast(
         "Un mail de renouvellement de mot de passe a été envoyé",
         "is-primary",
@@ -528,7 +530,9 @@ export default class extends Vue {
       onAction: () => {
         try {
           this.loading = true;
-          // const data = await signup(this.signupForm);
+          if(this.selectedUser) {
+            anonymiseUser(this.selectedUser.user_id);
+          };
           OpenToast(
             "L'utilisateur a bien été anonymisé",
             "is-primary",
@@ -550,7 +554,9 @@ export default class extends Vue {
   public async updateUser(): Promise<void> {
     try {
       this.loading = true;
-      // const data = await signup(this.signupForm);
+      if(this.selectedUser) {
+        putUser(this.selectedUser.user_id, this.selectedUser);
+      }
       OpenToast(
         "Utilisateur mis à jour",
         "is-primary",
