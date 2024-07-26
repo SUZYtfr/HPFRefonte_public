@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "/home/pierre/.cache/pypoetry/virtualenvs/hpfserver-lciau1sD-py3.10"
+    ]
+}

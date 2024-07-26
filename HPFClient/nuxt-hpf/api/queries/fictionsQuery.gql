@@ -1,0 +1,14 @@
+{
+    fictions {
+        id
+        title
+        characteristics {
+            id
+            name
+            characteristicType {
+                id
+                name
+            }
+        }
+    }
+}

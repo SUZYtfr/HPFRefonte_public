@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../HPFClient/nuxt-hpf"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

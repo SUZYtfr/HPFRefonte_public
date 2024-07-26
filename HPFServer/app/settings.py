@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "graphene_django",
     "mptt",
     "polymorphic_tree",
     "rest_framework",
@@ -83,6 +84,10 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+GRAPHENE = {
+    "SCHEMA": "app.schema.schema"
 }
 
 SPECTACULAR_SETTINGS = {

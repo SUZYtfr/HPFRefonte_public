@@ -47,6 +47,7 @@ const config: NuxtConfig = {
   modules: [
     "@nuxtjs/axios",
     "@nuxtjs/auth-next",
+    "@nuxtjs/apollo",
     ["nuxt-buefy", {
       css: false,
       materialDesignIcons: false,
@@ -105,12 +106,20 @@ const config: NuxtConfig = {
     "~/plugins/truncate",
     "~/plugins/axios",
     "~/plugins/fontawesome",
-    "~/plugins/classes"
+    "~/plugins/classes",
+    "~/plugins/apollo",
   ],
   axios: {
     baseURL: process.env.SERVER_BASE_API, // Used as fallback if no runtime config is provided,
     browserBaseURL: process.env.CLIENT_BASE_API,
     credentials: (process.env.NODE_ENV === "production")
+  },
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: process.env.SERVER_GRAPHQL_API,
+      }
+    }
   },
   ssr: true,
   target: "server",

@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "hpfserver"
+version = "0.1.0"
+description = ""
+authors = ["PierreMDL <pierre@catecut.com>"]
+readme = "À lire"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9"
+django = "*"
+djangorestframework = "*"
+django-extensions = "*"
+python-lorem = "*"
+django-sortedm2m = "*"
+django-ordered-model = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

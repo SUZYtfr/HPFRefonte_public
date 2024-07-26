@@ -3,6 +3,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from graphene_django.views import GraphQLView
+from django.views.decorators.csrf import csrf_exempt
+
 
 urlpatterns = [
     path(r"api/", include([
@@ -15,6 +18,7 @@ urlpatterns = [
         path(r"images/", include("images.urls", namespace="images")),
         path(r"account/", include("account.urls", namespace="account")),
     ])),
+    path(r"graphql/", csrf_exempt(GraphQLView.as_view(graphiql=False))),
     path(r"admin/", admin.site.urls),
     path(r'schema/download/', SpectacularAPIView.as_view(), name='schema'),
     path(r"schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-schema'),

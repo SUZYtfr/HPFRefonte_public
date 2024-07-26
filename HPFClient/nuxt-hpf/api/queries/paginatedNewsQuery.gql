@@ -1,0 +1,20 @@
+{
+    paginated_news {
+        current
+        count
+        results {
+            id
+            title
+            content
+            post_date
+            creation_user {
+                id
+                username
+            }
+            authors {
+                id
+                username
+            }
+        }
+    }
+}

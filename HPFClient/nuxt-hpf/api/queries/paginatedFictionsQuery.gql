@@ -1,0 +1,27 @@
+{
+    paginated_fictions {
+        current
+        count
+        results {
+            id
+            title
+            summary
+            last_update_date
+            creation_date
+            word_count
+            read_count
+            chapter_count
+            review_count
+            average
+            authors {
+                id
+                username
+            }
+            characteristics {
+                id
+                name
+                characteristic_type_id
+            }
+        }
+    }
+}
