@@ -16,6 +16,7 @@
         'is-flex',
         'is-flex-direction-row',
         'is-align-items-center',
+        'is-white'
       ]"
     >
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
@@ -63,9 +64,8 @@
           <News_2
             v-for="(item, innerindex) of news"
             :key="'news_' + item.news_id.toString()"
-            class="mb-2"
+            :class="['mb-2', {'is-color-even': (innerindex % 2 != 0) }, {'is-color-odd': (innerindex % 2 == 0) }]"
             :news="item"
-            :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
             :index="innerindex"
           />
         </div>
@@ -211,5 +211,8 @@ export default class NewsList extends Vue {
 <style lang="scss" scoped>
 .fullheight {
   height: 100%;
+}
+.card-header {
+  background-color: var(--scheme-main);
 }
 </style>

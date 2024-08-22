@@ -822,33 +822,33 @@ table tr.is-subheading, table tr.is-subheading th {
 }
 
 table tr.is-selected {
-  -webkit-box-shadow: inset 8px 0px 0px 0px $primary !important;
-  box-shadow: inset 8px 0px 0px 0px $primary !important;
+  -webkit-box-shadow: inset 8px 0px 0px 0px var(--primary) !important;
+  box-shadow: inset 8px 0px 0px 0px var(--primary) !important;
   font-weight: bold !important;
 }
 
 table tr.highlighted {
   //background-color: red !important; /* Changer la couleur de fond */
   /* Autres styles pour indiquer la ligne cible */
-  //-webkit-box-shadow: inset 0px 35px 0px -30px  $primary  !important;
-  //box-shadow: inset 0px 35px 0px -30px  $primary  !important;
-  -webkit-box-shadow: 0px -5px 0px 0px  $primary  !important;
-  box-shadow: 0px -5px 0px 0px  $primary  !important;
+  //-webkit-box-shadow: inset 0px 35px 0px -30px  var(--primary)  !important;
+  //box-shadow: inset 0px 35px 0px -30px  var(--primary)  !important;
+  -webkit-box-shadow: 0px -5px 0px 0px  var(--primary)  !important;
+  box-shadow: 0px -5px 0px 0px  var(--primary)  !important;
 }
 
 table tr.highlighted-child {
-  -webkit-box-shadow: 70px -5px 0px 0px  $primary, 0px -5px 0px 0px  $primary-light !important;
-  box-shadow: 70px -5px 0px 0px  $primary, 0px -5px 0px 0px  $primary-light !important;
+  -webkit-box-shadow: 70px -5px 0px 0px  var(--primary), 0px -5px 0px 0px  var(--primary-light) !important;
+  box-shadow: 70px -5px 0px 0px  var(--primary), 0px -5px 0px 0px  var(--primary-light) !important;
 }
 
 table{
   // border-collapse: collapse !important;
-  border: 1px solid $primary !important;
+  border: 1px solid var(--primary) !important;
   border-radius: 4px;
 }
 
 table tr:not(.is-selected, .is-subheading):hover {
-  /*background-color: $primary-light !important;
+  /*background-color: var(--primary-light) !important;
   color: whitesmoke !important;*/
   box-shadow: inset 0 0 0 99999px rgba(0,0,0,0.1) !important;
   cursor: pointer !important;

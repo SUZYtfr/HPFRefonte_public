@@ -152,13 +152,13 @@ export default class FanfictionThumbnail extends Vue {
 }
 
 .fanfiction-hover {
-  background-color: #e8d7e0 !important;
-  border: 1px solid $primary-light !important;
+  background-color: var(--hpf-primary-lighter) !important;
+  border: 1px solid var(--primary-light) !important;
   border-radius: 5px !important;
 }
 
 .fanfiction {
-  background-color: #ffffff;
+  background-color: var(--scheme-main);
   /*height: 118px;*/
   border: 1px solid transparent;
   padding-bottom: 5px;

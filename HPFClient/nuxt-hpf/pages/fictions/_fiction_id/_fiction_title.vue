@@ -181,6 +181,6 @@ export default class extends Vue {
 }
 @import "~/assets/scss/custom_bulma_core.scss";
 #main-container{
-  background-color: $primary-lighter;
+  background-color: var(--hpf-primary-lighter);
 }
 </style>
