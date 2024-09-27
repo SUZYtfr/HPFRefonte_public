@@ -92,7 +92,7 @@
         :key="'tag_' + index.toString()"
         class="my-2"
         :characteristic_type="type"
-        :characteristics="filteredCharacteristics(type.characteristic_type_id)"
+        :characteristics="filteredCharacteristics(type.characteristicTypeId)"
         @change="characteristicsChanged"
       />
       <b-field
@@ -293,12 +293,12 @@ export default class extends Vue {
     return result + " mots";
   }
 
-  public filteredCharacteristics(characteristic_type_id: number): CharacteristicModel[] {
+  public filteredCharacteristics(characteristicTypeId: number): CharacteristicModel[] {
     const itemsSorted: CharacteristicModel[] = this.characteristics
       .filter(
         (t: CharacteristicModel) =>
-          t.characteristic_type_id === characteristic_type_id &&
-          t.parent_id == null
+          t.characteristicTypeId === characteristicTypeId &&
+          t.parentId == null
       )
       .sort((a: CharacteristicModel, b: CharacteristicModel) => {
         return a.order - b.order;
@@ -306,9 +306,9 @@ export default class extends Vue {
     groupBy(
       this.characteristics.filter(
         (t: CharacteristicModel) =>
-          t.characteristic_type_id === characteristic_type_id
+          t.characteristicTypeId === characteristicTypeId
       ),
-      (g: CharacteristicModel) => g.parent_id
+      (g: CharacteristicModel) => g.parentId
     ).forEach((value: CharacteristicModel[], key: number) => {
       if (key != null) {
         const index = itemsSorted.findIndex(c => c.id === key);

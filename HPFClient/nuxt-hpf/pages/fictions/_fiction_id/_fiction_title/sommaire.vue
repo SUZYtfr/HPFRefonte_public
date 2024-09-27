@@ -10,7 +10,7 @@
         </header>
         <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px;">
           <FanfictionEntity
-            :key="'ff_' + fiction.fanfiction_id.toString()"
+            :key="'ff_' + fiction.fanfictionId.toString()"
             class="my-2"
             :fanfiction="fiction"
             :config="fanfictionEntityConfig"
@@ -99,9 +99,9 @@
               >
                 {{ chapter.title }}
               </NuxtLink>
-              <div v-if="(chapter?.trigger_warnings_loaded?.length ?? 0) > 0" class="is-danger ml-2 is-flex is-flex-direction-row is-align-items-baseline">
+              <div v-if="(chapter?.triggerWarnings_loaded?.length ?? 0) > 0" class="is-danger ml-2 is-flex is-flex-direction-row is-align-items-baseline">
                 <b-icon icon="exclamation-triangle" size="is-small" type="is-danger" class="mr-1" />
-                <div v-for="(trigger_warning, index) in chapter.trigger_warnings_loaded" :key="index">
+                <div v-for="(trigger_warning, index) in chapter.triggerWarnings_loaded" :key="index">
                   <span v-if="index > 0">
                     ,
                   </span>
@@ -131,7 +131,7 @@
             :aria-expanded="props.open"
           >
             <p class="card-header-title is-unselectable">
-              {{ 'Reviews (' + fiction?.review_count?.toString() + ")" }}
+              {{ 'Reviews (' + fiction?.reviewCount?.toString() + ")" }}
             </p>
             <a class="card-header-icon">
               <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" type="is-light" />
@@ -141,7 +141,7 @@
 
         <div class="card-content pb-0">
           <div class="content p-2">
-            <ReviewList ref="reviewList" :item_id="reviewListItemId" :review-list-type="reviewListType" />
+            <ReviewList ref="reviewList" :itemId="reviewListItemId" :review-list-type="reviewListType" />
           </div>
         </div>
       </b-collapse>
@@ -197,8 +197,8 @@ export default class extends Vue {
     let triggerWarningsGrouped: {id: number, caption: string }[] = [];
     this.tableOfContent?.chapters?.filter(
       (t: ChapterModelLight) =>
-        ((t.trigger_warnings?.length ?? 0) > 0)
-    ).forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.trigger_warnings_loaded));
+        ((t.triggerWarnings?.length ?? 0) > 0)
+    ).forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.triggerWarnings_loaded));
     triggerWarningsGrouped = triggerWarningsGrouped.filter((value, index, self) =>
       index === self.findIndex(t => (
         t.id === value.id
@@ -213,9 +213,9 @@ export default class extends Vue {
     this.fictionLoading = true;
     try {
       // Charger la fiction
-      this.fiction = (await getFanfictions(parseInt(this.$route.params.fiction_id)));
+      this.fiction = (await getFanfictions(parseInt(this.$route.params.fictionId)));
       if (this.fiction != null) {
-        this.reviewListItemId = this.fiction?.fanfiction_id;
+        this.reviewListItemId = this.fiction?.fanfictionId;
         this.reviewListType = ReviewItemTypeEnum.Fanfiction;
       }
       console.log(this.fiction instanceof FanfictionModel);

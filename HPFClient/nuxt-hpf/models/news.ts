@@ -8,7 +8,7 @@ export class CommentModel extends CommentData {
   @Type(() => AuthorData)
   public author: AuthorData | null = null;
 
-  public content_images: ImageHPFData[] | null = null;
+  public contentImages: ImageHPFData[] | null = null;
 }
 // #endregion
 
@@ -20,6 +20,6 @@ export class NewsModel extends NewsData {
   @Type(() => CommentModel)
   public comments: CommentModel[] | null = null;
 
-  public comment_count: number = 0;
+  public commentCount: number = 0;
 }
 // #endregion

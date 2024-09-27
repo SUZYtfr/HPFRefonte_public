@@ -67,7 +67,7 @@
       <div v-else>
         <Fanfiction
           v-for="(fanfiction, innerindex) of fanfictions"
-          :key="'ff_' + fanfiction.fanfiction_id.toString()"
+          :key="'ff_' + fanfiction.fanfictionId.toString()"
           class="my-2"
           :fanfiction="fanfiction"
           :index="innerindex"
@@ -188,13 +188,13 @@ export default class FanfictionList extends Vue {
       this.totalFanfictions = response.count;
       // console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
       // console.log("Date type: " + ((new Date()) instanceof Date));
-      // console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
-      // console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
+      // console.log("Creation date type: " + (this.fanfictions[0].creationDate instanceof Date));
+      // console.log("Last update date type: " + (this.fanfictions[0].lastUpdateDate instanceof Date));
       // console.log("Characteristic type: " + (this.fanfictions[0].characteristics[0] instanceof CharacteristicData));
-      // console.log(this.fanfictions[0]?.creation_date);
-      // console.log(new Date(this.fanfictions[0]?.creation_date));
-      // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString());
-      // console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
+      // console.log(this.fanfictions[0]?.creationDate);
+      // console.log(new Date(this.fanfictions[0]?.creationDate));
+      // console.log(new Date(this.fanfictions[0]?.creationDate).toLocaleDateString());
+      // console.log(this.fanfictions[0].creationDate?.toLocaleDateString());
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({
@@ -223,11 +223,11 @@ export default class FanfictionList extends Vue {
         break;
       case "most_recent":
         this.fanfictionFilters.sortBy = SortByEnum.Descending;
-        this.fanfictionFilters.sortOn = "last_update_date";
+        this.fanfictionFilters.sortOn = "lastUpdateDate";
         break;
       case "less_recent":
         this.fanfictionFilters.sortBy = SortByEnum.Ascending;
-        this.fanfictionFilters.sortOn = "last_update_date";
+        this.fanfictionFilters.sortOn = "lastUpdateDate";
         break;
       case "most_reviews":
         this.fanfictionFilters.sortBy = SortByEnum.Descending;

@@ -11,7 +11,7 @@
 // // NOTE - une classe pour tous les types de reviews ET réponse à review
 // export class ReviewData extends BasicClass<ReviewData> {
 //   @Exclude()
-//   public get review_id(): number {
+//   public get reviewId(): number {
 //     return this.id;
 //   }
 
@@ -23,10 +23,10 @@
 
 //   // Pour la création d'une review, indiquer son type et l'ID de l'élément en question
 //   // Pour une réponse à review, indiquer seulement le type (la route définira l'élément parent)
-//   public item_type: ReviewItemTypeEnum | null = null;
-//   public chapter_id: number | null = null;
-//   public fiction_id: number | null = null;
-//   public collection_id: number | null = null;
+//   public itemType: ReviewItemTypeEnum | null = null;
+//   public chapterId: number | null = null;
+//   public fictionId: number | null = null;
+//   public collectionId: number | null = null;
 
 //   @Transform(({ value }) => new Date(value), { toClassOnly: true })
 //   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
@@ -35,6 +35,6 @@
 
 // export interface IReviewFilters extends IBasicQuery {
 //   searchTerm: string | null;
-//   include_item_types: ReviewItemTypeEnum[] | null;
-//   item_id: number | null;
+//   includeItemTypes: ReviewItemTypeEnum[] | null;
+//   itemId: number | null;
 // }

@@ -190,7 +190,7 @@ export default class extends Vue {
   private onFiltersincludedTagsChanged(): void {
     if (this.fanfictionFilters == null) return;
     if ((this.includedTagsFull?.length ?? 0) > 0)
-      this.fanfictionFilters.includedTags = this.includedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
+      this.fanfictionFilters.includedTags = this.includedTagsFull.map((t: CharacteristicData) => t.characteristicId);
     else
       this.fanfictionFilters.includedTags = [];
   }
@@ -199,7 +199,7 @@ export default class extends Vue {
   private onFiltersexcludedTagsChanged(): void {
     if (this.fanfictionFilters == null) return;
     if ((this.excludedTagsFull?.length ?? 0) > 0)
-      this.fanfictionFilters.excludedTags = this.excludedTagsFull.map((t: CharacteristicData) => t.characteristic_id);
+      this.fanfictionFilters.excludedTags = this.excludedTagsFull.map((t: CharacteristicData) => t.characteristicId);
     else
       this.fanfictionFilters.excludedTags = [];
   }
@@ -230,11 +230,11 @@ export default class extends Vue {
       );
 
       const itemsSorted: CharacteristicData[] = items
-        .filter(t => t.parent_id == null)
+        .filter(t => t.parentId == null)
         .sort((a: CharacteristicData, b: CharacteristicData) => {
           return a.order - b.order;
         });
-      groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
+      groupBy(items, (g: CharacteristicData) => g.parentId).forEach(
         (value: CharacteristicData[], key: number) => {
           if (key != null) {
             const index = itemsSorted.findIndex(
@@ -268,7 +268,7 @@ export default class extends Vue {
 
     const grouped = groupBy(
       this.ConfigModule.characteristics,
-      (characteristic: CharacteristicData) => characteristic.characteristic_type_id
+      (characteristic: CharacteristicData) => characteristic.characteristicTypeId
     );
     this.ConfigModule.characteristicTypes.forEach((element: CharacteristicTypeData) => {
       const items = grouped
@@ -278,11 +278,11 @@ export default class extends Vue {
         });
 
       const itemsSorted: CharacteristicData[] = items
-        .filter((t: CharacteristicData) => t.parent_id == null)
+        .filter((t: CharacteristicData) => t.parentId == null)
         .sort((a: CharacteristicData, b: CharacteristicData) => {
           return a.order - b.order;
         });
-      groupBy(items, (g: CharacteristicData) => g.parent_id).forEach(
+      groupBy(items, (g: CharacteristicData) => g.parentId).forEach(
         (value: CharacteristicData[], key: number) => {
           if (key != null) {
             const index = itemsSorted.findIndex(

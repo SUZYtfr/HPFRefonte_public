@@ -46,7 +46,7 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="$auth.user?.profile.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"
@@ -190,7 +190,7 @@
                   style="padding-left: 8px"
                 >
                   <b-image
-                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="$auth.user?.profile.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px: margin-left: -8px;"
                     :rounded="true"

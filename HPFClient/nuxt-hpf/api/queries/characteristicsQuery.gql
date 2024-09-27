@@ -1,0 +1,13 @@
+{
+    paginatedCharacteristics {
+        current
+        count
+        results {
+            id
+            name
+            description
+            characteristicTypeId
+            parentId
+        }
+    }
+}

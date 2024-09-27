@@ -8,7 +8,7 @@
     <div class="card-content">
       <div class="content">
         <div v-if="(comments?.length ?? 0) > 0 ">
-          <Comment v-for="(item, innerindex) of comments" :key="'comment_' + item.comment_id.toString()" :index="innerindex" :comment="item" />
+          <Comment v-for="(item, innerindex) of comments" :key="'comment_' + item.commentId.toString()" :index="innerindex" :comment="item" />
         </div>
         <p v-else class="has-text-centered">
           Aucun commentaire
@@ -58,7 +58,7 @@ export default class CommentList extends Vue {
   declare public comments?: CommentModel[];
 
   @Prop({ default: null })
-  declare public news_id?: number;
+  declare public newsId?: number;
   // #endregion
 
   // #region Datas
@@ -87,14 +87,14 @@ export default class CommentList extends Vue {
 
   // #region Methods
   public async PostComment(): Promise<void> {
-    if (this.news_id === null) return;
+    if (this.newsId === null) return;
     if ((this.editorContent?.wordcount ?? 0) < 3) return;
     if (this.editorContent?.content == null) return;
     try {
       let comment: CommentModel = new CommentModel();
       comment.content = this.editorContent?.content;
-      comment.content_images = this.editorContent?.content_images;
-      comment = (await postComment((this.news_id as number), comment)).items;
+      comment.contentImages = this.editorContent?.contentImages;
+      comment = (await postComment((this.newsId as number), comment)).items;
       if (comment != null) this.comments?.push(comment);
     } catch (error) {
       console.log(error);

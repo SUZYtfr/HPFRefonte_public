@@ -1,17 +1,17 @@
 {
-    paginated_fictions {
+    paginatedFictions {
         current
         count
         results {
             id
             title
             summary
-            last_update_date
-            creation_date
-            word_count
-            read_count
-            chapter_count
-            review_count
+            lastUpdateDate
+            creationDate
+            wordCount
+            readCount
+            chapterCount
+            reviewCount
             average
             authors {
                 id
@@ -20,7 +20,7 @@
             characteristics {
                 id
                 name
-                characteristic_type_id
+                characteristicTypeId
             }
         }
     }

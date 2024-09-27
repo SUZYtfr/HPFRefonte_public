@@ -1,4 +1,4 @@
-import type { ApolloClient, InMemoryCache, QueryOptions } from '@apollo/client/core'
+import type { ApolloClient, InMemoryCache } from '@apollo/client/core'
 import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
 import type { DocumentNode } from "graphql/language/ast";
@@ -43,21 +43,17 @@ export class ApolloWrapper {
      */
     get apolloInstance(): ApolloClient<InMemoryCache> { return $apollo; }
 
-    public async query<T>(query: DocumentNode, params: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-        
-        const queryOptions: QueryOptions = {
-            query: query,
-        };
+    public async query<T>(query: DocumentNode, variables: any, accessor: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
         if (type) {
             try {
-                let { data } = await $apollo.query(queryOptions);
-                console.log(data)
-                const results = data[params].results;
+                let { data } = await $apollo.query({query, variables});
+                console.log(data);
+                const results = data[accessor].results;
                 // Transformer en instance
                 if (results != null) {
                     // Contenu paginé
-                    data.count = data[params].count;
-                    data.page = data[params].current;
+                    data.count = data[accessor].count;
+                    data.page = data[accessor].current;
                     data.results = this.parseData2(type, results);
                 } else {
                     // Contenu unique
@@ -70,9 +66,34 @@ export class ApolloWrapper {
             }
         } else {
             // if there is no type, return axios default behavior
-            return $apollo.query(queryOptions);
+            return $apollo.query({query});
         }
     }
+
+    public async mutation<T>(mutation: DocumentNode, variables: any, accessor: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
+        if (type) { 
+          try {
+            let { data } = await $apollo.mutate({mutation, variables});
+            const results = data[accessor].results;
+            if (results != null) {
+                // Contenu paginé
+                data.count = data[accessor].count;
+                data.page = data[accessor].current;
+                data.results = this.parseData2(type, results);
+            } else {
+                // Contenu unique
+                data = this.parseData2(type, data);
+            }
+            return data;
+          } catch (error) {
+            return error;
+          }
+
+        } else {
+          // if there is no type, return axios default behavior
+          return $apollo.mutate({mutation, variables});
+        }
+      }
 
     /**
      * Parse response data, before creating response object

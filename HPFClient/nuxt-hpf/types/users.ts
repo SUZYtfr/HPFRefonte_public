@@ -20,12 +20,12 @@ export enum UserGender {
 // Informations essentielles d'un utilisateur
 export class UserData extends BasicClass<UserData> {
   @Exclude()
-  public get user_id(): number {
+  public get userId(): number {
     return this.id;
   }
 
   public status: UserStatus = UserStatus.Unvalidated;
-  public ban_reason: string = "";
+  public banReason: string = "";
   public username: string = "";
   public email: string = "";
 
@@ -35,15 +35,15 @@ export class UserData extends BasicClass<UserData> {
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public creation_date: Date | null = null;
+  public creationDate: Date | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public first_seen: Date | null = null;
+  public firstSeen: Date | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public last_login: Date | null = null;
+  public lastLogin: Date | null = null;
 }
 
 // Filtres utilisateurs
@@ -55,14 +55,14 @@ export interface IUserFilters extends IBasicQuery {
   premium: boolean | null,
   published: boolean | null,
   team: number[] | null,
-  creation_date: Date | null,
+  creationDate: Date | null,
 }
 
 // Table UserProfile
 // Informations secondaire (de profil) d'un utilisateur
 export class UserProfileData extends BasicClass<UserProfileData> {
   @Exclude()
-  public get user_profile_id(): number {
+  public get userProfileId(): number {
     return this.id;
   }
 
@@ -75,38 +75,38 @@ export class UserProfileData extends BasicClass<UserProfileData> {
   public website: string | null = null;
   public gender: UserGender | null = null;
   public bio: string | null = null;
-  public profile_picture: string | ArrayBuffer | null = null;
+  public profilePicture: string | ArrayBuffer | null = null;
 }
 
 // Table UserPreferences
 // Informations secondaire (des préférences) d'un utilisateur
 export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   @Exclude()
-  public get user_preference_id(): number {
+  public get userPreferenceId(): number {
     return this.id;
   }
 
-  public age_consent: boolean = false;
+  public ageConsent: boolean = false;
   public font: string | null = null;
-  public font_size: number | null = null;
-  public line_spacing: number | null = null;
-  public dark_mode: boolean | null = null;
+  public fontSize: number | null = null;
+  public lineSpacing: number | null = null;
+  public darkMode: boolean | null = null;
   public skin: string = "default";
-  public show_reaction: boolean = true;
+  public showReaction: boolean = true;
 }
 
 // Table UserLink
 // Liens de l'utilisateur
 export class UserLinkData extends BasicClass<UserLinkData> {
   @Exclude()
-  public get user_link_id(): number {
+  public get userLinkId(): number {
     return this.id;
   }
 
-  public user_id: number = 0;
-  public link_type_id: number = 0;
-  public display_name: string = "";
-  public link_url: string = "";
+  public userId: number = 0;
+  public linkTypeId: number = 0;
+  public displayName: string = "";
+  public linkUrl: string = "";
   public visible: boolean = true;
 }
 
@@ -114,7 +114,7 @@ export interface UserRegisterProfileData {
   realname: string | null,
   bio: string | null,
   website: string | null,
-  profile_picture: string | ArrayBuffer | null,
+  profilePicture: string | ArrayBuffer | null,
 }
 
 export interface UserRegisterData {
@@ -131,7 +131,7 @@ export interface UserLoginData {
 
 export class AuthorData extends BasicClass<AuthorData> {
   @Exclude()
-  public get user_id(): number {
+  public get userId(): number {
     return this.id;
   }
 

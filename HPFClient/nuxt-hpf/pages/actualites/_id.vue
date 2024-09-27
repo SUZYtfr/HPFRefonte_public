@@ -3,7 +3,7 @@
     <News_2 v-if="news != null" class="mt-2" :news="news" :active-color="'#f0f0f0'" />
     <br>
     <div>
-      <CommentList v-if="news != null" :news_id="news?.id" :comments="news?.comments" />
+      <CommentList v-if="news != null" :newsId="news?.id" :comments="news?.comments" />
     </div>
     <br>
   </div>

@@ -24,11 +24,11 @@
           <div
 
             v-for="(fanfiction, innerindex) of fanfictions"
-            :key="'ff_recent_' + fanfiction.fanfiction_id.toString()"
+            :key="'ff_recent_' + fanfiction.fanfictionId.toString()"
             class="column is-half py-2"
           >
             <FanfictionThumbnail
-              :key="fanfiction.fanfiction_id"
+              :key="fanfiction.fanfictionId"
               :fanfiction="fanfiction"
               :index="innerindex"
             />

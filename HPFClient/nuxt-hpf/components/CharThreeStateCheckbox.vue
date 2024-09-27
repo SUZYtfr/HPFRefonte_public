@@ -6,10 +6,10 @@
     :class="[{ excluded: indeterminate }]"
     @click.native.prevent="checkBoxClicked($event)"
   >
-    <font-awesome-icon v-if="characteristic?.parent_id != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
+    <font-awesome-icon v-if="characteristic?.parentId != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
       :class="[
-        characteristic?.parent_id != null
+        characteristic?.parentId != null
           ? 'is-italic has-text-weight-light'
           : 'has-text-weight-medium',
       ]"

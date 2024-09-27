@@ -1,13 +1,13 @@
 {
-    paginated_news {
+    paginatedNewsArticles {
         current
         count
         results {
             id
             title
             content
-            post_date
-            creation_user {
+            postDate
+            creationUser {
                 id
                 username
             }

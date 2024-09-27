@@ -78,7 +78,7 @@ export default class extends Vue {
     pageSize: 10,
     totalPages: false,
     sortBy: SortByEnum.Descending,
-    sortOn: "post_date"
+    sortOn: "postDate"
   };
 
   public listLoading: boolean = false;

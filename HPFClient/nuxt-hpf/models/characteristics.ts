@@ -1,11 +1,11 @@
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 
 export class CharacteristicModel extends CharacteristicData {
-  public fiction_count: number = 0;
+  public fictionCount: number = 0;
   public depth: number = 0;
 }
 
 export class CharacteristicTypeModel extends CharacteristicTypeData {
-  public fiction_count: number = 0;
+  public fictionCount: number = 0;
   public characteristics: CharacteristicModel[] = [];
 }

@@ -41,7 +41,7 @@
             custom-class="has-text-primary"
           >
             <b-select
-              v-model="contactForm.subject_id"
+              v-model="contactForm.subjectId"
               placeholder="Objet du message"
               required
             >
@@ -113,7 +113,7 @@ export default class extends Vue {
   // #region Data
   public contactForm: ContactFormData = {
     email: "",
-    subject_id: "",
+    subjectId: "",
     content: ""
   };
 

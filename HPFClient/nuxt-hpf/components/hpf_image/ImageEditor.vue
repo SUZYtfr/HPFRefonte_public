@@ -128,7 +128,7 @@
                 />
               </b-field>
             </div>
-            <b-checkbox v-model="image.is_adult_only" size="is-small">
+            <b-checkbox v-model="image.isAdultOnly" size="is-small">
               Contenu sensible
             </b-checkbox>
           </div>

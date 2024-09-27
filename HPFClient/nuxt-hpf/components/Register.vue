@@ -137,7 +137,7 @@
                       <div v-if="uploadedFile">
                         <img
                           id="previewPicture"
-                          :src="signupForm.profile.profile_picture"
+                          :src="signupForm.profile.profilePicture"
                           :alt="uploadedFile.name"
                           width="256"
                           height="256"
@@ -218,7 +218,7 @@ export default class extends Vue {
       realname: "",
       bio: "",
       website: "",
-      profile_picture: null
+      profilePicture: null
     }
   };
 
@@ -281,14 +281,14 @@ export default class extends Vue {
   @Watch("uploadedFile", { deep: true })
   public onChanged(): void {
     const reader = new FileReader();
-    reader.onloadend = e => (this.signupForm.profile.profile_picture = reader.result);
+    reader.onloadend = e => (this.signupForm.profile.profilePicture = reader.result);
     if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
     // reader.readAsDataURL(
     //   this.uploadedFile != null ? this.uploadedFile : new Blob()
     // );
     console.log(this.uploadedFile);
     console.log(reader);
-    console.log(this.signupForm.profile.profile_picture);
+    console.log(this.signupForm.profile.profilePicture);
   }
   // #endregion
 
@@ -301,7 +301,7 @@ export default class extends Vue {
   // Supprimer l'avatar uploadé
   public deleteDropFile(): void {
     this.uploadedFile = null;
-    this.signupForm.profile.profile_picture = "";
+    this.signupForm.profile.profilePicture = "";
   }
 
   // Envoyer le formulaire

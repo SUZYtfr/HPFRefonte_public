@@ -18,15 +18,15 @@
       <!-- <p v-if="fanfictions[0] != null">
         {{ fanfictions[0].title }}
         {{ ( fanfictions[0] instanceof FanfictionModel) }}
-        {{ ( fanfictions[0].creation_date instanceof Date) }}
-        {{ ( fanfictions[0].last_update_date instanceof Date) }}
+        {{ ( fanfictions[0].creationDate instanceof Date) }}
+        {{ ( fanfictions[0].lastUpdateDate instanceof Date) }}
         {{ (new Date()).toLocaleDateString() }}
       </p>
-      <p v-if="(fanfictions[0]?.last_update_date instanceof Date)">
-        {{ fanfictions[0].last_update_date?.toLocaleDateString() }}
+      <p v-if="(fanfictions[0]?.lastUpdateDate instanceof Date)">
+        {{ fanfictions[0].lastUpdateDate?.toLocaleDateString() }}
       </p>
-      <p v-if="(fanfictions[0]?.creation_date instanceof Date)">
-        {{ fanfictions[0].creation_date?.toLocaleDateString() }}
+      <p v-if="(fanfictions[0]?.creationDate instanceof Date)">
+        {{ fanfictions[0].creationDate?.toLocaleDateString() }}
       </p>
       <p>
         {{ new Date("2020-11-01T19:25:43.511Z") }}
@@ -162,9 +162,9 @@ export default class extends Vue {
       // console.log(this.fanfictions);
       console.log("Fanfiction type: " + (this.fanfictions[0] instanceof FanfictionModel));
       console.log("Date type: " + ((new Date()) instanceof Date));
-      console.log("Creation date type: " + (this.fanfictions[0].creation_date instanceof Date));
-      console.log("Last update date type: " + (this.fanfictions[0].last_update_date instanceof Date));
-      console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
+      console.log("Creation date type: " + (this.fanfictions[0].creationDate instanceof Date));
+      console.log("Last update date type: " + (this.fanfictions[0].lastUpdateDate instanceof Date));
+      console.log(this.fanfictions[0].creationDate?.toLocaleDateString());
       // console.log(this.fanfictions[0] instanceof FanfictionModel);
     } catch (error) {
       console.log(error);

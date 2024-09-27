@@ -132,10 +132,10 @@
           </section>
 
           <!-- Trigger warning -->
-          <article v-if="(chapter?.trigger_warnings_loaded?.length ?? 0) > 0" class="message is-danger">
+          <article v-if="(chapter?.triggerWarnings_loaded?.length ?? 0) > 0" class="message is-danger">
             <div class="message-body py-3 px-2 is-flex is-flex-direction-row">
               <b-icon icon="exclamation-triangle" /><span><strong class="mr-1"> TW / CW </strong></span>
-              <div v-for="(trigger_warning, index) in chapter?.trigger_warnings_loaded" :key="index">
+              <div v-for="(trigger_warning, index) in chapter?.triggerWarnings_loaded" :key="index">
                 <span v-if="index > 0">
                   ,
                 </span>
@@ -237,7 +237,7 @@
                   :aria-expanded="reviewPaneExpanded"
                 >
                   <p class="card-header-title is-unselectable">
-                    {{ 'Reviews (' + chapter?.review_count?.toString() + ")" }}
+                    {{ 'Reviews (' + chapter?.reviewCount?.toString() + ")" }}
                   </p>
                   <a class="card-header-icon">
                     <b-icon class="is-clickable" :icon="reviewPaneExpanded ? 'caret-up' : 'caret-down'" type="is-light" />
@@ -247,7 +247,7 @@
 
               <div class="card-content pb-0">
                 <div class="content p-2">
-                  <ReviewList ref="reviewList" :item_id="reviewListItemId" :review-list-type="reviewListType" @reviewContentChanged="(value) => (editorContentReview = value)" />
+                  <ReviewList ref="reviewList" :itemId="reviewListItemId" :review-list-type="reviewListType" @reviewContentChanged="(value) => (editorContentReview = value)" />
                 </div>
               </div>
             </b-collapse>
@@ -448,10 +448,10 @@ export default class extends Vue {
     this.chapterLoading = true;
     try {
       // Charger le chapitre
-      this.chapter = (await getChapters(parseInt(this.$route.params.chapter_id)));
+      this.chapter = (await getChapters(parseInt(this.$route.params.chapterId)));
       this.tiptapReadOnlyConfig.defaultValue = (this.chapter?.text ?? "");
       if (this.chapter != null) {
-        this.reviewListItemId = this.chapter?.chapter_id;
+        this.reviewListItemId = this.chapter?.chapterId;
         this.reviewListType = ReviewItemTypeEnum.Chapter;
       }
       if (process.client) {

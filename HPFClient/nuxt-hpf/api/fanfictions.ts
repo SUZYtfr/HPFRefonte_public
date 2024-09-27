@@ -14,4 +14,4 @@ export const deleteFanfictions = (id: number): Promise<any> => $AxiosWrapper.del
 import $ApolloWrapper from "~/utils/apolloApi";
 import paginatedFictionsQuery from "./queries/paginatedFictionsQuery.gql";
 
-export const searchFanfictions = (filters: IBasicQuery | null | undefined): Promise<any> => $ApolloWrapper.query<FanfictionModel>(paginatedFictionsQuery, "paginated_fictions", FanfictionModel)
+export const searchFanfictions = (filters: IBasicQuery | null | undefined): Promise<any> => $ApolloWrapper.query<FanfictionModel>(paginatedFictionsQuery, filters, "paginatedFictions", FanfictionModel)

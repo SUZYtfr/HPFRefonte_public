@@ -4,11 +4,11 @@
     :class="[
       { 'tag-hover': hover },
       'tag p-2 is-relative',
-      getCaracteristicTypeColor(characteristic_type_id),
+      getCaracteristicTypeColor(characteristicTypeId),
     ]"
     @mouseover="hover = true"
     @mouseleave="hover = false"
-    @click="$emit('click', characteristic_type_id, characteristic_id)"
+    @click="$emit('click', characteristicTypeId, characteristicId)"
   >
     <div
       id="tag-wrapper"
@@ -53,7 +53,7 @@
       </div>
     </div>
     <label
-      v-if="characteristic_count !== undefined && characteristic_id != null"
+      v-if="characteristic_count !== undefined && characteristicId != null"
       :class="[
         'is-size-7',
         'is-clickable',
@@ -76,10 +76,10 @@ import { getCaracteristicTypeColor } from "@/utils/characteristics";
 export default class extends Vue {
   // #region Props
   @Prop()
-  declare public characteristic_type_id?: number | undefined;
+  declare public characteristicTypeId?: number | undefined;
 
   @Prop()
-  declare public characteristic_id?: number | undefined;
+  declare public characteristicId?: number | undefined;
 
   @Prop()
   declare public characteristic_name?: string | undefined;
@@ -113,9 +113,9 @@ export default class extends Vue {
 
   // #region Methods
   // Récupération couleur du tag
-  public getCaracteristicTypeColor(characteristic_type_id: number | undefined): string {
-    if (characteristic_type_id === undefined) return "";
-    return getCaracteristicTypeColor(characteristic_type_id);
+  public getCaracteristicTypeColor(characteristicTypeId: number | undefined): string {
+    if (characteristicTypeId === undefined) return "";
+    return getCaracteristicTypeColor(characteristicTypeId);
   }
 
   // Lors du resize de l'élément

@@ -127,10 +127,10 @@ export default class extends Vue {
 
   @Watch("$route.query")
   private onRouteChanged(): void {
-    if (this.$route.params.chapter_id == null) {
+    if (this.$route.params.chapterId == null) {
       this.currentChapter = null;
     } else {
-      this.currentChapter = this.tableOfContent?.chapters?.find((chapter: ChapterModelLight) => chapter.id === parseInt(this.$route.params.chapter_id)) ?? null;
+      this.currentChapter = this.tableOfContent?.chapters?.find((chapter: ChapterModelLight) => chapter.id === parseInt(this.$route.params.chapterId)) ?? null;
     }
 
     // Mise à jour des previous et next chapter
@@ -151,7 +151,7 @@ export default class extends Vue {
   private async fetch(): Promise<void> {
     this.fictionLoading = true;
     try {
-      this.tableOfContent = (await getTableOfContent(parseInt(this.$route.params.fiction_id)));
+      this.tableOfContent = (await getTableOfContent(parseInt(this.$route.params.fictionId)));
       this.onRouteChanged();
     } catch (error) {
       if (process.client) {

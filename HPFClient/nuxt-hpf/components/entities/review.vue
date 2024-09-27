@@ -23,9 +23,9 @@
                   ,
                 </template>
                 <NuxtLink
-                  :key="'author_' + author.user_id.toString()"
+                  :key="'author_' + author.userId.toString()"
                   class="is-size-7 has-text-weight-normal"
-                  :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
+                  :to="{ name: 'auteurs-id', params: { id: author.userId } }"
                 >
                   {{ author.username }}
                 </NuxtLink>
@@ -44,10 +44,10 @@
         </div>
 
         <!-- <div class="is-flex is-flex-direction-row is-justify-content-space-between">
-          <NuxtLink :to="{ name: 'auteurs-id', params: { id: review.authors?.user_id } }">
+          <NuxtLink :to="{ name: 'auteurs-id', params: { id: review.authors?.userId } }">
             <strong>{{ review.authors?.username }}</strong>
           </NuxtLink>
-          <small>{{ review.post_date != null ? (review.post_date.toLocaleDateString() + " à " + review.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
+          <small>{{ review.postDate != null ? (review.postDate.toLocaleDateString() + " à " + review.postDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
         </div> -->
         <p>
           <span

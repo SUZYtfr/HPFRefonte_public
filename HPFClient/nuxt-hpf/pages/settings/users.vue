@@ -127,30 +127,30 @@
             </b-table-column>
 
             <!-- Date d'inscription -->
-            <b-table-column field="creation_date" label="Inscription" width="120" sortable centered>
+            <b-table-column field="creationDate" label="Inscription" width="120" sortable centered>
               <template #subheading>
                 <b-datepicker
-                  v-model="userFilters.creation_date"
+                  v-model="userFilters.creationDate"
                   locale="fr-FR"
                   placeholder="Date d'inscription"
                   append-to-body
                   icon="calendar-alt"
                   :first-day-of-week="1"
-                  :icon-right="userFilters.creation_date ? 'times-circle' : ''"
+                  :icon-right="userFilters.creationDate ? 'times-circle' : ''"
                   :icon-right-clickable="true"
                   size="is-small"
-                  @icon-right-click="userFilters.creation_date = null"
+                  @icon-right-click="userFilters.creationDate = null"
                 />
               </template>
               <template #default="props">
-                {{ props.row.creation_date?.toLocaleDateString() ?? "31/12/1970" }}
+                {{ props.row.creationDate?.toLocaleDateString() ?? "31/12/1970" }}
               </template>
             </b-table-column>
 
             <!-- Nombre de publications-->
-            <b-table-column field="stats.fiction_count" label="Publications" sortable>
+            <b-table-column field="stats.fictionCount" label="Publications" sortable>
               <template #default="props">
-                {{ props.row.stats?.fiction_count }}
+                {{ props.row.stats?.fictionCount }}
               </template>
             </b-table-column>
 
@@ -207,11 +207,11 @@
               <div class="column is-narrow">
                 <figure class="image is-64x64">
                   <img
-                    :src="selectedUser.profile?.profile_picture ?? require('@/assets/img/placeholders/64x64.png')"
+                    :src="selectedUser.profile?.profilePicture ?? require('@/assets/img/placeholders/64x64.png')"
                   >
                 </figure>
                 <b-button
-                  v-if="(selectedUser.profile?.profile_picture ?? false)"
+                  v-if="(selectedUser.profile?.profilePicture ?? false)"
                   type="is-primary"
                   size="is-small"
                   icon-pack="fas"
@@ -275,7 +275,7 @@
               custom-class="has-text-primary"
             >
               <b-input
-                v-model="selectedUser.ban_reason"
+                v-model="selectedUser.banReason"
                 type="textarea"
                 placeholder="Raison du bannissement"
                 required
@@ -424,7 +424,7 @@ export default class extends Vue {
     premium: null,
     team: null,
     published: null,
-    creation_date: null,
+    creationDate: null,
     page: 1,
     pageSize: 20,
     totalPages: true,
@@ -445,7 +445,7 @@ export default class extends Vue {
 
     return (((this.selectedUser.username?.length ?? 0) > 0) &&
     ((this.selectedUser.email?.length ?? 0) > 0) &&
-    ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.ban_reason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
+    ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.banReason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
   }
 
   get form(): VForm {
@@ -501,7 +501,7 @@ export default class extends Vue {
     try {
       this.loading = true;
       if(this.selectedUser) {
-        sendPasswordResetEmail(this.selectedUser.user_id);
+        sendPasswordResetEmail(this.selectedUser.userId);
       }
       OpenToast(
         "Un mail de renouvellement de mot de passe a été envoyé",
@@ -531,7 +531,7 @@ export default class extends Vue {
         try {
           this.loading = true;
           if(this.selectedUser) {
-            anonymiseUser(this.selectedUser.user_id);
+            anonymiseUser(this.selectedUser.userId);
           };
           OpenToast(
             "L'utilisateur a bien été anonymisé",
@@ -555,7 +555,7 @@ export default class extends Vue {
     try {
       this.loading = true;
       if(this.selectedUser) {
-        putUser(this.selectedUser.user_id, this.selectedUser);
+        putUser(this.selectedUser.userId, this.selectedUser);
       }
       OpenToast(
         "Utilisateur mis à jour",
@@ -574,7 +574,7 @@ export default class extends Vue {
 
   // Supprimer l'avatar de l'utilisateur
   public deletePicture(): void {
-    if (this.selectedUser?.profile != null) this.selectedUser.profile.profile_picture = "";
+    if (this.selectedUser?.profile != null) this.selectedUser.profile.profilePicture = "";
   }
   // #endregion
 }

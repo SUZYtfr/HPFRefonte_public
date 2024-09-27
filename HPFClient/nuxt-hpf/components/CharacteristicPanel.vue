@@ -2,7 +2,7 @@
   <div class="container-div">
     <div
       :class="[
-        getCaracteristicTypeColor(characteristic_type.characteristic_type_id),
+        getCaracteristicTypeColor(characteristic_type.characteristicTypeId),
         { 'header-expanded': expanded },
         'is-flex',
         'is-flex-direction-row',
@@ -28,7 +28,7 @@
             :key="index"
             class="py-1 pl-1"
             :characteristic="charac"
-            :external-state="stateForCheckbox(charac.characteristic_id)"
+            :external-state="stateForCheckbox(charac.characteristicId)"
             @change="threeStateChanged"
           />
         </div>
@@ -84,8 +84,8 @@ export default class extends Vue {
   // #endregion
 
   // #region Methods
-  public getCaracteristicTypeColor(characteristic_type_id: number): string {
-    return getCaracteristicTypeColor(characteristic_type_id);
+  public getCaracteristicTypeColor(characteristicTypeId: number): string {
+    return getCaracteristicTypeColor(characteristicTypeId);
   }
 
   public threeStateChanged(caracteristic_id: number, state: number): void {

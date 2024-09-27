@@ -1266,7 +1266,7 @@ export default class extends Vue {
       this.editor?.commands.setContent(tiptapContent.content);
     else
       this.editor?.commands.setContent("");
-    // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
+    // this.editor?.extensionStorage.hpfImage.images = tiptapContent.contentImages;
   }
 
   // Ajouter une quote
@@ -1423,7 +1423,7 @@ export default class extends Vue {
     this.$emit("change", new TipTapEditorContent({
       content: this.editor?.getHTML(),
       wordcount: this.editorFunctionsCharacterStatuses.wordCount,
-      content_images: this.editor?.extensionStorage.hpfImage.images
+      contentImages: this.editor?.extensionStorage.hpfImage.images
     }));
   }
 

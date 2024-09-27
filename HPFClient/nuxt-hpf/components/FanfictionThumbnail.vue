@@ -16,8 +16,8 @@
       <div class="is-flex-grow-5">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
           <NuxtLink
-            :key="'fiction_' + fanfiction.fanfiction_id.toString()"
-            :to="{ name: 'fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title', params: { fiction_id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug, chapter_id: fanfiction.first_chapter?.id, chapter_title: fanfiction.first_chapter?.title } }"
+            :key="'fiction_' + fanfiction.fanfictionId.toString()"
+            :to="{ name: 'fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title', params: { fiction_id: fanfiction.fanfictionId, fiction_title: fanfiction.titleAsSlug, chapter_id: fanfiction.firstChapter?.id, chapter_title: fanfiction.firstChapter?.title } }"
           >
             {{ fanfiction.title }}
           </NuxtLink>
@@ -48,9 +48,9 @@
             ,
           </template>
           <NuxtLink
-            :key="'author_' + author.user_id.toString()"
+            :key="'author_' + author.userId.toString()"
             class="is-size-7 has-text-weight-normal"
-            :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
+            :to="{ name: 'auteurs-id', params: { id: author.userId } }"
           >
             {{ author.username }}
           </NuxtLink>
@@ -61,7 +61,7 @@
           v-for="characteristic in fanfiction.characteristics"
           :key="
             'ff_' +
-              fanfiction.fanfiction_id +
+              fanfiction.fanfictionId +
               '_characteristic_' +
               characteristic.id.toString()
           "

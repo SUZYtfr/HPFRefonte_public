@@ -9,9 +9,11 @@ export const postNews = (news: NewsData): Promise<any> => $AxiosWrapper.post<New
 export const putNews = (id: number, news: NewsData): Promise<any> => $AxiosWrapper.put<NewsModel>("/news/" + id.toString() + "/", news, NewsModel);
 export const deleteNews = (id: number): Promise<any> => $AxiosWrapper.delete<NewsModel>("/news/" + id.toString() + "/", NewsModel);
 
-export const postComment = (news_id: number, comment: CommentData): Promise<any> => $AxiosWrapper.post<CommentModel>("/news/" + news_id.toString() + "/comments/", comment, CommentModel);
+// export const postComment = (newsId: number, comment: CommentData): Promise<any> => $AxiosWrapper.post<CommentModel>("/news/" + newsId.toString() + "/comments/", comment, CommentModel);
 
-import $ApolloWrapper, { ApolloWrapper } from "~/utils/apolloApi";
+import $ApolloWrapper from "~/utils/apolloApi";
 import paginatedNewsQuery from "./queries/paginatedNewsQuery.gql";
+import postCommentMutation from "./queries/postCommentMutation.gql";
 
-export const searchNews = (filters: IBasicQuery | null | undefined): Promise<any> => $ApolloWrapper.query<NewsModel>(paginatedNewsQuery, "paginated_news", NewsModel);
+export const searchNews = (filters: IBasicQuery | null | undefined): Promise<any> => $ApolloWrapper.query<NewsModel>(paginatedNewsQuery, filters, "paginatedNewsArticles", NewsModel);
+export const postComment = (newsId: number, comment: CommentData): Promise<any> => $ApolloWrapper.mutation<CommentModel>(postCommentMutation, comment, "comment", CommentModel);

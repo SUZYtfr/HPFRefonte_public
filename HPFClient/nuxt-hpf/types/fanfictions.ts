@@ -17,7 +17,7 @@ export enum ValidationStatus {
 
 export class FanfictionData extends BasicClass<FanfictionData> {
   @Exclude()
-  public get fanfiction_id(): number {
+  public get fanfictionId(): number {
     return this.id;
   }
 
@@ -29,15 +29,15 @@ export class FanfictionData extends BasicClass<FanfictionData> {
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public last_update_date: Date = new Date();
+  public lastUpdateDate: Date = new Date();
 
-  public read_count: number | null = null;
-  public word_count: number | null = null;
-  public review_count: number | null = null;
-  public collection_count: number | null = null;
+  public readCount: number | null = null;
+  public wordCount: number | null = null;
+  public reviewCount: number | null = null;
+  public collectionCount: number | null = null;
   public status: FanfictionStatus = FanfictionStatus.OnGoing;
   public featured: boolean = false;
-  public validation_status: ValidationStatus = ValidationStatus.Unvalidated;
+  public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
 
   @Exclude()
   public get statusAsText(): string {
@@ -93,30 +93,30 @@ export enum ReviewItemTypeEnum {
 
 export class ReviewData extends BasicClass<ReviewData> {
   @Exclude()
-  public get review_id(): number {
+  public get reviewId(): number {
     return this.id;
   }
 
-  public item_id: number = 0;
-  public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
-  public user_id: number | null = null;
+  public itemId: number = 0;
+  public review_itemType_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
+  public userId: number | null = null;
   public group_id: number | null = null;
   public grading: number | null = null;
   public text: string = "";
-  public parent_id: number | null = null;
+  public parentId: number | null = null;
   public is_draft: boolean = false;
   public is_archived: boolean = false;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public post_date: Date | null = null;
+  public postDate: Date | null = null;
 }
 
 // Est-ce que finalement ça sert à quelque chose ?
 export interface IReviewFilters extends IBasicQuery {
   searchTerm: string | null;
-  include_item_types: ReviewItemTypeEnum[] | null;
-  item_id: number | null;
+  includeItemTypes: ReviewItemTypeEnum[] | null;
+  itemId: number | null;
 }
 // #endregion
 
@@ -129,13 +129,13 @@ enum SerieStatusEnum {
 
 export class SerieData extends BasicClass<SerieData> {
   @Exclude()
-  public get serie_id(): number {
+  public get serieId(): number {
     return this.id;
   }
 
   public title: string = "";
   public summary: string | null = null;
-  public parent_id: number | null = null;
+  public parentId: number | null = null;
   public status: SerieStatusEnum = SerieStatusEnum.Closed;
 }
 // #endregion
@@ -153,31 +153,31 @@ enum ChapterValidationStatusEnum {
 
 export class ChapterData extends BasicClass<ChapterData> {
   @Exclude()
-  public get chapter_id(): number {
+  public get chapterId(): number {
     return this.id;
   }
 
   public title: string = "";
   public fiction: number | null = null;
 
-  public creation_user: number | null = null;
+  public creationUser: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public creation_date: Date = new Date();
+  public creationDate: Date = new Date();
 
   public modification_user: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public modification_date: Date = new Date();
+  public modificationDate: Date = new Date();
 
   public startnote: string = "";
   public endnote: string = "";
   public order: number | null = null;
 
-  public validation_status: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;
-  public word_count: number | null = null;
-  public read_count: number | null = null;
-  public review_count: number | null = null;
+  public validationStatus: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;
+  public wordCount: number | null = null;
+  public readCount: number | null = null;
+  public reviewCount: number | null = null;
   public average: number | null = null;
 
   @Exclude()

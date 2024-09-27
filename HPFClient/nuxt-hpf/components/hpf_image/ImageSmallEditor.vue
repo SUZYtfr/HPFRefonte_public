@@ -25,7 +25,7 @@
           style="gap: 5px"
         >
           <b-input v-model="image.url" placeholder="Url" size="is-small" />
-          <b-checkbox v-model="image.is_adult_only" size="is-small">
+          <b-checkbox v-model="image.isAdultOnly" size="is-small">
             Contenu sensible
           </b-checkbox>
         </div>

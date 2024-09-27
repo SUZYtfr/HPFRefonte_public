@@ -40,17 +40,17 @@
                 class="column is-4 is-4-desktop is-4-widescreen is-3-fullhd"
               >
                 <TagPanel
-                  :characteristic_type_id="
+                  :characteristicTypeId="
                     charac instanceof CharacteristicModel
-                      ? charac.characteristic_type_id
-                      : charac.characteristic_type_id
+                      ? charac.characteristicTypeId
+                      : charac.characteristicTypeId
                   "
-                  :characteristic_id="
-                    charac instanceof CharacteristicModel ? charac.characteristic_id : null
+                  :characteristicId="
+                    charac instanceof CharacteristicModel ? charac.characteristicId : null
                   "
                   :characteristic_name="charac.name"
                   :characteristic_description="charac.description"
-                  :characteristic_count="charac.fiction_count"
+                  :characteristic_count="charac.fictionCount"
                   @click="AddBreadCrumbLevel"
                 />
               </div>
@@ -101,8 +101,8 @@ export default class extends Vue {
 
   // Filtres des charactéristiques
   public caracteristicFilters: ICharacteristicFilters = {
-    characteristic_type_id: null,
-    parent_id: null
+    characteristicTypeId: null,
+    parentId: null
   };
 
   // Filtres
@@ -125,7 +125,7 @@ export default class extends Vue {
     pageSize: 10,
     totalPages: false,
     sortBy: SortByEnum.Descending,
-    sortOn: "last_update_date"
+    sortOn: "lastUpdateDate"
   };
 
   public listLoading: boolean = false;
@@ -169,17 +169,17 @@ export default class extends Vue {
     if (this.breadcrumbStack.length > 0) {
       const current = this.breadcrumbStack[this.breadcrumbStack.length - 1];
       if (current instanceof CharacteristicModel) {
-        this.caracteristicFilters.characteristic_type_id =
-          current.characteristic_type_id;
-        this.caracteristicFilters.parent_id = current.characteristic_id;
+        this.caracteristicFilters.characteristicTypeId =
+          current.characteristicTypeId;
+        this.caracteristicFilters.parentId = current.characteristicId;
       } else if (current instanceof CharacteristicTypeModel) {
-        this.caracteristicFilters.characteristic_type_id = current.characteristic_type_id;
-        this.caracteristicFilters.parent_id = null;
+        this.caracteristicFilters.characteristicTypeId = current.characteristicTypeId;
+        this.caracteristicFilters.parentId = null;
       }
       await this.getCharacteristics();
       // Si pas de nouvelle caractéristique, on est en bas de la pile on déclenche recherche les fictions
       if ((this.currentCharacs?.length ?? 0) === 0)
-        this.fanfictionFilters.includedTags = [current.characteristic_id];
+        this.fanfictionFilters.includedTags = [current.characteristicId];
       console.log(this.fanfictionFilters);
     } else {
       await this.getCharacteristicsTypes();
@@ -245,13 +245,13 @@ export default class extends Vue {
     if (caracteristic_id !== null) {
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
-          (t: CharacteristicModel) => t.characteristic_id === caracteristic_id
+          (t: CharacteristicModel) => t.characteristicId === caracteristic_id
         )[0]
       );
     } else if (caracteristic_type_id !== null) {
       this.breadcrumbStack.push(
         this.currentCharacs.filter(
-          (t: CharacteristicTypeModel) => t.characteristic_type_id === caracteristic_type_id
+          (t: CharacteristicTypeModel) => t.characteristicTypeId === caracteristic_type_id
         )[0]
       );
     }

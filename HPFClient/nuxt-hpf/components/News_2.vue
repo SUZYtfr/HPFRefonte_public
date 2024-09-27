@@ -9,7 +9,7 @@
         <h3 class="h3 is-inline">
           <NuxtLink
             class="pl-0"
-            :to="{ name: 'actualites-id', params: { id: news.news_id } }"
+            :to="{ name: 'actualites-id', params: { id: news.newsId } }"
           >
             {{ news.title }}
           </NuxtLink>
@@ -21,9 +21,9 @@
           icon-pack="fas"
           icon-left="comment-alt"
           tag="nuxt-link"
-          :to="{ name: 'actualites-id', params: { id: news.news_id } }"
+          :to="{ name: 'actualites-id', params: { id: news.newsId } }"
         >
-          <span class="badge">{{ news.comment_count }}</span>
+          <span class="badge">{{ news.commentCount }}</span>
         </b-button>
         <hr>
       </div>
@@ -32,7 +32,7 @@
     <div class="columns mb-0">
       <div id="content-container" class="column is-full py-0">
         <span
-          :id="'news-' + news.news_id"
+          :id="'news-' + news.newsId"
           class="max-lines"
           v-html="news.content"
         />
@@ -43,7 +43,7 @@
       <div class="column pt-2 pb-1">
         <span>Le </span>
         <span class="has-text-weight-semibold">
-          {{ news.post_date != null ? (news.post_date.toLocaleDateString() + " à " + news.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}
+          {{ news.postDate != null ? (news.postDate.toLocaleDateString() + " à " + news.postDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}
         </span>
         <span> par </span>
         <span v-for="(author, index) in news.authors" :key="author.id" class="has-text-weight-semibold">
@@ -73,10 +73,10 @@ export default class News_2 extends Vue {
   public mounted(): void {
     // console.log("News type: " + (this.news instanceof NewsModel));
     // console.log("Date type: " + ((new Date()) instanceof Date));
-    // console.log("Creation date type: " + (this.news?.creation_date instanceof Date));
-    // console.log("Last update date type: " + (this.news?.post_date instanceof Date));
+    // console.log("Creation date type: " + (this.news?.creationDate instanceof Date));
+    // console.log("Last update date type: " + (this.news?.postDate instanceof Date));
     // console.log(this.news);
-    // console.log(this.news?.post_date?.toLocaleDateString());
+    // console.log(this.news?.postDate?.toLocaleDateString());
   }
 }
 </script>

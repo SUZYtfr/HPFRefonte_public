@@ -29,7 +29,7 @@
               <div class="media-left">
                 <figure class="image is-48x48">
                   <img
-                    :src="user.profile?.profile_picture ?? 'https://bulma.io/images/placeholders/96x96.png'"
+                    :src="user.profile?.profilePicture ?? 'https://bulma.io/images/placeholders/96x96.png'"
                     alt="Image de profil d'utilisateur"
                   >
                 </figure>
@@ -41,9 +41,9 @@
                 <p class="subtitle is-7">
                   {{ user.profile?.realname }}
                 </p>
-                <p v-if="user.first_seen" class="subtitle is-7">
+                <p v-if="user.firstSeen" class="subtitle is-7">
                   Inscrit le
-                  <strong>{{ user.first_seen.toLocaleDateString() }}</strong>
+                  <strong>{{ user.firstSeen.toLocaleDateString() }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -242,12 +242,12 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.fiction_count ?? 0) | numberToString }}
+                          {{ (user?.stats?.fictionCount ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
                             "Fanfiction" +
-                              ((user?.stats?.fiction_count ?? 0) > 1 ? "s" : "")
+                              ((user?.stats?.fictionCount ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -257,11 +257,11 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.chapter_count ?? 0) | numberToString }}
+                          {{ (user?.stats?.chapterCount ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
                           {{
-                            "Chapitre" + ((user?.stats?.chapter_count ?? 0) > 1 ? "s" : "")
+                            "Chapitre" + ((user?.stats?.chapterCount ?? 0) > 1 ? "s" : "")
                           }}
                         </p>
                       </div>
@@ -271,10 +271,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.word_count ?? 0) | numberToString }}
+                          {{ (user?.stats?.wordCount ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Mot" + ((user?.stats?.word_count ?? 0) > 1 ? "s" : "") }}
+                          {{ "Mot" + ((user?.stats?.wordCount ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -283,10 +283,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.collection_count ?? 0) | numberToString }}
+                          {{ (user?.stats?.collectionCount ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Série" + ((user?.stats?.collection_count ?? 0) > 1 ? "s" : "") }}
+                          {{ "Série" + ((user?.stats?.collectionCount ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -309,10 +309,10 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="is-size-6 has-text-weight-semibold">
-                          {{ (user?.stats?.review_count ?? 0) | numberToString }}
+                          {{ (user?.stats?.reviewCount ?? 0) | numberToString }}
                         </p>
                         <p class="heading">
-                          {{ "Review" + ((user?.stats?.review_count ?? 0) > 1 ? "s" : "") }}
+                          {{ "Review" + ((user?.stats?.reviewCount ?? 0) > 1 ? "s" : "") }}
                         </p>
                       </div>
                     </div>
@@ -368,7 +368,7 @@
                       :is-full-page="false"
                       :model="true"
                     /><b-tag v-else rounded>
-                      {{ user?.stats?.fiction_count }}
+                      {{ user?.stats?.fictionCount }}
                     </b-tag>
                   </span>
                 </template>
@@ -391,7 +391,7 @@
                       v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.collection_count }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.collectionCount }} </b-tag>
                   </span>
                 </template>
                 2
@@ -404,7 +404,7 @@
                       v-if="userLoading || user == undefined"
                       :is-full-page="false"
                       :model="true"
-                    /><b-tag v-else rounded> {{ user?.stats?.review_count }} </b-tag>
+                    /><b-tag v-else rounded> {{ user?.stats?.reviewCount }} </b-tag>
                   </span>
                 </template>
                 3
@@ -431,7 +431,7 @@
                       :is-full-page="false"
                       :model="true"
                     /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_fanfictions }}
+                      {{ user?.stats?.favoritesFanfictions }}
                     </b-tag>
                   </span>
                 </template>
@@ -446,7 +446,7 @@
                       :is-full-page="false"
                       :model="true"
                     /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_series }}
+                      {{ user?.stats?.favoritesSeries }}
                     </b-tag>
                   </span>
                 </template>
@@ -461,7 +461,7 @@
                       :is-full-page="false"
                       :model="true"
                     /><b-tag v-else rounded>
-                      {{ user?.stats?.favorites_author }}
+                      {{ user?.stats?.favoritesAuthor }}
                     </b-tag>
                   </span>
                 </template>
@@ -534,7 +534,7 @@ export default class extends Vue {
     page: 1,
     pageSize: 10,
     totalPages: true,
-    sortOn: "last_update_date",
+    sortOn: "lastUpdateDate",
     sortBy: SortByEnum.Descending
   };
 

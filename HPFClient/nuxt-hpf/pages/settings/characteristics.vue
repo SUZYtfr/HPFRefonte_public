@@ -106,7 +106,7 @@
             </b-table-column>
 
             <!-- Nombre de référence -->
-            <b-table-column field="fiction_count" label="Références" centered>
+            <b-table-column field="fictionCount" label="Références" centered>
               {{ "" }}
             </b-table-column>
 
@@ -121,9 +121,9 @@
                 v-for="(item, index) in props.row.characteristics"
                 :key="item.id"
                 :ref="'child_row_' + item.id.toString()"
-                :class="[((index % 2 == 0) ? getCaracteristicTypeColorLight(item.characteristic_type_id) : getCaracteristicTypeColorLighter(item.characteristic_type_id)),
-                         { 'highlighted': (item.characteristic_type_id === (droppedOnRow?.object?.characteristic_type_id ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === false) },
-                         { 'highlighted-child': (item.characteristic_type_id === (droppedOnRow?.object?.characteristic_type_id ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === true) }]"
+                :class="[((index % 2 == 0) ? getCaracteristicTypeColorLight(item.characteristicTypeId) : getCaracteristicTypeColorLighter(item.characteristicTypeId)),
+                         { 'highlighted': (item.characteristicTypeId === (droppedOnRow?.object?.characteristicTypeId ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === false) },
+                         { 'highlighted-child': (item.characteristicTypeId === (droppedOnRow?.object?.characteristicTypeId ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === true) }]"
                 :selected="selectedItem"
                 draggable="true"
                 @click="onChildRowClicked(item, $event)"
@@ -134,12 +134,12 @@
                 <!-- { 'highlighted': item.order === (droppedOnRow?.object?.order ?? -1) } -->
                 <td />
                 <!-- └ ├ -->
-                <!-- <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ (item.parent_id === null ? item.name : (item.name) ) }}</td> -->
+                <!-- <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ (item.parentId === null ? item.name : (item.name) ) }}</td> -->
                 <td>
-                  <span v-if="item.parent_id == null">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span v-if="item.parentId == null">&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   <span v-for="(number, index) in item.depth" :key="index">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                  <font-awesome-icon v-if="item.parent_id != null" icon="level-up-alt" rotation="90" class="" />
-                  <span :class="[{'ml-2': (item.parent_id !== null)}]">{{ item.name }}</span>
+                  <font-awesome-icon v-if="item.parentId != null" icon="level-up-alt" rotation="90" class="" />
+                  <span :class="[{'ml-2': (item.parentId !== null)}]">{{ item.name }}</span>
                 </td>
                 <td class="has-text-centered" data-label="Activé">
                   <b-checkbox
@@ -156,7 +156,7 @@
                   />
                 </td>
                 <td class="has-text-centered">
-                  {{ item.fiction_count }}
+                  {{ item.fictionCount }}
                 </td>
                 <td class="has-text-centered">
                   {{ (item.order + 1).toString() }}
@@ -228,7 +228,7 @@
                 custom-class="has-text-primary"
               >
                 <b-numberinput
-                  v-model="selectedItem.min_occurence"
+                  v-model="selectedItem.minLimit"
                   placeholder="Occurences min"
                   :min="0"
                   size="is-small"
@@ -245,12 +245,12 @@
                   custom-class="has-text-primary"
                 >
                   <b-numberinput
-                    v-model="selectedItem.max_occurence"
+                    v-model="selectedItem.maxLimit"
                     placeholder="Occurences max"
                     :min="0"
                     size="is-small"
                     type="is-primary"
-                    :disabled="selectedItem.max_occurence === null"
+                    :disabled="selectedItem.maxLimit === null"
                   />
                 </b-field>
               </div>
@@ -340,7 +340,7 @@ export default class extends Vue {
     return true;
     // return (((this.selectedUser.username?.length ?? 0) > 0) &&
     //   ((this.selectedUser.email?.length ?? 0) > 0) &&
-    //   ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.ban_reason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
+    //   ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.banReason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
   }
 
   get form(): VForm {
@@ -357,8 +357,8 @@ export default class extends Vue {
   @Watch("maxOccurenceEnable")
   public onMaxOccurenceEnabledChanged(): void {
     if (this.selectedItem == null || (this.selectedItem instanceof CharacteristicTypeModel) === false) return;
-    if (this.maxOccurenceEnable) (this.selectedItem as CharacteristicTypeModel).max_occurence = 0;
-    else (this.selectedItem as CharacteristicTypeModel).max_occurence = null;
+    if (this.maxOccurenceEnable) (this.selectedItem as CharacteristicTypeModel).maxLimit = 0;
+    else (this.selectedItem as CharacteristicTypeModel).maxLimit = null;
   }
 
   @Watch("caracFilter")
@@ -383,24 +383,24 @@ export default class extends Vue {
   // #endregion
 
   // #region Methods
-  public getCaracteristicTypeColor(characteristic_type_id: number): string {
-    return getCaracteristicTypeColor(characteristic_type_id);
+  public getCaracteristicTypeColor(characteristicTypeId: number): string {
+    return getCaracteristicTypeColor(characteristicTypeId);
   }
 
-  public getCaracteristicTypeColorLight(characteristic_type_id: number): string {
-    return getCaracteristicTypeColorLight(characteristic_type_id);
+  public getCaracteristicTypeColorLight(characteristicTypeId: number): string {
+    return getCaracteristicTypeColorLight(characteristicTypeId);
   }
 
-  public getCaracteristicTypeColorLighter(characteristic_type_id: number): string {
-    return getCaracteristicTypeColorLighter(characteristic_type_id);
+  public getCaracteristicTypeColorLighter(characteristicTypeId: number): string {
+    return getCaracteristicTypeColorLighter(characteristicTypeId);
   }
-
+// 
   private async getCharacteristics(): Promise<void> {
-    this.characteristics = (await getCharacteristics(null));
-    this.characteristics_types = (await getCharacteristicsTypes());
+    this.characteristics = (await getCharacteristics(null)).results;
+    this.characteristics_types = (await getCharacteristicsTypes()).results;
     this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
       parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {
-        return item.characteristic_type_id === parent.id;
+        return item.characteristicTypeId === parent.id;
       });
     });
   }
@@ -435,13 +435,13 @@ export default class extends Vue {
     try {
       this.loading = true;
       if (this.selectedItem instanceof CharacteristicModel) {
-        if (this.selectedItem.characteristic_id > 0) {
+        if (this.selectedItem.characteristicId > 0) {
           updateCharacteristic(this.selectedItem);
         } else {
           createCharacteristic(this.selectedItem);
         }
       } else if (this.selectedItem instanceof CharacteristicTypeModel) {
-        if (this.selectedItem.characteristic_type_id > 0) {
+        if (this.selectedItem.characteristicTypeId > 0) {
           updateCharacteristicsType(this.selectedItem as CharacteristicTypeModel);
         }
       } else {
@@ -512,16 +512,16 @@ export default class extends Vue {
     });
 
     // On récupère les caractétistiques types qui correspondent
-    const caracTypeIds = filteredCharacteristics.map(({ characteristic_type_id }) => characteristic_type_id);
+    const caracTypeIds = filteredCharacteristics.map(({ characteristicTypeId }) => characteristicTypeId);
     const filteredCharacteristicsTypes = this.characteristics_types.filter((item: CharacteristicTypeModel) => {
       return caracTypeIds.includes(item.id);
     });
 
     // On récupère l'arborescence complète
     filteredCharacteristics.forEach((item: CharacteristicModel) => {
-      if (item.parent_id != null && filteredCharacteristics.find((parent: CharacteristicModel) => parent.id === item.parent_id) == null) {
+      if (item.parentId != null && filteredCharacteristics.find((parent: CharacteristicModel) => parent.id === item.parentId) == null) {
         const missingParent = this.characteristics.filter((parent: CharacteristicModel) => {
-          return parent.id === item.parent_id;
+          return parent.id === item.parentId;
         });
         filteredCharacteristics.push(...missingParent);
       }
@@ -538,7 +538,7 @@ export default class extends Vue {
       parent.characteristics = [];
       // On met uniquement celles filtrées
       parent.characteristics = filteredCharacteristics.filter((item: CharacteristicModel) => {
-        return item.characteristic_type_id === parent.id;
+        return item.characteristicTypeId === parent.id;
       });
       // On tri sur l'ordre
       parent.characteristics = this.sortItems(parent.characteristics);
@@ -575,8 +575,8 @@ export default class extends Vue {
 
     // Créer la nouvelle entrée
     const newItem = new CharacteristicModel({
-      characteristic_type_id: caracteristicType.id,
-      parent_id: null,
+      characteristicTypeId: caracteristicType.id,
+      parentId: null,
       name: "Nouvelle entrée",
       description: null,
       visible: false,
@@ -594,7 +594,7 @@ export default class extends Vue {
 
     // Expand la caractéristique type parent
     const caracType = this.filteredCharacteristicType.filter((item: CharacteristicTypeModel) => {
-      return item.id === newItem.characteristic_type_id;
+      return item.id === newItem.characteristicTypeId;
     });
     (this.$refs.carac_table as any).openDetailRow(caracType[0]);
 
@@ -647,7 +647,7 @@ export default class extends Vue {
     if ((this.droppedOnRow?.index ?? -1) === index && (this.droppedOnRow?.dropAsChild ?? false) === e.shiftKey) return;
 
     // On ne peut pas bouger une carac en dehors de son parent ni bouger un parent dans un enfant
-    if (row.characteristic_type_id !== this.draggedRow.object.characteristic_type_id ||
+    if (row.characteristicTypeId !== this.draggedRow.object.characteristicTypeId ||
       this.draggedRow.childs.includes(row.id)
     ) {
       this.droppedOnRow = null;
@@ -679,8 +679,8 @@ export default class extends Vue {
     if (this.droppedOnRow.dropAsChild) {
       parentObject = this.droppedOnRow.object;
       newPos = 0;
-    } else if (this.droppedOnRow.object.parent_id != null) {
-      parentObject = this.characteristics.filter(item => item.id === this.droppedOnRow.object.parent_id)[0];
+    } else if (this.droppedOnRow.object.parentId != null) {
+      parentObject = this.characteristics.filter(item => item.id === this.droppedOnRow.object.parentId)[0];
     }
 
     let message = "Confirmer le déplacement de \"" + this.draggedRow.object.name + "\" (position " + (this.draggedRow.object.order + 1).toString() + ") vers la position " + (newPos + 1).toString();
@@ -709,14 +709,14 @@ export default class extends Vue {
     confirmSnackbar.onAction = () => {
       // Récupérer le parent
       const parent = this.filteredCharacteristicType.filter((parent: CharacteristicTypeModel) => {
-        return parent.characteristic_type_id === this.draggedRow.object.characteristic_type_id;
+        return parent.characteristicTypeId === this.draggedRow.object.characteristicTypeId;
       });
 
       // Récupére l'élément qu'on drag
       const draggedItem = parent[0].characteristics.splice(this.draggedRow.index, 1)[0];
 
       // Gestion du drop en tant que child
-      draggedItem.parent_id = (parentObject != null ? parentObject.id : null);
+      draggedItem.parentId = (parentObject != null ? parentObject.id : null);
 
       // Calculer sa nouvelle profondeur
       draggedItem.depth = this.getDepth(draggedItem, parent[0].characteristics);
@@ -725,7 +725,7 @@ export default class extends Vue {
       parent[0].characteristics.splice((this.droppedOnRow.dropAsChild ? this.droppedOnRow.index + 1 : this.droppedOnRow.index), 0, draggedItem);
 
       // Mettre à jour l'ordre dans le tableau
-      this.reOrder(parent[0].characteristics, parent[0].characteristics.filter(t => t.parent_id == null));
+      this.reOrder(parent[0].characteristics, parent[0].characteristics.filter(t => t.parentId == null));
 
       // S'il faut  déplacer les enfants, on regénère la totalité du tree
       if (this.draggedRow.childs.length > 0) this.prepareFilteredCarac();
@@ -738,7 +738,7 @@ export default class extends Vue {
 
   // public test():void {
   //   const t = this.characteristics.filter((item: CharacteristicModel) => {
-  //     return item.parent_id !== null;
+  //     return item.parentId !== null;
   //   });
   //   console.log(t);
   // }
@@ -747,7 +747,7 @@ export default class extends Vue {
   private sortItems(items: CharacteristicModel[]) : CharacteristicModel[] {
     // Trier les items racines
     const rootItems = items
-      .filter(item => item.parent_id === null)
+      .filter(item => item.parentId === null)
       .sort((a, b) => a.order - b.order);
 
     const sortedList = [];
@@ -764,7 +764,7 @@ export default class extends Vue {
   private getChildren(items: CharacteristicModel[], parentId: number | null): CharacteristicModel[] {
     if (parentId == null) return [];
     return items
-      .filter(item => item.parent_id === parentId)
+      .filter(item => item.parentId === parentId)
       .sort((a, b) => a.order - b.order);
   }
 
@@ -782,7 +782,7 @@ export default class extends Vue {
     let result: CharacteristicModel[] = [];
     if (parentId == null) return result;
 
-    const children = items.filter(item => item.parent_id === parentId);
+    const children = items.filter(item => item.parentId === parentId);
     result = children;
     for (const child of children) {
       result.push(...this.getAllChildren(this.characteristics, child.id));
@@ -795,7 +795,7 @@ export default class extends Vue {
     if (items == null || items.length === 0) return;
     items.forEach((child: CharacteristicModel, index: number) => {
       child.order = index;
-      this.reOrder(refArray, refArray.filter(t => t.parent_id === child.id));
+      this.reOrder(refArray, refArray.filter(t => t.parentId === child.id));
     });
   }
 
@@ -803,9 +803,9 @@ export default class extends Vue {
   private getDepth(item: CharacteristicModel, items: CharacteristicModel[]): number {
     let depth: number = 0;
     let currentItem: CharacteristicModel | null | undefined = item;
-    while (currentItem != null && currentItem.parent_id !== null) {
+    while (currentItem != null && currentItem.parentId !== null) {
       depth++;
-      currentItem = items.find(item => item.id === currentItem?.parent_id);
+      currentItem = items.find(item => item.id === currentItem?.parentId);
     }
     return depth;
   }

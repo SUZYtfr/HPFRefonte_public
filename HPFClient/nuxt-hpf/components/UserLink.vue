@@ -1,6 +1,6 @@
 <template>
   <!-- <b-tooltip
-    :label="link.link_url"
+    :label="link.linkUrl"
     position="is-bottom"
     :delay="250"
     append-to-body
@@ -16,13 +16,13 @@
         <img
           :class="[{ 'img-hover': hover }, 'is-rounded']"
           :src="linkIdImg"
-          :alt="link.display_name"
+          :alt="link.displayName"
         >
       </figure>
     </div>
     <div v-if="hover" class="">
       <p :class="[{ 'link-hover': hover }, { 'animate__fadeInLeft': hover}, 'animate__animated']">
-        {{ link.display_name }}
+        {{ link.displayName }}
       </p>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default class extends Vue {
   get linkIdImg(): string {
     const imgDir = require.context("@/assets/img/");
     let s = "placeholders/32x32.png";
-    switch (this.link?.link_type_id) {
+    switch (this.link?.linkTypeId) {
       case 1:
         s = "logo_forum_centre.png";
         break;

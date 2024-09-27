@@ -1,0 +1,12 @@
+{
+    paginatedCharacteristicTypes {
+        current
+        count
+        results {
+            id
+            name
+            minLimit
+            maxLimit
+        }
+    }
+}

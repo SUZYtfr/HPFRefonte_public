@@ -58,7 +58,7 @@ export default class extends Vue {
     page: 1,
     pageSize: 20,
     totalPages: false,
-    sortOn: "last_update_date",
+    sortOn: "lastUpdateDate",
     sortBy: SortByEnum.Descending,
     searchTerm: null,
     searchAuthor: null,
@@ -80,7 +80,7 @@ export default class extends Vue {
     page: 1,
     pageSize: 20,
     totalPages: false,
-    sortOn: "last_update_date",
+    sortOn: "lastUpdateDate",
     sortBy: SortByEnum.Descending,
     searchTerm: null,
     searchAuthor: null,
@@ -102,7 +102,7 @@ export default class extends Vue {
     page: 1,
     pageSize: 20,
     totalPages: true,
-    sortOn: "post_date",
+    sortOn: "postDate",
     sortBy: SortByEnum.Descending
   };
   // #endregion

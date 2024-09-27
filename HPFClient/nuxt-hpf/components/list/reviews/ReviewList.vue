@@ -55,7 +55,7 @@
           <div v-else>
             <Review
               v-for="(review, innerindex) of reviews"
-              :key="'rv_' + review.review_id.toString()"
+              :key="'rv_' + review.reviewId.toString()"
               class="my-2"
               :review="review"
               :index="innerindex"
@@ -101,7 +101,7 @@ import { SortByEnum } from "~/types/basics";
 export default class ReviewList extends Vue {
   // #region Props
   @Prop({ default: null })
-  declare public item_id?: number;
+  declare public itemId?: number;
 
   @Prop({ default: 0 })
   declare public totalReviews?: number;
@@ -126,7 +126,7 @@ export default class ReviewList extends Vue {
     pageSize: 10,
     totalPages: false,
     sortBy: SortByEnum.Descending,
-    sortOn: "post_date"
+    sortOn: "postDate"
   };
 
   public tiptapConfig: TipTapEditorConfig = {
@@ -198,19 +198,19 @@ export default class ReviewList extends Vue {
 
   // #region Methods
   private async getReviews(): Promise<void> {
-    if (this.item_id == null) return;
+    if (this.itemId == null) return;
     try {
-      // if (this.reviewFilters == null || this.reviewFilters.item_id <= 0) return;
+      // if (this.reviewFilters == null || this.reviewFilters.itemId <= 0) return;
       let response;
       switch (this.reviewListType) {
         case ReviewItemTypeEnum.Chapter:
-          response = (await searchChapterReviews(this.item_id, this.reviewFilters));
+          response = (await searchChapterReviews(this.itemId, this.reviewFilters));
           break;
         case ReviewItemTypeEnum.Fanfiction:
-          response = (await searchFictionReviews(this.item_id, this.reviewFilters));
+          response = (await searchFictionReviews(this.itemId, this.reviewFilters));
           break;
         case ReviewItemTypeEnum.Serie:
-          response = (await searchCollectionReviews(this.item_id, this.reviewFilters));
+          response = (await searchCollectionReviews(this.itemId, this.reviewFilters));
           break;
       }
       this.reviews = response.results;
@@ -235,7 +235,7 @@ export default class ReviewList extends Vue {
   }
 
   public async PostReview(): Promise<void> {
-    if (this.item_id == null) return;
+    if (this.itemId == null) return;
     if (this.reviewListType == null) return;
     if ((this.editorContent?.wordcount ?? 0) < 3) return;
     if (this.editorContent?.content == null) return;
@@ -243,18 +243,18 @@ export default class ReviewList extends Vue {
       let review: ReviewModel = new ReviewModel();
       review.text = this.editorContent?.content;
       review.grading = this.reviewRating;
-      review.review_item_type_id = this.reviewListType;
-      review.item_id = this.item_id;
+      review.review_itemType_id = this.reviewListType;
+      review.itemId = this.itemId;
       review.is_draft = false;
       switch (this.reviewListType) {
         case ReviewItemTypeEnum.Chapter:
-          review = (await postChapterReview(this.item_id, review)).items;
+          review = (await postChapterReview(this.itemId, review)).items;
           break;
         case ReviewItemTypeEnum.Fanfiction:
-          review = (await postFictionReview(this.item_id, review)).items;
+          review = (await postFictionReview(this.itemId, review)).items;
           break;
         case ReviewItemTypeEnum.Serie:
-          review = (await postCollectionReview(this.item_id, review)).items;
+          review = (await postCollectionReview(this.itemId, review)).items;
           break;
       }
       if (review != null) this.reviews?.push(review);

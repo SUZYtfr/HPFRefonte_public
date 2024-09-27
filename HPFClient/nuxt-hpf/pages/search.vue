@@ -88,7 +88,7 @@ export default class extends Vue {
     pageSize: 10,
     totalPages: true,
     sortBy: SortByEnum.Descending,
-    sortOn: "last_update_date"
+    sortOn: "lastUpdateDate"
   };
 
   public listLoading: boolean = false;

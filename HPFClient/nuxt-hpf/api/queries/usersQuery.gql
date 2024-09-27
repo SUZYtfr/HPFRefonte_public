@@ -1,0 +1,23 @@
+{
+    user {
+        id
+        username
+        status
+        firstSeen
+        stats {
+            fictionCount
+            chapterCount
+            wordCount
+            collectionCount
+            challenges
+            reviewCount
+            favoritesFanfictions
+            favoritesSeries
+            favoritesAuthor
+        }
+        profile {
+            realname
+            bio
+        }
+    }
+}

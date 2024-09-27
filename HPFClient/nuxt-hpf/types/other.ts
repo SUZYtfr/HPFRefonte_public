@@ -1,6 +1,6 @@
 export interface ContactFormData {
   email: string,
-  subject_id: string,
+  subjectId: string,
   content: string,
 }
 

@@ -62,7 +62,7 @@
         <div>
           <News_2
             v-for="(item, innerindex) of news"
-            :key="'news_' + item.news_id.toString()"
+            :key="'news_' + item.newsId.toString()"
             class="mb-2"
             :news="item"
             :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
@@ -196,11 +196,11 @@ export default class NewsList extends Vue {
     switch (value) {
       case "most_recent":
         this.newsFilters.sortBy = SortByEnum.Descending;
-        this.newsFilters.sortOn = "last_update_date";
+        this.newsFilters.sortOn = "lastUpdateDate";
         break;
       case "less_recent":
         this.newsFilters.sortBy = SortByEnum.Ascending;
-        this.newsFilters.sortOn = "last_update_date";
+        this.newsFilters.sortOn = "lastUpdateDate";
         break;
     }
   }

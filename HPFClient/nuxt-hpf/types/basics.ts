@@ -21,17 +21,17 @@ export interface BasicResponse {
 
 export class BasicClass<T> {
   public id: number = 0;
-  public creation_user_id: number | null = null;
+  public creationUserId: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public creation_date: Date | null = null;
+  public creationDate: Date | null = null;
 
-  public modification_user_id: number | null = null;
+  public modificationUserId: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public modification_date: Date | null = null;
+  public modificationDate: Date | null = null;
 
   constructor()
 

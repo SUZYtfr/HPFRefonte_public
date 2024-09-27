@@ -1,0 +1,7 @@
+mutation postComment($newsId: Int, $content: String) {
+    postComment(newsId: $newsId, content: $content) {
+        comment {
+            id
+        }
+    }
+}

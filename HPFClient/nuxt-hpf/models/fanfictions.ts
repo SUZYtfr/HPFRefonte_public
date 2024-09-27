@@ -37,14 +37,14 @@ export class FanfictionModel extends FanfictionData {
   @Type(() => SerieModel)
   public series: SerieModel[] | null = null;
 
-  public chapter_count: number | null = null;
-  public word_count: number | null = null;
-  public first_chapter: { id: number, title: string, order: number } | null = null;
+  public chapterCount: number | null = null;
+  public wordCount: number | null = null;
+  public firstChapter: { id: number, title: string, order: number } | null = null;
 }
 
 export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
   @Exclude()
-  public get fanfiction_id(): number {
+  public get fanfictionId(): number {
     return this.id;
   }
 
@@ -52,13 +52,13 @@ export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfiction_id.toString();
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfictionId.toString();
   }
 }
 
 export class TableOfContent extends BasicClass<TableOfContent> {
   @Exclude()
-  public get fanfiction_id(): number {
+  public get fanfictionId(): number {
     return this.id;
   }
 
@@ -70,7 +70,7 @@ export class TableOfContent extends BasicClass<TableOfContent> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfiction_id.toString();
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfictionId.toString();
   }
 }
 
@@ -94,16 +94,16 @@ export class ChapterModel extends ChapterData {
   public text: string | null = null;
 
   @Type(() => ImageHPFData)
-  public text_images: ImageHPFData[] | null = null;
+  public textImages: ImageHPFData[] | null = null;
 
-  public trigger_warnings: number[] = [];
-
-  @Exclude()
-  public _trigger_warnings_loaded: { id: number, caption: string }[] | null = null;
+  public triggerWarnings: number[] = [];
 
   @Exclude()
-  public get trigger_warnings_loaded(): { id: number, caption: string }[] | null {
-    if (this._trigger_warnings_loaded == null && process.client === true) {
+  public _triggerWarningsLoaded: { id: number, caption: string }[] | null = null;
+
+  @Exclude()
+  public get triggerWarnings_loaded(): { id: number, caption: string }[] | null {
+    if (this._triggerWarningsLoaded == null && process.client === true) {
       const ConfigModule = getModule(Config, window.$nuxt.$store);
       if (
         ConfigModule.characteristicTypes.length === 0 ||
@@ -111,9 +111,9 @@ export class ChapterModel extends ChapterData {
       ) {
         LoadConfigAsync(ConfigModule);
       }
-      return ConfigModule.characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
+      return ConfigModule.characteristics.filter(t => t.characteristicTypeId === 4 && this.triggerWarnings.includes(t.characteristicId)).map((x: CharacteristicData) => ({ id: x.characteristicId, caption: x.name }));
     }
-    return this._trigger_warnings_loaded;
+    return this._triggerWarningsLoaded;
   }
 }
 
@@ -123,20 +123,20 @@ async function LoadConfigAsync(ConfigModule: Config): Promise<void> {
 
 export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   @Exclude()
-  public get chapter_id(): number {
+  public get chapterId(): number {
     return this.id;
   }
 
   public title: string | null = null;
   public order: number = 0;
-  public trigger_warnings: number[] = [];
+  public triggerWarnings: number[] = [];
 
   @Exclude()
-  public _trigger_warnings_loaded: { id: number, caption: string }[] | null = null;
+  public _triggerWarningsLoaded: { id: number, caption: string }[] | null = null;
 
   @Exclude()
-  public get trigger_warnings_loaded(): { id: number, caption: string }[] {
-    if (this._trigger_warnings_loaded == null && process.client === true) {
+  public get triggerWarnings_loaded(): { id: number, caption: string }[] {
+    if (this._triggerWarningsLoaded == null && process.client === true) {
       const ConfigModule = getModule(Config, window.$nuxt.$store);
       if (
         ConfigModule.characteristicTypes.length === 0 ||
@@ -144,14 +144,14 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
       ) {
         LoadConfigAsync(ConfigModule);
       }
-      return ConfigModule.characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
+      return ConfigModule.characteristics.filter(t => t.characteristicTypeId === 4 && this.triggerWarnings.includes(t.characteristicId)).map((x: CharacteristicData) => ({ id: x.characteristicId, caption: x.name }));
     }
-    return this._trigger_warnings_loaded != null ? this._trigger_warnings_loaded : [];
+    return this._triggerWarningsLoaded != null ? this._triggerWarningsLoaded : [];
   }
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.chapter_id.toString();
+    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.chapterId.toString();
   }
 }
 // #endregion
