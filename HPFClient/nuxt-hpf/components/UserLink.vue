@@ -88,12 +88,12 @@ export default class extends Vue {
 
 img {
   background-color: #f0f0f0;
-  /*border: 1px solid $primary;*/
+  /*border: 1px solid var(--primary);*/
   /*border: 1px solid #707070;*/
 }
 
 .img-hover {
-  border: 2px solid $primary;
+  border: 2px solid var(--primary);
   /*border: 2px solid #707070;*/
 }
 
@@ -109,7 +109,7 @@ figure {
 
 p {
   margin-left: 0.5rem;
-  color: $primary;
+  color: var(--primary);
 }
 
 #user-link-image {

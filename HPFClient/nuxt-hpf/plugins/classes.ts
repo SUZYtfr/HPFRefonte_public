@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { RecordStatusEnum } from "@/types/basics";
 import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
 import { UserData, UserLinkData, AuthorData, UserStatus } from "@/types/users";
 import { NewsData, CommentData } from "@/types/news";
@@ -37,5 +38,6 @@ Vue.prototype.ChapterModelLight = ChapterModelLight;
 Vue.prototype.TableOfContent = TableOfContent;
 
 // Enum
+Vue.prototype.RecordStatusEnum = RecordStatusEnum;
 Vue.prototype.FanfictionListType = FanfictionListType;
 Vue.prototype.UserStatus = UserStatus;

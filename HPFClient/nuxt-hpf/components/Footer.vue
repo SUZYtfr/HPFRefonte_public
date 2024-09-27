@@ -51,12 +51,12 @@ export default class extends Vue {}
 
 <style scoped>
 a {
-  color: #ffffff !important;
+  color: var(--scheme-main) !important;
   padding: 10px;
 }
 a:hover {
-  color: #ffffff;
-  background-color: #f07800;
+  color: var(--scheme-main);
+  background-color: var(--buttons_menus_links_background);
 }
 
 #footer-background-image-wrapper {

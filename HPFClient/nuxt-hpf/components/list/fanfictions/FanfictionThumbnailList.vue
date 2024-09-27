@@ -24,7 +24,7 @@
           <div
 
             v-for="(fanfiction, innerindex) of fanfictions"
-            :key="'ff_recent_' + fanfiction.fanfiction_id.toString()"
+            :key="'ff_' + (listType == FanfictionListType.Recent ? 'recent' : 'selection' )+'_' + fanfiction.fanfiction_id.toString()"
             class="column is-half py-2"
           >
             <FanfictionThumbnail

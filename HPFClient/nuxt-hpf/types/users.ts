@@ -137,4 +137,9 @@ export class AuthorData extends BasicClass<AuthorData> {
 
   public username: string | null = null;
   public avatar: string | null = null;
+
+  constructor(init?: Partial<AuthorData>) {
+    super();
+    Object.assign(this, init);
+  }
 }

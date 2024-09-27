@@ -41,7 +41,7 @@ export default class extends Vue {}
 @import "~/assets/scss/custom_bulma_core.scss";
 
 #container {
-  background-color: $primary-light;
+  background-color: var(--primary-light);
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -69,7 +69,7 @@ body {
 }
 
 .hero-body {
-  background-image: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
+  background-image: var(--hpf-banner);
 }
 #banner h1 {
   font-size: 50px;

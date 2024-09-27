@@ -1574,13 +1574,13 @@ export default class extends Vue {
   height: 100%;
 }
 .editor-borders{
-    border: 3px solid $primary !important;
+    border: 3px solid var(--primary) !important;
     border-radius: 0.75rem !important;
   // border: 1px solid #CCCCCC !important;
   // border-radius: 0rem !important;
   }
 #editor {
-  background-color: #fff;
+  background-color: var(--scheme-main);
   height: 100%;
   width: 100%;
   min-width: 180px;
@@ -1602,7 +1602,7 @@ export default class extends Vue {
     padding-left: 41px !important;
   }
   #editor-header {
-    border-bottom: 3px solid $primary !important;
+    border-bottom: 3px solid var(--primary) !important;
     //border-bottom: 1px solid #DBDBDB !important;
     background-color: #f5f5f5;
     padding: 4px 6px;
@@ -1611,7 +1611,7 @@ export default class extends Vue {
     gap: 5px;
     .vertical-line {
       border-radius: 0.75rem !important;
-      border-left: 2px solid $primary-light;
+      border-left: 2px solid var(--primary-light);
       height: 100%;
     }
   }
@@ -1619,7 +1619,7 @@ export default class extends Vue {
     max-height: 100%;
     #editor-bubble-menu {
       background: #f5f5f5;
-      border: 2px solid $primary !important;
+      border: 2px solid var(--primary) !important;
       border-radius: 0.57rem !important;
       padding: 3px;
     }
@@ -1723,13 +1723,13 @@ export default class extends Vue {
         }
     #editor-content-footer-pane {
       //border-top: 1px solid #dbdbdb !important;
-      border-top: 2px solid $primary-light !important;
+      border-top: 2px solid var(--primary-light) !important;
       border-bottom-left-radius: 0.57rem !important;
       border-bottom-right-radius: 0.57rem !important;
       background: #f5f5f5;
     }
     #editor-content-right-pane {
-      border-left: 3px solid $primary !important;
+      border-left: 3px solid var(--primary) !important;
       background-color: #ffffff;
       border-bottom-right-radius: 0.75rem;
       #editor-content-right-pane-content {
@@ -1738,7 +1738,7 @@ export default class extends Vue {
         height: 0px;
       }
       #editor-content-right-pane-footer {
-        border-top: 3px dashed $primary !important;
+        border-top: 3px dashed var(--primary) !important;
         height: 50px;
       }
     }
@@ -1752,7 +1752,7 @@ export default class extends Vue {
 }
 .editor-modal-card {
   display: inline-block;
-  border: 3px solid $primary !important;
+  border: 3px solid var(--primary) !important;
   border-radius: 0.75rem !important;
   width: 90%;
   max-width: 350px;

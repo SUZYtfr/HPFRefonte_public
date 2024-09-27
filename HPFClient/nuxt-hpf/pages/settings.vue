@@ -87,7 +87,7 @@ export default class extends Vue {
     { label: "Gestion des images", icon: "images", tag: "nuxt-link", to: "/settings/", keywords: "gestion images", isactive: false },
     { label: "Administration des pages", icon: "columns", tag: "nuxt-link", to: "/settings/", keywords: "page personalisees", isactive: false },
     { label: "Statistiques", icon: "chart-pie", tag: "nuxt-link", to: "/settings/", keywords: "stats statistiques graph", isactive: false },
-    { label: "Thèmes et charte graphique", icon: "paint-brush", tag: "nuxt-link", to: "/settings/", keywords: "design charte graphique themes", isactive: false },
+    { label: "Thèmes et charte graphique", icon: "paint-brush", tag: "nuxt-link", to: "/settings/themes", keywords: "design charte graphique themes", isactive: false },
     { label: "Signalements", icon: "exclamation-triangle", tag: "nuxt-link", to: "/settings/", keywords: "moderation signalements", isactive: false },
     { label: "Administration", icon: "tools", keywords: "admin", isactive: false, subitems: [{ label: "", icon: "", tag: null, to: null, keywords: "" }, { label: "", icon: "", tag: null, to: null, keywords: "" }] }
   ];

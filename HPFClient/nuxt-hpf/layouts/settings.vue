@@ -29,7 +29,7 @@ export default class extends Vue {}
   @import "~/assets/scss/custom_bulma_core.scss";
 
   #container {
-    background-color: $primary-light;
+    background-color: var(--primary-light);
     display: flex;
     min-height: 100vh;
     flex-direction: column;

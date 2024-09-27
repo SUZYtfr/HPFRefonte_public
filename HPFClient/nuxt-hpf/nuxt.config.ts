@@ -105,7 +105,8 @@ const config: NuxtConfig = {
     "~/plugins/truncate",
     "~/plugins/axios",
     "~/plugins/fontawesome",
-    "~/plugins/classes"
+    "~/plugins/classes",
+    "~/plugins/theme"
   ],
   axios: {
     baseURL: process.env.SERVER_BASE_API, // Used as fallback if no runtime config is provided,

@@ -114,7 +114,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import "~/assets/scss/custom.scss";
 .container-div {
-  border: 1px solid $primary;
+  border: 1px solid var(--primary);
   border-radius: 5px;
   max-height: 200px;
 }
@@ -125,7 +125,7 @@ export default class extends Vue {
 }
 
 .header-expanded {
-  border-bottom: 1px solid $primary;
+  border-bottom: 1px solid var(--primary);
   border-top-left-radius: 0.27rem;
   border-top-right-radius: 0.27rem;
   border-bottom-right-radius: 0px;

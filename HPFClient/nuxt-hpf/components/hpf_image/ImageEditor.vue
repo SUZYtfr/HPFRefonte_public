@@ -343,11 +343,11 @@ export default class extends Vue {
   width: 1rem;
   height: 1rem;
   margin-top: 7px;
-  //color: $primary;
+  //color: var(--primary);
 }
 
 #handle {
-  color: $primary;
+  color: var(--primary);
   display: block;
   position: absolute;
   z-index: 2;
@@ -361,7 +361,7 @@ export default class extends Vue {
 
 .image-editor {
   /*background: #FAF594;*/
-  border: 2px solid #ffffff !important;
+  border: 2px solid var(--scheme-main) !important;
   border-radius: 0.75rem !important;
   margin: 0.25rem 0;
   position: relative;
@@ -371,9 +371,9 @@ export default class extends Vue {
 }
 
 .image-editor-hover {
-  border: 2px solid $primary-light !important;
+  border: 2px solid var(--primary-light) !important;
   border-radius: 0.75rem !important;
-  background: #f6f6f6;
+  background: var(--whitesmoke);
   /*margin: 1rem 0;
   position: relative;
   height: 200px;
@@ -396,12 +396,12 @@ img {
   left: 0px;
 }
 #close-button:hover {
-  color: $primary;
+  color: var(--primary);
   cursor: pointer;
 }
 .vertical-line {
   border-radius: 0.75rem !important;
-  border-left: 2px solid $primary-light;
+  border-left: 2px solid var(--primary-light);
   height: 100%;
 }
 #toolbar {

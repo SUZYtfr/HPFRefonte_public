@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.11.0",
-    "@creativebulma/bulma-badge": "https://github.com/francesco-loreti/bulma-badge.git",
+    "@bulvar/buefy": "^0.11.14",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/vue-fontawesome": "2.0.10",
     "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",

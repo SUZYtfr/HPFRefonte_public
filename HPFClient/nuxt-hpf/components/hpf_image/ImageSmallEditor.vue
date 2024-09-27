@@ -87,7 +87,7 @@ export default class extends Vue {
 
 .image-editor-hover {
   // background-color: #e8d7e0 !important;
-  // border: 1px solid $primary-light !important;
+  // border: 1px solid var(--primary-light) !important;
   // border-radius: 5px !important;
   // cursor: pointer;
 }
@@ -108,7 +108,7 @@ img {
   left: 0px;
 }
 #close-button:hover {
-  color: $primary;
+  color: var(--primary);
   cursor: pointer;
 }
 </style>

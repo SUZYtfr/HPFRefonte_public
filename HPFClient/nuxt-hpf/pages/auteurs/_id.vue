@@ -675,7 +675,7 @@ export default class extends Vue {
   margin-right: 0.2rem;
 }
 #author-info .card .card-footer .card-footer-item .icon:hover {
-  color: $primary !important;
+  color: var(--primary) !important;
 }
 #author-info .card .card-content .level-item .has-text-weight-semibold {
   margin-bottom: 0rem !important;

@@ -209,7 +209,7 @@ a {
 }
 
 .tag-hover {
-  border: 5px solid $primary-light !important;
+  border: 5px solid var(--primary-light) !important;
   border-radius: 10px !important;
 }
 </style>
