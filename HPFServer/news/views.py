@@ -8,28 +8,34 @@ from .models import NewsArticle, NewsComment
 from .enums import NewsStatus
 from .serializers import NewsArticleSerializer, NewsCommentSerializer
 from .filters import NewsArticleFilterSet
+from core.utils import get_moderation_account
 
 
 class NewsViewSet(ModelViewSet):
     """Ensemble de vues d'actualités"""
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # permission_classes = [IsAuthenticatedOrReadOnly, DjangoPermissionOrReadOnly]
-    queryset = NewsArticle.objects.filter(status=NewsStatus.PUBLISHED).order_by("-post_date")
+    # queryset = NewsArticle.objects.filter(status=NewsStatus.PUBLISHED).order_by("-post_date")
+    queryset = NewsArticle.objects.order_by("-creation_date", "-post_date")
     serializer_class = NewsArticleSerializer
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = NewsArticleFilterSet
 
-    def get_queryset(self):
-        if self.request.user.has_perm("news.view_newsarticle"):
-            return NewsArticle.objects.order_by("-creation_date")
-        return self.queryset
+    # def get_queryset(self):
+    #     if self.request.user.has_perm("news.view_newsarticle"):
+    #         return NewsArticle.objects.order_by("-creation_date")
+    #     return self.queryset
 
     def perform_create(self, serializer):
-        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+        moderation_account = get_moderation_account()
+        serializer.save(creation_user=moderation_account, creation_date=timezone.now())
+        # serializer.save(creation_user=self.request.user, creation_date=timezone.now())
 
     def perform_update(self, serializer):
-        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+        moderation_account = get_moderation_account()
+        serializer.save(modification_user=moderation_account, modification_date=timezone.now())
+        # serializer.save(modification_user=self.request.user, modification_date=timezone.now())
 
 
 class NewsCommentViewSet(ModelViewSet):

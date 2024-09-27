@@ -78,6 +78,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
 
     # FIXME - pour le branchement
     url = serializers.URLField(
+        required=False,
         source="src_url",
         validators=[
             validators.URLValidator(
