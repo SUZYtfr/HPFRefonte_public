@@ -48,14 +48,14 @@ export class UserData extends BasicClass<UserData> {
 
 // Filtres utilisateurs
 export interface IUserFilters extends IBasicQuery {
-  name: string | null,
+  username: string | null,
   email: string | null,
-  authorId: number | null,
+  id: number | null,
   status: UserStatus | null,
   premium: boolean | null,
   published: boolean | null,
   team: number[] | null,
-  creation_date: Date | null,
+  first_seen: Date | null,
 }
 
 // Table UserProfile

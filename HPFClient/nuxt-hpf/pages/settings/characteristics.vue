@@ -286,7 +286,7 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import Config from "~/store/modules/Config";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { getCaracteristicTypeColor, getCaracteristicTypeColorLight, getCaracteristicTypeColorLighter } from "@/utils/characteristics";
-import { getCharacteristics, getCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/characteristics";
+import { getCharacteristics, getCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/private/characteristics";
 
 @Component({
   name: "SettingsCharateristics",

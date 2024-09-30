@@ -31,7 +31,7 @@
             >
               <template #subheading>
                 <b-input
-                  v-model="userFilters.authorId"
+                  v-model="userFilters.id"
                   size="is-small"
                   type="search"
                 />
@@ -45,7 +45,7 @@
             <b-table-column field="username" label="Pseudo" sortable>
               <template #subheading>
                 <b-input
-                  v-model="userFilters.name"
+                  v-model="userFilters.username"
                   placeholder="Pseudo"
                   size="is-small"
                   type="search"
@@ -127,23 +127,23 @@
             </b-table-column>
 
             <!-- Date d'inscription -->
-            <b-table-column field="creation_date" label="Inscription" width="120" sortable centered>
+            <b-table-column field="first_seen" label="Inscription" width="120" sortable centered>
               <template #subheading>
                 <b-datepicker
-                  v-model="userFilters.creation_date"
+                  v-model="userFilters.first_seen"
                   locale="fr-FR"
                   placeholder="Date d'inscription"
                   append-to-body
                   icon="calendar-alt"
                   :first-day-of-week="1"
-                  :icon-right="userFilters.creation_date ? 'times-circle' : ''"
+                  :icon-right="userFilters.first_seen ? 'times-circle' : ''"
                   :icon-right-clickable="true"
                   size="is-small"
-                  @icon-right-click="userFilters.creation_date = null"
+                  @icon-right-click="userFilters.first_seen = null"
                 />
               </template>
               <template #default="props">
-                {{ props.row.creation_date?.toLocaleDateString() ?? "31/12/1970" }}
+                {{ props.row.first_seen?.toLocaleDateString() ?? "31/12/1970" }}
               </template>
             </b-table-column>
 
@@ -386,7 +386,7 @@ import { Component, Vue, Watch } from "nuxt-property-decorator";
 import { SerialiseClass } from "@/serialiser-decorator";
 import { UserModel } from "@/models/users";
 import { IUserFilters, UserStatus } from "@/types/users";
-import { searchUsers, putUser, anonymiseUser, sendPasswordResetEmail } from "@/api/users";
+import { searchUsers, putUser, anonymiseUser, sendPasswordResetEmail } from "@/api/private/users";
 import { SortByEnum } from "~/types/basics";
 import { VForm, OpenToast } from "@/utils/formHelper";
 
@@ -417,14 +417,14 @@ export default class extends Vue {
   public totalUsers: number = 0;
 
   public userFilters: IUserFilters = {
-    name: null,
+    username: null,
     email: null,
-    authorId: null,
+    id: null,
     status: null,
     premium: null,
     team: null,
     published: null,
-    creation_date: null,
+    first_seen: null,
     page: 1,
     pageSize: 20,
     totalPages: true,
