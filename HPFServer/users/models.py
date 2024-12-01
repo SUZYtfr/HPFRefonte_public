@@ -98,7 +98,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=200,
         verbose_name="pseudonyme",
         unique=True,
-        null=False,
+        null=True,
         blank=False,
     )
     email = models.EmailField(
@@ -202,22 +202,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     def ban(self, anonymise=False, keep_reviews=False):
         """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
 
-        if not keep_reviews:
-            for review in self.created_reviews.all():
-                review.delete()
+        # if not keep_reviews:
+        #     for review in self.created_reviews.all():
+        #         review.delete()
 
-        for fiction in self.authored_fictions.all():
-            fiction.authors.remove(self)
-            if not anonymise and fiction.authors.count() == 0:
-                fiction.delete()
+        # for fiction in self.authored_fictions.all():
+        #     fiction.authors.remove(self)
+        #     if not anonymise and fiction.authors.count() == 0:
+        #         fiction.delete()
 
-        try:
-            self.banner.delete()
-        except ObjectDoesNotExist:
-            pass
+        # try:
+        #     self.banner.delete()
+        # except ObjectDoesNotExist:
+        #     pass
 
-        self.profile.delete()
-        self.preferences.delete()
+        if self.profile:
+            self.profile.delete()
+        if self.preferences:
+            self.preferences.delete()
 
         self.groups.clear()  # Supprime de tous les groupes / équipes
         self.is_staff = False

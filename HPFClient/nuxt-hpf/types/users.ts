@@ -48,9 +48,9 @@ export class UserData extends BasicClass<UserData> {
 
 // Filtres utilisateurs
 export interface IUserFilters extends IBasicQuery {
-  name: string | null,
+  username: string | null,
   email: string | null,
-  authorId: number | null,
+  id: number | null,
   status: UserStatus | null,
   premium: boolean | null,
   published: boolean | null,

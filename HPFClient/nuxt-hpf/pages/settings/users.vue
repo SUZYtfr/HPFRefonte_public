@@ -31,7 +31,7 @@
             >
               <template #subheading>
                 <b-input
-                  v-model="userFilters.authorId"
+                  v-model="userFilters.id"
                   size="is-small"
                   type="search"
                 />
@@ -45,7 +45,7 @@
             <b-table-column field="username" label="Pseudo" sortable>
               <template #subheading>
                 <b-input
-                  v-model="userFilters.name"
+                  v-model="userFilters.username"
                   placeholder="Pseudo"
                   size="is-small"
                   type="search"
@@ -386,7 +386,7 @@ import { Component, Vue, Watch } from "nuxt-property-decorator";
 import { SerialiseClass } from "@/serialiser-decorator";
 import { UserModel } from "@/models/users";
 import { IUserFilters, UserStatus } from "@/types/users";
-import { searchUsers } from "@/api/users";
+import { searchUsers, putUser, anonymiseUser, sendPasswordResetEmail } from "@/api/private/users";
 import { SortByEnum } from "~/types/basics";
 import { VForm, OpenToast } from "@/utils/formHelper";
 
@@ -417,9 +417,9 @@ export default class extends Vue {
   public totalUsers: number = 0;
 
   public userFilters: IUserFilters = {
-    name: null,
+    username: null,
     email: null,
-    authorId: null,
+    id: null,
     status: null,
     premium: null,
     team: null,
@@ -500,15 +500,18 @@ export default class extends Vue {
   public async sendResetPassword(): Promise<void> {
     try {
       this.loading = true;
-      // const data = await signup(this.signupForm);
+      if(this.selectedUser) {
+        await sendPasswordResetEmail(this.selectedUser.user_id);
+      }
+      else { throw "Erreur"; }
       OpenToast(
-        "Un mail de renouvellement de mot de passe a été envoyé",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
+          "Un mail de renouvellement de mot de passe a été envoyé",
+          "is-primary",
+          5000,
+          false,
+          true,
+          "is-bottom"
+        );
     } catch (exception) {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {
@@ -525,18 +528,21 @@ export default class extends Vue {
       cancelText: "Annuler",
       actionText: "Confirmer",
       type: "is-warning",
-      onAction: () => {
+      onAction: async () => {
         try {
           this.loading = true;
-          // const data = await signup(this.signupForm);
+          if(this.selectedUser) {
+            await anonymiseUser(this.selectedUser.user_id);
+          }
+          else { throw "Erreur"; }
           OpenToast(
-            "L'utilisateur a bien été anonymisé",
-            "is-primary",
-            5000,
-            false,
-            true,
-            "is-bottom"
-          );
+              "L'utilisateur a bien été anonymisé",
+              "is-primary",
+              5000,
+              false,
+              true,
+              "is-bottom"
+            );
         } catch (exception) {
           OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
         } finally {
@@ -550,15 +556,18 @@ export default class extends Vue {
   public async updateUser(): Promise<void> {
     try {
       this.loading = true;
-      // const data = await signup(this.signupForm);
+      if(this.selectedUser) {
+        await putUser(this.selectedUser.user_id, this.selectedUser);
+      }
+      else { throw "Erreur"; }
       OpenToast(
-        "Utilisateur mis à jour",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
+          "Utilisateur mis à jour",
+          "is-primary",
+          5000,
+          false,
+          true,
+          "is-bottom"
+        );
     } catch (exception) {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {

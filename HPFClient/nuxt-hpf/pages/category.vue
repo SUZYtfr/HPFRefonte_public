@@ -79,7 +79,7 @@ import {
   CharacteristicModel,
   CharacteristicTypeModel
 } from "@/models/characteristics";
-import { getCharacteristics } from "@/api/characteristics";
+import { searchCharacteristics } from "@/api/characteristics";
 import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import { SortByEnum } from "~/types/basics";
@@ -215,7 +215,7 @@ export default class extends Vue {
   private async getCharacteristics(): Promise<void> {
     try {
       this.currentCharacs = (
-        await getCharacteristics(this.caracteristicFilters)
+        await searchCharacteristics(this.caracteristicFilters)
       );
       console.log(this.currentCharacs);
     } catch (error) {

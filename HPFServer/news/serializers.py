@@ -8,6 +8,7 @@ from .models import NewsArticle, NewsComment
 
 from images.models import ContentImage
 from images.serializers import ContentImageSerializer
+from users.models import User
 
 
 class NewsCommentSerializer(serializers.ModelSerializer):
@@ -111,13 +112,14 @@ class NewsArticleSerializer(ListableModelSerializer):
 
     authors = extra_relations.PresentablePrimaryKeyRelatedField(
         many=True,
-        read_only=True,
+        read_only=False,
+        queryset=User.objects.all(),
         presentation_serializer="users.serializers.UserCardSerializer",
     )
     teams = NewsTeamSerializer(read_only=True, many=True)
     comments = NewsCommentSerializer(read_only=True, many=True)
 
-    content_images = ContentImageSerializer(many=True)
+    content_images = ContentImageSerializer(many=True, required=False)
 
     class Meta:
         list_serializer_child_class = NewsArticleListSerializer
@@ -147,7 +149,7 @@ class NewsArticleSerializer(ListableModelSerializer):
         ]
 
     @transaction.atomic
-    def create(self, validated_data):        
+    def create(self, validated_data):
         content_images = validated_data.pop("content_images", None)
         newsarticle = super().create(validated_data=validated_data)
 
@@ -162,3 +164,21 @@ class NewsArticleSerializer(ListableModelSerializer):
             newsarticle.content_images.set(images)
     
         return newsarticle
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        content_images = validated_data.pop("content_images", None)
+        super().update(instance, validated_data=validated_data)
+
+        # TODO - supprimer seulement si plus référencées dans le contenu
+        instance.content_images.all().delete()
+        if content_images:
+            images = [
+                ContentImage(
+                    **_hpf_image,
+                    creation_user=validated_data["creation_user"],                
+                ) for _hpf_image in content_images
+            ]
+            images = ContentImage.objects.bulk_create(images)
+            instance.content_images.set(images)
+        return instance

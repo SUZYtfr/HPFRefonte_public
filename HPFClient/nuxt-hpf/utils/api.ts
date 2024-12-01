@@ -95,7 +95,7 @@ export class AxiosWrapper {
         data.items = this.parseData2(type, items);
         return data;
       } catch (error) {
-        return error;
+        throw error;
       }
       // return new Promise(async (resolve, reject) => {
       //   try {
@@ -130,7 +130,7 @@ export class AxiosWrapper {
         data.items = this.parseData2(type, items);
         return data;
       } catch (error) {
-        return error;
+        throw error;
       }
       // return new Promise(async (resolve, reject) => {
       //   try {
@@ -165,7 +165,7 @@ export class AxiosWrapper {
         data.items = this.parseData2(type, items);
         return data;
       } catch (error) {
-        return error;
+        throw error;
       }
       // return new Promise(async (resolve, reject) => {
       //   try {

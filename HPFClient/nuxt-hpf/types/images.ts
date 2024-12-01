@@ -23,3 +23,10 @@ export class ImageHPFData {
     this.display_height = _display_height;
   }
 }
+
+export interface IContentImageFilters {
+  username: string | null;
+  is_adult_only: boolean | null;
+  missing_credits: boolean | null;
+  // host: number | null;  // TODO
+}
