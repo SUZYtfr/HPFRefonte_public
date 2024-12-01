@@ -1,5 +1,5 @@
 import $AxiosWrapper from "~/utils/api";
-import { ContentImageModel } from "~/models/images";
+// import { ContentImageModel } from "~/models/images";
 import { IContentImageFilters } from "~/types/images";
 
 // TODO créer ContentImageModel

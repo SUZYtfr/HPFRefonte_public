@@ -55,7 +55,7 @@ export interface IUserFilters extends IBasicQuery {
   premium: boolean | null,
   published: boolean | null,
   team: number[] | null,
-  first_seen: Date | null,
+  creation_date: Date | null,
 }
 
 // Table UserProfile
