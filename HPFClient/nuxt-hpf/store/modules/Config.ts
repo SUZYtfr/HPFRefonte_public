@@ -1,8 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from "vuex-module-decorators";
 import { plainToInstance } from "class-transformer";
 import {
-  getCharacteristics,
-  getCharacteristicsTypes
+  searchCharacteristics,
+  searchCharacteristicsTypes
 } from "@/api/characteristics";
 // import { CharacteristicData, CharacteristicTypeData } from "~/types/characteristics";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
@@ -71,14 +71,14 @@ export default class _Config extends VuexModule implements ConfigState {
     let caracteristicsTemp;
     let caracteristicTypesTemp;
     try {
-      caracteristicsTemp = (await getCharacteristics(null));
+      caracteristicsTemp = (await searchCharacteristics(null));
     } catch (error) {
       caracteristicsTemp = [];
       console.log(error);
     }
 
     try {
-      caracteristicTypesTemp = (await getCharacteristicsTypes());
+      caracteristicTypesTemp = (await searchCharacteristicsTypes());
     } catch (error) {
       caracteristicTypesTemp = [];
       console.log(error);

@@ -286,7 +286,7 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import Config from "~/store/modules/Config";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { getCaracteristicTypeColor, getCaracteristicTypeColorLight, getCaracteristicTypeColorLighter } from "@/utils/characteristics";
-import { getCharacteristics, getCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/private/characteristics";
+import { searchCharacteristics, searchCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/private/characteristics";
 
 @Component({
   name: "SettingsCharateristics",
@@ -396,8 +396,8 @@ export default class extends Vue {
   }
 
   private async getCharacteristics(): Promise<void> {
-    this.characteristics = (await getCharacteristics(null));
-    this.characteristics_types = (await getCharacteristicsTypes());
+    this.characteristics = (await searchCharacteristics(null));
+    this.characteristics_types = (await searchCharacteristicsTypes());
     this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
       parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {
         return item.characteristic_type_id === parent.id;
