@@ -501,16 +501,17 @@ export default class extends Vue {
     try {
       this.loading = true;
       if(this.selectedUser) {
-        sendPasswordResetEmail(this.selectedUser.user_id);
+        await sendPasswordResetEmail(this.selectedUser.user_id);
       }
+      else { throw "Erreur"; }
       OpenToast(
-        "Un mail de renouvellement de mot de passe a été envoyé",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
+          "Un mail de renouvellement de mot de passe a été envoyé",
+          "is-primary",
+          5000,
+          false,
+          true,
+          "is-bottom"
+        );
     } catch (exception) {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {
@@ -527,20 +528,21 @@ export default class extends Vue {
       cancelText: "Annuler",
       actionText: "Confirmer",
       type: "is-warning",
-      onAction: () => {
+      onAction: async () => {
         try {
           this.loading = true;
           if(this.selectedUser) {
-            anonymiseUser(this.selectedUser.user_id);
-          };
+            await anonymiseUser(this.selectedUser.user_id);
+          }
+          else { throw "Erreur"; }
           OpenToast(
-            "L'utilisateur a bien été anonymisé",
-            "is-primary",
-            5000,
-            false,
-            true,
-            "is-bottom"
-          );
+              "L'utilisateur a bien été anonymisé",
+              "is-primary",
+              5000,
+              false,
+              true,
+              "is-bottom"
+            );
         } catch (exception) {
           OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
         } finally {
@@ -555,16 +557,17 @@ export default class extends Vue {
     try {
       this.loading = true;
       if(this.selectedUser) {
-        putUser(this.selectedUser.user_id, this.selectedUser);
+        await putUser(this.selectedUser.user_id, this.selectedUser);
       }
+      else { throw "Erreur"; }
       OpenToast(
-        "Utilisateur mis à jour",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
+          "Utilisateur mis à jour",
+          "is-primary",
+          5000,
+          false,
+          true,
+          "is-bottom"
+        );
     } catch (exception) {
       OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
     } finally {

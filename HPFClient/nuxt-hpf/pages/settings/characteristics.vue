@@ -436,13 +436,13 @@ export default class extends Vue {
       this.loading = true;
       if (this.selectedItem instanceof CharacteristicModel) {
         if (this.selectedItem.characteristic_id > 0) {
-          updateCharacteristic(this.selectedItem);
+          await updateCharacteristic(this.selectedItem);
         } else {
-          createCharacteristic(this.selectedItem);
+          await createCharacteristic(this.selectedItem);
         }
       } else if (this.selectedItem instanceof CharacteristicTypeModel) {
         if (this.selectedItem.characteristic_type_id > 0) {
-          updateCharacteristicsType(this.selectedItem as CharacteristicTypeModel);
+          await updateCharacteristicsType(this.selectedItem as CharacteristicTypeModel);
         }
       } else {
         throw "Erreur"
