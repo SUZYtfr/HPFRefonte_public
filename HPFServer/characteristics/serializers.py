@@ -48,7 +48,10 @@ class CharacteristicSerializer(CharacteristicBaseSerializer):
                 "initial": "",
                 "source": "parent",
             },
-            "order": {"source": "_order"},
+            "order": {
+                "source": "_order",
+                "read_only": True
+            },
         }
 
     def get_or_create(self, validated_data):

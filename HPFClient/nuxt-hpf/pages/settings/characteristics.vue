@@ -707,32 +707,33 @@ export default class extends Vue {
 
     // Binder l'événement d'action
     confirmSnackbar.onAction = () => {
-      // Récupérer le parent
-      const parent = this.filteredCharacteristicType.filter((parent: CharacteristicTypeModel) => {
+      // Récupérer le type de caractéristiques parent
+      const characteristicType = this.filteredCharacteristicType.find((parent: CharacteristicTypeModel) => {
         return parent.characteristic_type_id === this.draggedRow.object.characteristic_type_id;
-      });
+      })!;
 
       // Récupére l'élément qu'on drag
-      const draggedItem = parent[0].characteristics.splice(this.draggedRow.index, 1)[0];
+      const draggedItem = characteristicType.characteristics.splice(this.draggedRow.index, 1)[0];
 
       // Gestion du drop en tant que child
       draggedItem.parent_id = (parentObject != null ? parentObject.id : null);
 
       // Calculer sa nouvelle profondeur
-      draggedItem.depth = this.getDepth(draggedItem, parent[0].characteristics);
+      draggedItem.depth = this.getDepth(draggedItem, characteristicType.characteristics);
 
       // Insérer l'élément déplacé à sa nouvelle position
-      parent[0].characteristics.splice((this.droppedOnRow.dropAsChild ? this.droppedOnRow.index + 1 : this.droppedOnRow.index), 0, draggedItem);
+      characteristicType!.characteristics.splice((this.droppedOnRow.dropAsChild ? this.droppedOnRow.index + 1 : this.droppedOnRow.index), 0, draggedItem);
 
       // Mettre à jour l'ordre dans le tableau
-      this.reOrder(parent[0].characteristics, parent[0].characteristics.filter(t => t.parent_id == null));
+      this.reOrder(characteristicType.characteristics, characteristicType.characteristics.filter(t => t.parent_id == null));
 
       // S'il faut  déplacer les enfants, on regénère la totalité du tree
       if (this.draggedRow.childs.length > 0) this.prepareFilteredCarac();
 
       // Réordonner dans la bdd
-      const newOrder = parent[0].characteristics.map(characteristic => characteristic.id);
-      reorderCharacteristics(parent[0], newOrder);
+      reorderCharacteristics(characteristicType, characteristicType.characteristics.map(characteristic => characteristic.id));
+      // Mettre-à-jour la caractéristique (peut-être que le parent a changé)
+      updateCharacteristic(draggedItem);
     };
   }
 
