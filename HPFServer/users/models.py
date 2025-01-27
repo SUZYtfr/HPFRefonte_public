@@ -384,12 +384,17 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
     )
 
     # APPARENCE
-    skin = models.CharField(
-        max_length=50,
-        verbose_name="thème",
-        # null=False,
-        # blank=True,
-        default="default",
+    theme = models.ForeignKey(
+        verbose_name="thème préféré",
+        to="users.Theme",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    theme_overriden_at = models.DateTimeField(
+        verbose_name="thème préféré bloqué",
+        null=True,
+        blank=True,
+        help_text="Date à laquelle l'utilisateur a spécialement indiqué vouloir voir son thème préféré",
     )
     color_scheme = models.PositiveSmallIntegerField(
         verbose_name="mode d'affichage",
@@ -548,3 +553,49 @@ class ExternalProfile(models.Model):
     def __str__(self):
         return f"{self.external_username} sur {str(self.website_type)}"
   
+
+class Theme(models.Model):
+    class Meta:
+        verbose_name = "Thème"
+        constraints = [
+            models.UniqueConstraint(
+                name="UQ_unique_default_theme",
+                fields=["default"],
+                condition=models.Q(default=True),
+                violation_error_message="Il ne peut exister qu'un seul thème par défaut.",
+            ),
+        ]
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name="nom",
+        unique=True,
+    )
+    default = models.BooleanField(
+        verbose_name="thème par défaut",
+        default=False,
+    )
+    enabled = models.BooleanField(
+        verbose_name="disponible",
+        default=False,
+    )
+    use_default_from = models.DateTimeField(
+        verbose_name="utiliser de",
+        null=True,
+        blank=True,
+        default=None,
+    )
+    use_default_to = models.DateTimeField(
+        verbose_name="utiliser jusqu'à",
+        null=True,
+        blank=True,
+        default=None,
+    )
+    detail = models.JSONField(
+        verbose_name="détails",
+        default=dict,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.name

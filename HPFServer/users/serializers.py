@@ -9,6 +9,7 @@ from .models import (
     UserProfile,
     UserPreferences,
     ExternalProfile,
+    Theme,
 )
 from .enums import UserStatus
 from images.serializers import ContentImageSerializer
@@ -52,7 +53,8 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
             "line_spacing",
             "color_scheme",
             "color_scheme_in_reader",
-            "skin",
+            "theme",
+            "theme_overriden_at",
             "show_animations",
             "show_profile_pictures",
             # "show_reaction",
@@ -213,3 +215,9 @@ class UserSerializer(ListableModelSerializer):
         if "profile" in attrs and not attrs.get("profile"):
             attrs.pop("profile")
         return super().validate(attrs)
+
+
+class ThemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Theme
+        fields = "__all__"

@@ -337,7 +337,7 @@ import { CharacteristicData } from "~/types/characteristics";
 import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
 import Fanfiction from "~/components/Fanfiction.vue";
 import { VForm, OpenToast } from "@/utils/formHelper";
-import { searchThemes } from "@/api/themes";
+import { searchThemes } from "~/api/private/themes";
 import "simplebar/dist/simplebar.min.css";
 import "simplebar/dist/simplebar.min.js";
 

@@ -85,6 +85,11 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public get user_preference_id(): number {
     return this.id;
   }
+  
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public theme_overriden_at: Date | null = null;
+  public theme: number | null = null;
 
   public age_consent: boolean = false;
   public font: string | null = null;
