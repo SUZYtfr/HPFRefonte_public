@@ -128,9 +128,9 @@
                 />
               </b-field>
             </div>
-            <b-checkbox v-model="image.is_adult_only" size="is-small">
+            <!-- <b-checkbox v-model="image.is_adult_only" size="is-small">
               Contenu sensible
-            </b-checkbox>
+            </b-checkbox> -->
           </div>
           <div class="mt-3" style="width: 100%">
             <b-field
@@ -190,7 +190,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-2";
-import { ImageHPFData } from "@/types/images";
+import { ExplicitContentEnum, ImageHPFData } from "@/types/images";
 
 @Component({
   name: "ImageEditor",
@@ -248,7 +248,7 @@ export default class extends Vue {
         this.node.attrs.url,
         null,
         null,
-        false,
+        ExplicitContentEnum.Safe,
         null,
         null
       );

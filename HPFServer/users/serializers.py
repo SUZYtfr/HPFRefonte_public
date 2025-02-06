@@ -72,6 +72,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
             "email_for_favorite",
             "email_for_chapter_status",
             "result_order",
+            "display_content",
         ]
 
 

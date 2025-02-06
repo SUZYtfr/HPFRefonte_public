@@ -7,7 +7,7 @@ class PrivateContentImageFilterSet(filterset.FilterSet):
         model = ContentImage
         fields = [
             "username",
-            "is_adult_only",
+            "explicit_content_type",
             "missing_credits",
         ]
 

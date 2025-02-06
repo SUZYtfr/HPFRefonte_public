@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterTextVersion
 from images.models import ProfilePicture, Banner, ContentImage
-from images.enums import BannerType
+from images.enums import BannerType, ExplicitContent
 from .enums import (
     Gender,
     WebsiteType,
@@ -340,7 +340,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
             creation_user=self.user,
             display_height=0,  # FIXME - supprimer les dimensions du modèle d'avatar
             display_width=0,
-            is_adult_only=False,
+            explicit_content_type=ExplicitContent.SAFE,
             is_user_property=True,
             **profile_picture,
         )        
@@ -382,12 +382,19 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         primary_key=True,
         editable=True,
     )
-
+    display_content = models.PositiveSmallIntegerField(
+        verbose_name="Contenu explicite à afficher",
+        default=ExplicitContent.SAFE,
+        choices=ExplicitContent.combined_choices,
+        help_text="opérateur bitwise sur ExplicitContent"
+    )
+    
     # APPARENCE
     theme = models.ForeignKey(
         verbose_name="thème préféré",
         to="users.Theme",
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
     )
     theme_overriden_at = models.DateTimeField(

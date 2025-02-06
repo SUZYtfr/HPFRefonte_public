@@ -42,7 +42,7 @@ class ProfilePictureSerializer(serializers.ModelSerializer):
             "src_path",
             "src_url",
             "is_user_property",
-            "is_adult_only",
+            "explicit_content_type",
             "credits_url",
         ]
         read_only_fields = [
@@ -103,7 +103,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
             "display_height",
             "display_width",
             "is_user_property",
-            "is_adult_only",
+            "explicit_content_type",
             "is_visibility_coerced",
             "credits_url",
             "src",
@@ -131,7 +131,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
                 "required": False,
                 "default": True,
             },
-            "is_adult_only": {
+            "explicit_content_type": {
                 "required": False,
             },
             "index": {
@@ -215,7 +215,7 @@ class PrivateContentImageSerializer(serializers.ModelSerializer):
             "is_on_disk",
             "is_user_property",
             "credits_url",
-            "is_adult_only",
+            "explicit_content_type",
             "is_visibility_coerced",
             "credits",
         ]

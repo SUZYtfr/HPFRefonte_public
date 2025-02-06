@@ -1,5 +1,6 @@
 import { Exclude, Transform } from "class-transformer";
 import { BasicClass, IBasicQuery } from "./basics";
+import { ExplicitContentEnum } from "./images";
 
 export enum UserStatus {
   Unvalidated = 1,
@@ -98,6 +99,7 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public dark_mode: boolean | null = null;
   public skin: string = "default";
   public show_reaction: boolean = true;
+  public explicit_content: ExplicitContentEnum = ExplicitContentEnum.Safe;
 }
 
 // Table UserLink
