@@ -598,9 +598,9 @@ class Theme(models.Model):
         blank=True,
         default=None,
     )
-    detail = models.JSONField(
+    details = models.JSONField(
         verbose_name="détails",
-        default=dict,
+        default=list,
         blank=True,
     )
 

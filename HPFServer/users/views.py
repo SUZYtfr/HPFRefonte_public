@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.request import Request
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_501_NOT_IMPLEMENTED, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_501_NOT_IMPLEMENTED, HTTP_403_FORBIDDEN
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.db import transaction
 
@@ -75,6 +75,16 @@ class PrivateThemeViewSet(viewsets.ModelViewSet):
             Theme.objects.update(default=False)
         return super().perform_update(serializer)
 
+    def destroy(self, request, *args, **kwargs):
+        theme = self.get_object()
+        if theme.default:
+            return Response(
+                status=HTTP_403_FORBIDDEN,
+                data="Le thème par défaut ne peut pas être supprimé.",
+            )
+        return super().destroy(request, *args, **kwargs)
+
+    '''
     def perform_destroy(self, instance: Theme):
         if instance.default:
             return Response(
@@ -82,6 +92,7 @@ class PrivateThemeViewSet(viewsets.ModelViewSet):
                 data="Le thème par défaut ne peut pas être supprimé.",
             )
         return super().perform_destroy(instance)
+'''
 
 
 class PublicThemeViewSet(viewsets.ReadOnlyModelViewSet):
