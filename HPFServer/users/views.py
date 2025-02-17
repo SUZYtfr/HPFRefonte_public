@@ -84,16 +84,6 @@ class PrivateThemeViewSet(viewsets.ModelViewSet):
             )
         return super().destroy(request, *args, **kwargs)
 
-    '''
-    def perform_destroy(self, instance: Theme):
-        if instance.default:
-            return Response(
-                status=HTTP_400_BAD_REQUEST,
-                data="Le thème par défaut ne peut pas être supprimé.",
-            )
-        return super().perform_destroy(instance)
-'''
-
 
 class PublicThemeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Theme.objects.all()

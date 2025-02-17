@@ -7,6 +7,7 @@ class BannerType(IntegerChoices):
     PARTNER = (2, "Bannière de partenaire")
     EVENT = (3, "Bannière événementielle")
     PREMIUM = (4, "Bannière d'adhérent")
+    THEME = (5, "Bannière de thème")
 
 
 class FlagChoicesMeta(ChoicesMeta):

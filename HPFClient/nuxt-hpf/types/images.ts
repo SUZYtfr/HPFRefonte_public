@@ -37,3 +37,24 @@ export enum ExplicitContentEnum {
   Gore = 1 << 2,
   All = ~(~0 << 4)
 }
+
+export enum BannerCategoryEnum {
+  Website = 1,
+  Partner = 2,
+  Event = 3,
+  Premium = 4,
+  Theme = 5,
+}
+
+export interface IBannerData {
+  id: number | null;
+  category: BannerCategoryEnum | null;
+  is_active: boolean | null;
+  href: string | null;
+  alt: string | null;
+  src: string | null;
+}
+
+export interface IBannerFilters {
+  category: BannerCategoryEnum | null;
+}

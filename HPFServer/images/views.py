@@ -15,7 +15,7 @@ from images.serializers import (
     ContentImageSerializer,
     PrivateContentImageSerializer,
 )
-from images.filters import PrivateContentImageFilterSet
+from images.filters import PrivateContentImageFilterSet, PrivateBannerFilterSet
 from core.utils import get_moderation_account
 
 
@@ -25,6 +25,24 @@ class BannerViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = BannerSerializer
     queryset = Banner.objects.filter(is_active=True)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PrivateBannerFilterSet
+
+    def perform_create(self, serializer):
+        serializer.save(creation_user=self.request.user, creation_date=timezone.now())
+
+    def perform_update(self, serializer):
+        serializer.save(modification_user=self.request.user, modification_date=timezone.now())
+
+
+class PrivateBannerViewSet(viewsets.ModelViewSet):
+    """Ensemble de vues privées pour les bannières"""
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = BannerSerializer
+    queryset = Banner.objects.filter(is_active=True)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PrivateBannerFilterSet
 
     def perform_create(self, serializer):
         serializer.save(creation_user=self.request.user, creation_date=timezone.now())
