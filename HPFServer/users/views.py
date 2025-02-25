@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_501_NOT_IMPLEMENTED, HTTP_403_FORBIDDEN
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.db import transaction
+from django.utils import timezone
 
 from users.models import User, Theme
 from users.filters import UserFilterSet
@@ -86,5 +87,11 @@ class PrivateThemeViewSet(viewsets.ModelViewSet):
 
 
 class PublicThemeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Theme.objects.all()
+    queryset = Theme.objects.exclude(
+        enabled=False,
+    ).exclude(
+        use_default_from__gt=timezone.now(),
+    ).exclude(
+        use_default_to__lt=timezone.now(),
+    )
     serializer_class = ThemeSerializer

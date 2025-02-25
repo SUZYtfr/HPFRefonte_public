@@ -571,6 +571,21 @@ class Theme(models.Model):
                 condition=models.Q(default=True),
                 violation_error_message="Il ne peut exister qu'un seul thème par défaut.",
             ),
+            models.CheckConstraint(
+                name="CK_default_theme_not_disabled",
+                check=~models.Q(default=True, enabled=False),
+                violation_error_message="Le thème par défaut ne peux pas être désactivé.",
+            ),
+            models.CheckConstraint(
+                name="CK_default_theme_not_temporary",
+                check=~(models.Q(default=True) & (models.Q(use_default_from__isnull=False) | models.Q(use_default_to__isnull=False))),
+                violation_error_message="Le thème par défaut ne peut pas être temporaire.",
+            ),
+            models.CheckConstraint(
+                name="CK_use_default_from_lt_use_default_to",
+                check=~(models.Q(use_default_from__gte=models.F("use_default_to"))),
+                violation_error_message="La date de début ne peut pas être plus lointaine que la date de fin.",
+            ),
         ]
 
     name = models.CharField(

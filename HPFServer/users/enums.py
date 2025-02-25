@@ -34,6 +34,7 @@ class ColorScheme(IntegerChoices):
     AUTO = 0, "Préférence système"
     LIGHT = 1, "Mode clair"
     DARK = 2, "Mode sombre"
+    CONTRAST = 3, "Mode contraste élevé"
 
 
 class Sort(IntegerChoices):
