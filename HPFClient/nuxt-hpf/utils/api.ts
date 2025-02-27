@@ -1,6 +1,7 @@
 import type { NuxtAxiosInstance } from "@nuxtjs/axios";
 import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
+import { AxiosError } from "axios";
 import qs from "qs";
 
 let $axios: NuxtAxiosInstance;
@@ -12,7 +13,8 @@ export function initializeAxios(axiosInstance: NuxtAxiosInstance): void {
     timeout: 5000,
     withCredentials: (process.env.NODE_ENV === "production")
   });
-
+  // Header spécifique à ngrok à commenter quand on est sur python anywhere
+  // $axios.defaults.headers.common["ngrok-skip-browser-warning"] = "1";
   $axios.defaults.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
 
   $axios.interceptors.request.use((request) => {
@@ -62,19 +64,24 @@ export class AxiosWrapper {
         // Transformer en instance
         if (data.results != null) {
           // Contenu paginé
-          data.results = this.parseData2(type, data.results);
-        } else {
+          if (data.results.length > 0) {
+            data.results = this.parseData2(type, data.results);
+          }
+        } else if (data != null) {
           // Contenu unique
           data = this.parseData2(type, data);
         }
         return data;
       } catch (error) {
-        console.log(error);
-        throw error;
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
       }
     } else {
       // if there is no type, return axios default behavior
-      return $axios.get(url);
+      try {
+        return $axios.get(url);
+      } catch (error) {
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
+      }
     }
   }
 
@@ -87,29 +94,10 @@ export class AxiosWrapper {
    * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
    */
   public async delete<T>(url: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.delete(url);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        return error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.delete(url);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.delete(url);
+    try {
+      return await $axios.delete(url);
+    } catch (error) {
+      throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
     }
   }
 
@@ -126,25 +114,18 @@ export class AxiosWrapper {
       try {
         const { data } = await $axios.post(url, payload);
         const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
         data.items = this.parseData2(type, items);
         return data;
       } catch (error) {
-        return error;
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
       }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.post(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
     } else {
       // if there is no type, return axios default behavior
-      return $axios.post(url, payload);
+      try {
+        return $axios.post(url, payload);
+      } catch (error) {
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
+      }
     }
   }
 
@@ -159,27 +140,19 @@ export class AxiosWrapper {
   public async put<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
     if (type) {
       try {
-        const { data } = await $axios.put(url, payload);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
+        let { data } = await $axios.put(url, payload);
+        data = this.parseData2(type, data);
         return data;
       } catch (error) {
-        return error;
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
       }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.put(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
     } else {
       // if there is no type, return axios default behavior
-      return $axios.put(url, payload);
+      try {
+        return $axios.put(url, payload);
+      } catch (error) {
+        throw new Error((error as AxiosError).response?.data ?? (error as Error).message);
+      }
     }
   }
 
@@ -188,6 +161,7 @@ export class AxiosWrapper {
    * @param type Typescript class type to be returned
    * @param data Response data
    * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false)
+   * NON UTILISE, A ENLEVER UN JOUR
    */
   private createObject(Type: any, data: any, useConstructor: boolean = false): any {
     let result: any;

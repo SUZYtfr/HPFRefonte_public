@@ -23,9 +23,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { getModule } from "vuex-module-decorators";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import SidebarDebug from "@/components/SidebarDebug.vue";
+import Config from "~/store/modules/Config";
+import Common from "~/store/modules/CommonState";
+import { ColorSchemeEnum } from "~/types/themes";
 
 @Component({
   components: {
@@ -34,7 +38,25 @@ import SidebarDebug from "@/components/SidebarDebug.vue";
     SidebarDebug
   }
 })
-export default class extends Vue {}
+export default class extends Vue {
+  // #region Hooks
+  mounted(): void {
+    if (this.CommonModule.wasRefreshed) {
+      this.$changeTheme(this.ConfigModule.currentTheme?.details?.find((t) => { return t.colorScheme === ((this.$auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
+    }
+  }
+  // #endregion
+
+  // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
+
+  get CommonModule(): Common {
+    return getModule(Common, this.$store);
+  }
+  // #endregion
+}
 </script>
 
 <style lang="scss" scoped>

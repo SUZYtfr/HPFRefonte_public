@@ -35,7 +35,7 @@ const config: NuxtConfig = {
   ],
   env: {},
   head: {
-    title: "nuxt-community/typescript-template",
+    title: "Harry Potter Fanfiction",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },

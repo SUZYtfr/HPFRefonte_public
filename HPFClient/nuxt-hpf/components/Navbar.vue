@@ -237,6 +237,7 @@ import Login from "~/components/Login.vue";
 import Register from "~/components/Register.vue";
 import Contact from "~/components/Contact.vue";
 import ModalsStates from "~/store/modules/ModalsStates";
+import Config from "~/store/modules/Config";
 
 @Component({
   name: "Navbar",
@@ -255,11 +256,17 @@ export default class extends Vue {
   get ModalsStatesModule(): ModalsStates {
     return getModule(ModalsStates, this.$store);
   }
+
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
   // #endregion
 
   // #region Methods
   public async logout(): Promise<void> {
     await this.$auth.logout();
+    // Remettre le thème par défaut
+    this.$changeTheme(this.ConfigModule.currentTheme?.details[0] ?? null);
   }
   // #endregion
 }

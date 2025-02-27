@@ -1,18 +1,19 @@
 import Vue from "vue";
-import { ThemeDetail } from "@/types/themes";
+import { ThemeDetail, ColorSchemeEnum } from "@/types/themes";
 import { hexToHsl, hexToRgb, invertHex, rgbToHsl } from "@/utils/color";
 
 declare module "vue/types/vue" {
   interface Vue {
-    $changeTheme(theme: ThemeDetail): void
+    $changeTheme(theme: ThemeDetail | null): void
   }
 }
 
-Vue.prototype.$changeTheme = (theme: ThemeDetail, useNightVariant: boolean = false) => {
+Vue.prototype.$changeTheme = (theme: ThemeDetail| null) => {
+  if (theme === null) return;
   assignCssVar("--primary", theme.primary);
   assignCssVar("--primary-light", theme.primary_light);
   assignCssVar("--hpf-primary-lighter", theme.hpf_primary_lighter);
-  if (useNightVariant || theme.nightTheme) {
+  if (theme.colorScheme === ColorSchemeEnum.Dark) {
     assignCssVar("--scheme-main", "#14161A");
     assignCssVar("--scheme-main-bis", "#181B20");
     assignCssVar("--scheme-main-ter", "#1D1F26");

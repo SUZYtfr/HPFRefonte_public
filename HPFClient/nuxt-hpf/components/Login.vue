@@ -48,7 +48,9 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { getModule } from "vuex-module-decorators";
 import ModalsStates from "~/store/modules/ModalsStates";
+import Config from "~/store/modules/Config";
 import { UserLoginData } from "@/types/users";
+import { ColorSchemeEnum } from "~/types/themes";
 
 @Component({
   name: "Connexion"
@@ -64,6 +66,10 @@ export default class extends Vue {
   // #endregion
 
   // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
+
   get ModalsStatesModule(): ModalsStates {
     return getModule(ModalsStates, this.$store);
   }
@@ -87,6 +93,7 @@ export default class extends Vue {
     this.loading = true;
     try {
       await this.$auth.loginWith("cookie", { data: this.loginForm });
+      this.$changeTheme(this.ConfigModule.currentTheme?.details?.find((t) => { return t.colorScheme === ((this.$auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
       this.modalActive = false;
     } catch (error) {
       if (process.client) {

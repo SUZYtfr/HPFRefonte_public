@@ -1,8 +1,8 @@
 <template>
   <div
     :class="[{ 'fanfiction-hover': hover }, 'fanfiction']"
-    @mouseover="hover = true"
     @mouseleave="hover = false"
+    @mouseover="hover = true"
   >
     <div
       class="
