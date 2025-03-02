@@ -6,14 +6,20 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 urlpatterns = [
     path(r"api/", include([
-        path(r"users/", include("users.urls", namespace="users")),
+        path(r"users/", include("users.public_urls", namespace="users")),
         path(r"fictions/", include("fictions.urls", namespace="fictions")),
-        path(r"characteristics/", include("characteristics.urls", namespace="characteristics")),
+        path(r"characteristics/", include("characteristics.public_urls", namespace="characteristics")),
         path(r"reviews/", include("reviews.urls", namespace="reviews")),
-        path(r"news/", include("news.urls", namespace="news")),
+        path(r"news/", include("news.public_urls", namespace="news")),
         # path(r"reports/", include("reports.urls", namespace="reports")),
-        path(r"images/", include("images.urls", namespace="images")),
+        path(r"images/", include("images.public_urls", namespace="images")),
         path(r"account/", include("account.urls", namespace="account")),
+        path(r"private/", include([
+            path(r"users/", include("users.private_urls", namespace="private-users")),
+            path(r"news/", include("news.private_urls", namespace="private-news")),
+            path(r"characteristics/", include("characteristics.private_urls", namespace="private-characteristics")),
+            path(r"images/", include("images.private_urls", namespace="private-images")),
+        ])),
     ])),
     path(r"admin/", admin.site.urls),
     path(r'schema/download/', SpectacularAPIView.as_view(), name='schema'),

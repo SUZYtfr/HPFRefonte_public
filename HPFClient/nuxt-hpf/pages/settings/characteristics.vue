@@ -286,6 +286,7 @@ import { VForm, OpenToast } from "@/utils/formHelper";
 import Config from "~/store/modules/Config";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { getCaracteristicTypeColor, getCaracteristicTypeColorLight, getCaracteristicTypeColorLighter } from "@/utils/characteristics";
+import { searchCharacteristics, searchCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/private/characteristics";
 
 @Component({
   name: "SettingsCharateristics",
@@ -395,20 +396,13 @@ export default class extends Vue {
   }
 
   private async getCharacteristics(): Promise<void> {
-    // TODO à récupérer depuis l'API, pas depuis le store
-    if (
-      this.ConfigModule.characteristicTypes.length === 0 ||
-      this.ConfigModule.characteristics.length === 0
-    ) {
-      await this.ConfigModule.LoadConfig();
-    }
-    this.characteristics = this.ConfigModule.characteristics.map(obj => new CharacteristicModel(obj));
-    this.characteristics_types = this.ConfigModule.characteristicTypes;
-    // this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
-    //   parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {
-    //     return item.characteristic_type_id === parent.id;
-    //   });
-    // });
+    this.characteristics = (await searchCharacteristics(null));
+    this.characteristics_types = (await searchCharacteristicsTypes());
+    this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
+      parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {
+        return item.characteristic_type_id === parent.id;
+      });
+    });
   }
 
   // private async getUsers(): Promise<void> {
@@ -440,7 +434,19 @@ export default class extends Vue {
   public async updateItem(): Promise<void> {
     try {
       this.loading = true;
-      // const data = await signup(this.signupForm);
+      if (this.selectedItem instanceof CharacteristicModel) {
+        if (this.selectedItem.characteristic_id > 0) {
+          await updateCharacteristic(this.selectedItem);
+        } else {
+          await createCharacteristic(this.selectedItem);
+        }
+      } else if (this.selectedItem instanceof CharacteristicTypeModel) {
+        if (this.selectedItem.characteristic_type_id > 0) {
+          await updateCharacteristicsType(this.selectedItem as CharacteristicTypeModel);
+        }
+      } else {
+        throw "Erreur"
+      }
       OpenToast(
         "Caractéristique mise à jour",
         "is-primary",
@@ -470,7 +476,9 @@ export default class extends Vue {
         onAction: () => {
           try {
             this.loading = true;
-            // const data = await signup(this.signupForm);
+            if (this.selectedItem instanceof CharacteristicModel) {
+              deleteCharacteristic(this.selectedItem);
+            }
             this.selectedItem = null;
             this.characteristics = this.characteristics.filter((item: CharacteristicModel) => item.id !== 0);
             this.prepareFilteredCarac();
@@ -722,8 +730,9 @@ export default class extends Vue {
       // S'il faut  déplacer les enfants, on regénère la totalité du tree
       if (this.draggedRow.childs.length > 0) this.prepareFilteredCarac();
 
-      // Mettre à jour l'élément en base
-      this.updateItem();
+      // Réordonner dans la bdd
+      const newOrder = parent[0].characteristics.map(characteristic => characteristic.id);
+      reorderCharacteristics(parent[0], newOrder);
     };
   }
 

@@ -18,6 +18,4 @@ export const signup = (data: UserRegisterData): Promise<AxiosResponse<any>> =>
     data
   });
 
-export const searchUsers = (filters: IBasicQuery | null): Promise<any> => $AxiosWrapper.get<UserModel>("/users/", filters, UserModel);
 export const getUser = (id: number): Promise<any> => $AxiosWrapper.get<UserModel>("/users/" + id.toString() + "/", null, UserModel);
-export const putUser = (id: number, user: UserModel): Promise<any> => $AxiosWrapper.put<UserModel>("/users/" + id.toString() + "/", user, UserModel);

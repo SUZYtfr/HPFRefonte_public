@@ -2,14 +2,16 @@ from rest_framework.routers import SimpleRouter
 from rest_framework.urls import path
 from django.urls import include
 
-from .views import NewsViewSet, NewsCommentViewSet
+from .views import PublicNewsViewSet, NewsCommentViewSet
 
 app_name = "news"
 
 news_router = SimpleRouter()
-news_router.register(r"", NewsViewSet, basename="news")
+news_router.register(r"", PublicNewsViewSet, basename="public-news")
 newscomments_router = SimpleRouter()
 newscomments_router.register(r"", NewsCommentViewSet, basename="comment")
+
+urlpatterns = news_router.urls
 
 urlpatterns = [
     path(

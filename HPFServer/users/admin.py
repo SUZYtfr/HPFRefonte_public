@@ -18,6 +18,7 @@ class UserPreferencesInline(admin.StackedInline):
     classes = ["collapse"]
 
 
+# FIXME - Plante quand le compte est anonymisé
 @admin.register(User)
 class UserAdminPage(UserAdmin):
     """Accès d'administration des utilisateurs"""

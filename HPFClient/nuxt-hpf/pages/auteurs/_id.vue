@@ -41,9 +41,9 @@
                 <p class="subtitle is-7">
                   {{ user.profile?.realname }}
                 </p>
-                <p v-if="user.first_seen" class="subtitle is-7">
+                <p v-if="user.creation_date" class="subtitle is-7">
                   Inscrit le
-                  <strong>{{ user.first_seen.toLocaleDateString() }}</strong>
+                  <strong>{{ user.creation_date.toLocaleDateString() }}</strong>
                 </p>
               </div>
               <div class="media-right">
