@@ -3,8 +3,7 @@ from django.db import models
 from django.conf import settings
 from core.models import CreatedModel, DatedModel
 
-from .enums import BannerType
-
+from images.enums import BannerType, ExplicitContent
 
 """
 Toutes les images sont répertoriées dans la BDD. Aucune image ne doit être insérée par une balise <img>.
@@ -163,7 +162,7 @@ class BaseUserImage(BaseImage):
     """
     Modèle de base d'image ajoutée par les utilisateurs
     
-    :is_adult_only indique si l'image a un public restreint
+    :explicit_content_type indique si l'image a un public restreint
     :is_visibility_coerced indique si seule la modération peut modifier la valeur précédente
     """
     
@@ -177,8 +176,10 @@ class BaseUserImage(BaseImage):
         verbose_name="URL du site",
         help_text="URL du site du propriétaire de l'image si applicable."
     )
-    is_adult_only = models.BooleanField(
-        verbose_name="public restreint",
+    explicit_content_type = models.PositiveSmallIntegerField(
+        choices=ExplicitContent.choices,
+        default=ExplicitContent.SAFE,
+        verbose_name="Type de contenu explicite",
     )
     is_visibility_coerced = models.BooleanField(
         default=False,

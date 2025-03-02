@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterTextVersion
 from images.models import ProfilePicture, Banner, ContentImage
-from images.enums import BannerType
+from images.enums import BannerType, ExplicitContent
 from .enums import (
     Gender,
     WebsiteType,
@@ -340,7 +340,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
             creation_user=self.user,
             display_height=0,  # FIXME - supprimer les dimensions du modèle d'avatar
             display_width=0,
-            is_adult_only=False,
+            explicit_content_type=ExplicitContent.SAFE,
             is_user_property=True,
             **profile_picture,
         )        
@@ -382,14 +382,26 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         primary_key=True,
         editable=True,
     )
-
+    display_content = models.PositiveSmallIntegerField(
+        verbose_name="Contenu explicite à afficher",
+        default=ExplicitContent.SAFE,
+        choices=ExplicitContent.combined_choices,
+        help_text="opérateur bitwise sur ExplicitContent"
+    )
+    
     # APPARENCE
-    skin = models.CharField(
-        max_length=50,
-        verbose_name="thème",
-        # null=False,
-        # blank=True,
-        default="default",
+    theme = models.ForeignKey(
+        verbose_name="thème préféré",
+        to="users.Theme",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    theme_overriden_at = models.DateTimeField(
+        verbose_name="thème préféré bloqué",
+        null=True,
+        blank=True,
+        help_text="Date à laquelle l'utilisateur a spécialement indiqué vouloir voir son thème préféré",
     )
     color_scheme = models.PositiveSmallIntegerField(
         verbose_name="mode d'affichage",
@@ -548,3 +560,64 @@ class ExternalProfile(models.Model):
     def __str__(self):
         return f"{self.external_username} sur {str(self.website_type)}"
   
+
+class Theme(models.Model):
+    class Meta:
+        verbose_name = "Thème"
+        constraints = [
+            models.UniqueConstraint(
+                name="UQ_unique_default_theme",
+                fields=["default"],
+                condition=models.Q(default=True),
+                violation_error_message="Il ne peut exister qu'un seul thème par défaut.",
+            ),
+            models.CheckConstraint(
+                name="CK_default_theme_not_disabled",
+                check=~models.Q(default=True, enabled=False),
+                violation_error_message="Le thème par défaut ne peux pas être désactivé.",
+            ),
+            models.CheckConstraint(
+                name="CK_default_theme_not_temporary",
+                check=~(models.Q(default=True) & (models.Q(use_default_from__isnull=False) | models.Q(use_default_to__isnull=False))),
+                violation_error_message="Le thème par défaut ne peut pas être temporaire.",
+            ),
+            models.CheckConstraint(
+                name="CK_use_default_from_lt_use_default_to",
+                check=~(models.Q(use_default_from__gte=models.F("use_default_to"))),
+                violation_error_message="La date de début ne peut pas être plus lointaine que la date de fin.",
+            ),
+        ]
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name="nom",
+        unique=True,
+    )
+    default = models.BooleanField(
+        verbose_name="thème par défaut",
+        default=False,
+    )
+    enabled = models.BooleanField(
+        verbose_name="disponible",
+        default=False,
+    )
+    use_default_from = models.DateTimeField(
+        verbose_name="utiliser de",
+        null=True,
+        blank=True,
+        default=None,
+    )
+    use_default_to = models.DateTimeField(
+        verbose_name="utiliser jusqu'à",
+        null=True,
+        blank=True,
+        default=None,
+    )
+    details = models.JSONField(
+        verbose_name="détails",
+        default=list,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.name

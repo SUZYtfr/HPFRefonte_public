@@ -144,7 +144,7 @@ class TestFictionsAPI(APITestCase):
             "summary_images": [
                 {
                     "url": "https://picsum.photos/250/",
-                    "is_adult_only": False,
+                    "explicit_content_type": 0,
                     "index": 1,
                     "display_height": 250,
                     "display_width": 250
@@ -161,14 +161,14 @@ class TestFictionsAPI(APITestCase):
                 "text_images": [
                     {
                         "url": "https://picsum.photos/250/",
-                        "is_adult_only": False,
+                        "explicit_content_type": 0,
                         "index": 1,
                         "display_height": 250,
                         "display_width": 250
                     },
                     {
                         "url": "https://picsum.photos/250/",
-                        "is_adult_only": False,
+                        "explicit_content_type": 0,
                         "index": 2,
                         "display_height": 250,
                         "display_width": 250

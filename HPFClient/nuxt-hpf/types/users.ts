@@ -1,5 +1,6 @@
 import { Exclude, Transform } from "class-transformer";
 import { BasicClass, IBasicQuery } from "./basics";
+import { ExplicitContentEnum } from "./images";
 
 export enum UserStatus {
   Unvalidated = 1,
@@ -85,6 +86,11 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public get user_preference_id(): number {
     return this.id;
   }
+  
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public theme_overriden_at: Date | null = null;
+  public theme: number | null = null;
 
   public age_consent: boolean = false;
   public font: string | null = null;
@@ -93,6 +99,7 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public dark_mode: boolean | null = null;
   public skin: string = "default";
   public show_reaction: boolean = true;
+  public explicit_content: ExplicitContentEnum = ExplicitContentEnum.Safe;
 }
 
 // Table UserLink

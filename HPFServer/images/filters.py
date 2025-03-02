@@ -1,5 +1,5 @@
 from django_filters.rest_framework import filters, filterset
-from images.models import ContentImage
+from images.models import ContentImage, Banner
 
 
 class PrivateContentImageFilterSet(filterset.FilterSet):
@@ -7,7 +7,7 @@ class PrivateContentImageFilterSet(filterset.FilterSet):
         model = ContentImage
         fields = [
             "username",
-            "is_adult_only",
+            "explicit_content_type",
             "missing_credits",
         ]
 
@@ -30,3 +30,10 @@ class PrivateContentImageFilterSet(filterset.FilterSet):
             )
         return queryset
     
+
+class PrivateBannerFilterSet(filterset.FilterSet):
+    class Meta:
+        model = Banner
+        fields = [
+            "category"
+        ]

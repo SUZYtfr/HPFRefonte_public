@@ -18,4 +18,4 @@ export const signup = (data: UserRegisterData): Promise<AxiosResponse<any>> =>
     data
   });
 
-export const getUser = (id: number): Promise<any> => $AxiosWrapper.get<UserModel>("/users/" + id.toString() + "/", null, UserModel);
+export const getUser = (id: number): Promise<any> => $AxiosWrapper.get<UserModel>(`/users/users/${id.toString()}/`, null, UserModel);

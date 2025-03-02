@@ -12,6 +12,7 @@ from characteristics.models import Characteristic, CharacteristicType
 from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage, CollectionAccess
 from reviews.models import FictionReview, ChapterReview, CollectionReview
 from news.models import NewsArticle, NewsComment, NewsStatus
+from images.enums import ExplicitContent
 
 """
 Fonctions de génération aléatoire de ressources.
@@ -115,7 +116,7 @@ def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
             display_width=width,
             display_height=height,
             is_user_property=True,
-            is_adult_only=False,
+            explicit_content_type=ExplicitContent.SAFE,
             creation_user_id=creation_user_id,
             index=i,
         )
