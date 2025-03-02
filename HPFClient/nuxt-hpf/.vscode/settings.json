@@ -1,7 +1,0 @@
-{
-    "sonarlint.disableTelemetry": true,
-    "eslint.lintTask.enable": false,
-    "eslint.run": "onType",
-    "eslint.packageManager": "yarn",
-    "vue.codeActions.enabled": false
-}
