@@ -4,6 +4,14 @@
     <SidebarDebug v-if="false" />
     <!-- Header -->
     <Navbar />
+    <!-- Bannière -->
+    <div id="banner" class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1>Harry Potter Fanfiction</h1>
+        </div>
+      </div>
+    </div>
     <div id="wrapper">
       <!-- Main Content -->
       <nuxt />
@@ -15,9 +23,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { getModule } from "vuex-module-decorators";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import SidebarDebug from "@/components/SidebarDebug.vue";
+import Config from "~/store/modules/Config";
+import Common from "~/store/modules/CommonState";
+import { ColorSchemeEnum } from "~/types/themes";
 
 @Component({
   components: {
@@ -26,14 +38,32 @@ import SidebarDebug from "@/components/SidebarDebug.vue";
     SidebarDebug
   }
 })
-export default class extends Vue {}
+export default class extends Vue {
+  // #region Hooks
+  mounted(): void {
+    if (this.CommonModule.wasRefreshed) {
+      this.$changeTheme(this.ConfigModule.currentTheme?.details?.find((t) => { return t.colorScheme === ((this.$auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
+    }
+  }
+  // #endregion
+
+  // #region Computed
+  get ConfigModule(): Config {
+    return getModule(Config, this.$store);
+  }
+
+  get CommonModule(): Common {
+    return getModule(Common, this.$store);
+  }
+  // #endregion
+}
 </script>
 
 <style lang="scss" scoped>
 @import "~/assets/scss/custom_bulma_core.scss";
 
 #container {
-  background-color: $primary-light;
+  background-color: var(--primary-light);
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -59,4 +89,17 @@ body {
 * {
   // outline: 1px solid #0f0 !important;
 }
+
+.hero-body {
+  background-image: var(--hpf-banner);
+}
+#banner h1 {
+  font-size: 50px;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-family: "Amiri", serif;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0px 20px;
+}
+
 </style>

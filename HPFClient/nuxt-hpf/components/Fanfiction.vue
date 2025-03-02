@@ -158,8 +158,11 @@ import { CharacteristicData } from "@/types/characteristics";
 })
 export default class Fanfiction extends Vue {
   // #region Props
-  @Prop() public fanfiction!: FanfictionModel;
-  @Prop({ default: null }) public config!: FanfictionEntityConfig;
+  @Prop()
+  declare public fanfiction?: FanfictionModel;
+
+  @Prop({ default: null })
+  declare public config?: FanfictionEntityConfig;
   // #endregion
 
   // #region Datas
@@ -210,19 +213,19 @@ export default class Fanfiction extends Vue {
 }
 
 .fanfiction-hover {
-  background-color: #f6f6f6 !important;
+  background-color: var(--whitesmoke) !important;
   //border: 1px solid #f6f6f6 !important;
   border-radius: 10px 10px 0px 0px !important;
 }
 
 .fanfiction {
-  background-color: #ffffff;
+  background-color: var(--scheme-main);
 }
 .fanfiction-with-border {
-  border-bottom: 2px solid $primary;
+  border-bottom: 2px solid var(--primary);
 }
 
 hr {
-  background-color: $primary;
+  background-color: var(--primary);
 }
 </style>

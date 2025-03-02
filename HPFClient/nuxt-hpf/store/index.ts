@@ -1,9 +1,12 @@
-// import type { Context } from '@nuxt/types'
-// import type { GetterTree, ActionTree, MutationTree } from 'vuex'
+import type { Context } from "@nuxt/types";
+import type { ActionTree } from "vuex";
+import { getModule } from "vuex-module-decorators";
+import Config from "~/store/modules/Config";
+import Common from "~/store/modules/CommonState";
 
-// export interface RootState {
-//   description: string
-// }
+export interface RootState {
+  description: string
+}
 
 // export const state = (): RootState => ({
 //   description: "I'm defined as an initial state"
@@ -21,11 +24,15 @@
 //   [MutationType.CHANGE_DESCRIPTION]: (state, newDescription: string) => { state.description = newDescription }
 // }
 
-// export const actions: ActionTree<RootState, RootState> = {
-//   nuxtServerInit ({ commit }, _context: Context) {
-//     commit(MutationType.CHANGE_DESCRIPTION, "I'm defined by server side")
-//   }
-// }
+export const actions: ActionTree<RootState, RootState> = {
+  async nuxtServerInit({ commit }, _context: Context) {
+    const configModule = getModule(Config, _context.store);
+    await configModule.LoadConfig();
+    // On indique un rafrachissement de la page
+    const commonModule = getModule(Common, _context.store);
+    commonModule.setWasRefreshed(true);
+  }
+};
 
 // import { Store } from "vuex";
 // import { initialiseStores } from "~/utils/store-accessor";

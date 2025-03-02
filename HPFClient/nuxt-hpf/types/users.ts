@@ -1,12 +1,13 @@
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass } from "./basics";
+import { BasicClass, IBasicQuery } from "./basics";
+import { ExplicitContentEnum } from "./images";
 
 export enum UserStatus {
   Unvalidated = 1,
   Validated = 2,
   Moderator = 3,
   Administrator = 4,
-  Banned = 4,
+  Banned = 5,
 }
 
 export enum UserGender {
@@ -25,11 +26,17 @@ export class UserData extends BasicClass<UserData> {
   }
 
   public status: UserStatus = UserStatus.Unvalidated;
+  public ban_reason: string = "";
   public username: string = "";
   public email: string = "";
 
   public is_premium: boolean = false;
   public is_beta: boolean = false;
+  public team: number[] | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public creation_date: Date | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
@@ -38,6 +45,18 @@ export class UserData extends BasicClass<UserData> {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public last_login: Date | null = null;
+}
+
+// Filtres utilisateurs
+export interface IUserFilters extends IBasicQuery {
+  username: string | null,
+  email: string | null,
+  id: number | null,
+  status: UserStatus | null,
+  premium: boolean | null,
+  published: boolean | null,
+  team: number[] | null,
+  creation_date: Date | null,
 }
 
 // Table UserProfile
@@ -67,6 +86,11 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public get user_preference_id(): number {
     return this.id;
   }
+  
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
+  public theme_overriden_at: Date | null = null;
+  public theme: number | null = null;
 
   public age_consent: boolean = false;
   public font: string | null = null;
@@ -75,6 +99,7 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   public dark_mode: boolean | null = null;
   public skin: string = "default";
   public show_reaction: boolean = true;
+  public explicit_content: ExplicitContentEnum = ExplicitContentEnum.Safe;
 }
 
 // Table UserLink
@@ -119,4 +144,9 @@ export class AuthorData extends BasicClass<AuthorData> {
 
   public username: string | null = null;
   public avatar: string | null = null;
+
+  constructor(init?: Partial<AuthorData>) {
+    super();
+    Object.assign(this, init);
+  }
 }

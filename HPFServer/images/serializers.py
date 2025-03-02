@@ -1,7 +1,7 @@
 from django.core import validators
 from rest_framework import serializers
 from drf_extra_fields import fields as extra_fields, relations as extra_relations
-from .models import Banner, ProfilePicture, ContentImage
+from images.models import Banner, ProfilePicture, ContentImage
 
 
 class BannerSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class ProfilePictureSerializer(serializers.ModelSerializer):
             "src_path",
             "src_url",
             "is_user_property",
-            "is_adult_only",
+            "explicit_content_type",
             "credits_url",
         ]
         read_only_fields = [
@@ -78,6 +78,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
 
     # FIXME - pour le branchement
     url = serializers.URLField(
+        required=False,
         source="src_url",
         validators=[
             validators.URLValidator(
@@ -102,7 +103,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
             "display_height",
             "display_width",
             "is_user_property",
-            "is_adult_only",
+            "explicit_content_type",
             "is_visibility_coerced",
             "credits_url",
             "src",
@@ -130,7 +131,7 @@ class ContentImageSerializer(serializers.ModelSerializer):
                 "required": False,
                 "default": True,
             },
-            "is_adult_only": {
+            "explicit_content_type": {
                 "required": False,
             },
             "index": {
@@ -193,3 +194,45 @@ class ContentImageSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(message)
 
         return values
+
+
+class PrivateContentImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentImage
+        fields = [
+            "id",
+            "creation_user",
+            "modification_user",
+            "creation_date",
+            "modification_date",
+            "src_path",
+            "src_url",
+            "display_height",
+            "display_width",
+            "href",
+            "alt",
+            "src",
+            "is_on_disk",
+            "is_user_property",
+            "credits_url",
+            "explicit_content_type",
+            "is_visibility_coerced",
+            "credits",
+        ]
+        read_only_fields = [
+            "src_url",
+            "src_path",
+        ]
+        extra_kwargs = {
+            # TODO - pour le branchement, on voudra sans doute un champ libre en effet
+            "credits": {"source": "credits_url"},
+        }
+
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        presentation_serializer="users.serializers.UserCardSerializer",
+        read_only=True,
+    )
+    modification_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        presentation_serializer="users.serializers.UserCardSerializer",
+        read_only=True,
+    )

@@ -41,9 +41,9 @@
                 <p class="subtitle is-7">
                   {{ user.profile?.realname }}
                 </p>
-                <p v-if="user.first_seen" class="subtitle is-7">
+                <p v-if="user.creation_date" class="subtitle is-7">
                   Inscrit le
-                  <strong>{{ user.first_seen.toLocaleDateString() }}</strong>
+                  <strong>{{ user.creation_date.toLocaleDateString() }}</strong>
                 </p>
               </div>
               <div class="media-right">
@@ -675,7 +675,7 @@ export default class extends Vue {
   margin-right: 0.2rem;
 }
 #author-info .card .card-footer .card-footer-item .icon:hover {
-  color: $primary !important;
+  color: var(--primary) !important;
 }
 #author-info .card .card-content .level-item .has-text-weight-semibold {
   margin-bottom: 0rem !important;

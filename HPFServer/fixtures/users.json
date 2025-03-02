@@ -203,7 +203,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -214,7 +214,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -225,7 +225,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -236,7 +236,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -247,7 +247,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -258,7 +258,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     },
     {
@@ -269,7 +269,7 @@
             "font": "Tahoma",
             "font_size": 7,
             "line_spacing": "1.00",
-            "skin": "default"
+            "theme": null
         }
     }
 ]

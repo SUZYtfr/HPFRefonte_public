@@ -38,12 +38,20 @@ class CharacteristicSerializer(CharacteristicBaseSerializer):
             "fiction_count",
         ]
         extra_kwargs = {
-            "description": {"read_only": True},
-            "characteristic_type": {"queryset": CharacteristicType.objects.open()},
-            "parent": {"queryset": Characteristic.objects.allowed(),
-                       "allow_null": True,
-                       "initial": ""},
-            "order": {"source": "_order"},
+            "characteristic_type_id": {
+                "queryset": CharacteristicType.objects.open(),
+                "source": "characteristic_type",
+            },
+            "parent_id": {
+                "queryset": Characteristic.objects.allowed(),
+                "allow_null": True,
+                "initial": "",
+                "source": "parent",
+            },
+            "order": {
+                "source": "_order",
+                "read_only": True
+            },
         }
 
     def get_or_create(self, validated_data):

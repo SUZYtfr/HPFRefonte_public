@@ -38,8 +38,11 @@ import { UserLinkData } from "@/types/users";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public link!: UserLinkData;
-  @Prop() private fullLength!: boolean;
+  @Prop()
+  declare public link?: UserLinkData;
+
+  @Prop()
+  declare private fullLength?: boolean;
   // #endregion
 
   // #region Datas
@@ -50,7 +53,7 @@ export default class extends Vue {
   get linkIdImg(): string {
     const imgDir = require.context("@/assets/img/");
     let s = "placeholders/32x32.png";
-    switch (this.link.link_type_id) {
+    switch (this.link?.link_type_id) {
       case 1:
         s = "logo_forum_centre.png";
         break;
@@ -85,12 +88,12 @@ export default class extends Vue {
 
 img {
   background-color: #f0f0f0;
-  /*border: 1px solid $primary;*/
+  /*border: 1px solid var(--primary);*/
   /*border: 1px solid #707070;*/
 }
 
 .img-hover {
-  border: 2px solid $primary;
+  border: 2px solid var(--primary);
   /*border: 2px solid #707070;*/
 }
 
@@ -106,7 +109,7 @@ figure {
 
 p {
   margin-left: 0.5rem;
-  color: $primary;
+  color: var(--primary);
 }
 
 #user-link-image {

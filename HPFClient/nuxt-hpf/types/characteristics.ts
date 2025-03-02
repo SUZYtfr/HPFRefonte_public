@@ -14,6 +14,11 @@ export class CharacteristicData extends BasicClass<CharacteristicData> {
   public order: number = 0;
   public visible: boolean = true;
   public enabled: boolean = true;
+
+  constructor(init?: Partial<CharacteristicData>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {

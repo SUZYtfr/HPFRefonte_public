@@ -28,6 +28,16 @@ export function getCaracteristicTypeColor(characteristic_type_id: number | null)
   }
 }
 
+export function getCaracteristicTypeColorLight(characteristic_type_id: number | null): string {
+  if (characteristic_type_id == null) return "";
+  return getCaracteristicTypeColor(characteristic_type_id) + "-light";
+}
+
+export function getCaracteristicTypeColorLighter(characteristic_type_id: number | null): string {
+  if (characteristic_type_id == null) return "";
+  return getCaracteristicTypeColor(characteristic_type_id) + "-lighter";
+}
+
 export function getFullPath(characteristic: CharacteristicData, characteristics: CharacteristicData[]): string {
   let result = "";
   if (characteristic.parent_id != null) {

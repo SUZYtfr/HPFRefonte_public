@@ -1,4 +1,3 @@
-
 import { Type, Exclude } from "class-transformer";
 import { getModule } from "vuex-module-decorators";
 import { CharacteristicModel } from "./characteristics";
@@ -40,6 +39,11 @@ export class FanfictionModel extends FanfictionData {
   public chapter_count: number | null = null;
   public word_count: number | null = null;
   public first_chapter: { id: number, title: string, order: number } | null = null;
+
+  constructor(init?: Partial<FanfictionModel>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {

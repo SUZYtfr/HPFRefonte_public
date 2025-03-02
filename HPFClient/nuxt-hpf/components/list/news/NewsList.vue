@@ -16,6 +16,7 @@
         'is-flex',
         'is-flex-direction-row',
         'is-align-items-center',
+        'is-white'
       ]"
     >
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
@@ -63,9 +64,8 @@
           <News_2
             v-for="(item, innerindex) of news"
             :key="'news_' + item.news_id.toString()"
-            class="mb-2"
+            :class="['mb-2', {'is-color-even': (innerindex % 2 != 0) }, {'is-color-odd': (innerindex % 2 == 0) }]"
             :news="item"
-            :active-color="innerindex % 2 != 0 ? '#e8d7e0' : '#f0f0f0'"
             :index="innerindex"
           />
         </div>
@@ -110,10 +110,17 @@ import { SortByEnum } from "~/types/basics";
 })
 export default class NewsList extends Vue {
   // #region Props
-  @Prop({ default: true }) public isCard!: boolean;
-  @Prop({ default: true }) public showRefreshButton!: boolean;
-  @Prop({ default: false }) private isLoading!: boolean;
-  @Prop() public newsFilters!: INewsFilters;
+  @Prop({ default: true })
+  declare public isCard?: boolean;
+
+  @Prop({ default: true })
+  declare public showRefreshButton?: boolean;
+
+  @Prop({ default: false })
+  declare private isLoading?: boolean;
+
+  @Prop()
+  declare public newsFilters?: INewsFilters;
   // #endregion
 
   // #region Data
@@ -134,7 +141,7 @@ export default class NewsList extends Vue {
   }
 
   get listLoading(): boolean {
-    return this.isLoading;
+    return this.isLoading ?? false;
   }
 
   set listLoading(value) {
@@ -161,6 +168,7 @@ export default class NewsList extends Vue {
 
   // #region Methods
   private async searchNews(): Promise<void> {
+    if (this.newsFilters == null) return;
     try {
       const response = (await searchNews(this.newsFilters));
       this.news = response.results;
@@ -184,6 +192,7 @@ export default class NewsList extends Vue {
   }
 
   public SelectSortBy_OnInputChanged(value: string): void {
+    if (this.newsFilters == null) return;
     switch (value) {
       case "most_recent":
         this.newsFilters.sortBy = SortByEnum.Descending;
@@ -202,5 +211,8 @@ export default class NewsList extends Vue {
 <style lang="scss" scoped>
 .fullheight {
   height: 100%;
+}
+.card-header {
+  background-color: var(--scheme-main);
 }
 </style>

@@ -25,9 +25,9 @@
           style="gap: 5px"
         >
           <b-input v-model="image.url" placeholder="Url" size="is-small" />
-          <b-checkbox v-model="image.is_adult_only" size="is-small">
+          <!-- <b-checkbox v-model="image.is_adult_only" size="is-small">
             Contenu sensible
-          </b-checkbox>
+          </b-checkbox> -->
         </div>
       </div>
 
@@ -60,7 +60,8 @@ import { ImageHPFData } from "@/types/images";
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public image!: ImageHPFData;
+  @Prop()
+  declare public image?: ImageHPFData;
   // #endregion
 
   // #region Datas
@@ -86,7 +87,7 @@ export default class extends Vue {
 
 .image-editor-hover {
   // background-color: #e8d7e0 !important;
-  // border: 1px solid $primary-light !important;
+  // border: 1px solid var(--primary-light) !important;
   // border-radius: 5px !important;
   // cursor: pointer;
 }
@@ -107,7 +108,7 @@ img {
   left: 0px;
 }
 #close-button:hover {
-  color: $primary;
+  color: var(--primary);
   cursor: pointer;
 }
 </style>

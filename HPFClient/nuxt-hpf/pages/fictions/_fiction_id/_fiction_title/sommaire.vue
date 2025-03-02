@@ -154,7 +154,7 @@
 import { Component, Vue, Prop } from "nuxt-property-decorator";
 import { SerialiseClass } from "@/serialiser-decorator";
 import FanfictionEntity from "~/components/Fanfiction.vue";
-import { getFanfictions } from "~/api/fanfictions";
+import { getFanfiction } from "~/api/fanfictions";
 import { FanfictionModel, FanfictionEntityConfig, TableOfContent, ChapterModelLight } from "~/models/fanfictions";
 import ReviewList from "@/components/list/reviews/ReviewList.vue";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
@@ -172,7 +172,8 @@ import { ReviewItemTypeEnum } from "@/types/fanfictions";
 export default class extends Vue {
   // #region Props
   @SerialiseClass(TableOfContent)
-  @Prop() public tableOfContent!: TableOfContent;
+  @Prop()
+  declare public tableOfContent?: TableOfContent;
   // #endregion
 
   // #region Data
@@ -194,7 +195,7 @@ export default class extends Vue {
   // #region Computed
   public get fictionTriggerWarnings() : {id: number, caption: string }[] {
     let triggerWarningsGrouped: {id: number, caption: string }[] = [];
-    this.tableOfContent.chapters?.filter(
+    this.tableOfContent?.chapters?.filter(
       (t: ChapterModelLight) =>
         ((t.trigger_warnings?.length ?? 0) > 0)
     ).forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.trigger_warnings_loaded));
@@ -212,7 +213,7 @@ export default class extends Vue {
     this.fictionLoading = true;
     try {
       // Charger la fiction
-      this.fiction = (await getFanfictions(parseInt(this.$route.params.fiction_id)));
+      this.fiction = (await getFanfiction(parseInt(this.$route.params.fiction_id)));
       if (this.fiction != null) {
         this.reviewListItemId = this.fiction?.fanfiction_id;
         this.reviewListType = ReviewItemTypeEnum.Fanfiction;

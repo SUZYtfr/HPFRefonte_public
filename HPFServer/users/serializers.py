@@ -1,6 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 from drf_extra_fields import fields as extra_fields
+from datetime import datetime
 
 from core.serializers import ListableModelSerializer
 from .models import (
@@ -8,7 +9,9 @@ from .models import (
     UserProfile,
     UserPreferences,
     ExternalProfile,
+    Theme,
 )
+from .enums import UserStatus
 from images.serializers import ContentImageSerializer
 
 
@@ -50,7 +53,8 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
             "line_spacing",
             "color_scheme",
             "color_scheme_in_reader",
-            "skin",
+            "theme",
+            "theme_overriden_at",
             "show_animations",
             "show_profile_pictures",
             # "show_reaction",
@@ -68,6 +72,7 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
             "email_for_favorite",
             "email_for_chapter_status",
             "result_order",
+            "display_content",
         ]
 
 
@@ -158,13 +163,40 @@ class UserListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "username",
+            "email",
+            "first_seen",
+            "creation_date",
+            "status",
+            "stats",
         ]
+
+    creation_date = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    stats = serializers.SerializerMethodField()
+
+    def get_creation_date(self, user: User) -> datetime | None:
+        return user.first_seen
+
+    def get_status(self, user: User) -> UserStatus:
+        if user.is_superuser:
+            return UserStatus.ADMINISTRATOR
+        elif user.is_staff:
+            return UserStatus.MODERATOR
+        elif user.is_active:
+            return UserStatus.VALIDATED
+        elif not user.username:
+            return UserStatus.BANNED
+        else:
+            return UserStatus.UNVALIDATED
+
+    def get_stats(self, user: User):
+        return {"fiction_count": user.fiction_count}
 
 
 class UserSerializer(ListableModelSerializer):
     """Sérialiseur d'utilisateur"""
 
-    profile = UserProfileSerializer(required=False)
+    profile = UserProfileSerializer(required=False, allow_null=True)
     stats = UserStatsSerializer(read_only=True, source="*")
 
     class Meta:
@@ -179,3 +211,14 @@ class UserSerializer(ListableModelSerializer):
             "stats",
         ]
         list_serializer_child_class = UserListSerializer
+
+    def validate(self, attrs):
+        if "profile" in attrs and not attrs.get("profile"):
+            attrs.pop("profile")
+        return super().validate(attrs)
+
+
+class ThemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Theme
+        fields = "__all__"

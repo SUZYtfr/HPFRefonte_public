@@ -9,6 +9,11 @@ export class CommentModel extends CommentData {
   public author: AuthorData | null = null;
 
   public content_images: ImageHPFData[] | null = null;
+
+  constructor(init?: Partial<CommentModel>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 // #endregion
 
@@ -21,5 +26,10 @@ export class NewsModel extends NewsData {
   public comments: CommentModel[] | null = null;
 
   public comment_count: number = 0;
+
+  constructor(init?: Partial<NewsModel>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 // #endregion

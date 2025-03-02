@@ -1,8 +1,8 @@
 <template>
   <div
     :class="[{ 'fanfiction-hover': hover }, 'fanfiction']"
-    @mouseover="hover = true"
     @mouseleave="hover = false"
+    @mouseover="hover = true"
   >
     <div
       class="
@@ -95,7 +95,7 @@ import { CharacteristicData } from "@/types/characteristics";
   },
   directives: {
     plaintext: {
-      bind: function (el, binding, vnode) {
+      bind: function (el: any, binding: any, vnode: any) {
         el.innerHTML = el.innerText.trimStart();
       }
     }
@@ -103,7 +103,8 @@ import { CharacteristicData } from "@/types/characteristics";
 })
 export default class FanfictionThumbnail extends Vue {
   // #region Props
-  @Prop() public fanfiction!: FanfictionModel;
+  @Prop()
+  declare public fanfiction?: FanfictionModel;
   // #endregion
 
   // #region Datas
@@ -151,13 +152,13 @@ export default class FanfictionThumbnail extends Vue {
 }
 
 .fanfiction-hover {
-  background-color: #e8d7e0 !important;
-  border: 1px solid $primary-light !important;
+  background-color: var(--hpf-primary-lighter) !important;
+  border: 1px solid var(--primary-light) !important;
   border-radius: 5px !important;
 }
 
 .fanfiction {
-  background-color: #ffffff;
+  background-color: var(--scheme-main);
   /*height: 118px;*/
   border: 1px solid transparent;
   padding-bottom: 5px;

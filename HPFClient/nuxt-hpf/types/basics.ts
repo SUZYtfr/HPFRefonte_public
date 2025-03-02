@@ -5,6 +5,13 @@ export enum SortByEnum {
   Descending = 1,
 }
 
+export enum RecordStatusEnum {
+  Unchanged = 1,
+  Added = 2,
+  Updated = 3,
+  Deleted = 4,
+}
+
 export interface IBasicQuery {
   page: number,
   totalPages: boolean,
@@ -21,6 +28,7 @@ export interface BasicResponse {
 
 export class BasicClass<T> {
   public id: number = 0;
+  public recordStatus: RecordStatusEnum = RecordStatusEnum.Unchanged;
   public creation_user_id: number | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
@@ -42,7 +50,7 @@ export class BasicClass<T> {
   //   Object.assign(this, basicClass); // or set each prop individually
   // }
 
-  public toJSON (): any {
+  public toJSON(): any {
     return { ...this }; // POJO's copy of the class instance
   }
 }

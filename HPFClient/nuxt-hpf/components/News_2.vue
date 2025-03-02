@@ -1,7 +1,6 @@
 <template>
   <div
     :class="['news', 'px-3']"
-    :style="{ backgroundColor: activeColor }"
   >
     <!-- Header -->
     <div class="columns is-vcentered is-mobile mb-1">
@@ -63,8 +62,8 @@ import { NewsModel } from "~/models/news";
 })
 export default class News_2 extends Vue {
   // #region Props
-  @Prop() public news!: NewsModel;
-  @Prop() public activeColor!: string;
+  @Prop()
+  declare public news?: NewsModel;
   // #endregion
 
   public mounted(): void {
@@ -82,7 +81,7 @@ export default class News_2 extends Vue {
 <style lang="scss" scoped>
 @import "~/assets/scss/custom.scss";
 hr {
-  background-color: $primary;
+  background-color: var(--primary);
   margin-top: 5px;
   margin-bottom: 5px;
   margin-right: 80px;
@@ -105,6 +104,6 @@ hr {
 
 .fanfiction {
   /*background-color: #ffffff;
-  border-bottom: 2px solid $primary;*/
+  border-bottom: 2px solid var(--primary);*/
 }
 </style>

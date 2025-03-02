@@ -318,7 +318,7 @@
 import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
 import { getModule } from "vuex-module-decorators";
 import { SerialiseClass } from "@/serialiser-decorator";
-import { getChapters } from "@/api/chapters";
+import { getChapter } from "@/api/chapters";
 import { ChapterModel, TableOfContent } from "@/models/fanfictions";
 import TipTapEditor from "@/components/TipTapEditor.vue";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
@@ -339,7 +339,8 @@ import { ReviewItemTypeEnum } from "@/types/fanfictions";
 export default class extends Vue {
   // #region Props
   @SerialiseClass(TableOfContent)
-  @Prop() public tableOfContent!: TableOfContent;
+  @Prop()
+  declare public tableOfContent?: TableOfContent;
   // #endregion
 
   // #region Data
@@ -447,7 +448,7 @@ export default class extends Vue {
     this.chapterLoading = true;
     try {
       // Charger le chapitre
-      this.chapter = (await getChapters(parseInt(this.$route.params.chapter_id)));
+      this.chapter = (await getChapter(parseInt(this.$route.params.chapter_id)));
       this.tiptapReadOnlyConfig.defaultValue = (this.chapter?.text ?? "");
       if (this.chapter != null) {
         this.reviewListItemId = this.chapter?.chapter_id;

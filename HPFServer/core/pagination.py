@@ -1,5 +1,5 @@
-from rest_framework.pagination import PageNumberPagination, Response, OrderedDict
-
+from rest_framework.pagination import PageNumberPagination, Response
+from collections import OrderedDict
 
 class CurrentPagePagination(PageNumberPagination):
     page_size_query_param = "page_size"

@@ -144,19 +144,18 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~/assets/scss/custom.scss";
-
 .card-content {
   padding: 0px;
 }
 
-@media (max-width: $desktop) {
+@media (max-width: var(--desktop-width)) {
   .columns.is-reversed-touch {
     flex-direction: column-reverse;
     display: flex;
   }
 }
 
-@media (max-width: $tablet) {
+@media (max-width: var(--tablet-width)) {
   .columns.is-reversed-mobile {
     flex-direction: column-reverse;
     display: flex;

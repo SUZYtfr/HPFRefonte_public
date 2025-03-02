@@ -213,10 +213,17 @@ import { CharacteristicModel, CharacteristicTypeModel } from "~/models/character
 })
 export default class extends Vue {
   // #region Props
-  @Prop() public fanfictionFilters!: IFanfictionFilters;
-  @Prop({ default: false }) public loading!: boolean;
-  @Prop({ default: false }) public isFixedHeightCard!: boolean;
-  @Prop({ default: "is-right" }) public tooltipPosition!: string;
+  @Prop()
+  declare public fanfictionFilters?: IFanfictionFilters;
+
+  @Prop({ default: false })
+  declare public loading?: boolean;
+
+  @Prop({ default: false })
+  declare public isFixedHeightCard?: boolean;
+
+  @Prop({ default: "is-right" })
+  declare public tooltipPosition?: string;
   // #endregion
 
   // #region Datas
@@ -257,6 +264,7 @@ export default class extends Vue {
   // #region Watchers
   @Watch("sliderWords")
   public onSliderChanged(): void {
+    if (this.fanfictionFilters == null) return;
     this.fanfictionFilters.wordCount_min = this.sliderTicks[this.sliderWords[0] - 1].realValue;
     this.fanfictionFilters.wordCount_max = this.sliderTicks[this.sliderWords[1] - 1].realValue;
     // Valeurs min et max -> null
@@ -322,6 +330,7 @@ export default class extends Vue {
     includedIds: number[],
     excludedIds: number[]
   ): void {
+    if (this.fanfictionFilters == null) return;
     this.fanfictionFilters.excludedTags =
       this.fanfictionFilters.excludedTags.filter(
         excludedId => !allIds.has(excludedId)
@@ -338,6 +347,7 @@ export default class extends Vue {
 
   // Déclencher le Watcher des filtres sur le clique recherche
   public toggleFilterChanged(): void {
+    if (this.fanfictionFilters == null) return;
     this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm + " ";
     this.fanfictionFilters.searchTerm = this.fanfictionFilters.searchTerm.slice(
       0,

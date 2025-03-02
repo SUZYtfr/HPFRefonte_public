@@ -30,12 +30,12 @@ const config: NuxtConfig = {
   components: false,
   css: [
     "@fortawesome/fontawesome-svg-core/styles.css",
-    "~/assets/scss/custom.scss",
+    "@/assets/scss/custom.scss",
     "@/node_modules/animate.css/animate.css"
   ],
   env: {},
   head: {
-    title: "nuxt-community/typescript-template",
+    title: "Harry Potter Fanfiction",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -105,7 +105,8 @@ const config: NuxtConfig = {
     "~/plugins/truncate",
     "~/plugins/axios",
     "~/plugins/fontawesome",
-    "~/plugins/classes"
+    "~/plugins/classes",
+    "~/plugins/theme"
   ],
   axios: {
     baseURL: process.env.SERVER_BASE_API, // Used as fallback if no runtime config is provided,
