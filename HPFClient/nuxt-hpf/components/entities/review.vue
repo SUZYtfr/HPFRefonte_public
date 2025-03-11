@@ -18,12 +18,12 @@
         >
           <div class="is-flex-grow-5">
             <div class="mr-3 white-space-nowrap">
-              <template v-for="(author, index) in review.authors">
+              <template v-for="(author, index) in review.authors", :key="'author_' + author.user_id.toString()">
                 <template v-if="index > 0">
                   ,
                 </template>
                 <NuxtLink
-                  :key="'author_' + author.user_id.toString()"
+                  no-prefetch
                   class="is-size-7 has-text-weight-normal"
                   :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
                 >
@@ -47,7 +47,7 @@
           <NuxtLink :to="{ name: 'auteurs-id', params: { id: review.authors?.user_id } }">
             <strong>{{ review.authors?.username }}</strong>
           </NuxtLink>
-          <small>{{ review.post_date != null ? (review.post_date.toLocaleDateString() + " à " + review.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
+          <small>{{ review.post_date != null ? (review.post_date.toLocaleDateString("fr-FR") + " à " + review.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
         </div> -->
         <p>
           <span
@@ -59,19 +59,16 @@
   </article>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import { ReviewModel } from "~/models/fanfictions";
 
-  @Component({ name: "Review" })
-export default class Review extends Vue {
-    // #region Props
-    @Prop()
-  declare public review?: ReviewModel;
-  // #endregion
+interface Props {
+  review?: ReviewModel;
 }
+
+const { review } = defineProps<Props>();
 </script>
 
-  <style lang="scss" scoped>
-  @import "~/assets/scss/custom.scss";
-  </style>
+<style lang="scss" scoped>
+@use "~/assets/scss/custom.scss";
+</style>

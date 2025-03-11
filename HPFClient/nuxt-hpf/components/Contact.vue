@@ -1,12 +1,12 @@
 <template>
-  <b-modal v-model="modalActive" width="600px" scroll="keep">
-    <form ref="contactForm">
+  <b-modal v-model="ModalStatesModule.contactModalActive" width="600px" scroll="keep">
+    <form ref="html-contact-form">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
           <p class="modal-card-title">
             Nous contacter
           </p>
-          <button type="button" class="delete" @click="modalActive = false" />
+          <button type="button" class="delete" @click="ModalStatesModule.setContactModalActive(false)" />
         </header>
         <section class="modal-card-body pt-2 pb-1">
           <p>
@@ -84,7 +84,7 @@
             :expanded="true"
             label="Envoyer"
             type="is-primary"
-            :loading="loading"
+            :loading="status === 'pending'"
             @click="checkAndSubmitForm()"
           />
         </footer>
@@ -93,85 +93,49 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import { contact } from "@/api/other";
-import { VForm, OpenToast } from "@/utils/formHelper";
-import { ContactFormData } from "@/types/other";
+<script setup lang="ts">
+import type { ContactFormData } from "@/types/other";
 
-@Component({
-  name: "NousContacter"
-})
-export default class extends Vue {
-  // #region Props
-  @Prop()
-  declare public active?: boolean;
-  // #endregion
+// const { active } = defineProps<{
+//   active: boolean;
+// }>();
 
-  // #region Data
-  public contactForm: ContactFormData = {
-    email: "",
-    subject_id: "",
-    content: ""
-  };
+const ModalStatesModule = ModalsStates();
 
-  public formIsValid: boolean = false;
+// Le formulaire en tant qu'élément HTML
+const htmlContactForm = useTemplateRef("html-contact-form");
 
-  public loading: boolean = false;
-  // #endregion
+// L'objet lié des informations du formulaire
+const contactForm = reactive<ContactFormData>({
+  email: "",
+  subject_id: "",
+  content: ""
+});
 
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
+// Si les informations changent, utiliser la validation de l'élément HTML
+const formIsValid = ref(false);
+watch(contactForm, () => { formIsValid.value = htmlContactForm.value.checkValidity() });
+
+// TODO réparer les toasts !
+const { status, execute: submitForm, error } = await useFetch("/api/contact", { immediate: false });
+watch(status, () => {
+  if (status.value === "success") {
+    OpenToast("Envoi réussi", "is-primary", 5000, false, true, "is-bottom");
   }
-
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.contactModalActive;
+  else if (status.value === "error") {
+    console.log("essai");
+    OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
   }
+});
 
-  set modalActive(value) {
-    this.ModalsStatesModule.setContactModalActive(value);
-  }
-
-  get form(): VForm {
-    return this.$refs.contactForm as VForm;
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("contactForm", { deep: true })
-  public onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
-  }
-  // #endregion
-
-  // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm(): void {
-    if (this.form.checkValidity()) this.contact();
-  }
-
-  // Envoyer le formulaire
-  private async contact(): Promise<void> {
-    this.loading = true;
-    try {
-      const { data } = await contact(this.contactForm);
-      OpenToast("Envoi réussi", "is-primary", 5000, false, true, "is-bottom");
-    } catch (exception) {
-      console.log(exception);
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
+// Vérifier le formulaire avant l'envoi
+function checkAndSubmitForm(): void {
+  if (formIsValid) submitForm();
 }
 </script>
 
 <style lang="scss">
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 .contact-textarea {
   resize: none !important;
 }

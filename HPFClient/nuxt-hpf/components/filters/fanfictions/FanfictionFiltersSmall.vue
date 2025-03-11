@@ -151,7 +151,7 @@ import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
     ThreeStateCheckbox
   }
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Props
   @Prop()
   declare private authorFieldVisible?: boolean;

@@ -2,7 +2,7 @@
   <div :class="[((config?.fixedHeight ?? true) ? 'editor-height' : '')]">
     <!-- Editor -->
     <div
-      v-if="editor != null"
+      v-if="editor"
       id="editor"
       :class="['is-flex', 'is-flex-direction-column', 'is-justify-content-flex-start', ((config?.readOnly == false) ? 'editor-borders' : '')]"
     >
@@ -318,7 +318,7 @@
         </b-tooltip>
         <!-- Toolbar, sur une ou plusieurs lignes selon la largeur -->
         <b-button
-          ref="btnBold"
+          ref="btn-bold"
           type="is-primary"
           outlined
           size="is-small"
@@ -328,7 +328,7 @@
           @click="editor?.chain().focus().toggleBold().run()"
         />
         <b-button
-          ref="btnItalic"
+          ref="btn-italic"
           type="is-primary"
           outlined
           size="is-small"
@@ -338,7 +338,7 @@
           @click="editor?.chain().focus().toggleItalic().run()"
         />
         <b-button
-          ref="btnUnderline"
+          ref="btn-underline"
           type="is-primary"
           outlined
           size="is-small"
@@ -348,7 +348,7 @@
           @click="editor?.chain().focus().toggleUnderline().run()"
         />
         <b-button
-          ref="btnStrikethrough"
+          ref="btn-strikethrough"
           type="is-primary"
           outlined
           size="is-small"
@@ -361,7 +361,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
-          ref="btnAlignLeft"
+          ref="btn-align-left"
           type="is-primary"
           outlined
           size="is-small"
@@ -371,7 +371,7 @@
           @click="editor?.chain().focus().setTextAlign('left').run()"
         />
         <b-button
-          ref="btnAlignCenter"
+          ref="btn-align-center"
           type="is-primary"
           outlined
           size="is-small"
@@ -383,7 +383,7 @@
           @click="editor?.chain().focus().setTextAlign('center').run()"
         />
         <b-button
-          ref="btnAlignRight"
+          ref="btn-align-right"
           type="is-primary"
           outlined
           size="is-small"
@@ -395,7 +395,7 @@
           @click="editor?.chain().focus().setTextAlign('right').run()"
         />
         <b-button
-          ref="btnAlignJustify"
+          ref="btn-align-justify"
           type="is-primary"
           outlined
           size="is-small"
@@ -410,7 +410,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
-          ref="btnIndent"
+          ref="btn-indent"
           type="is-primary"
           outlined
           size="is-small"
@@ -419,7 +419,7 @@
           @click="editor?.chain().focus().indent().run()"
         />
         <b-button
-          ref="btnOutdent"
+          ref="btn-outdent"
           type="is-primary"
           outlined
           size="is-small"
@@ -431,7 +431,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
-          ref="btnListUl"
+          ref="btn-list-ul"
           type="is-primary"
           outlined
           size="is-small"
@@ -441,7 +441,7 @@
           @click="editor?.chain().focus().toggleBulletList().run()"
         />
         <b-button
-          ref="btnListOl"
+          ref="btn-list-ol"
           type="is-primary"
           outlined
           size="is-small"
@@ -454,7 +454,7 @@
           <div class="vertical-line" />
         </div>
         <b-button
-          ref="btnUndo"
+          ref="btn-undo"
           type="is-primary"
           outlined
           size="is-small"
@@ -464,7 +464,7 @@
           @click="editor?.chain().focus().undo().run()"
         />
         <b-button
-          ref="btnRedo"
+          ref="btn-redo"
           type="is-primary"
           outlined
           size="is-small"
@@ -479,7 +479,7 @@
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
-              ref="btnTextstyle"
+              ref="btn-textstyle"
               type="is-primary"
               outlined
               size="is-small"
@@ -506,7 +506,7 @@
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
-              ref="btnTextheight"
+              ref="btn-textheight"
               type="is-primary"
               outlined
               size="is-small"
@@ -543,7 +543,7 @@
         <b-dropdown aria-role="list" :mobile-modal="false">
           <template #trigger="{ active }">
             <b-button
-              ref="btnFont"
+              ref="btn-font"
               type="is-primary"
               outlined
               size="is-small"
@@ -577,7 +577,7 @@
         </div>
         <b-button
           v-if="(config?.canUseImage ?? false)"
-          ref="btnImage"
+          ref="btn-image"
           type="is-primary"
           outlined
           size="is-small"
@@ -586,7 +586,7 @@
           @click="addHPFImage(null, null, null, null)"
         />
         <b-button
-          ref="btnLink"
+          ref="btn-link"
           type="is-primary"
           outlined
           size="is-small"
@@ -595,7 +595,7 @@
           @click="linkEditorModalActive = true"
         />
         <b-button
-          ref="btnGripLines"
+          ref="btn-gripLines"
           type="is-primary"
           outlined
           size="is-small"
@@ -824,9 +824,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
+<script setup lang="ts">
+import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Underline } from "@tiptap/extension-underline";
 import { TextAlign } from "@tiptap/extension-text-align";
@@ -846,728 +845,698 @@ import { ImageHPFData } from "@/types/images";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
 import { LimitedSelection } from "~/utils/tiptap_extensions/tiptap_limit_selection_mark";
+import { BButton } from "buefy";
 
-@Component({
-  name: "TipTapEditor",
-  components: {
-    EditorContent,
-    ImageSmallEditor,
-    BubbleMenu
+const { config } = defineProps<{
+  config?: TipTapEditorConfig;
+}>();
+
+function toggleForbiddenDropAlert(): void {
+  // TODO
+  // this.$buefy.toast.open({
+  //   duration: 5000,
+  //   message: "Non supporté par l'éditeur",
+  //   position: "is-bottom",
+  //   type: "is-danger"
+  // });
+}
+
+// Ajout d'une image HPF
+function addHPFImage(
+  url: string | null,
+  width: number | null,
+  height: number | null,
+  pos: any | null
+): void {
+  if ((config?.canUseImage ?? false) === false) return;
+  editor.value.commands.insertContentAt(
+    pos != null ? pos : editor.value.view.state.selection.$anchor.pos,
+    "<hpf-image " +
+      (url != null ? 'url="' + url + '"' : "") +
+      (width != null
+        ? 'defaultWidth="' + width + '" currentWidth="' + width + '" '
+        : "") +
+      (height != null
+        ? 'defaultHeight="' + height + '" currentHeight="' + height + '" '
+        : "") +
+      'data-type="draggable-item"></hpf-image>'
+  );
+}
+
+// let editor: Editor | null = null;
+let images: ImageHPFData[] = [];
+// Timer Editor update
+let timerThrottleId: number = 0;
+
+// Timer resize
+let timerThrottleResizeId: number = 0;
+
+function emitQuote() {}
+
+// #region Toolbar
+let ToolBarButtonsTooltipVisibility = {
+  Bold: true,
+  Italic: true,
+  Underline: true,
+  Strikethrough: true,
+  AlignLeft: true,
+  AlignCenter: true,
+  AlignRight: true,
+  AlignJustify: true,
+  Indent: true,
+  Outdent: true,
+  ListUl: true,
+  ListOl: true,
+  Undo: true,
+  Redo: true,
+  TextStyle: true,
+  TextHeight: true,
+  Font: true,
+  Image: true,
+  Link: true,
+  GripLines: true
+};
+
+let menusStyle: any = [
+  { icon: "heading", text: "Titre 1", action: "h1" },
+  { icon: "heading", text: "Titre 2", action: "h2" },
+  { icon: "heading", text: "Titre 3", action: "h3" },
+  { icon: "heading", text: "Titre 4", action: "h4" },
+  { icon: "heading", text: "Titre 5", action: "h5" },
+  { icon: "heading", text: "Titre 6", action: "h6" },
+  { icon: "paragraph", text: "Paragraphe", action: "p" }
+];
+
+let menusFontSize: number[] = [8, 10, 12, 14, 16, 18, 24, 36];
+let menusFontFamily: string[] = [
+  "Arial",
+  "Calibri",
+  "Tahoma",
+  "Times new roman"
+];
+
+const linkEditorModalActive = ref(false);
+let linkEditorTextHolder: string = "";
+let linkEditorLinkHolder: string = "";
+
+// Cache des status de l'éditeur (actives)
+let editorFunctionsActiveSettings: { [key: string]: Function } = {
+  h1: (editor: Editor): boolean => editor.isActive("heading", { level: 1 }),
+  h2: (editor: Editor): boolean => editor.isActive("heading", { level: 2 }),
+  h3: (editor: Editor): boolean => editor.isActive("heading", { level: 3 }),
+  h4: (editor: Editor): boolean => editor.isActive("heading", { level: 4 }),
+  h5: (editor: Editor): boolean => editor.isActive("heading", { level: 5 }),
+  h6: (editor: Editor): boolean => editor.isActive("heading", { level: 6 }),
+  paragraph: (editor: Editor): boolean => editor.isActive("paragraph"),
+
+  bold: (editor: Editor): boolean => editor.isActive("bold"),
+  italic: (editor: Editor): boolean => editor.isActive("italic"),
+  underline: (editor: Editor): boolean => editor.isActive("underline"),
+  strike: (editor: Editor): boolean => editor.isActive("strike"),
+
+  link: (editor: Editor): boolean => editor.isActive("link"),
+
+  textAlignLeft: (editor: Editor): boolean =>
+    editor.isActive({ textAlign: "left" }),
+  textAlignCenter: (editor: Editor): boolean =>
+    editor.isActive({ textAlign: "center" }),
+  textAlignRight: (editor: Editor): boolean =>
+    editor.isActive({ textAlign: "right" }),
+  textAlignJustified: (editor: Editor): boolean =>
+    editor.isActive({ textAlign: "justify" }),
+
+  bulletList: (editor: Editor): boolean => editor.isActive("bulletList"),
+  orderedList: (editor: Editor): boolean => editor.isActive("orderedList"),
+
+  undo: (editor: Editor): boolean => editor.can().undo(),
+  redo: (editor: Editor): boolean => editor.can().redo()
+};
+
+// Cache des status de l'éditeur (Font)
+let editorFunctionsTextStyleSettings: { [key: string]: Function } = {
+  fontSize: (editor: Editor): string => {
+    if (editor?.getAttributes("textStyle").fontSize !== undefined) {
+      return editor?.getAttributes("textStyle").fontSize;
+    } else if (editor.isActive("heading", { level: 1 })) return "32px";
+    else if (editor.isActive("heading", { level: 2 })) return "24px";
+    else if (editor.isActive("heading", { level: 3 })) return "18px";
+    else if (editor.isActive("heading", { level: 4 })) return "16px";
+    else if (editor.isActive("heading", { level: 5 })) return "14px";
+    else if (editor.isActive("heading", { level: 6 })) return "12px";
+    else if (editor.isActive("paragraph")) return "16px";
+    else return "16px";
+  },
+  fontFamily: (editor: Editor): string => {
+    if (editor?.getAttributes("textStyle").fontFamily !== undefined) {
+      return editor?.getAttributes("textStyle").fontFamily;
+    } else {
+      if (editor.isActive("textStyle", { fontFamily: "Arial" }))
+        return "Arial";
+      if (editor.isActive("textStyle", { fontFamily: "Calibri" }))
+        return "Calibri";
+      if (editor.isActive("textStyle", { fontFamily: "Tahoma" }))
+        return "Tahoma";
+      if (editor.isActive("textStyle", { fontFamily: "Times new roman" }))
+        return "Times new roman";
+      else return "Arial";
+    }
   }
-})
-export default class extends Vue {
-  // #region Props
-  @Prop({ default: null })
-  declare public config?: TipTapEditorConfig;
-  // #endregion
+};
 
-  // #region Datas
+// Cache des status de l'éditeur (Link)
+let editorFunctionsMiscSettings: { [key: string]: Function } = {
+  link: (editor: Editor): string => {
+    return editor?.isActive("link") ? editor?.getAttributes("link").href : "";
+  }
+};
 
-  public editor: Editor | null = null;
-  private images: ImageHPFData[] = [];
-  // Timer Editor update
-  private timerThrottleId: number = 0;
+// Cache des status de l'éditeur (Character count extension)
+let editorFunctionsCharacterSettings: { [key: string]: Function } = {
+  wordCount: (editor: Editor): number =>
+    editor.storage.characterCount.words(),
+  characterCount: (editor: Editor): number =>
+    editor.storage.characterCount.characters()
+};
 
-  // Timer resize
-  private timerThrottleResizeId: number = 0;
+// Cache des status de l'éditeur (Tableau)
+let tableFunctionsActiveSettings: { [key: string]: Function } = {
+  deleteTable: (editor: Editor): boolean => editor.can().deleteTable(),
+  addColumnBefore: (editor: Editor): boolean =>
+    editor.can().addColumnBefore(),
+  addColumnAfter: (editor: Editor): boolean => editor.can().addColumnAfter(),
+  deleteColumn: (editor: Editor): boolean => editor.can().deleteColumn(),
+  addRowBefore: (editor: Editor): boolean => editor.can().addRowBefore(),
+  addRowAfter: (editor: Editor): boolean => editor.can().addRowAfter(),
+  deleteRow: (editor: Editor): boolean => editor.can().deleteRow(),
+  mergeCells: (editor: Editor): boolean => editor.can().mergeCells(),
+  splitCell: (editor: Editor): boolean => editor.can().splitCell(),
+  toggleHeaderColumn: (editor: Editor): boolean =>
+    editor.can().toggleHeaderColumn(),
+  toggleHeaderRow: (editor: Editor): boolean =>
+    editor.can().toggleHeaderRow(),
+  toggleHeaderCell: (editor: Editor): boolean =>
+    editor.can().toggleHeaderCell()
+};
 
-  // #region Toolbar
-  public ToolBarButtonsTooltipVisibility = {
-    Bold: true,
-    Italic: true,
-    Underline: true,
-    Strikethrough: true,
-    AlignLeft: true,
-    AlignCenter: true,
-    AlignRight: true,
-    AlignJustify: true,
-    Indent: true,
-    Outdent: true,
-    ListUl: true,
-    ListOl: true,
-    Undo: true,
-    Redo: true,
-    TextStyle: true,
-    TextHeight: true,
-    Font: true,
-    Image: true,
-    Link: true,
-    GripLines: true
-  };
+// Cache des status de l'éditeur (actives)
+let editorFunctionsActiveStatuses = reactive<Record<string, boolean>>({
+  h1: false,
+  h2: false,
+  h3: false,
+  h4: false,
+  h5: false,
+  h6: false,
+  paragraph: false,
 
-  public menusStyle: any = [
-    { icon: "heading", text: "Titre 1", action: "h1" },
-    { icon: "heading", text: "Titre 2", action: "h2" },
-    { icon: "heading", text: "Titre 3", action: "h3" },
-    { icon: "heading", text: "Titre 4", action: "h4" },
-    { icon: "heading", text: "Titre 5", action: "h5" },
-    { icon: "heading", text: "Titre 6", action: "h6" },
-    { icon: "paragraph", text: "Paragraphe", action: "p" }
-  ];
+  bold: false,
+  italic: false,
+  underline: false,
+  strike: false,
 
-  public menusFontSize: number[] = [8, 10, 12, 14, 16, 18, 24, 36];
-  public menusFontFamily: string[] = [
-    "Arial",
-    "Calibri",
-    "Tahoma",
-    "Times new roman"
-  ];
-  // #endregion
+  link: false,
 
-  // #region Editor Link Modal
-  public linkEditorModalActive: boolean = false;
-  public linkEditorTextHolder: string = "";
-  public linkEditorLinkHolder: string = "";
-  // #endregion
+  textAlignLeft: false,
+  textAlignCenter: false,
+  textAlignRight: false,
+  textAlignJustified: false,
 
-  // #region Editor status
-  // Cache des status de l'éditeur (actives)
-  public editorFunctionsActiveSettings: { [key: string]: Function } = {
-    h1: (editor: Editor): boolean => editor.isActive("heading", { level: 1 }),
-    h2: (editor: Editor): boolean => editor.isActive("heading", { level: 2 }),
-    h3: (editor: Editor): boolean => editor.isActive("heading", { level: 3 }),
-    h4: (editor: Editor): boolean => editor.isActive("heading", { level: 4 }),
-    h5: (editor: Editor): boolean => editor.isActive("heading", { level: 5 }),
-    h6: (editor: Editor): boolean => editor.isActive("heading", { level: 6 }),
-    paragraph: (editor: Editor): boolean => editor.isActive("paragraph"),
+  bulletList: false,
+  orderedList: false,
 
-    bold: (editor: Editor): boolean => editor.isActive("bold"),
-    italic: (editor: Editor): boolean => editor.isActive("italic"),
-    underline: (editor: Editor): boolean => editor.isActive("underline"),
-    strike: (editor: Editor): boolean => editor.isActive("strike"),
+  deleteTable: false,
+  addColumnBefore: false,
+  addColumnAfter: false,
+  deleteColumn: false,
+  addRowBefore: false,
+  addRowAfter: false,
+  deleteRow: false,
+  mergeCells: false,
+  splitCell: false,
+  toggleHeaderColumn: false,
+  toggleHeaderRow: false,
+  toggleHeaderCell: false,
 
-    link: (editor: Editor): boolean => editor.isActive("link"),
+  undo: false,
+  redo: false
+});
 
-    textAlignLeft: (editor: Editor): boolean =>
-      editor.isActive({ textAlign: "left" }),
-    textAlignCenter: (editor: Editor): boolean =>
-      editor.isActive({ textAlign: "center" }),
-    textAlignRight: (editor: Editor): boolean =>
-      editor.isActive({ textAlign: "right" }),
-    textAlignJustified: (editor: Editor): boolean =>
-      editor.isActive({ textAlign: "justify" }),
+// Cache des status de l'éditeur (Font) Status
+const editorFunctionsTextStyleStatuses = reactive<Record<string, string>>({
+  fontFamily: "Arial",
+  fontSize: "12px"
+});
 
-    bulletList: (editor: Editor): boolean => editor.isActive("bulletList"),
-    orderedList: (editor: Editor): boolean => editor.isActive("orderedList"),
+// Cache des status de l'éditeur (Character count extension) Status
+const editorFunctionsMiscStatuses = reactive<Record<string, string>>({
+  link: ""
+});
 
-    undo: (editor: Editor): boolean => editor.can().undo(),
-    redo: (editor: Editor): boolean => editor.can().redo()
-  };
+// Cache des status de l'éditeur (Font) Status
+const editorFunctionsCharacterStatuses = reactive<Record<string, number>>({
+  wordCount: 0,
+  characterCount: 0
+});
 
-  // Cache des status de l'éditeur (Font)
-  public editorFunctionsTextStyleSettings: { [key: string]: Function } = {
-    fontSize: (editor: Editor): string => {
-      if (editor?.getAttributes("textStyle").fontSize !== undefined) {
-        return editor?.getAttributes("textStyle").fontSize;
-      } else if (editor.isActive("heading", { level: 1 })) return "32px";
-      else if (editor.isActive("heading", { level: 2 })) return "24px";
-      else if (editor.isActive("heading", { level: 3 })) return "18px";
-      else if (editor.isActive("heading", { level: 4 })) return "16px";
-      else if (editor.isActive("heading", { level: 5 })) return "14px";
-      else if (editor.isActive("heading", { level: 6 })) return "12px";
-      else if (editor.isActive("paragraph")) return "16px";
-      else return "16px";
-    },
-    fontFamily: (editor: Editor): string => {
-      if (editor?.getAttributes("textStyle").fontFamily !== undefined) {
-        return editor?.getAttributes("textStyle").fontFamily;
-      } else {
-        if (editor.isActive("textStyle", { fontFamily: "Arial" }))
-          return "Arial";
-        if (editor.isActive("textStyle", { fontFamily: "Calibri" }))
-          return "Calibri";
-        if (editor.isActive("textStyle", { fontFamily: "Tahoma" }))
-          return "Tahoma";
-        if (editor.isActive("textStyle", { fontFamily: "Times new roman" }))
-          return "Times new roman";
-        else return "Arial";
-      }
-    }
-  };
-
-  // Cache des status de l'éditeur (Link)
-  public editorFunctionsMiscSettings: { [key: string]: Function } = {
-    link: (editor: Editor): string => {
-      return editor?.isActive("link") ? editor?.getAttributes("link").href : "";
-    }
-  };
-
-  // Cache des status de l'éditeur (Character count extension)
-  public editorFunctionsCharacterSettings: { [key: string]: Function } = {
-    wordCount: (editor: Editor): number =>
-      editor.storage.characterCount.words(),
-    characterCount: (editor: Editor): number =>
-      editor.storage.characterCount.characters()
-  };
-
-  // Cache des status de l'éditeur (Tableau)
-  public tableFunctionsActiveSettings: { [key: string]: Function } = {
-    deleteTable: (editor: Editor): boolean => editor.can().deleteTable(),
-    addColumnBefore: (editor: Editor): boolean =>
-      editor.can().addColumnBefore(),
-    addColumnAfter: (editor: Editor): boolean => editor.can().addColumnAfter(),
-    deleteColumn: (editor: Editor): boolean => editor.can().deleteColumn(),
-    addRowBefore: (editor: Editor): boolean => editor.can().addRowBefore(),
-    addRowAfter: (editor: Editor): boolean => editor.can().addRowAfter(),
-    deleteRow: (editor: Editor): boolean => editor.can().deleteRow(),
-    mergeCells: (editor: Editor): boolean => editor.can().mergeCells(),
-    splitCell: (editor: Editor): boolean => editor.can().splitCell(),
-    toggleHeaderColumn: (editor: Editor): boolean =>
-      editor.can().toggleHeaderColumn(),
-    toggleHeaderRow: (editor: Editor): boolean =>
-      editor.can().toggleHeaderRow(),
-    toggleHeaderCell: (editor: Editor): boolean =>
-      editor.can().toggleHeaderCell()
-  };
-
-  // Cache des status de l'éditeur (actives)
-  public editorFunctionsActiveStatuses: Record<string, boolean> = {
-    h1: false,
-    h2: false,
-    h3: false,
-    h4: false,
-    h5: false,
-    h6: false,
-    paragraph: false,
-
-    bold: false,
-    italic: false,
-    underline: false,
-    strike: false,
-
-    link: false,
-
-    textAlignLeft: false,
-    textAlignCenter: false,
-    textAlignRight: false,
-    textAlignJustified: false,
-
-    bulletList: false,
-    orderedList: false,
-
-    deleteTable: false,
-    addColumnBefore: false,
-    addColumnAfter: false,
-    deleteColumn: false,
-    addRowBefore: false,
-    addRowAfter: false,
-    deleteRow: false,
-    mergeCells: false,
-    splitCell: false,
-    toggleHeaderColumn: false,
-    toggleHeaderRow: false,
-    toggleHeaderCell: false,
-
-    undo: false,
-    redo: false
-  };
-
-  // Cache des status de l'éditeur (Font) Status
-  public editorFunctionsTextStyleStatuses: Record<string, string> = {
-    fontFamily: "Arial",
-    fontSize: "12px"
-  };
-
-  // Cache des status de l'éditeur (Character count extension) Status
-  private editorFunctionsMiscStatuses: Record<string, string> = {
-    link: ""
-  };
-
-  // Cache des status de l'éditeur (Font) Status
-  public editorFunctionsCharacterStatuses: Record<string, number> = {
-    wordCount: 0,
-    characterCount: 0
-  };
-
-  // #endregion
-
-  // #endregion
-
-  // #region Hooks
-  private mounted(): void {
-    this.editor = new Editor({
-      content: this.config?.defaultValue,
-      extensions: [
-        StarterKit,
-        TextStyle,
-        // Image,
-        Underline,
-        TextAlign.configure({
-          types: ["heading", "paragraph"]
-        }),
-        Indent,
-        TipTapImageEditor,
-        FontSize,
-        FontFamily,
-        Link.configure({
-          openOnClick: false
-        }),
-        CharacterCount,
-        Table.configure({
-          resizable: true
-        }),
-        TableRow,
-        TableHeader,
-        TableCell,
-        Placeholder.configure({
-          placeholder: this.config?.placeholder
-        }),
-        LimitedSelection.configure({
-          HTMLAttributes: {
-            class: "animate__animated animate__fast animate__flash"
+const editor = useEditor({
+  content: config?.defaultValue,
+  extensions: [
+      StarterKit,
+      TextStyle,
+      // Image,
+      Underline,
+      TextAlign.configure({
+        types: ["heading", "paragraph"]
+      }),
+      Indent,
+      TipTapImageEditor,
+      FontSize,
+      FontFamily,
+      Link.configure({
+        openOnClick: false
+      }),
+      CharacterCount,
+      Table.configure({
+        resizable: true
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Placeholder.configure({
+        placeholder: config?.placeholder
+      }),
+      LimitedSelection.configure({
+        HTMLAttributes: {
+          class: "animate__animated animate__fast animate__flash"
+        }
+      })
+    ],
+    editorProps: {
+      attributes: {
+        spellcheck: "true"
+      },
+      // handleDrop: function(view, event, slice, moved) {
+      //     if (!moved && event.dataTransfer && event.dataTransfer.files) { // if dropping external files
+      //         // the addImage function checks the files are an image upload, and returns the url
+      //         addImage(event.dataTransfer.files[0], function(url) {
+      //             // this inserts the image with src url into the editor at the position of the drop
+      //             const { schema } = view.state;
+      //             const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+      //             const node = schema.nodes.image.create({ src: url });
+      //             const transaction = view.state.tr.insert(coordinates.pos, node);
+      //             return view.dispatch(transaction);
+      //         });
+      //         return true; // drop is handled don't do anything else
+      //     }
+      //     return false; // not handled as wasn't dragging a file so use default behaviour
+      // },
+      handleDOMEvents: {
+        drop: (view, e) => {
+          // Drop des images seulement autorisé
+          if (
+            e.dataTransfer &&
+            e?.dataTransfer
+              ?.getData("text/plain")
+              .match(
+                /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*\.(jpeg|jpg|png)$)/
+              )
+          ) {
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopPropagation) e.stopPropagation();
+            const imgURL = e?.dataTransfer?.getData("text/plain");
+            const img = new Image();
+            img.addEventListener("load", () => {
+              const coordinates = view.posAtCoords({
+                left: e.clientX,
+                top: e.clientY
+              });
+              addHPFImage(
+                imgURL,
+                img.naturalWidth,
+                img.naturalHeight,
+                coordinates?.pos
+              );
+            });
+            img.src = imgURL;
+            return true;
           }
-        })
-      ],
-      editorProps: {
-        attributes: {
-          spellcheck: "true"
-        },
-        // handleDrop: function(view, event, slice, moved) {
-        //     if (!moved && event.dataTransfer && event.dataTransfer.files) { // if dropping external files
-        //         // the addImage function checks the files are an image upload, and returns the url
-        //         addImage(event.dataTransfer.files[0], function(url) {
-        //             // this inserts the image with src url into the editor at the position of the drop
-        //             const { schema } = view.state;
-        //             const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
-        //             const node = schema.nodes.image.create({ src: url });
-        //             const transaction = view.state.tr.insert(coordinates.pos, node);
-        //             return view.dispatch(transaction);
-        //         });
-        //         return true; // drop is handled don't do anything else
-        //     }
-        //     return false; // not handled as wasn't dragging a file so use default behaviour
-        // },
-        handleDOMEvents: {
-          drop: (view, e) => {
-            // Drop des images seulement autorisé
-            if (
-              e.dataTransfer &&
+          // Drag and Drop à l'intérieur de tiptap (sur les hpf_images, sur le texte)
+          else if (
+            e.dataTransfer &&
+            (e?.dataTransfer?.getData("text/html").match(/^<hpf-image/) ||
               e?.dataTransfer
                 ?.getData("text/plain")
-                .match(
-                  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*\.(jpeg|jpg|png)$)/
-                )
-            ) {
-              if (e.preventDefault) e.preventDefault();
-              if (e.stopPropagation) e.stopPropagation();
-              const imgURL = e?.dataTransfer?.getData("text/plain");
-              const img = new Image();
-              img.addEventListener("load", () => {
-                const coordinates = view.posAtCoords({
-                  left: e.clientX,
-                  top: e.clientY
-                });
-                this.addHPFImage(
-                  imgURL,
-                  img.naturalWidth,
-                  img.naturalHeight,
-                  coordinates?.pos
-                );
-              });
-              img.src = imgURL;
-              return true;
-            }
-            // Drag and Drop à l'intérieur de tiptap (sur les hpf_images, sur le texte)
-            else if (
-              e.dataTransfer &&
-              (e?.dataTransfer?.getData("text/html").match(/^<hpf-image/) ||
-                e?.dataTransfer
-                  ?.getData("text/plain")
-                  .match(/^(?!https?:\/\/)(?!file:\/\/).+$/))
-            ) {
-              return false;
-            } else {
-              this.toggleForbiddenDropAlert();
-              return true;
-            }
+                .match(/^(?!https?:\/\/)(?!file:\/\/).+$/))
+          ) {
+            return false;
+          } else {
+            toggleForbiddenDropAlert();
+            return true;
           }
         }
       }
-    });
+    }
+})
 
-    this.editor.setEditable((this.config?.readOnly ?? false) === false);
+onMounted(() => {
+  // Configuration par défaut
 
-    // Bind custom update function
-    this.editor.on("update", () => this.onEditorUpdated());
-    this.editor.on("selectionUpdate", () => this.onEditorUpdated());
+  editor.value?.setEditable((config?.readOnly ?? false) === false);
+  
+  // Bind custom update function
+  editor.value?.on("update", () => onEditorUpdated());
+  editor.value?.on("selectionUpdate", () => onEditorUpdated());
 
-    // Evénement pour gérer la selection limitée
-    this.editor.view.dom.addEventListener("mouseup", () => {
-      if ((this.config?.canQuote ?? false) === false) return;
-      if (this.editor != null) {
-        const selection = this.editor.state.selection;
-        const maxSelectionLength = (this.config?.quoteLimit ?? 250);
-        if (selection.empty) return; // La sélection est vide, aucune action nécessaire
-        const { view } = this.editor;
-        const { from, to } = view.state.selection;
-        if ((to - from) > maxSelectionLength) {
-          const newTo = from + maxSelectionLength;
-          this.editor.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
-          const element = document.querySelector("limitedselection");
-          element?.addEventListener("animationend", () => {
-            this.editor?.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
-          });
-        }
-      }
-    });
-
-    // Configuration par défaut
-    this.editor?.chain().focus().setParagraph().setFontFamily("Arial").run();
-
-    // window.addEventListener("resize", this.detectWrappedItems);
-    // this.detectWrappedItems();
-  }
-
-  private beforeDestroy(): void {
-    // window.removeEventListener("resize", this.detectWrappedItems);
-    this.editor?.destroy();
-  }
-  // #endregion
-
-  // #region Computed
-  get currentStyle(): any {
-    if (this.editorFunctionsActiveStatuses.h1)
-      return { icon: "heading", text: "Titre 1", action: "h1" };
-    else if (this.editorFunctionsActiveStatuses.h2)
-      return { icon: "heading", text: "Titre 2", action: "h2" };
-    else if (this.editorFunctionsActiveStatuses.h3)
-      return { icon: "heading", text: "Titre 3", action: "h3" };
-    else if (this.editorFunctionsActiveStatuses.h4)
-      return { icon: "heading", text: "Titre 4", action: "h4" };
-    else if (this.editorFunctionsActiveStatuses.h5)
-      return { icon: "heading", text: "Titre 5", action: "h5" };
-    else if (this.editorFunctionsActiveStatuses.h6)
-      return { icon: "heading", text: "Titre 6", action: "h6" };
-    else return { icon: "paragraph", text: "Paragraphe", action: "p" };
-  }
-  // #endregion
-
-  // #region Watchers
-  // Ouverture de la modal-homemade
-  @Watch("linkEditorModalActive")
-  private onlinkEditorModalActiveChanged(): void {
-    if (this.linkEditorModalActive) {
-      if (this.editor != null) {
-        this.editor.chain().focus().extendMarkRange("link").run();
-        const { view, state } = this.editor;
-        const { from, to } = view.state.selection;
-        const text = state.doc.textBetween(from, to, "");
-        this.linkEditorTextHolder = text;
-        this.linkEditorLinkHolder = this.editorFunctionsMiscStatuses.link;
+  // Evénement pour gérer la selection limitée
+  editor.value.view.dom.addEventListener("mouseup", () => {
+    if ((config?.canQuote ?? false) === false) return;
+    if (editor != null) {
+      const selection = editor.value.state.selection;
+      const maxSelectionLength = (config?.quoteLimit ?? 250);
+      if (selection.empty) return; // La sélection est vide, aucune action nécessaire
+      const { view } = editor.value;
+      const { from, to } = view.state.selection;
+      if ((to - from) > maxSelectionLength) {
+        const newTo = from + maxSelectionLength;
+        editor.value.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
+        const element = document.querySelector("limitedselection");
+        element?.addEventListener("animationend", () => {
+          editor.value.chain().setTextSelection({ from: newTo, to: to }).focus().toggleLimitedSelection().setTextSelection({ from: from, to: newTo }).focus().run();
+        });
       }
     }
-  }
-  // #endregion
+  });
 
-  // #region Public Methods
-  // Changer le contenu de l'éditeur
-  public setContent(tiptapContent: TipTapEditorContent | null): void {
-    if (tiptapContent != null)
-      this.editor?.commands.setContent(tiptapContent.content);
-    else
-      this.editor?.commands.setContent("");
-    // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
-  }
+  editor.value?.chain().focus().setParagraph().setFontFamily("Arial").run();
 
-  // Ajouter une quote
-  public setQuote(quote: string): void {
-    // this.editor?.chain().focus().insertContent("[...] " + quote + "[...]").setBlockquote().enter().focus("end").run();
-    this.editor?.chain().focus().enter().insertContent(quote).setBlockquote().run();
-    this.editor?.commands.enter();
-    this.editor?.commands.enter();
-  }
+  // window.addEventListener("resize", this.detectWrappedItems);
+  // this.detectWrappedItems();
+})
 
-  // Tentative avortée, en css c'est aussi bien et plus rapide et beaucoup plus simple
-  // public upFontSize(): void {
-  //   // this.editor?.chain().focus().setFontSize(fontSize + "px").run();
+onBeforeUnmount(() => {
+  // window.removeEventListener("resize", this.detectWrappedItems);
+  unref(editor).destroy();
+});
 
-  //   // this.editor?.chain().focus().commands.forEach((command) => {
-  //   //   const { fontSize } = command.queryNodeAttributes("fontSize");
-  //   //   if (fontSize) {
-  //   //     const newSize = fontSize + 1; // Augmentation de 1 unité, ajustez selon vos besoins
-  //   //     command.updateNodeAttributes({ fontSize: newSize });
-  //   //   }
-  //   // }).run();
+const currentStyle = computed(() => {
+  if (editorFunctionsActiveStatuses.h1)
+    return { icon: "heading", text: "Titre 1", action: "h1" };
+  else if (editorFunctionsActiveStatuses.h2)
+    return { icon: "heading", text: "Titre 2", action: "h2" };
+  else if (editorFunctionsActiveStatuses.h3)
+    return { icon: "heading", text: "Titre 3", action: "h3" };
+  else if (editorFunctionsActiveStatuses.h4)
+    return { icon: "heading", text: "Titre 4", action: "h4" };
+  else if (editorFunctionsActiveStatuses.h5)
+    return { icon: "heading", text: "Titre 5", action: "h5" };
+  else if (editorFunctionsActiveStatuses.h6)
+    return { icon: "heading", text: "Titre 6", action: "h6" };
+  else return { icon: "paragraph", text: "Paragraphe", action: "p" };
+})
 
-  //   if (this.editor != null) {
-  //     const { state, view } = this.editor;
-  //     const tr = state.tr;
-
-  //     // Parcours de tous les nœuds du document
-  //     state.doc.descendants((node, pos) => {
-  //       if (node.isText) {
-  //         const currentSize = node.attrs.fontSize || 12; // Taille de police par défaut si non définie
-  //         console.log(node.attrs.fontSize);
-  //         const newSize = currentSize + 1; // Augmentation de 1 unité, ajustez selon vos besoins
-
-  //         // Mise à jour des attributs de la taille de police
-  //         tr.setNodeMarkup(pos, undefined, { ...node.attrs, fontSize: newSize });
-  //       }
-  //     });
-
-  //     // Appliquer les modifications au document
-  //     view.dispatch(tr);
+  // // Ouverture de la modal-homemade
+  // @Watch("linkEditorModalActive")
+  // private onlinkEditorModalActiveChanged(): void {
+  //   if (this.linkEditorModalActive) {
+  //     if (this.editor != null) {
+  //       this.editor.chain().focus().extendMarkRange("link").run();
+  //       const { view, state } = this.editor;
+  //       const { from, to } = view.state.selection;
+  //       const text = state.doc.textBetween(from, to, "");
+  //       this.linkEditorTextHolder = text;
+  //       this.linkEditorLinkHolder = this.editorFunctionsMiscStatuses.link;
+  //     }
   //   }
   // }
-  // #endregion
 
-  // #region Emit Function
-  public emitQuote(): void {
-    if (this.editor != null) {
-      const { view, state } = this.editor;
-      const { from, to } = view.state.selection;
-      // On check la longueur max émise
-      let newTo = to;
-      const maxSelectionLength = (this.config?.quoteLimit ?? 250);
-      if ((to - from) > maxSelectionLength) newTo = from + maxSelectionLength;
-      // Emet l'évènement quote
-      this.$emit("quote", state.doc.textBetween(from, newTo, ""));
-      this.editor.commands.setTextSelection(to);
-      window?.getSelection()?.empty();
-    }
-  }
-  // #endregion
+  // // #region Public Methods
+  // // Changer le contenu de l'éditeur
+  // public setContent(tiptapContent: TipTapEditorContent | null): void {
+  //   if (tiptapContent != null)
+  //     this.editor?.commands.setContent(tiptapContent.content);
+  //   else
+  //     this.editor?.commands.setContent("");
+  //   // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
+  // }
 
-  // #region Private Methods
-  // Toggle Alert Drop interdit
-  private toggleForbiddenDropAlert(): void {
-    this.$buefy.toast.open({
-      duration: 5000,
-      message: "Non supporté par l'éditeur",
-      position: "is-bottom",
-      type: "is-danger"
-    });
-  }
+  // // Ajouter une quote
+  // public setQuote(quote: string): void {
+  //   // this.editor?.chain().focus().insertContent("[...] " + quote + "[...]").setBlockquote().enter().focus("end").run();
+  //   this.editor?.chain().focus().enter().insertContent(quote).setBlockquote().run();
+  //   this.editor?.commands.enter();
+  //   this.editor?.commands.enter();
+  // }
 
-  private test(): void {
-    console.log(this.editor?.getHTML());
-  }
+  // // #region Private Methods
+  // // Toggle Alert Drop interdit
+  // private toggleForbiddenDropAlert(): void {
+  //   this.$buefy.toast.open({
+  //     duration: 5000,
+  //     message: "Non supporté par l'éditeur",
+  //     position: "is-bottom",
+  //     type: "is-danger"
+  //   });
+  // }
 
-  // Ajout d'une image HPF
-  public addHPFImage(
-    url: string | null,
-    width: number | null,
-    height: number | null,
-    pos: any | null
-  ): void {
-    if ((this.config?.canUseImage ?? false) === false) return;
-    this.editor?.commands.insertContentAt(
-      pos != null ? pos : this.editor.view.state.selection.$anchor.pos,
-      "<hpf-image " +
-        (url != null ? 'url="' + url + '"' : "") +
-        (width != null
-          ? 'defaultWidth="' + width + '" currentWidth="' + width + '" '
-          : "") +
-        (height != null
-          ? 'defaultHeight="' + height + '" currentHeight="' + height + '" '
-          : "") +
-        'data-type="draggable-item"></hpf-image>'
-    );
-  }
+  // // #region Emit Function
+  // public emitQuote(): void {
+  //   if (this.editor != null) {
+  //     const { view, state } = this.editor;
+  //     const { from, to } = view.state.selection;
+  //     // On check la longueur max émise
+  //     let newTo = to;
+  //     const maxSelectionLength = (this.config?.quoteLimit ?? 250);
+  //     if ((to - from) > maxSelectionLength) newTo = from + maxSelectionLength;
+  //     // Emet l'évènement quote
+  //     this.$emit("quote", state.doc.textBetween(from, newTo, ""));
+  //     this.editor.commands.setTextSelection(to);
+  //     window?.getSelection()?.empty();
+  //   }
+  // }
+  // // #endregion
 
-  // Actualisation de status en cache de l'éditeur, actualisation du contenu
-  private calcEditorButtonsActiveStatuses(): void {
-    // Cache des status de l'éditeur (actives)
-    const objectToReturn: Record<string, boolean> = {};
-    for (const key in this.editorFunctionsActiveSettings) {
-      if (key)
-        objectToReturn[key] = this.editorFunctionsActiveSettings[key](
-          this.editor
-        );
-    }
-    // Cache des status de l'éditeur (Table)
-    if (this.tableFunctionsActiveSettings.deleteTable(this.editor)) {
-      objectToReturn.deleteTable = true;
-      for (const key in this.tableFunctionsActiveSettings) {
-        if (key)
-          objectToReturn[key] = this.tableFunctionsActiveSettings[key](
-            this.editor
-          );
-      }
-    } else {
-      for (const key in this.tableFunctionsActiveSettings) {
-        if (key) objectToReturn[key] = false;
-      }
-    }
-    this.editorFunctionsActiveStatuses = objectToReturn;
-
-    // Cache des status de l'éditeur (Font)
-    const textStyleToReturn: Record<string, string> = {};
-    for (const key in this.editorFunctionsTextStyleSettings) {
-      if (key)
-        textStyleToReturn[key] = this.editorFunctionsTextStyleSettings[key](
-          this.editor
-        );
-    }
-    this.editorFunctionsTextStyleStatuses = textStyleToReturn;
-
-    // Cache des status de l'éditeur (Link)
-    const miscToReturn: Record<string, string> = {};
-    for (const key in this.editorFunctionsMiscSettings) {
-      if (key)
-        miscToReturn[key] = this.editorFunctionsMiscSettings[key](this.editor);
-    }
-    this.editorFunctionsMiscStatuses = miscToReturn;
-
-    // Cache des status de l'éditeur (Character count extension)
-    const characterToReturn: Record<string, number> = {};
-    for (const key in this.editorFunctionsCharacterSettings) {
-      if (key)
-        characterToReturn[key] = this.editorFunctionsCharacterSettings[key](
-          this.editor
-        );
-    }
-    this.editorFunctionsCharacterStatuses = characterToReturn;
-
-    // Emet l'évènement change
-    this.$emit("change", new TipTapEditorContent({
-      content: this.editor?.getHTML(),
-      wordcount: this.editorFunctionsCharacterStatuses.wordCount,
-      content_images: this.editor?.extensionStorage.hpfImage.images
-    }));
-  }
-
-  // Déclenche l'actualisation du cache via un timer
-  private onEditorUpdated(): void {
-    clearTimeout(this.timerThrottleId);
-    this.timerThrottleId = window.setTimeout(
-      this.calcEditorButtonsActiveStatuses,
-      100
-    );
-  }
-
-  // Mise en forme d'un style dans l'éditeur
-  public toggleStyle(action: string): void {
-    switch (action) {
-      case "h1":
-        this.editor?.chain().focus().toggleHeading({ level: 1 }).run();
-        break;
-      case "h2":
-        this.editor?.chain().focus().toggleHeading({ level: 2 }).run();
-        break;
-      case "h3":
-        this.editor?.chain().focus().toggleHeading({ level: 3 }).run();
-        break;
-      case "h4":
-        this.editor?.chain().focus().toggleHeading({ level: 4 }).run();
-        break;
-      case "h5":
-        this.editor?.chain().focus().toggleHeading({ level: 5 }).run();
-        break;
-      case "h6":
-        this.editor?.chain().focus().toggleHeading({ level: 6 }).run();
-        break;
-      case "p":
-        this.editor?.chain().focus().setParagraph().run();
-        break;
-    }
-  }
-
-  // Mise à jour d'une taille de police dans l'éditeur
-  private toggleFontSize(fontSize: number): void {
-    this.editor
-      ?.chain()
-      .focus()
-      .setFontSize(fontSize + "px")
-      .run();
-    this.calcEditorButtonsActiveStatuses();
-  }
-
-  // Mise à jour d'une police dans l'éditeur
-  public toggleFontFamily(fontFamily: string): void {
-    this.editor?.chain().focus().setFontFamily(fontFamily).run();
-    this.calcEditorButtonsActiveStatuses();
-  }
-
-  // Ajout d'un lien hypertexte
-  public validateLinkEdit(): void {
-    this.linkEditorModalActive = false;
-    if (this.editor != null) {
-      const { view } = this.editor;
-      const { from, to } = view.state.selection;
-      this.editor
-        ?.chain()
-        .focus()
-        .extendMarkRange("link")
-        .setLink({ href: this.linkEditorLinkHolder })
-        .command(({ tr }) => {
-          tr.insertText(this.linkEditorTextHolder, from, to);
-          return true;
-        })
-        .run();
-    }
-  }
-
-  // Suppression du lien hypertexte
-  public deleteLinkEdit(): void {
-    this.linkEditorModalActive = false;
-    this.editor?.chain().focus().extendMarkRange("link").unsetLink().run();
-  }
-
-  // Où doit apparaitre le Bubble Menu
-  public bubbleMenuShouldShow(): boolean {
-    if (this.editor != null) {
-      if ((this.config?.readOnly ?? false) === true && (this.config?.canQuote ?? false) === false) return false;
-
-      const { view, state } = this.editor;
-      const { from, to } = view.state.selection;
-      const text = state.doc.textBetween(from, to, "");
-      return (
-        !this.linkEditorModalActive &&
-        text.length > 0 &&
-        (this.editorFunctionsActiveStatuses.h1 ||
-          this.editorFunctionsActiveStatuses.h2 ||
-          this.editorFunctionsActiveStatuses.h3 ||
-          this.editorFunctionsActiveStatuses.h4 ||
-          this.editorFunctionsActiveStatuses.h5 ||
-          this.editorFunctionsActiveStatuses.h6 ||
-          this.editorFunctionsActiveStatuses.paragraph ||
-          this.editorFunctionsActiveStatuses.link)
+// Actualisation de status en cache de l'éditeur, actualisation du contenu
+function calcEditorButtonsActiveStatuses(): void {
+  // Cache des status de l'éditeur (actives)
+  // const objectToReturn: Record<string, boolean> = {};
+  for (const key in editorFunctionsActiveSettings) {
+    if (key)
+    editorFunctionsActiveStatuses[key] = editorFunctionsActiveSettings[key](
+        editor.value
       );
-    }
-    return false;
   }
+  // Cache des status de l'éditeur (Table)
+  if (tableFunctionsActiveSettings.deleteTable(editor)) {
+    editorFunctionsActiveStatuses.deleteTable = true;
+    for (const key in tableFunctionsActiveSettings) {
+      if (key)
+      editorFunctionsActiveStatuses[key] = tableFunctionsActiveSettings[key](
+          editor
+        );
+    }
+  } else {
+    for (const key in tableFunctionsActiveSettings) {
+      if (key) editorFunctionsActiveStatuses[key] = false;
+    }
+  }
+  // editorFunctionsActiveStatuses = objectToReturn;
 
-  // Détecter le wrap des button de l'éditeur
-  public detectWrappedItems():void {
-    clearTimeout(this.timerThrottleResizeId);
-    this.timerThrottleResizeId = window.setTimeout(
-      () => {
-        console.log("Je doit passer une seule fois");
-        const container = document.querySelector("#editor-header");
-        const containerBottom = (container?.getBoundingClientRect()?.bottom ?? 0);
-        if (container == null) return;
-        this.ToolBarButtonsTooltipVisibility.Bold = ((this.$refs.btnBold as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Italic = ((this.$refs.btnItalic as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Underline = ((this.$refs.btnUnderline as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Strikethrough = ((this.$refs.btnStrikethrough as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.AlignLeft = ((this.$refs.btnAlignLeft as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.AlignCenter = ((this.$refs.btnAlignCenter as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.AlignRight = ((this.$refs.btnAlignRight as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.AlignJustify = ((this.$refs.btnAlignJustify as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Indent = ((this.$refs.btnIndent as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Outdent = ((this.$refs.btnOutdent as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.ListUl = ((this.$refs.btnListUl as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.ListOl = ((this.$refs.btnListOl as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Undo = ((this.$refs.btnUndo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Redo = ((this.$refs.btnRedo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.TextStyle = ((this.$refs.btnTextstyle as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.TextHeight = ((this.$refs.btnTextheight as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Font = ((this.$refs.btnFont as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Image = ((this.$refs.btnImage as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Link = ((this.$refs.btnLink as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.GripLines = ((this.$refs.btnGripLines as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-        this.ToolBarButtonsTooltipVisibility.Redo = ((this.$refs.btnRedo as any)?.$el.getBoundingClientRect()?.top > containerBottom);
-      },
-      300
+  // Cache des status de l'éditeur (Font)
+  // const textStyleToReturn: Record<string, string> = {};
+  for (const key in editorFunctionsTextStyleSettings) {
+    if (key)
+    editorFunctionsTextStyleStatuses[key] = editorFunctionsTextStyleSettings[key](
+        editor
+      );
+  }
+  // editorFunctionsTextStyleStatuses = textStyleToReturn;
+
+  // Cache des status de l'éditeur (Link)
+  // const miscToReturn: Record<string, string> = {};
+  for (const key in editorFunctionsMiscSettings) {
+    if (key)
+    editorFunctionsMiscStatuses[key] = editorFunctionsMiscSettings[key](editor.value);
+  }
+  // editorFunctionsMiscStatuses = miscToReturn;
+
+  // Cache des status de l'éditeur (Character count extension)
+  // const characterToReturn: Record<string, number> = {};
+  for (const key in editorFunctionsCharacterSettings) {
+    if (key)
+    editorFunctionsCharacterStatuses[key] = editorFunctionsCharacterSettings[key](
+        editor
+      );
+  }
+  // editorFunctionsCharacterStatuses = characterToReturn;
+
+  // Emet l'évènement change
+  // TODO utiliser useEmits
+  // $emit("change", new TipTapEditorContent({
+  //   content: this.editor?.getHTML(),
+  //   wordcount: this.editorFunctionsCharacterStatuses.wordCount,
+  //   content_images: this.editor?.extensionStorage.hpfImage.images
+  // }));
+}
+
+// Déclenche l'actualisation du cache via un timer
+function onEditorUpdated(): void {
+  clearTimeout(timerThrottleId);
+  timerThrottleId = window.setTimeout(
+    calcEditorButtonsActiveStatuses,
+    100
+  );
+}
+
+// Mise en forme d'un style dans l'éditeur
+function toggleStyle(action: string): void {
+  switch (action) {
+    case "h1":
+      editor.value.chain().focus().toggleHeading({ level: 1 }).run();
+      break;
+    case "h2":
+      editor.value.chain().focus().toggleHeading({ level: 2 }).run();
+      break;
+    case "h3":
+      editor.value.chain().focus().toggleHeading({ level: 3 }).run();
+      break;
+    case "h4":
+      editor.value.chain().focus().toggleHeading({ level: 4 }).run();
+      break;
+    case "h5":
+      editor.value.chain().focus().toggleHeading({ level: 5 }).run();
+      break;
+    case "h6":
+      editor.value.chain().focus().toggleHeading({ level: 6 }).run();
+      break;
+    case "p":
+      editor.value.chain().focus().setParagraph().run();
+      break;
+  }
+}
+
+// Mise à jour d'une taille de police dans l'éditeur
+function toggleFontSize(fontSize: number): void {
+  editor.value
+    .chain()
+    .focus()
+    .setFontSize(fontSize + "px")
+    .run();
+  calcEditorButtonsActiveStatuses();
+}
+
+// Mise à jour d'une police dans l'éditeur
+function toggleFontFamily(fontFamily: string): void {
+  editor.value.chain().focus().setFontFamily(fontFamily).run();
+  calcEditorButtonsActiveStatuses();
+}
+
+// Ajout d'un lien hypertexte
+function validateLinkEdit(): void {
+  linkEditorModalActive.value = false;
+  if (editor.value != null) {
+    const { view } = editor.value;
+    const { from, to } = view.state.selection;
+    editor.value
+      .chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: linkEditorLinkHolder })
+      .command(({ tr }) => {
+        tr.insertText(linkEditorTextHolder, from, to);
+        return true;
+      })
+      .run();
+  }
+}
+
+// Suppression du lien hypertexte
+function deleteLinkEdit(): void {
+  linkEditorModalActive.value = false;
+  editor.value.chain().focus().extendMarkRange("link").unsetLink().run();
+}
+
+// Où doit apparaitre le Bubble Menu
+function bubbleMenuShouldShow(): boolean {
+  if (editor != null) {
+    if ((config?.readOnly ?? false) === true && (config?.canQuote ?? false) === false) return false;
+
+    const { view, state } = editor.value;
+    const { from, to } = view.state.selection;
+    const text = state.doc.textBetween(from, to, "");
+    return (
+      !linkEditorModalActive.value &&
+      text.length > 0 &&
+      (editorFunctionsActiveStatuses.h1 ||
+        editorFunctionsActiveStatuses.h2 ||
+        editorFunctionsActiveStatuses.h3 ||
+        editorFunctionsActiveStatuses.h4 ||
+        editorFunctionsActiveStatuses.h5 ||
+        editorFunctionsActiveStatuses.h6 ||
+        editorFunctionsActiveStatuses.paragraph ||
+        editorFunctionsActiveStatuses.link)
     );
   }
-  // #endregion
+  return false;
+}
+
+const btnBold = useTemplateRef("btn-bold")
+const btnItalic = useTemplateRef("btn-italic")
+const btnUnderline = useTemplateRef("btn-underline")
+const btnStrikethrough = useTemplateRef("btn-strikethrough")
+const btnAlignLeft = useTemplateRef("btn-align-left")
+const btnAlignCenter = useTemplateRef("btn-align-center")
+const btnAlignRight = useTemplateRef("btn-align-right")
+const btnAlignJustify = useTemplateRef("btn-align-justify")
+const btnIndent = useTemplateRef("btn-indent")
+const btnOutdent = useTemplateRef("btn-outdent")
+const btnListUl = useTemplateRef("btn-list-ul")
+const btnListOl = useTemplateRef("btn-list-ol")
+const btnUndo = useTemplateRef("btn-undo")
+const btnRedo = useTemplateRef("btn-redo")
+const btnTextstyle = useTemplateRef("btn-textstyle")
+const btnTextheight = useTemplateRef("btn-textheight")
+const btnFont = useTemplateRef("btn-font")
+const btnImage = useTemplateRef("btn-image")
+const btnLink = useTemplateRef("btn-link")
+// const btnGripLines = useTemplateRef("btn-grip-lines")
+
+
+// Détecter le wrap des button de l'éditeur
+function detectWrappedItems():void {
+  clearTimeout(timerThrottleResizeId);
+  timerThrottleResizeId = window.setTimeout(
+    () => {
+      console.log("Je doit passer une seule fois");
+      const container = document.querySelector("#editor-header");
+      const containerBottom = (container?.getBoundingClientRect()?.bottom ?? 0);
+      if (container == null) return;
+      ToolBarButtonsTooltipVisibility.Bold = (btnBold.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Italic = (btnItalic.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Underline = (btnUnderline.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Strikethrough = (btnStrikethrough.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.AlignLeft = (btnAlignLeft.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.AlignCenter = (btnAlignCenter.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.AlignRight = (btnAlignRight.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.AlignJustify = (btnAlignJustify.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Indent = (btnIndent.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Outdent = (btnOutdent.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.ListUl = (btnListUl.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.ListOl = (btnListOl.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Undo = (btnUndo.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Redo = (btnRedo.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.TextStyle = (btnTextstyle.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.TextHeight = (btnTextheight.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Font = (btnFont.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Image = (btnImage.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.Link = (btnLink.value.$el.getBoundingClientRect()?.top > containerBottom);
+      // ToolBarButtonsTooltipVisibility.GripLines = (btnGripLines.value.$el.getBoundingClientRect()?.top > containerBottom);
+    },
+    300
+  );
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom_bulma_core.scss";
+@use "~/assets/scss/custom_bulma_core.scss";
 
 /* Basic editor styles */
 .editor-height{
@@ -1628,7 +1597,7 @@ export default class extends Vue {
       height: 125px;
     }
     #editor-content-main-pane {
-      ::v-deep .ProseMirror {
+      :deep(.ProseMirror) {
         //background-color: #f3e5a9;
         min-height: 100%;
         padding: 4px;

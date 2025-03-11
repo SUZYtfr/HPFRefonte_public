@@ -40,12 +40,11 @@
         <span class="is-size-6"><strong>{{
           "Auteur" + ((fanfiction?.authors?.length ?? 0) > 1 ? "s" : "") + " : "
         }}</strong></span>
-        <template v-for="(author, index) in fanfiction?.authors">
+        <template v-for="(author, index) in fanfiction?.authors" :key="'author_' + author.user_id.toString()">
           <template v-if="index > 0">
             ,
           </template>
           <a
-            :key="'author_' + author.user_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
             :href="'auteurs/' + author.user_id"
           >{{ author.username }}
@@ -69,12 +68,11 @@
         <span><strong>{{
           "Série" + ((fanfiction?.collection_count ?? 0) > 1 ? "s" : "") + " : "
         }}</strong></span>
-        <template v-for="(serie, index) in fanfiction?.series">
+        <template v-for="(serie, index) in fanfiction?.series" :key="'serie_' + serie.serie_id.toString()">
           <template v-if="index > 0">
             ,
           </template>
           <a
-            :key="'serie_' + serie.serie_id.toString()"
             class="is-size-6-5 has-text-weight-normal"
             :href="'series/' + serie.serie_id"
           >{{ serie.title }}
@@ -119,9 +117,9 @@
           fanfiction?.statusAsText
         }}</span>
         <span class="is-size-6">le </span>
-        <span v-if="(fanfiction?.last_update_date instanceof Date)" class="is-size-6"><strong>{{ (fanfiction?.last_update_date ?? new Date()).toLocaleDateString() }}</strong></span>
+        <span v-if="(fanfiction?.last_update_date instanceof Date)" class="is-size-6"><strong>{{ (fanfiction?.last_update_date ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span>
         <span class="is-size-6-5 is-hidden-mobile">(publiée depuis le </span>
-        <span v-if="(fanfiction?.creation_date instanceof Date)" class="is-size-6-5 is-hidden-mobile"><strong>{{ (fanfiction?.creation_date ?? new Date()).toLocaleDateString() }}</strong></span><span class="is-size-6-5 is-hidden-mobile">)</span>
+        <span v-if="(fanfiction?.creation_date instanceof Date)" class="is-size-6-5 is-hidden-mobile"><strong>{{ (fanfiction?.creation_date ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span><span class="is-size-6-5 is-hidden-mobile">)</span>
       </div>
       <div class="is-block">
         <b-tooltip label="Ajouter à la pile à lire" type="is-primary">
@@ -147,50 +145,27 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import { FanfictionModel, FanfictionEntityConfig } from "@/models/fanfictions";
 import { getClassTypeColor } from "@/utils/characteristics";
 import { CharacteristicData } from "@/types/characteristics";
 
-@Component({
-  name: "Fanfiction"
-})
-export default class Fanfiction extends Vue {
-  // #region Props
-  @Prop()
-  declare public fanfiction?: FanfictionModel;
+interface Props {
+  fanfiction?: FanfictionModel;
+  config?: FanfictionEntityConfig;
+}
 
-  @Prop({ default: null })
-  declare public config?: FanfictionEntityConfig;
-  // #endregion
+const { fanfiction, config } = defineProps<Props>();
 
-  // #region Datas
-  // public ratinga = 10;
-  public hover: boolean = false;
-  // #endregion
+const hover = ref<boolean>(false);
 
-  public mounted(): void {
-    // console.log("Fanfiction type: " + (this.fanfiction instanceof FanfictionModel));
-    // console.log("Date type: " + ((new Date()) instanceof Date));
-    // console.log("Creation date type: " + (this.fanfiction?.creation_date instanceof Date));
-    // console.log("Last update date type: " + (this.fanfiction?.last_update_date instanceof Date));
-    // console.log("Characteristic type: " + (this.fanfiction.characteristics[0] instanceof CharacteristicData));
-    // console.log(this.fanfiction?.creation_date);
-    // console.log(this.fanfiction?.creation_date?.toLocaleDateString());
-  }
-
-  // #region Methods
-  public getClassType(characteristic: CharacteristicData): string {
-    return getClassTypeColor(characteristic);
-  }
-  // #endregion
+function getClassType(characteristic: CharacteristicData): string {
+  return getClassTypeColor(characteristic);
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .rating-float-right {
   display: block;

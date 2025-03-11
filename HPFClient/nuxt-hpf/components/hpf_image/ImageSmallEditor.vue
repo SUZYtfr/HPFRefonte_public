@@ -53,12 +53,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
+import { Component, Vue, Prop } from "vue-facing-decorator";
 import { ImageHPFData } from "@/types/images";
 @Component({
   name: "ImageSmallEditor"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Props
   @Prop()
   declare public image?: ImageHPFData;

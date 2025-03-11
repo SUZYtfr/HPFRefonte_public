@@ -508,7 +508,7 @@ import { SortByEnum } from "~/types/basics";
     }
   }
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region  Data
   @SerialiseClass(UserModel)
   public user: UserModel | null = null;

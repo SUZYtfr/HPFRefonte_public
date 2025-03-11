@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import { CommentData, NewsData } from "~/types/news";
 import { AuthorData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
+import 'reflect-metadata';
 
 // #region Comment
 export class CommentModel extends CommentData {

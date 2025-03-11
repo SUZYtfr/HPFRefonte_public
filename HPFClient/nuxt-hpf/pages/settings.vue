@@ -68,7 +68,7 @@ import { Component, Vue } from "nuxt-property-decorator";
   fetchOnServer: true,
   fetchKey: "settings"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Data
   // Menu actif
   public activeItem: string = "";

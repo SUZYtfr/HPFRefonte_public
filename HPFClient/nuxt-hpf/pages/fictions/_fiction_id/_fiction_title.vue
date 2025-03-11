@@ -76,7 +76,7 @@ import { TableOfContent, ChapterModelLight } from "~/models/fanfictions";
     fetchKey: "table-of-content-page"
   })
 
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region  Data
   @SerialiseClass(TableOfContent)
   public tableOfContent: TableOfContent | null = null;

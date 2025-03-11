@@ -1,9 +1,11 @@
-import $AxiosWrapper from "~/utils/api";
+import fetchController from "~/utils/api";
 import { IBasicQuery } from "@/types/basics";
 import { CommentModel, NewsModel } from "~/models/news";
 import { CommentData, NewsData } from "@/types/news";
+import type { Paginated } from "@/types/basics";
 
-export const searchNews = (filters: IBasicQuery | null | undefined): Promise<any> => $AxiosWrapper.get<NewsModel>(`/news/`, filters, NewsModel);
-export const getNews = (id: number): Promise<any> => $AxiosWrapper.get<NewsModel>(`/news/${id.toString()}/`, null, NewsModel);
 
-export const postComment = (news_id: number, comment: CommentData): Promise<any> => $AxiosWrapper.post<CommentModel>(`/news/${news_id.toString()}/comments/`, comment, CommentModel);
+export const searchNews = (filters: IBasicQuery | null | undefined) => fetchController.get<Paginated<NewsModel[]>>(`/news/`, filters, NewsModel);
+export const getNews = (id: number) => fetchController.get<NewsModel>(`/news/${id.toString()}/`, null, NewsModel);
+
+export const postComment = (news_id: number, comment: CommentData) => fetchController.post<CommentModel>(`/news/${news_id.toString()}/comments/`, comment, CommentModel);

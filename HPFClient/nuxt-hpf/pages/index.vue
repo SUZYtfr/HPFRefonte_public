@@ -4,146 +4,119 @@
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" />
+        <FanfictionThumbnailList :is-loading="recentFanfictionListLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions.results" />
         <br>
         <!-- Sélections fanfictions -->
-        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionsFanfictions" />
+        <FanfictionThumbnailList :is-loading="selectionFanfictionListLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionFanfictions.results" />
         <br>
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList :is-loading="listLoading" :news="recentNews" />
+        <NewsThumbnailList :is-loading="newsListLoading" :news="paginatedRecentNews.results" />
       </div>
     </div>
     <br>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import { searchNews } from "@/api/news";
-import { NewsModel } from "@/models/news";
 import { searchFanfictions } from "@/api/fanfictions";
-import { FanfictionModel } from "@/models/fanfictions";
-import { IBasicQuery, SortByEnum } from "@/types/basics";
-import { IFanfictionFilters } from "@/types/fanfictions";
-import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
+// import { IBasicQuery, SortByEnum } from "@/types/basics";
+// import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
 import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
+import { FanfictionListType } from "~/types/other";
 
-@Component({
-  components: {
-    FanfictionThumbnail,
-    FanfictionThumbnailList,
-    NewsThumbnailList
-  },
-  fetchOnServer: true,
-  fetchKey: "index"
-})
-export default class extends Vue {
-  // #region  Datas
+// let recentFanfictionFilters : IFanfictionFilters = {
+//   page: 1,
+//   pageSize: 20,
+//   totalPages: false,
+//   sortOn: "last_update_date",
+//   sortBy: SortByEnum.Descending,
+//   searchTerm: null,
+//   searchAuthor: null,
+//   searchAuthorId: null,
+//   multipleAuthors: null,
+//   status: null,
+//   wordCount_min: null,
+//   wordCount_max: null,
+//   includedTags: [],
+//   excludedTags: [],
+//   customTags: [],
+//   featured: null,
+//   inclusive: false,
+//   fromDate: null,
+//   toDate: null
+// };
 
-  @SerialiseClass(NewsModel)
-  public recentNews: NewsModel[] = [];
+// let selectionsFanfictionFilters : IFanfictionFilters = {
+//   page: 1,
+//   pageSize: 20,
+//   totalPages: false,
+//   sortOn: "last_update_date",
+//   sortBy: SortByEnum.Descending,
+//   searchTerm: null,
+//   searchAuthor: null,
+//   searchAuthorId: null,
+//   multipleAuthors: null,
+//   status: null,
+//   wordCount_min: null,
+//   wordCount_max: null,
+//   includedTags: [],
+//   excludedTags: [],
+//   customTags: [],
+//   featured: true,
+//   inclusive: false,
+//   fromDate: null,
+//   toDate: null
+// };
 
-  @SerialiseClass(FanfictionModel)
-  public recentFanfictions: FanfictionModel[] = [];
+// let newsFilters : IBasicQuery = {
+//   page: 1,
+//   pageSize: 20,
+//   totalPages: true,
+//   sortOn: "post_date",
+//   sortBy: SortByEnum.Descending
+// };
 
-  @SerialiseClass(FanfictionModel)
-  public selectionsFanfictions: FanfictionModel[] = [];
+const { data: paginatedRecentNews, status: newsStatus } = await searchNews(null);
+const newsListLoading = newsStatus.value === "pending";
 
-  public listLoading = false;
-  private recentFanfictionFilters : IFanfictionFilters = {
-    page: 1,
-    pageSize: 20,
-    totalPages: false,
-    sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending,
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: null,
-    inclusive: false,
-    fromDate: null,
-    toDate: null
-  };
+const { data: recentFanfictions, status: recentFanfictionStatus } = await searchFanfictions(null);
+const recentFanfictionListLoading = recentFanfictionStatus.value === "pending";
 
-  private selectionsFanfictionFilters : IFanfictionFilters = {
-    page: 1,
-    pageSize: 20,
-    totalPages: false,
-    sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending,
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: true,
-    inclusive: false,
-    fromDate: null,
-    toDate: null
-  };
+const { data: selectionFanfictions, status: selectionFanfictionStatus } = await searchFanfictions(null);
+const selectionFanfictionListLoading = selectionFanfictionStatus.value === "pending";
 
-  private newsFilters : IBasicQuery = {
-    page: 1,
-    pageSize: 20,
-    totalPages: true,
-    sortOn: "post_date",
-    sortBy: SortByEnum.Descending
-  };
-  // #endregion
-
-  // #region Hooks
-  created(): void {}
-
-  async fetch(): Promise<void> {
-    this.listLoading = true;
-    try {
-      this.recentNews = (await searchNews(this.newsFilters)).results;
-      this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
-      this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des données",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.listLoading = false;
-    }
-  }
-
-  beforeMount(): void {}
-
-  mouted(): void {}
-  // #endregion
-}
+// async function fetch(): Promise<void> {
+//   this.listLoading = true;
+//   try {
+//     this.recentNews = (await searchNews(this.newsFilters)).results;
+//     this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
+//     this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
+//   } catch (error) {
+//     if (process.client) {
+//       this.$buefy.snackbar.open({
+//         duration: 5000,
+//         message: "Une erreur s'est produite lors de la récupération des données",
+//         type: "is-danger",
+//         position: "is-bottom-right",
+//         actionText: null,
+//         pauseOnHover: true,
+//         queue: true
+//       });
+//     } else {
+//       console.log(error);
+//     }
+//   } finally {
+//     this.listLoading = false;
+//   }
+// }
 </script>
 
 <style lang="scss">
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 .card-content {
   padding: 0px;
 }

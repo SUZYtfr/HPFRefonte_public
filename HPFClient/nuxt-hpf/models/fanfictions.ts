@@ -1,12 +1,12 @@
 import { Type, Exclude } from "class-transformer";
-import { getModule } from "vuex-module-decorators";
 import { CharacteristicModel } from "./characteristics";
 import { BasicClass } from "~/types/basics";
 import { FanfictionData, SerieData, ChapterData, ReviewData } from "~/types/fanfictions";
 import { AuthorData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData } from "~/types/characteristics";
-import Config from "~/store/modules/Config";
+import 'reflect-metadata';
+
 
 // #region Review
 export class ReviewModel extends ReviewData {
@@ -37,7 +37,7 @@ export class FanfictionModel extends FanfictionData {
   public series: SerieModel[] | null = null;
 
   public chapter_count: number | null = null;
-  public word_count: number | null = null;
+  // public word_count: number | null = null;
   public first_chapter: { id: number, title: string, order: number } | null = null;
 
   constructor(init?: Partial<FanfictionModel>) {
@@ -107,23 +107,17 @@ export class ChapterModel extends ChapterData {
 
   @Exclude()
   public get trigger_warnings_loaded(): { id: number, caption: string }[] | null {
-    if (this._trigger_warnings_loaded == null && process.client === true) {
-      const ConfigModule = getModule(Config, window.$nuxt.$store);
-      if (
-        ConfigModule.characteristicTypes.length === 0 ||
-        ConfigModule.characteristics.length === 0
-      ) {
-        LoadConfigAsync(ConfigModule);
-      }
-      return ConfigModule.characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
+    if (this._trigger_warnings_loaded == null && import.meta.client === true) {
+      return Config().characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
     }
     return this._trigger_warnings_loaded;
   }
 }
 
-async function LoadConfigAsync(ConfigModule: Config): Promise<void> {
-  await ConfigModule.LoadConfig();
-}
+// async function LoadConfigAsync(ConfigModule: typeof Config): Promise<void> {
+//   const ConfigModule = Config();
+//   await ConfigModule.LoadConfig();
+// }
 
 export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   @Exclude()
@@ -141,14 +135,7 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   @Exclude()
   public get trigger_warnings_loaded(): { id: number, caption: string }[] {
     if (this._trigger_warnings_loaded == null && process.client === true) {
-      const ConfigModule = getModule(Config, window.$nuxt.$store);
-      if (
-        ConfigModule.characteristicTypes.length === 0 ||
-        ConfigModule.characteristics.length === 0
-      ) {
-        LoadConfigAsync(ConfigModule);
-      }
-      return ConfigModule.characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
+      return Config().characteristics.filter(t => t.characteristic_type_id === 4 && this.trigger_warnings.includes(t.characteristic_id)).map((x: CharacteristicData) => ({ id: x.characteristic_id, caption: x.name }));
     }
     return this._trigger_warnings_loaded != null ? this._trigger_warnings_loaded : [];
   }

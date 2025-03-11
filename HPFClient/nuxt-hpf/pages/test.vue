@@ -58,7 +58,7 @@ import TipTapEditor from "~/components/TipTapEditor.vue";
   fetchOnServer: true,
   fetchKey: "test-key"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // @SerialiseClass(CharacteristicModel)
   // public characteristics: CharacteristicModel[] = [];
 

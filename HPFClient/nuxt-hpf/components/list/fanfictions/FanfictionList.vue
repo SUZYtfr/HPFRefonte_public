@@ -193,8 +193,8 @@ export default class FanfictionList extends Vue {
       // console.log("Characteristic type: " + (this.fanfictions[0].characteristics[0] instanceof CharacteristicData));
       // console.log(this.fanfictions[0]?.creation_date);
       // console.log(new Date(this.fanfictions[0]?.creation_date));
-      // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString());
-      // console.log(this.fanfictions[0].creation_date?.toLocaleDateString());
+      // console.log(new Date(this.fanfictions[0]?.creation_date).toLocaleDateString("fr-FR"));
+      // console.log(this.fanfictions[0].creation_date?.toLocaleDateString("fr-FR"));
     } catch (error) {
       if (process.client) {
         this.$buefy.snackbar.open({

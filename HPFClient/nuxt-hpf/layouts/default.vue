@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <!-- Debug sidebar -->
-    <SidebarDebug v-if="false" />
+    <!-- <SidebarDebug v-if="false" /> -->
     <!-- Header -->
     <Navbar />
     <!-- Bannière -->
@@ -14,31 +14,21 @@
     </div>
     <div id="wrapper">
       <!-- Main Content -->
-      <nuxt />
+      <slot />
     </div>
     <!-- Footer -->
     <Footer />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
-import SidebarDebug from "@/components/SidebarDebug.vue";
-
-@Component({
-  components: {
-    Navbar,
-    Footer,
-    SidebarDebug
-  }
-})
-export default class extends Vue {}
+// import SidebarDebug from "@/components/SidebarDebug.vue";
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom_bulma_core.scss";
+@use "~/assets/scss/custom_bulma_core.scss";
 
 #container {
   background-color: var(--primary-light);

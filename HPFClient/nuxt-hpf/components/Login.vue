@@ -1,12 +1,12 @@
 <template>
-  <b-modal v-model="modalActive" width="300px" scroll="keep">
-    <form ref="loginForm">
+  <b-modal v-model="ModalStatesModule.loginModalActive" width="300px" scroll="keep">
+    <form ref="html-login-form">
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
           <p class="modal-card-title">
             Connexion
           </p>
-          <button type="button" class="delete" @click="modalActive = false" />
+          <button type="button" class="delete" @click="ModalStatesModule.setLoginModalActive(false)" />
         </header>
         <section class="modal-card-body">
           <b-field label="Identifiant">
@@ -24,7 +24,7 @@
               password-reveal
               placeholder="Votre mot de passe"
               required
-              @keydown.native.enter="login()"
+              @keydown.native.enter="checkAndSubmitForm()"
             />
           </b-field>
           <b-checkbox>Se souvenir de moi</b-checkbox>
@@ -35,8 +35,8 @@
             :expanded="true"
             label="Se connecter"
             type="is-primary"
-            :loading="loading"
-            @click="login()"
+            :loading="status === 'pending'"
+            @click="checkAndSubmitForm()"
           />
         </footer>
       </div>
@@ -44,72 +44,42 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
+<script setup lang="ts">
 import { UserLoginData } from "@/types/users";
 
-@Component({
-  name: "Connexion"
-})
-export default class extends Vue {
-  // #region Data
-  public loginForm: UserLoginData = {
-    username: "",
-    password: ""
-  };
+const ModalStatesModule = ModalsStates();
 
-  public loading: boolean = false;
-  // #endregion
+// Le formulaire en tant qu'élément HTML
+const htmlLoginForm = useTemplateRef("html-login-form");
 
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
+// L'objet lié des informations du formulaire
+const loginForm = reactive<UserLoginData>({
+  username: "",
+  password: ""
+});
+
+// Si les informations changent, utiliser la validation de l'élément HTML
+const formIsValid = ref(false);
+watch(loginForm, () => { formIsValid.value = htmlLoginForm.value.checkValidity() });
+
+// TODO réparer les toasts !
+const { status, execute: submitForm, error } = await useFetch("http://localhost:8585/api/account/", { immediate: false });
+watch(status, () => {
+  if (status.value === "success") {
+    OpenToast("Envoi réussi", "is-primary", 5000, false, true, "is-bottom");
   }
-
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.loginModalActive;
+  else if (status.value === "error") {
+    console.log("essai");
+    OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
   }
+});
 
-  set modalActive(value) {
-    this.ModalsStatesModule.setLoginModalActive(value);
-  }
-
-  get formIsValid(): boolean {
-    return ((this.loginForm?.username?.length ?? 0) > 0 && (this.loginForm?.password?.length ?? 0) > 0);
-  }
-  // #endregion
-
-  // #region Methods
-  // Envoyer le formulaire
-  public async login(): Promise<void> {
-    this.loading = true;
-    try {
-      await this.$auth.loginWith("cookie", { data: this.loginForm });
-      this.modalActive = false;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la tentative de connexion",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
+// Vérifier le formulaire avant l'envoi
+function checkAndSubmitForm(): void {
+  if (formIsValid) submitForm();
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 </style>

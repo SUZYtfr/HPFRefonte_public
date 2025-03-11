@@ -352,7 +352,7 @@ import "simplebar/dist/simplebar.min.js";
   fetchOnServer: true,
   fetchKey: "settings-themes"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Data
   public listLoading: boolean = false;
   public loading: boolean = false;

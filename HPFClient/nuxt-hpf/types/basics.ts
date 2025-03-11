@@ -26,6 +26,19 @@ export interface BasicResponse {
   pageSize: number
 }
 
+export interface Paginated<T> {
+  count: number;
+  current: number;
+  results: T;
+}
+
+// T | T[] => T
+export type Flatten<T> = T extends any[] ? T[number] : T;
+
+// T | T["results"] => T
+export type Depaginate<T> = T extends Paginated<any> ? T["results"] : T;
+
+
 export class BasicClass<T> {
   public id: number = 0;
   public recordStatus: RecordStatusEnum = RecordStatusEnum.Unchanged;

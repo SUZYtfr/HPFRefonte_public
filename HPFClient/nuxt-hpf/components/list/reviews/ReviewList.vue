@@ -47,14 +47,14 @@
         <b-loading v-model="listLoading" :is-full-page="false" />
         <div class="px-2 py-3 is-flex-grow-5">
           <div
-            v-if="(reviews?.length ?? 0) == 0"
+            v-if="(reviews?.count ?? 0) == 0"
             class="mx-auto my-auto has-text-centered"
           >
             <span class="is-italic mt-3">Aucune review, soyez le premier !</span>
           </div>
           <div v-else>
             <Review
-              v-for="(review, innerindex) of reviews"
+              v-for="(review, innerindex) of reviews.results"
               :key="'rv_' + review.review_id.toString()"
               class="my-2"
               :review="review"
@@ -84,203 +84,191 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import { SerialiseClass } from "@/serialiser-decorator";
-import Review from "~/components/entities/review.vue";
+<script setup lang="ts">
 import { searchChapterReviews, searchCollectionReviews, searchFictionReviews, postChapterReview, postChapterReviewReply, postCollectionReview, postCollectionReviewReply, postFictionReview, postFictionReviewReply } from "~/api/reviews";
-import TipTapEditor from "~/components/TipTapEditor.vue";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
-import ModalsStates from "~/store/modules/ModalsStates";
 import { ReviewModel } from "~/models/fanfictions";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
 import { SortByEnum } from "~/types/basics";
+import Review from "~/components/entities/review.vue";
 
-@Component({ name: "ReviewList", components: { Review, TipTapEditor } })
-export default class ReviewList extends Vue {
-  // #region Props
-  @Prop({ default: null })
-  declare public item_id?: number;
+interface Props {
+  item_id?: number;
+  totalReviews?: number;
+  isLoading?: boolean;
+  reviewListType?: ReviewItemTypeEnum;
+}
+const { item_id, totalReviews, isLoading, reviewListType } = defineProps<Props>();
 
-  @Prop({ default: 0 })
-  declare public totalReviews?: number;
+// TODO Un truc qui fait pas pleurer
+let searchReviews: typeof searchChapterReviews | typeof searchFictionReviews | typeof searchCollectionReviews
+switch (reviewListType) {
+  case ReviewItemTypeEnum.Chapter:
+    searchReviews = searchChapterReviews;
+    break;
+  case ReviewItemTypeEnum.Fanfiction:
+    searchReviews = searchFictionReviews;
+    break;
+  case ReviewItemTypeEnum.Serie:
+    searchReviews = searchCollectionReviews;
+    break;
+}
 
-  @Prop({ default: false })
-  declare private isLoading?: boolean;
+const { data: reviews, status } = await searchReviews(item_id, null)
+// const reviews = searchReviews(item_id, reviewFilters)
+const listLoading = computed(() => status.value === 'pending')
 
-  @Prop()
-  declare public reviewListType?: ReviewItemTypeEnum;
-  // @Prop({ default: null }) public propEditorContent!: TipTapEditorContent | null;
-  // #endregion
+const ModalsStatesModule = ModalsStates();
 
-  // #region Datas
-  @SerialiseClass(ReviewModel)
-  public reviews: ReviewModel[] = [];
+  // public editorContent: TipTapEditorContent | null = null;
+  // public canRate: boolean = false;
+  // public reviewRating: number | null = null;
 
-  public editorContent: TipTapEditorContent | null = null;
-  public canRate: boolean = false;
-  public reviewRating: number | null = null;
-  public reviewFilters = {
-    page: 1,
-    pageSize: 10,
-    totalPages: false,
-    sortBy: SortByEnum.Descending,
-    sortOn: "post_date"
-  };
+// TODO faire réactif
+const reviewFilters = {
+  page: 1,
+  pageSize: 10,
+  totalPages: false,
+  sortBy: SortByEnum.Descending,
+  sortOn: "post_date"
+};
 
-  public tiptapConfig: TipTapEditorConfig = {
-    showFooter: false,
-    placeholder: "Ecrire un commentaire",
-    readOnly: false,
-    fixedHeight: true,
-    defaultValue: "",
-    canQuote: false,
-    quoteLimit: 0,
-    fontSize: 100,
-    height: 300,
-    oneLineToolbar: false,
-    canUseImage: false
-  };
+  // public tiptapConfig: TipTapEditorConfig = {
+  //   showFooter: false,
+  //   placeholder: "Ecrire un commentaire",
+  //   readOnly: false,
+  //   fixedHeight: true,
+  //   defaultValue: "",
+  //   canQuote: false,
+  //   quoteLimit: 0,
+  //   fontSize: 100,
+  //   height: 300,
+  //   oneLineToolbar: false,
+  //   canUseImage: false
+  // };
 
-  private timerId: number = 0;
-  // #endregion
+  // private timerId: number = 0;
+  // // #endregion
 
-  // #region Hooks
-  private async fetch(): Promise<void> {
-    this.listLoading = true;
-    // Récupération des fictions
-    await this.getReviews();
-    this.listLoading = false;
-  }
-  // #endregion
+  // get listLoading(): boolean {
+  //   return this.isLoading ?? false;
+  // }
 
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
+  // set listLoading(value) {
+  //   this.$emit("loadingChange", value);
+  // }
 
-  get listLoading(): boolean {
-    return this.isLoading ?? false;
-  }
+  // // #endregion
 
-  set listLoading(value) {
-    this.$emit("loadingChange", value);
-  }
+  // // #region Watchers
+  // @Watch("reviewFilters", { deep: true })
+  // public onFiltersChanged(): void {
+  //   clearTimeout(this.timerId);
+  //   this.timerId = window.setTimeout(this.$fetch, 500);
+  // }
 
-  // #endregion
+  // @Watch("canRate")
+  // public onCanRateChanged(): void {
+  //   this.reviewRating = (this.canRate ? 10 : null);
+  // }
 
-  // #region Watchers
-  @Watch("reviewFilters", { deep: true })
-  public onFiltersChanged(): void {
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.$fetch, 500);
-  }
+  // // @Watch("propEditorContent")
+  // // public onpropEditorContentChanged(): void {
+  // //   if (process.client) {
+  // //     (this.$refs.reviewEditor as TipTapEditor)?.setContent(this.propEditorContent);
+  // //   }
+  // // }
 
-  @Watch("canRate")
-  public onCanRateChanged(): void {
-    this.reviewRating = (this.canRate ? 10 : null);
-  }
+  // @Watch("editorContent")
+  // public oneditorContentChanged(): void {
+  //   this.$emit("reviewContentChanged", this.editorContent);
+  // }
 
-  // @Watch("propEditorContent")
-  // public onpropEditorContentChanged(): void {
-  //   if (process.client) {
-  //     (this.$refs.reviewEditor as TipTapEditor)?.setContent(this.propEditorContent);
+  // // #endregion
+
+  // // #region Methods
+  // private async getReviews(): Promise<void> {
+  //   if (this.item_id == null) return;
+  //   try {
+  //     // if (this.reviewFilters == null || this.reviewFilters.item_id <= 0) return;
+  //     let response;
+  //     switch (this.reviewListType) {
+  //       case ReviewItemTypeEnum.Chapter:
+  //         response = (await searchChapterReviews(this.item_id, this.reviewFilters));
+  //         break;
+  //       case ReviewItemTypeEnum.Fanfiction:
+  //         response = (await searchFictionReviews(this.item_id, this.reviewFilters));
+  //         break;
+  //       case ReviewItemTypeEnum.Serie:
+  //         response = (await searchCollectionReviews(this.item_id, this.reviewFilters));
+  //         break;
+  //     }
+  //     this.reviews = response.results;
+  //     this.reviewFilters.page = response.current;
+  //   } catch (error) {
+  //     if (process.client) {
+  //       this.$buefy.snackbar.open({
+  //         duration: 5000,
+  //         message: "Une erreur s'est produite lors de la récupération des reviews",
+  //         type: "is-danger",
+  //         position: "is-bottom-right",
+  //         actionText: null,
+  //         pauseOnHover: true,
+  //         queue: true
+  //       });
+  //     } else {
+  //       console.log(error);
+  //     }
+  //   } finally {
+  //     // Rien
   //   }
   // }
 
-  @Watch("editorContent")
-  public oneditorContentChanged(): void {
-    this.$emit("reviewContentChanged", this.editorContent);
-  }
+  // public async PostReview(): Promise<void> {
+  //   if (this.item_id == null) return;
+  //   if (this.reviewListType == null) return;
+  //   if ((this.editorContent?.wordcount ?? 0) < 3) return;
+  //   if (this.editorContent?.content == null) return;
+  //   try {
+  //     let review: ReviewModel = new ReviewModel();
+  //     review.text = this.editorContent?.content;
+  //     review.grading = this.reviewRating;
+  //     review.review_item_type_id = this.reviewListType;
+  //     review.item_id = this.item_id;
+  //     review.is_draft = false;
+  //     switch (this.reviewListType) {
+  //       case ReviewItemTypeEnum.Chapter:
+  //         review = (await postChapterReview(this.item_id, review)).items;
+  //         break;
+  //       case ReviewItemTypeEnum.Fanfiction:
+  //         review = (await postFictionReview(this.item_id, review)).items;
+  //         break;
+  //       case ReviewItemTypeEnum.Serie:
+  //         review = (await postCollectionReview(this.item_id, review)).items;
+  //         break;
+  //     }
+  //     if (review != null) this.reviews?.push(review);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-  // #endregion
+  // // Changer le contenu de l'éditeur
+  // public setContent(tiptapContent: TipTapEditorContent | null): void {
+  //   if (process.client) {
+  //     (this.$refs.reviewEditor as TipTapEditor)?.setContent(tiptapContent);
+  //   }
+  // }
 
-  // #region Methods
-  private async getReviews(): Promise<void> {
-    if (this.item_id == null) return;
-    try {
-      // if (this.reviewFilters == null || this.reviewFilters.item_id <= 0) return;
-      let response;
-      switch (this.reviewListType) {
-        case ReviewItemTypeEnum.Chapter:
-          response = (await searchChapterReviews(this.item_id, this.reviewFilters));
-          break;
-        case ReviewItemTypeEnum.Fanfiction:
-          response = (await searchFictionReviews(this.item_id, this.reviewFilters));
-          break;
-        case ReviewItemTypeEnum.Serie:
-          response = (await searchCollectionReviews(this.item_id, this.reviewFilters));
-          break;
-      }
-      this.reviews = response.results;
-      this.reviewFilters.page = response.current;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des reviews",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      // Rien
-    }
-  }
-
-  public async PostReview(): Promise<void> {
-    if (this.item_id == null) return;
-    if (this.reviewListType == null) return;
-    if ((this.editorContent?.wordcount ?? 0) < 3) return;
-    if (this.editorContent?.content == null) return;
-    try {
-      let review: ReviewModel = new ReviewModel();
-      review.text = this.editorContent?.content;
-      review.grading = this.reviewRating;
-      review.review_item_type_id = this.reviewListType;
-      review.item_id = this.item_id;
-      review.is_draft = false;
-      switch (this.reviewListType) {
-        case ReviewItemTypeEnum.Chapter:
-          review = (await postChapterReview(this.item_id, review)).items;
-          break;
-        case ReviewItemTypeEnum.Fanfiction:
-          review = (await postFictionReview(this.item_id, review)).items;
-          break;
-        case ReviewItemTypeEnum.Serie:
-          review = (await postCollectionReview(this.item_id, review)).items;
-          break;
-      }
-      if (review != null) this.reviews?.push(review);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  // Changer le contenu de l'éditeur
-  public setContent(tiptapContent: TipTapEditorContent | null): void {
-    if (process.client) {
-      (this.$refs.reviewEditor as TipTapEditor)?.setContent(tiptapContent);
-    }
-  }
-
-  // Quoter dans l'éditeur
-  public setQuote(quote: string): void {
-    if (process.client) {
-      (this.$refs.reviewEditor as TipTapEditor)?.setQuote(quote);
-    }
-  }
-  // #endregion
-}
+  // // Quoter dans l'éditeur
+  // public setQuote(quote: string): void {
+  //   if (process.client) {
+  //     (this.$refs.reviewEditor as TipTapEditor)?.setQuote(quote);
+  //   }
+  // }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 </style>

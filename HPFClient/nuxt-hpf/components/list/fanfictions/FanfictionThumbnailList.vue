@@ -7,7 +7,7 @@
         </p>
       </header>
       <div class="card-content is-relative p-2">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <b-loading v-if="isLoading" :is-full-page="false" />
         <div
           v-if="fanfictions?.length > 0"
           class="
@@ -41,14 +41,20 @@
       <footer v-if="listType == FanfictionListType.Recent" class="card-footer">
         <p class="card-footer-item py-2">
           <span>
-            <NuxtLink to="/search"> Plus de nouveautés </NuxtLink>
+            <NuxtLink
+              to="/search"
+              no-prefetch
+            > Plus de nouveautés </NuxtLink>
           </span>
         </p>
       </footer>
       <footer v-else-if="listType == FanfictionListType.Selections" class="card-footer">
         <p class="card-footer-item py-2">
           <span>
-            <NuxtLink to="/search"> Plus de sélections </NuxtLink>
+            <NuxtLink
+              to="/search"
+              no-prefetch
+            > Plus de sélections </NuxtLink>
           </span>
         </p>
         <p class="card-footer-item py-2">
@@ -61,50 +67,28 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
 import { FanfictionModel } from "@/models/fanfictions";
 import { FanfictionListType } from "@/types/other";
 
-@Component({
-  name: "FanfictionThumbnailList",
-  components: {
-    FanfictionThumbnail
-  },
-  fetchOnServer: true,
-  fetchKey: "fanfiction-thumbnail-list"
-})
-export default class FanfictionThumbnailList extends Vue {
-  // #region Props
-  @Prop({ default: false })
-  declare isLoading?: boolean;
+const { isLoading = false, fanfictions = [], listType } = defineProps<{
+  isLoading: boolean;
+  fanfictions: FanfictionModel[];
+  listType: FanfictionListType;
+}>();
 
-  @Prop({ default: FanfictionListType.Recent })
-  declare listType? : FanfictionListType;
-
-  @Prop({ default: [] })
-  declare fanfictions?: FanfictionModel[];
-  // #endregion
-
-  // #region Computed
-  get title(): string {
-    let result: string = "";
-    switch (this.listType) {
-      case FanfictionListType.Recent:
-        result = "Nouveautés";
-        break;
-      case FanfictionListType.Selections:
-        result = "Sélections du mois";
-        break;
-      default:
-        result = "";
-        break;
-    }
-    return result;
-  }
-
-  // #endregion
+let title: string = "";
+switch (listType) {
+  case FanfictionListType.Recent:
+    title = "Nouveautés";
+    break;
+  case FanfictionListType.Selections:
+    title = "Sélections du mois";
+    break;
+  default:
+    title = "";
+    break;
 }
 </script>
 

@@ -293,7 +293,7 @@ import { searchCharacteristics, searchCharacteristicsTypes, updateCharacteristic
   fetchOnServer: true,
   fetchKey: "settings-charateristics"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Data
   @SerialiseClass(CharacteristicModel)
   private characteristics: CharacteristicModel[] = [];

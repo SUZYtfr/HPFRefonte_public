@@ -5,7 +5,7 @@
       <template #brand>
         <b-navbar-item>
           <img
-            :src="require('@/assets/img/logo_hpfanfic_court_300.png')"
+            src="@/assets/img/logo_hpfanfic_court_300.png"
             width="56"
             height="36"
             alt="Logo forum HPF"
@@ -48,7 +48,7 @@
                   <b-image
                     :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
-                    style="width: 22px; height: 22px: margin-left: -8px;"
+                    style="width: 22px; height: 22px; margin-left: -8px;"
                     :rounded="true"
                     :responsive="true"
                   />
@@ -192,7 +192,7 @@
                   <b-image
                     :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
-                    style="width: 22px; height: 22px: margin-left: -8px;"
+                    style="width: 22px; height: 22px; margin-left: -8px;"
                     :rounded="true"
                     :responsive="true"
                   />
@@ -225,44 +225,17 @@
     <Contact />
     <!-- Modal de connexion -->
     <Login />
-    <!-- Modal d'inscription -->
+    <!-- Modal d'inscription -->  
     <Register />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import Login from "~/components/Login.vue";
-import Register from "~/components/Register.vue";
-import Contact from "~/components/Contact.vue";
-import ModalsStates from "~/store/modules/ModalsStates";
+<script setup lang="ts">
+const ModalsStatesModule = ModalsStates();
 
-@Component({
-  name: "Navbar",
-  components: {
-    Login,
-    Register,
-    Contact
-  }
-})
-export default class extends Vue {
-  // #region Data
-
-  // #endregion
-
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-  // #endregion
-
-  // #region Methods
-  public async logout(): Promise<void> {
-    await this.$auth.logout();
-  }
-  // #endregion
-}
+// async function logout(): Promise<void> {
+//   await this.$auth.logout();
+// }
 </script>
 
 <style lang="css" scoped>

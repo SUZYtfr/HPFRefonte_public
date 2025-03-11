@@ -169,7 +169,7 @@ import { ReviewItemTypeEnum } from "@/types/fanfictions";
   fetchKey: "fanfiction-page"
 })
 
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Props
   @SerialiseClass(TableOfContent)
   @Prop()

@@ -1,19 +1,20 @@
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": [
-      "esnext",
-      "esnext.asynciterable",
-      "dom"
-    ],
-    "esModuleInterop": true,
+    // "target": "esnext",
+    // "module": "esnext",
+    // "moduleResolution": "node",
+    // "lib": [
+    //   "esnext",
+    //   "esnext.asynciterable",
+    //   "dom"
+    // ],
+    // "esModuleInterop": true,
     "experimentalDecorators": true,
-    "sourceMap": true,
-    "strict": true,
-    "noEmit": true,
-    "baseUrl": ".",
+    // "sourceMap": true,
+    "strict": false,
+    // "noEmit": true,
+    // "baseUrl": ".",
     "verbatimModuleSyntax": false,
     "paths": {
       "~/*": [
@@ -23,21 +24,21 @@
         "./*"
       ]
     },
-    "types": [
-      "@types/node",
-      "@nuxt/types",
-      "@nuxtjs/axios",
-      "@nuxtjs/auth-next",
-      "buefy/types",
-      "webpack-env", 
-    ],
+  //   "types": [
+  //     // "@types/node",
+  //     // "@nuxt/types",
+  //     // "@nuxtjs/axios",
+  //     // "@nuxtjs/auth-next",
+  //     // "buefy/types",
+  //     // "webpack-env", 
+  //   ],
   },
-  "vueCompilerOptions": {
-    "extensions": [
-      ".vue"
-    ],
-    "target": 2
-  },
+  // "vueCompilerOptions": {
+  //   "extensions": [
+  //     ".vue"
+  //   ],
+  //   "target": 2
+  // },
   "exclude": [
     "node_modules"
   ]

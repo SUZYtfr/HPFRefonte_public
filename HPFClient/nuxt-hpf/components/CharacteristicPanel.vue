@@ -55,7 +55,7 @@ import { CharacteristicModel, CharacteristicTypeModel } from "~/models/character
     simplebar
   }
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Props
   @Prop()
   declare public characteristic_type?: CharacteristicTypeModel;

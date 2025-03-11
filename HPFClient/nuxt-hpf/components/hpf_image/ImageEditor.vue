@@ -1,5 +1,5 @@
 <template>
-  <node-view-wrapper
+  <NodeViewWrapper
     :class="[{ 'image-editor-hover': editing }, 'image-editor']"
   >
     <div
@@ -184,161 +184,123 @@
         data-drag-handle
       />
     </div>
-  </node-view-wrapper>
+  </NodeViewWrapper>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-2";
+<script setup lang="ts">
+import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
 import { ExplicitContentEnum, ImageHPFData } from "@/types/images";
 
-@Component({
-  name: "ImageEditor",
-  components: {
-    NodeViewWrapper,
-    NodeViewContent
-  }
+const { deleteNode, editor, node, extension, updateAttributes } = defineProps<{
+  deleteNode?: Function;
+  editor?: any;
+  node?: any;
+  extension?: any;
+  updateAttributes?: Function;
+}>();
+
+let image: ImageHPFData | null = null;
+const hover = ref(false);
+let editing: boolean = true;
+let preserveRatio: boolean = true;
+let defaultWidth: number = 32;
+let defaultHeight: number = 32;
+let currentWidth: number = 32;
+let currentHeight: number = 32;
+
+if (extension.storage.images === undefined) extension.storage.images = new Array<ImageHPFData>();
+image = editor.extensionStorage.hpfImage.images.filter((image: ImageHPFData) => image.index === node.attrs.index)[0];
+if (image === null || image === undefined) {
+  image = new ImageHPFData(
+    null,
+    null,
+    null,
+    extension.storage.images.length + 1,
+    node.attrs.url,
+    null,
+    null,
+    ExplicitContentEnum.Safe,
+    null,
+    null
+  );
+  // Mettre à jour l'attribut sans recharger le component
+  node.attrs.index = image.index;
+  // Ajouter l'image au storage
+  extension.storage.images.push(image);
+} else {
+  // Restaurer les valeurs de tailles / les préférences
+  editing = node.attrs.editing;
+  preserveRatio = node.attrs.preserveRatio;
+  defaultWidth = node.attrs.defaultWidth;
+  defaultHeight = node.attrs.defaultHeight;
+  currentWidth = node.attrs.currentWidth;
+  currentHeight = node.attrs.currentHeight;
+}
+
+// TODO régler ça
+const toto = useTemplateRef("???")
+onUpdated(() => {
+  // Fix bug draggable sur Firefox
+  toto.value.setAttribute("draggable", "false");
 })
-export default class extends Vue {
-  // #region Props
-  @Prop()
-  declare private deleteNode?: Function;
 
-  @Prop()
-  declare private editor?: any;
+onBeforeUnmount(() => {
+  // Sauvegarder les choix actuels du component
+  node.attrs.editing = editing;
+  node.attrs.preserveRatio = preserveRatio;
+  node.attrs.defaultWidth = defaultWidth;
+  node.attrs.defaultHeight = defaultHeight;
+  node.attrs.currentWidth = currentWidth;
+  node.attrs.currentHeight = currentHeight;
+})
 
-  @Prop()
-  declare private node?: any;
-
-  @Prop()
-  declare private extension?: any;
-
-  @Prop()
-  declare private updateAttributes?: Function;
-  // #endregion
-
-  // #region Datas
-  public image: ImageHPFData | null = null;
-  public hover: boolean = false;
-  public editing: boolean = true;
-  public preserveRatio: boolean = true;
-  public defaultWidth: number = 32;
-  public defaultHeight: number = 32;
-  public currentWidth: number = 32;
-  public currentHeight: number = 32;
-  // #endregion
-
-  // #region Computed
-
-  // #endregion
-
-  // #region Hooks
-  created(): void {
-    if (this.extension.storage.images === undefined)
-      this.extension.storage.images = new Array<ImageHPFData>();
-    this.image = this.editor.extensionStorage.hpfImage.images.filter(
-      (image: ImageHPFData) => image.index === this.node.attrs.index
-    )[0];
-    if (this.image === null || this.image === undefined) {
-      this.image = new ImageHPFData(
-        null,
-        null,
-        null,
-        this.extension.storage.images.length + 1,
-        this.node.attrs.url,
-        null,
-        null,
-        ExplicitContentEnum.Safe,
-        null,
-        null
-      );
-      // Mettre à jour l'attribut sans recharger le component
-      this.node.attrs.index = this.image.index;
-      // Ajouter l'image au storage
-      this.extension.storage.images.push(this.image);
-    } else {
-      // Restaurer les valeurs de tailles / les préférences
-      this.editing = this.node.attrs.editing;
-      this.preserveRatio = this.node.attrs.preserveRatio;
-      this.defaultWidth = this.node.attrs.defaultWidth;
-      this.defaultHeight = this.node.attrs.defaultHeight;
-      this.currentWidth = this.node.attrs.currentWidth;
-      this.currentHeight = this.node.attrs.currentHeight;
-    }
-  }
-
-  updated(): void {
-    // Fix bug draggable sur Firefox
-    this.$el.setAttribute("draggable", "false");
-  }
-
-  beforeDestroy(): void {
-    // Sauvegarder les choix actuels du component
-    this.node.attrs.editing = this.editing;
-    this.node.attrs.preserveRatio = this.preserveRatio;
-    this.node.attrs.defaultWidth = this.defaultWidth;
-    this.node.attrs.defaultHeight = this.defaultHeight;
-    this.node.attrs.currentWidth = this.currentWidth;
-    this.node.attrs.currentHeight = this.currentHeight;
-  }
-  // #endregion
-
-  // #region Watchers
-  @Watch("image.url")
-  private onUrlChanged(): void {
-    const img = new Image();
-    img.addEventListener("load", () => {
-      if (this.node.attrs.url !== this.image?.url) {
-        this.defaultWidth = img.naturalWidth;
-        this.currentWidth = this.defaultWidth;
-        this.defaultHeight = img.naturalHeight;
-        this.currentHeight = this.defaultHeight;
-        this.node.attrs.url = this.image?.url;
+watch(image, () => {
+  const img = new Image();
+  img.addEventListener("load", () => {
+      if (node.attrs.url !== image?.url) {
+        defaultWidth = img.naturalWidth;
+        currentWidth = defaultWidth;
+        defaultHeight = img.naturalHeight;
+        currentHeight = defaultHeight;
+        node.attrs.url = image?.url;
       }
     });
-    img.src =
-      this.image?.url != null
-        ? this.image?.url
-        : "https://bulma.io/images/placeholders/32x32.png";
-  }
-  // #endregion
+    img.src = image?.url != null ? image?.url : "https://bulma.io/images/placeholders/32x32.png";
+})
 
-  // #region Methods
-  public onWidthChanged(): void {
-    if (this.preserveRatio) {
-      this.currentHeight = Math.ceil(
-        (this.defaultHeight * this.currentWidth) / this.defaultWidth
-      );
-    }
-    this.node.attrs.currentWidth = this.currentWidth;
-    this.node.attrs.currentHeight = this.currentHeight;
-  }
-
-  public onHeightChanged(): void {
-    if (this.preserveRatio) {
-      this.currentWidth = Math.ceil(
-        (this.defaultWidth * this.currentHeight) / this.defaultHeight
-      );
-    }
-    this.node.attrs.currentWidth = this.currentWidth;
-    this.node.attrs.currentHeight = this.currentHeight;
-  }
-
-  public deleteImage(): void {
-    this.editor.extensionStorage.hpfImage.images.splice(
-      this.editor.extensionStorage.hpfImage.images.findIndex(
-        (item: ImageHPFData) => item.index === this.image?.index
-      ),
-      1
+function onWidthChanged(): void {
+  if (preserveRatio) {
+    currentHeight = Math.ceil(
+      (defaultHeight * currentWidth) / defaultWidth
     );
-    if (this.deleteNode != null) this.deleteNode();
   }
-  // #endregion
+  node.attrs.currentWidth = currentWidth;
+  node.attrs.currentHeight = currentHeight;
+}
+
+function onHeightChanged(): void {
+  if (preserveRatio) {
+    currentWidth = Math.ceil(
+      (defaultWidth * currentHeight) / defaultHeight
+    );
+  }
+  node.attrs.currentWidth = currentWidth;
+  node.attrs.currentHeight = currentHeight;
+}
+
+function deleteImage(): void {
+  editor.extensionStorage.hpfImage.images.splice(
+    editor.extensionStorage.hpfImage.images.findIndex(
+      (item: ImageHPFData) => item.index === image?.index
+    ),
+    1
+  );
+  if (deleteNode != null) deleteNode();
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 #warning {
   width: 1rem;
   height: 1rem;

@@ -1,12 +1,12 @@
 <template>
-  <b-modal v-model="modalActive" scroll="clip">
-    <form ref="signupForm" class="fullheight">
+  <b-modal v-model="ModalStatesModule.registerModalActive" scroll="clip">
+    <form ref="html-signup-form" class="fullheight">
       <div id="registerCard" class="modal-card mx-5 fullheight">
         <header class="modal-card-head">
           <p class="modal-card-title">
             Inscription
           </p>
-          <button type="button" class="delete" @click="modalActive = false" />
+          <button type="button" class="delete" @click="ModalStatesModule.setRegisterModalActive(false)" />
         </header>
         <section class="modal-card-body pt-2 fixed-height-card">
           <p>
@@ -183,152 +183,128 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import { signup } from "@/api/users";
-import { VForm, regexPasswordPattern, OpenToast } from "@/utils/formHelper";
-import TipTapEditor from "@/components/TipTapEditor.vue";
-import { UserRegisterData } from "@/types/users";
-import { TipTapEditorConfig } from "@/types/tiptap";
+<script setup lang="ts">
+// import { signup } from "@/api/users";
+import { regexPasswordPattern, OpenToast } from "@/utils/formHelper";
+import type { UserRegisterData } from "@/types/users";
+import type { TipTapEditorConfig } from "@/types/tiptap";
 
-@Component({
-  name: "Inscription",
-  components: {
-    TipTapEditor
+// const { active } = defineProps<{
+//   active: boolean;
+// }>();
+
+const ModalStatesModule = ModalsStates();
+
+
+// Le formulaire en tant qu'élément HTML
+const htmlContactForm = useTemplateRef("html-signup-form");
+
+// L'objet lié des informations du formulaire
+const signupForm = reactive<UserRegisterData>({
+  email: "",
+  password: "",
+  username: "",
+  profile: {
+    realname: "",
+    bio: "",
+    website: "",
+    profile_picture: null
   }
-})
-export default class extends Vue {
-  // #region Props
-  @Prop()
-  declare public active?: boolean;
-  // #endregion
+});
 
-  // #region Data
-  public uploadedFile: Blob | null = null;
-  // private previewAvatar!: Blob;
-  public checkPass: string = "";
+// Si les informations changent, utiliser la validation de l'élément HTML
+const formIsValid = ref(false);
+watch(signupForm, () => { formIsValid.value = htmlContactForm.value.checkValidity() });
 
-  public signupForm: UserRegisterData = {
-    email: "",
-    password: "",
-    username: "",
-    profile: {
-      realname: "",
-      bio: "",
-      website: "",
-      profile_picture: null
-    }
-  };
+const tiptapConfig = reactive<TipTapEditorConfig>({
+  showFooter: false,
+  placeholder: "Votre description",
+  readOnly: false,
+  fixedHeight: true,
+  defaultValue: "",
+  canQuote: false,
+  quoteLimit: 0,
+  fontSize: 100,
+  height: 150,
+  oneLineToolbar: false,
+  canUseImage: true
+});
 
-  public formIsValid: boolean = false;
 
-  public loading: boolean = false;
+const loading = false;
+const checkPass = ""
+function checkAndSubmitForm() {}
+function deleteDropFile() {}
+const uploadedFile: Blob | null = null;
+const rgxConfirmPassword = ""
 
-  public tiptapConfig: TipTapEditorConfig = {
-    showFooter: false,
-    placeholder: "Votre description",
-    readOnly: false,
-    fixedHeight: true,
-    defaultValue: "",
-    canQuote: false,
-    quoteLimit: 0,
-    fontSize: 100,
-    height: 150,
-    oneLineToolbar: false,
-    canUseImage: true
-  };
-  // #endregion
+  // // #region Computed
+  // get rgxConfirmPassword(): string {
+  //   return (
+  //     "^" +
+  //     this.signupForm.password.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
+  //     "$"
+  //   );
+  // }
 
-  // #region Computed
-  get rgxConfirmPassword(): string {
-    return (
-      "^" +
-      this.signupForm.password.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
-      "$"
-    );
-  }
 
-  get regexPasswordPattern(): string {
-    return regexPasswordPattern.source;
-  }
 
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
+  // // #region Watchers
+  // @Watch("signupForm", { deep: true })
+  // @Watch("checkPass", { deep: true })
+  // public onFormChanged(): void {
+  //   this.formIsValid = this.form.checkValidity();
+  // }
 
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.registerModalActive;
-  }
+  // @Watch("uploadedFile", { deep: true })
+  // public onChanged(): void {
+  //   const reader = new FileReader();
+  //   reader.onloadend = e => (this.signupForm.profile.profile_picture = reader.result);
+  //   if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
+  //   // reader.readAsDataURL(
+  //   //   this.uploadedFile != null ? this.uploadedFile : new Blob()
+  //   // );
+  //   console.log(this.uploadedFile);
+  //   console.log(reader);
+  //   console.log(this.signupForm.profile.profile_picture);
+  // }
+  // // #endregion
 
-  set modalActive(value) {
-    this.ModalsStatesModule.setRegisterModalActive(value);
-  }
+  // // #region Methods
+  // // Vérifier le formulaire avant l'envoi
+  // public checkAndSubmitForm(): void {
+  //   if (this.form.checkValidity()) this.signup();
+  // }
 
-  get form(): VForm {
-    return this.$refs.signupForm as VForm;
-  }
-  // #endregion
+  // // Supprimer l'avatar uploadé
+  // public deleteDropFile(): void {
+  //   this.uploadedFile = null;
+  //   this.signupForm.profile.profile_picture = "";
+  // }
 
-  // #region Watchers
-  @Watch("signupForm", { deep: true })
-  @Watch("checkPass", { deep: true })
-  public onFormChanged(): void {
-    this.formIsValid = this.form.checkValidity();
-  }
-
-  @Watch("uploadedFile", { deep: true })
-  public onChanged(): void {
-    const reader = new FileReader();
-    reader.onloadend = e => (this.signupForm.profile.profile_picture = reader.result);
-    if (this.uploadedFile != null) reader.readAsDataURL(this.uploadedFile);
-    // reader.readAsDataURL(
-    //   this.uploadedFile != null ? this.uploadedFile : new Blob()
-    // );
-    console.log(this.uploadedFile);
-    console.log(reader);
-    console.log(this.signupForm.profile.profile_picture);
-  }
-  // #endregion
-
-  // #region Methods
-  // Vérifier le formulaire avant l'envoi
-  public checkAndSubmitForm(): void {
-    if (this.form.checkValidity()) this.signup();
-  }
-
-  // Supprimer l'avatar uploadé
-  public deleteDropFile(): void {
-    this.uploadedFile = null;
-    this.signupForm.profile.profile_picture = "";
-  }
-
-  // Envoyer le formulaire
-  private async signup(): Promise<void> {
-    try {
-      this.loading = true;
-      const data = await signup(this.signupForm);
-      OpenToast(
-        "Inscription réussie",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
-    } catch (exception) {
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
-  }
-  // #endregion
-}
+  // // Envoyer le formulaire
+  // private async signup(): Promise<void> {
+  //   try {
+  //     this.loading = true;
+  //     const data = await signup(this.signupForm);
+  //     OpenToast(
+  //       "Inscription réussie",
+  //       "is-primary",
+  //       5000,
+  //       false,
+  //       true,
+  //       "is-bottom"
+  //     );
+  //   } catch (exception) {
+  //     OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+  //   } finally {
+  //     this.loading = false;
+  //   }
+  // }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 #registerCard {
   width: auto;

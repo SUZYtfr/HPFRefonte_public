@@ -1,221 +1,73 @@
-import type { NuxtAxiosInstance } from "@nuxtjs/axios";
-import type { ClassConstructor } from "class-transformer";
-import { plainToInstance } from "class-transformer";
-import qs from "qs";
+import { ClassConstructor } from "class-transformer";
+import type { UseFetchOptions } from "nuxt/app";
+import useCustomFetch from "~/composables/useCustomFetch";
+import type { Flatten, Depaginate } from "~/types/basics";
 
-let $axios: NuxtAxiosInstance;
-
-export function initializeAxios(axiosInstance: NuxtAxiosInstance): void {
-  $axios = axiosInstance;
-  $axios.create({
-    baseURL: process.env.SERVER_BASE_API,
-    timeout: 5000,
-    withCredentials: (process.env.NODE_ENV === "production")
-  });
-
-  $axios.defaults.paramsSerializer = params => qs.stringify(params, { arrayFormat: "repeat", skipNulls: true });
-
-  $axios.interceptors.request.use((request) => {
-    // console.log("Starting Request", JSON.stringify(request, null, 2));
-    return request;
-  });
-
-  $axios.interceptors.response.use((response) => {
-    // console.log("Response:", JSON.stringify(response, null, 2));
-    return response;
-  });
-}
-
-// Est-ce qu'on a vraiment besoin de ça ?
-export interface ListResponseWrapper<T> {
-  items: T[];
-  count: number;
-  next: string | null;
-  previous: string | null;
-  current: number;
-}
-
-export { $axios };
-
-export class AxiosWrapper {
-  /**
-   * Get axios instance if additional configuration is needed
-   */
-  get axiosInstance(): NuxtAxiosInstance { return $axios; }
-
-  /**
-   * HTTP GET request
-   * Returns Promise
-   * @param url String representation of url
-   * @param type Typescript class type. Optional.
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false). Optional.
-   * @param config AxiosRequestConfig. Additional axios configuration. Optional.
-   */
-  public async get<T>(url: string, params: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        let { data } = await $axios.request({
-          url: url,
-          method: "get",
-          params: params
-        });
-        // Transformer en instance
-        if (data.results != null) {
-          // Contenu paginé
-          data.results = this.parseData2(type, data.results);
-        } else {
-          // Contenu unique
-          data = this.parseData2(type, data);
+export class FetchController {
+    public async get<T>(url: string, params: any, model?: ClassConstructor<Flatten<Depaginate<T>>>, options?: UseFetchOptions<T>) {
+        try {
+            return useCustomFetch<T>(
+                url,
+                {
+                    method: "get",
+                    params: params,
+                    ...options
+                },
+                model
+            )
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
         }
-        return data;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.get(url);
-    }
-  }
 
-  /**
-   * HTTP DELETE request
-   * Returns Promise
-   * @param url String representation of url
-   * @param type Typescript class type.Optional.
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
-   * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
-   */
-  public async delete<T>(url: string, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.delete(url);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        throw error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.delete(url);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.delete(url);
-    }
-  }
-
-  /**
-   * HTTP POST request
-   * Returns Promise
-   * @param url String representation of url
-   * @param type Typescript class type.Optional.
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
-   * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
-   */
-  public async post<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.post(url, payload);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        throw error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.post(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.post(url, payload);
-    }
-  }
-
-  /**
-   * HTTP PUT request
-   * Returns Promise
-   * @param url String representation of url
-   * @param type Typescript class type.Optional.
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false).Optional.
-   * @param config AxiosRequestConfig | undefined. Additional axios configuration.Optional.
-   */
-  public async put<T>(url: string, payload: any, type?: (new (arg: any) => T)/* , useConstructor?: boolean */): Promise<any> {
-    if (type) {
-      try {
-        const { data } = await $axios.put(url, payload);
-        const items = data.items;
-        // if (process.client) data.items = this.parseData(type, items, useConstructor);
-        data.items = this.parseData2(type, items);
-        return data;
-      } catch (error) {
-        throw error;
-      }
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //     const { data } = await $axios.put(url, payload);
-      //     const items = data.items;
-      //     if (process.client) data.items = this.parseData(type, items, useConstructor)
-      //     return resolve(data);
-      //   } catch (error) {
-      //     return reject(error);
-      //   }
-      // });
-    } else {
-      // if there is no type, return axios default behavior
-      return $axios.put(url, payload);
-    }
-  }
-
-  /**
-   * Creates response object
-   * @param type Typescript class type to be returned
-   * @param data Response data
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false)
-   */
-  private createObject(Type: any, data: any, useConstructor: boolean = false): any {
-    let result: any;
-
-    if (useConstructor) {
-      result = new Type(data);
-    } else {
-      result = new Type();
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(result, key)) {
-          result[key] = data[key];
+    public async delete<T>(url: string, model?: (new (arg: any) => T), options?: any): Promise<any> {
+        try {
+            return useCustomFetch(
+                url,
+                {
+                    method: "delete",
+                    ...options
+                }
+            );
+        } catch (error) {
+            console.log(error)
+            throw error;
         }
-      }
     }
-    return result;
-  }
 
-  /**
-   * Parse response data, before creating response object
-   * @param type Typescript class type to be returned
-   * @param data Response data
-   * @param useConstructor boolean (default false). Indicates if we want to use class constructor (true) or use default constructor (false)
-   */
-  private parseData2<T>(classType: ClassConstructor<T>, data: any): T {
-    return plainToInstance(classType, data);
-  }
+    public async post<T>(url: string, payload: any, model?: (new (arg: any) => T), options?: any): Promise<any> {
+        try {
+            return useCustomFetch(
+                url,
+                {
+                    method: "post",
+                    body: payload,
+                    ...options
+                }
+            );
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }
+
+    public async put<T>(url: string, payload: any, model?: (new (arg: any) => T), options?: any): Promise<any> {
+        try {
+          return useCustomFetch(
+            url,
+                {
+                    method: "put",
+                    body: payload,
+                    ...options
+                }
+            );
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }
 }
 
-const $AxiosWrapper: AxiosWrapper = new AxiosWrapper();
-
-export default $AxiosWrapper;
+const $fetchController = new FetchController();
+export default $fetchController;

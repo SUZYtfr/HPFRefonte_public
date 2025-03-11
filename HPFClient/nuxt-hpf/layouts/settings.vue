@@ -22,7 +22,7 @@ import Footer from "@/components/Footer.vue";
       Footer
     }
   })
-export default class extends Vue {}
+export default class MyComponent extends Vue {}
 </script>
 
   <style lang="scss" scoped>

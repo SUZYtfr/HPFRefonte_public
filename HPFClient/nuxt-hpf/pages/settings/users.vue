@@ -408,7 +408,7 @@ import { VForm, OpenToast } from "@/utils/formHelper";
     }
   }
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Data
   @SerialiseClass(UserModel)
   public users: UserModel[] = [];

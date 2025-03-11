@@ -18,6 +18,7 @@
           <NuxtLink
             :key="'fiction_' + fanfiction.fanfiction_id.toString()"
             :to="{ name: 'fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title', params: { fiction_id: fanfiction.fanfiction_id, fiction_title: fanfiction.titleAsSlug, chapter_id: fanfiction.first_chapter?.id, chapter_title: fanfiction.first_chapter?.title } }"
+            no-prefetch
           >
             {{ fanfiction.title }}
           </NuxtLink>
@@ -43,14 +44,17 @@
       "
     >
       <div class="mr-3 white-space-nowrap">
-        <template v-for="(author, index) in fanfiction.authors">
+        <template
+          v-for="(author, index) in fanfiction.authors"
+          :key="'author_' + author.user_id.toString()"
+        >
           <template v-if="index > 0">
             ,
           </template>
           <NuxtLink
-            :key="'author_' + author.user_id.toString()"
             class="is-size-7 has-text-weight-normal"
             :to="{ name: 'auteurs-id', params: { id: author.user_id } }"
+            no-prefetch
           >
             {{ author.username }}
           </NuxtLink>
@@ -80,49 +84,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import { FanfictionModel } from "@/models/fanfictions";
 import { getClassTypeColor } from "@/utils/characteristics";
 import { CharacteristicData } from "@/types/characteristics";
 
-@Component({
-  name: "FanfictionThumbnail",
-  filters: {
-    parseTime: (timestamp: string) => {
-      return new Date(timestamp).toLocaleDateString();
-    }
-  },
-  directives: {
-    plaintext: {
-      bind: function (el: any, binding: any, vnode: any) {
-        el.innerHTML = el.innerText.trimStart();
-      }
-    }
-  }
-})
-export default class FanfictionThumbnail extends Vue {
-  // #region Props
-  @Prop()
-  declare public fanfiction?: FanfictionModel;
-  // #endregion
+const { fanfiction } = defineProps<{
+  fanfiction: FanfictionModel;
+}>();
 
-  // #region Datas
-  // public ratinga = 10;
-  public hover: boolean = false;
-  // #endregion
+// https://vuejs.org/guide/reusability/custom-directives.html#when-to-use
+const vPlaintext = {
+  mounted: el => el.innerHTML = el.innerText.trimStart(),
+}
 
-  // #region Methods
-  public getClassType(characteristic: CharacteristicData): string {
-    return getClassTypeColor(characteristic);
-  }
-  // #endregion
+const hover = ref<boolean>(false);
+
+function getClassType(characteristic: CharacteristicData): string {
+  return getClassTypeColor(characteristic);
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .text-ellipsis-three-line {
   display: -webkit-box;

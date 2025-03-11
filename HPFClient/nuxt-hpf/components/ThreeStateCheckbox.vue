@@ -16,7 +16,7 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 @Component({
   name: "ThreeStateCheckbox"
 })
-export default class extends Vue {
+export default class MyComponent extends Vue {
   // #region Props
   @Prop()
   declare private externalValue?: any | undefined;

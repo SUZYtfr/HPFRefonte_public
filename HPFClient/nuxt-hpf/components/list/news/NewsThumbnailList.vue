@@ -6,7 +6,7 @@
       </p>
     </header>
     <div class="card-content is-relative p-2">
-      <b-loading v-model="isLoading" :is-full-page="false" />
+      <b-loading v-if="isLoading" :is-full-page="false" />
       <div v-if="news?.length > 0">
         <News_2
           v-for="(item, innerindex) of news"
@@ -23,35 +23,25 @@
     <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
-          <NuxtLink to="/news"> Plus d'actualités </NuxtLink>
+          <NuxtLink
+            to="/news"
+            no-prefetch
+          > Plus d'actualités </NuxtLink>
         </span>
       </p>
     </footer>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 import News_2 from "~/components/News_2.vue";
 import { NewsModel } from "@/models/news";
 
-  @Component({
-    name: "NewsThumbnailList",
-    components: {
-      News_2
-    },
-    fetchOnServer: true,
-    fetchKey: "news-thumbnail-list"
-  })
-export default class NewsList extends Vue {
-  // #region Props
-  @Prop({ default: false })
-  declare public isLoading?: boolean;
+const { isLoading = false, news = [] } = defineProps<{
+  isLoading: boolean;
+  news: NewsModel[];
+}>()
 
-  @Prop({ default: [] })
-  declare public news?: NewsModel[];
-  // #endregion
-}
 </script>
 
 <style lang="scss" scoped>
