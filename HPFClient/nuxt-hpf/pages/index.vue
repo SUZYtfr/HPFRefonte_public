@@ -4,15 +4,15 @@
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <FanfictionThumbnailList :is-loading="recentFanfictionListLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions.results" />
+        <FanfictionThumbnailList :is-loading="recentFanfictionListLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions?.results" />
         <br>
         <!-- Sélections fanfictions -->
-        <FanfictionThumbnailList :is-loading="selectionFanfictionListLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionFanfictions.results" />
+        <FanfictionThumbnailList :is-loading="selectionFanfictionListLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionFanfictions?.results" />
         <br>
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList :is-loading="newsListLoading" :news="paginatedRecentNews.results" />
+        <NewsThumbnailList :is-loading="newsListLoading" :news="paginatedRecentNews?.results" />
       </div>
     </div>
     <br>
@@ -22,97 +22,73 @@
 <script setup lang="ts">
 import { searchNews } from "@/api/news";
 import { searchFanfictions } from "@/api/fanfictions";
-// import { IBasicQuery, SortByEnum } from "@/types/basics";
-// import { IFanfictionFilters } from "@/types/fanfictions";
+import { IBasicQuery, SortByEnum } from "@/types/basics";
+import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
 import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
 import { FanfictionListType } from "~/types/other";
 
-// let recentFanfictionFilters : IFanfictionFilters = {
-//   page: 1,
-//   pageSize: 20,
-//   totalPages: false,
-//   sortOn: "last_update_date",
-//   sortBy: SortByEnum.Descending,
-//   searchTerm: null,
-//   searchAuthor: null,
-//   searchAuthorId: null,
-//   multipleAuthors: null,
-//   status: null,
-//   wordCount_min: null,
-//   wordCount_max: null,
-//   includedTags: [],
-//   excludedTags: [],
-//   customTags: [],
-//   featured: null,
-//   inclusive: false,
-//   fromDate: null,
-//   toDate: null
-// };
+let recentFanfictionFilters : IFanfictionFilters = {
+  page: 1,
+  pageSize: 20,
+  totalPages: false,
+  sortOn: "last_update_date",
+  sortBy: SortByEnum.Descending,
+  searchTerm: null,
+  searchAuthor: null,
+  searchAuthorId: null,
+  multipleAuthors: null,
+  status: null,
+  wordCount_min: null,
+  wordCount_max: null,
+  includedTags: [],
+  excludedTags: [],
+  customTags: [],
+  featured: null,
+  inclusive: false,
+  fromDate: null,
+  toDate: null
+};
 
-// let selectionsFanfictionFilters : IFanfictionFilters = {
-//   page: 1,
-//   pageSize: 20,
-//   totalPages: false,
-//   sortOn: "last_update_date",
-//   sortBy: SortByEnum.Descending,
-//   searchTerm: null,
-//   searchAuthor: null,
-//   searchAuthorId: null,
-//   multipleAuthors: null,
-//   status: null,
-//   wordCount_min: null,
-//   wordCount_max: null,
-//   includedTags: [],
-//   excludedTags: [],
-//   customTags: [],
-//   featured: true,
-//   inclusive: false,
-//   fromDate: null,
-//   toDate: null
-// };
+let selectionsFanfictionFilters : IFanfictionFilters = {
+  page: 1,
+  pageSize: 20,
+  totalPages: false,
+  sortOn: "last_update_date",
+  sortBy: SortByEnum.Descending,
+  searchTerm: null,
+  searchAuthor: null,
+  searchAuthorId: null,
+  multipleAuthors: null,
+  status: null,
+  wordCount_min: null,
+  wordCount_max: null,
+  includedTags: [],
+  excludedTags: [],
+  customTags: [],
+  featured: true,
+  inclusive: false,
+  fromDate: null,
+  toDate: null
+};
 
-// let newsFilters : IBasicQuery = {
-//   page: 1,
-//   pageSize: 20,
-//   totalPages: true,
-//   sortOn: "post_date",
-//   sortBy: SortByEnum.Descending
-// };
+let newsFilters : IBasicQuery = {
+  page: 1,
+  pageSize: 20,
+  totalPages: true,
+  sortOn: "post_date",
+  sortBy: SortByEnum.Descending
+};
 
-const { data: paginatedRecentNews, status: newsStatus } = await searchNews(null);
+const { data: paginatedRecentNews, status: newsStatus } = await searchNews(newsFilters);
 const newsListLoading = newsStatus.value === "pending";
 
-const { data: recentFanfictions, status: recentFanfictionStatus } = await searchFanfictions(null);
+const { data: recentFanfictions, status: recentFanfictionStatus } = await searchFanfictions(recentFanfictionFilters);
 const recentFanfictionListLoading = recentFanfictionStatus.value === "pending";
 
-const { data: selectionFanfictions, status: selectionFanfictionStatus } = await searchFanfictions(null);
+const { data: selectionFanfictions, status: selectionFanfictionStatus } = await searchFanfictions(selectionsFanfictionFilters);
 const selectionFanfictionListLoading = selectionFanfictionStatus.value === "pending";
 
-// async function fetch(): Promise<void> {
-//   this.listLoading = true;
-//   try {
-//     this.recentNews = (await searchNews(this.newsFilters)).results;
-//     this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
-//     this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
-//   } catch (error) {
-//     if (process.client) {
-//       this.$buefy.snackbar.open({
-//         duration: 5000,
-//         message: "Une erreur s'est produite lors de la récupération des données",
-//         type: "is-danger",
-//         position: "is-bottom-right",
-//         actionText: null,
-//         pauseOnHover: true,
-//         queue: true
-//       });
-//     } else {
-//       console.log(error);
-//     }
-//   } finally {
-//     this.listLoading = false;
-//   }
-// }
 </script>
 
 <style lang="scss">

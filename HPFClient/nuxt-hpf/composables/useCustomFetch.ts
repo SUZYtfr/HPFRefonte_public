@@ -2,12 +2,27 @@ import type { UseFetchOptions } from "nuxt/app";
 import { ClassConstructor, plainToInstance } from "class-transformer";
 import type { Flatten, Depaginate } from "~/types/basics"
 import defu from "defu";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 
 export default function useCustomFetch<T>(url: string, opts: UseFetchOptions<T> = {}, model?: ClassConstructor<Flatten<Depaginate<T>>>) {  
     const defaultOptions: UseFetchOptions<T> = {
         headers: {
             "Accept": "application/json",
             "Content-type": "application/json",
+        },
+        onResponseError: ({ response }) => {
+            if (import.meta.client) {
+                new Snackbar().open({
+                    duration: 5000,
+                    message: "Une erreur s'est produite lors de la récupération des données",
+                    type: "is-danger",
+                    position: "is-bottom-right",
+                    actionText: null,
+                    pauseOnHover: true,
+                    queue: true
+                });
+            }
+            console.log(`${response.status} ${response.statusText}`);
         },
         timeout: 5000,
         // params: (input) => {
