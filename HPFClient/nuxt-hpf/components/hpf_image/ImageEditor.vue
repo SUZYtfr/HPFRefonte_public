@@ -265,7 +265,7 @@ watch(image, () => {
         node.attrs.url = image?.url;
       }
     });
-    img.src = image?.url != null ? image?.url : "https://bulma.io/images/placeholders/32x32.png";
+    img.src = image?.url != null ? image?.url : "https://bulma.io/assets/images/placeholders/32x32.png";
 })
 
 function onWidthChanged(): void {

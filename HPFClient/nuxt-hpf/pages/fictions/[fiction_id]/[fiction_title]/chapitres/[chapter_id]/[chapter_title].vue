@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-loading v-model="chapterLoading" :is-full-page="false" />
+    <b-loading v-if="status === 'pending'" :is-full-page="false" />
     <div class="columns">
       <!-- Colonne gauche - Toolbar -->
       <div v-if="chapter != null" class="column is-narrow pr-0">
@@ -176,7 +176,7 @@
                 <!-- FIN: Sticky FontSize -->
                 <div class="content p-2" style="display: block; overflow: auto; margin-top: -55px;">
                   <client-only>
-                    <TipTapEditor ref="chapterContentEditor" :config="tiptapReadOnlyConfig" @quote="quoteFromText" />
+                    <TipTapEditor ref="chapter-content-editor" :config="tiptapReadOnlyConfig" @quote="quoteFromText" />
                   </client-only>
                 </div>
               </div>
@@ -247,7 +247,7 @@
 
               <div class="card-content pb-0">
                 <div class="content p-2">
-                  <ReviewList ref="reviewList" :item_id="reviewListItemId" :review-list-type="reviewListType" @reviewContentChanged="(value) => (editorContentReview = value)" />
+                  <ReviewList ref="review-list" :item_id="reviewListItemId" :review-list-type="reviewListType" @reviewContentChanged="(value) => (editorContentReview = value)" />
                 </div>
               </div>
             </b-collapse>
@@ -271,7 +271,7 @@
               <p>Vous avez aimé ce texte ? <strong>Dites-le !</strong> Vous pensez que ce texte peut être amélioré ? <strong>Ecrivez-le !</strong></p><p>Avec gentillesse et bienveillance, faites part de votre avis.</p>
             </div>
             <client-only>
-              <TipTapEditor ref="reviewEditorSmall" :config="tiptapReviewConfig" :show-footer="false" :placeholder="'Ecrire une review'" @change="(value) => (editorContentReview = value)" />
+              <TipTapEditor ref="review-editor-small" :config="tiptapReviewConfig" :show-footer="false" :placeholder="'Ecrire une review'" @change="(value) => (editorContentReview = value)" />
             </client-only>
             <div class="mt-1 is-flex is-flex-direction-row is-flex-wrap-wrap">
               <b-checkbox v-model="canRate">
@@ -314,39 +314,50 @@
   </div>
 </template>
 
-<script lang="ts">
-import { SerialiseClass } from "@/serialiser-decorator";
+<script setup lang="ts">
 import { getChapter } from "@/api/chapters";
 import { ChapterModel, TableOfContent } from "@/models/fanfictions";
 import TipTapEditor from "@/components/TipTapEditor.vue";
 import { TipTapEditorContent, TipTapEditorConfig } from "@/types/tiptap";
 import ReviewList from "@/components/list/reviews/ReviewList.vue";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
-
-const ModalStatesModule = ModalsStates();
+import { TiptapEditor } from "~/.nuxt/imports";
 
 const { tableOfContent } = defineProps<{
   tableOfContent: TableOfContent;
 }>();
 
-let chapter: ChapterModel | null = null;
+const route = useRoute();
 
-let reviewEditorVisible: boolean = false;
-let editorContentReview: TipTapEditorContent | null = null;
+const ModalStatesModule = ModalsStates();
 
-let tiptapReadOnlyConfig: TipTapEditorConfig = {
+const { data: chapter, status } = await getChapter(parseInt(route.params.chapter_id as string));
+const reviewListItemId = computed(() => chapter.value.chapter_id)
+
+const tiptapReadOnlyConfig = reactive<TipTapEditorConfig>({
   showFooter: false,
   placeholder: "",
   readOnly: true,
   fixedHeight: false,
   height: 125,
-  defaultValue: "",
+  defaultValue: chapter.value.text ?? "",
   canQuote: false,
   quoteLimit: 250,
   fontSize: 100,
   oneLineToolbar: false,
   canUseImage: true
-};
+});
+
+// FIXME - mais en a-t-on besoin ?
+// const chapterContentEditor = useTemplateRef("chapter-content-editor");
+// effect(() => {
+//   (chapterContentEditor.value as unknown as TiptapEditor).commands.setContent(
+//     new TipTapEditorContent({ content: (chapter.value.text ?? "") }).content
+//   )
+// })
+
+let reviewEditorVisible = ref<boolean>(true);
+let editorContentReview: TipTapEditorContent | null = null;
 
 let tiptapReviewConfig: TipTapEditorConfig = {
   showFooter: false,
@@ -362,135 +373,93 @@ let tiptapReviewConfig: TipTapEditorConfig = {
   canUseImage: false
 };
 
-let chapterLoading: boolean = true;
+let reviewHeaderMessageVisible = ref<boolean>(true);
 
-let reviewHeaderMessageVisible: boolean = true;
-
-let fontSizeVisible: boolean = false;
+let fontSizeVisible = ref<boolean>(false);
 
 let timerThrottleFontsize: number = 0;
 
-let reviewPaneExpanded: boolean = false;
+let reviewPaneExpanded = ref<boolean>(false);
 
 // Reviews
 let reviewListType : ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
-let reviewListItemId : number = 0;
 
 let canRate: boolean = false;
 let reviewRating: number | null = null;
-// #endregion
 
+// FIXME
+// function onAuthChanged(): void {
+//   this.tiptapReadOnlyConfig.canQuote = this.$auth.loggedIn;
+// }
 
-// #region Watchers
-function onRouteChanged(): void {
-  this.$fetch();
-}
+// function onreviewPaneExpanded(): void {
+//   if (this.reviewPaneExpanded && this.reviewEditorVisible) {
+//     if (process.client) {
+//       (this.$refs.reviewList as ReviewList)?.setContent(this.editorContentReview);
+//     }
+//     this.reviewEditorVisible = false;
+//   }
+// }
 
-function onAuthChanged(): void {
-  this.tiptapReadOnlyConfig.canQuote = this.$auth.loggedIn;
-}
+// function onCanRateChanged(): void {
+//   this.reviewRating = (this.canRate ? 10 : null);
+// }
 
-function onreviewPaneExpanded(): void {
-  if (this.reviewPaneExpanded && this.reviewEditorVisible) {
-    if (process.client) {
-      (this.$refs.reviewList as ReviewList)?.setContent(this.editorContentReview);
-    }
-    this.reviewEditorVisible = false;
-  }
-}
+// function onreviewEditorVisibleChanged(): void {
+//   if (this.reviewEditorVisible && this.reviewPaneExpanded) {
+//     if (process.client) {
+//       (this.$refs.reviewEditorSmall as TipTapEditor)?.setContent(this.editorContentReview);
+//     }
+//     this.reviewPaneExpanded = false;
+//   }
+// }
 
-function onCanRateChanged(): void {
-  this.reviewRating = (this.canRate ? 10 : null);
-}
-
-function onreviewEditorVisibleChanged(): void {
-  if (this.reviewEditorVisible && this.reviewPaneExpanded) {
-    if (process.client) {
-      (this.$refs.reviewEditorSmall as TipTapEditor)?.setContent(this.editorContentReview);
-    }
-    this.reviewPaneExpanded = false;
-  }
-}
-// #endregion
-
-// #region Hooks
-async function fetch(): Promise<void> {
-  this.chapterLoading = true;
-  try {
-    // Charger le chapitre
-    this.chapter = (await getChapter(parseInt(this.$route.params.chapter_id)));
-    this.tiptapReadOnlyConfig.defaultValue = (this.chapter?.text ?? "");
-    if (this.chapter != null) {
-      this.reviewListItemId = this.chapter?.chapter_id;
-      this.reviewListType = ReviewItemTypeEnum.Chapter;
-    }
-    if (process.client) {
-      (this.$refs.chapterContentEditor as TipTapEditor)?.setContent(new TipTapEditorContent({ content: (this.chapter?.text ?? "") }));
-    }
-  } catch (error) {
-    if (process.client) {
-      this.$buefy.snackbar.open({
-        duration: 5000,
-        message: "Une erreur s'est produite lors de la récupération du chapitre",
-        type: "is-danger",
-        position: "is-bottom-right",
-        actionText: null,
-        pauseOnHover: true,
-        queue: true
-      });
-    } else {
-      console.log(error);
-    }
-  } finally {
-    this.chapterLoading = false;
-  }
-}
-// #endregion
-
-// #region Methods
-function quoteFromText(quote: string): void {
-  if (process.client) {
-    if (this.reviewPaneExpanded === false) {
-      if (this.reviewEditorVisible === false) this.reviewEditorVisible = true;
-      (this.$refs.reviewEditorSmall as TipTapEditor)?.setQuote(quote);
-    } else if (this.reviewPaneExpanded) (this.$refs.reviewList as ReviewList)?.setQuote(quote);
-  }
-}
+function quoteFromText() {}
+// FIXME
+// const reviewEditorSmall = useTemplateRef("review-editor-small");
+// const reviewList = useTemplateRef("review-list");
+// function quoteFromText(quote: string): void {
+//   if (import.meta.client) {
+//     if (reviewPaneExpanded.value === false) {
+//       if (reviewEditorVisible.value === false) reviewEditorVisible.value = true;
+//       (reviewEditorSmall.value as unknown as typeof TipTapEditor).commands.setQuote(quote);
+//     } else if (reviewPaneExpanded.value) (reviewList.value as unknown as typeof ReviewList).setQuote(quote);
+//   }
+// }
 
 // Augmenter la taille du texte
 function upSizeFont(): void {
-  if (process.client) {
-    this.tiptapReadOnlyConfig.fontSize += 10;
-    this.displayFontSize();
+  if (import.meta.client) {
+    tiptapReadOnlyConfig.fontSize += 10;
+    displayFontSize();
   }
 }
 
 // Réduire la taille du texte
 function defaultSizeFont(): void {
-  if (process.client) {
-    this.tiptapReadOnlyConfig.fontSize = 100;
-    this.displayFontSize();
+  if (import.meta.client) {
+    tiptapReadOnlyConfig.fontSize = 100;
+    displayFontSize();
   }
 }
 
 // Réduire la taille du texte
 function downSizeFont(): void {
-  if (process.client) {
-    this.tiptapReadOnlyConfig.fontSize -= 10;
-    this.displayFontSize();
+  if (import.meta.client) {
+    tiptapReadOnlyConfig.fontSize -= 10;
+    displayFontSize();
   }
 }
 
 // Afficher / masquer l'indicateur de fontSize
 function displayFontSize(): void {
-  this.fontSizeVisible = true;
-  clearTimeout(this.timerThrottleFontsize);
-  this.timerThrottleFontsize = window.setTimeout(
-    () => { this.fontSizeVisible = false; },
+  fontSizeVisible.value = true;
+  clearTimeout(timerThrottleFontsize);
+  timerThrottleFontsize = window.setTimeout(
+    () => { fontSizeVisible.value = false; },
     3000
   );
 }
-// #endregion
 </script>
 
 <style lang="scss" scoped>

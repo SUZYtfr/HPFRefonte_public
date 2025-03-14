@@ -1,6 +1,7 @@
 import type { UseFetchOptions } from "nuxt/app";
 import { ClassConstructor, plainToInstance } from "class-transformer";
 import type { Flatten, Depaginate } from "~/types/basics"
+import defu from "defu";
 
 export default function useCustomFetch<T>(url: string, opts: UseFetchOptions<T> = {}, model?: ClassConstructor<Flatten<Depaginate<T>>>) {  
     const defaultOptions: UseFetchOptions<T> = {
@@ -34,8 +35,6 @@ export default function useCustomFetch<T>(url: string, opts: UseFetchOptions<T> 
         $fetch: useNuxtApp().$api as typeof $fetch
     };
 
-    return useFetch<T>(url, {
-        ...opts,
-        ...defaultOptions,
-    })
+    const defaultedOptions = defu(opts, defaultOptions);
+    return useFetch(url, defaultedOptions)
 };

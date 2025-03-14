@@ -595,7 +595,7 @@
           @click="linkEditorModalActive = true"
         />
         <b-button
-          ref="btn-gripLines"
+          ref="btn-grip-lines"
           type="is-primary"
           outlined
           size="is-small"
@@ -890,8 +890,6 @@ let timerThrottleId: number = 0;
 
 // Timer resize
 let timerThrottleResizeId: number = 0;
-
-function emitQuote() {}
 
 // #region Toolbar
 let ToolBarButtonsTooltipVisibility = {
@@ -1268,23 +1266,24 @@ const currentStyle = computed(() => {
   //   }
   // }
 
-  // // #region Public Methods
-  // // Changer le contenu de l'éditeur
-  // public setContent(tiptapContent: TipTapEditorContent | null): void {
-  //   if (tiptapContent != null)
-  //     this.editor?.commands.setContent(tiptapContent.content);
-  //   else
-  //     this.editor?.commands.setContent("");
-  //   // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
-  // }
+// Changer le contenu de l'éditeur
+// FIXME
+function setContent(tiptapContent: TipTapEditorContent | null): void {
+  if (tiptapContent != null)
+    editor.value.commands.setContent(tiptapContent.content);
+  else
+    editor.value.commands.setContent("");
+  // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
+}
 
-  // // Ajouter une quote
-  // public setQuote(quote: string): void {
-  //   // this.editor?.chain().focus().insertContent("[...] " + quote + "[...]").setBlockquote().enter().focus("end").run();
-  //   this.editor?.chain().focus().enter().insertContent(quote).setBlockquote().run();
-  //   this.editor?.commands.enter();
-  //   this.editor?.commands.enter();
-  // }
+// Ajouter une quote
+// FIXME
+function setQuote(quote: string): void {
+  // this.editor?.chain().focus().insertContent("[...] " + quote + "[...]").setBlockquote().enter().focus("end").run();
+  editor.value.chain().focus().enter().insertContent(quote).setBlockquote().run();
+  editor.value.commands.enter();
+  editor.value.commands.enter();
+}
 
   // // #region Private Methods
   // // Toggle Alert Drop interdit
@@ -1297,22 +1296,22 @@ const currentStyle = computed(() => {
   //   });
   // }
 
-  // // #region Emit Function
-  // public emitQuote(): void {
-  //   if (this.editor != null) {
-  //     const { view, state } = this.editor;
-  //     const { from, to } = view.state.selection;
-  //     // On check la longueur max émise
-  //     let newTo = to;
-  //     const maxSelectionLength = (this.config?.quoteLimit ?? 250);
-  //     if ((to - from) > maxSelectionLength) newTo = from + maxSelectionLength;
-  //     // Emet l'évènement quote
-  //     this.$emit("quote", state.doc.textBetween(from, newTo, ""));
-  //     this.editor.commands.setTextSelection(to);
-  //     window?.getSelection()?.empty();
-  //   }
-  // }
-  // // #endregion
+  const $emit = defineEmits(["quote"]);
+
+  function emitQuote(): void {
+    if (editor.value != null) {
+      const { view, state } = editor.value;
+      const { from, to } = view.state.selection;
+      // On check la longueur max émise
+      let newTo = to;
+      const maxSelectionLength = (config?.quoteLimit ?? 250);
+      if ((to - from) > maxSelectionLength) newTo = from + maxSelectionLength;
+      // Emet l'évènement quote
+      $emit("quote", state.doc.textBetween(from, newTo, ""));
+      editor.value.commands.setTextSelection(to);
+      window?.getSelection()?.empty();
+    }
+  }
 
 // Actualisation de status en cache de l'éditeur, actualisation du contenu
 function calcEditorButtonsActiveStatuses(): void {
@@ -1456,7 +1455,7 @@ function deleteLinkEdit(): void {
 
 // Où doit apparaitre le Bubble Menu
 function bubbleMenuShouldShow(): boolean {
-  if (editor != null) {
+  if (editor.value != null) {
     if ((config?.readOnly ?? false) === true && (config?.canQuote ?? false) === false) return false;
 
     const { view, state } = editor.value;
@@ -1497,7 +1496,7 @@ const btnTextheight = useTemplateRef("btn-textheight")
 const btnFont = useTemplateRef("btn-font")
 const btnImage = useTemplateRef("btn-image")
 const btnLink = useTemplateRef("btn-link")
-// const btnGripLines = useTemplateRef("btn-grip-lines")
+const btnGripLines = useTemplateRef("btn-grip-lines")
 
 
 // Détecter le wrap des button de l'éditeur
@@ -1528,7 +1527,7 @@ function detectWrappedItems():void {
       ToolBarButtonsTooltipVisibility.Font = (btnFont.value.$el.getBoundingClientRect()?.top > containerBottom);
       ToolBarButtonsTooltipVisibility.Image = (btnImage.value.$el.getBoundingClientRect()?.top > containerBottom);
       ToolBarButtonsTooltipVisibility.Link = (btnLink.value.$el.getBoundingClientRect()?.top > containerBottom);
-      // ToolBarButtonsTooltipVisibility.GripLines = (btnGripLines.value.$el.getBoundingClientRect()?.top > containerBottom);
+      ToolBarButtonsTooltipVisibility.GripLines = (btnGripLines.value.$el.getBoundingClientRect()?.top > containerBottom);
     },
     300
   );

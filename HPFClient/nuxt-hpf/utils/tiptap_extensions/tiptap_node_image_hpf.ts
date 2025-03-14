@@ -14,7 +14,7 @@ export default Node.create({
   addAttributes() {
     return {
       url: {
-        default: "https://bulma.io/images/placeholders/32x32.png"
+        default: "https://bulma.io/assets/images/placeholders/32x32.png"
       },
       currentWidth: {
         default: 32

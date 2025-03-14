@@ -53,13 +53,13 @@
     </section>
 
     <!-- Trigger warning -->
-    <article v-if="fictionTriggerWarnings.length > 0" class="message is-danger">
+    <article v-if="fictionTriggerWarnings().length > 0" class="message is-danger">
       <div class="message-body py-1 px-2">
         <div class="is-flex is-flex-direction-row">
           <b-icon icon="exclamation-triangle" /><span><strong> TW / CW </strong></span>
         </div>
         <p>
-          <ul v-for="(tw, index) in fictionTriggerWarnings" :key="index">
+          <ul v-for="(tw, index) in fictionTriggerWarnings()" :key="index">
             <li>{{ tw.caption }}</li>
           </ul>
         </p>

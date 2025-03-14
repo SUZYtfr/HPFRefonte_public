@@ -124,7 +124,7 @@ const ModalsStatesModule = ModalsStates();
   // public canRate: boolean = false;
   // public reviewRating: number | null = null;
 
-// TODO faire réactif
+// FIXME faire réactif
 const reviewFilters = {
   page: 1,
   pageSize: 10,
@@ -133,19 +133,20 @@ const reviewFilters = {
   sortOn: "post_date"
 };
 
-  // public tiptapConfig: TipTapEditorConfig = {
-  //   showFooter: false,
-  //   placeholder: "Ecrire un commentaire",
-  //   readOnly: false,
-  //   fixedHeight: true,
-  //   defaultValue: "",
-  //   canQuote: false,
-  //   quoteLimit: 0,
-  //   fontSize: 100,
-  //   height: 300,
-  //   oneLineToolbar: false,
-  //   canUseImage: false
-  // };
+// FIXME ça aussi
+const tiptapConfig: TipTapEditorConfig = {
+  showFooter: false,
+  placeholder: "Ecrire un commentaire",
+  readOnly: false,
+  fixedHeight: true,
+  defaultValue: "",
+  canQuote: false,
+  quoteLimit: 0,
+  fontSize: 100,
+  height: 300,
+  oneLineToolbar: false,
+  canUseImage: false
+};
 
   // private timerId: number = 0;
   // // #endregion

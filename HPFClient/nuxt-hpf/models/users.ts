@@ -1,5 +1,7 @@
 import { Type } from "class-transformer";
 import { UserData, UserLinkData, UserStatus, UserProfileData, UserPreferencesData } from "@/types/users";
+import 'reflect-metadata';
+
 
 interface UserStats {
   fiction_count: number,

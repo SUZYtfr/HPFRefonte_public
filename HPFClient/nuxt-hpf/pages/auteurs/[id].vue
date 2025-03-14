@@ -29,7 +29,7 @@
               <div class="media-left">
                 <figure class="image is-48x48">
                   <img
-                    :src="user.profile?.profile_picture ?? 'https://bulma.io/images/placeholders/96x96.png'"
+                    :src="user.profile?.profile_picture ?? 'https://bulma.io/assets/images/placeholders/96x96.png'"
                     alt="Image de profil d'utilisateur"
                   >
                 </figure>

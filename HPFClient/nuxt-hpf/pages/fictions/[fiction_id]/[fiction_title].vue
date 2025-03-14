@@ -51,7 +51,7 @@
       </b-dropdown>
       <!-- Next -->
       <b-button
-        v-if="nextChapter != null"
+        v-if="nextChapter"
         type="is-primary"
         icon-right="angle-right"
         tag="router-link"
@@ -74,93 +74,56 @@ const route = useRoute();
 
 const { data: tableOfContent, status } = await getTableOfContent(parseInt(route.params.fiction_id as string));
 
-const currentChapter = computed(() => {
-  if (route.params.chapter_id == null) {
-      return null;
-    } else {
-      return tableOfContent.value.chapters?.find((chapter: ChapterModelLight) => chapter.id === parseInt(route.params.chapter_id[0])) ?? null;
-    }
-});
+const previousChapter = ref<ChapterModelLight>(null);
+const currentChapter = ref<ChapterModelLight>(null);
+const nextChapter = ref<ChapterModelLight>(null);
 
-const previousChapter = computed(() => {
-  if (currentChapter.value == null) {
-    return null
+const PreviousToRouterLink = reactive({
+  name: "fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title",
+  params: {
+    fiction_id: tableOfContent.value.fanfiction_id.toString(),
+    fiction_title: tableOfContent.value.titleAsSlug,
+    chapter_id: null,
+    chapter_title: null,
   }
-  else if (currentChapter.value.order === 1) {
-    return null
+})
+
+const NextToRouterLink = reactive({
+  name: "fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title",
+  params: {
+    fiction_id: tableOfContent.value.fanfiction_id.toString(),
+    fiction_title: tableOfContent.value.titleAsSlug,
+    chapter_id: null,
+    chapter_title: null,
+  }
+})
+
+effect(() => {
+  const currentChapterIndex = tableOfContent.value.chapters.findIndex((c) => c.chapter_id.toString() === route.params.chapter_id as string);
+  if(currentChapterIndex === -1) {
+    currentChapter.value = null;
+
+    previousChapter.value = null;
+    PreviousToRouterLink.params.chapter_id = null;
+    PreviousToRouterLink.params.chapter_title = null;
+   
+    nextChapter.value = tableOfContent.value.chapters[currentChapterIndex + 1] ?? null;
+    NextToRouterLink.params.chapter_id = tableOfContent.value.chapters[0]?.chapter_id.toString() ?? null;
+    NextToRouterLink.params.chapter_title = tableOfContent.value.chapters[0]?.titleAsSlug ?? null;
   }
   else {
-    return tableOfContent.value.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((currentChapter.value.order ?? -1) - 1)) ?? null;
+    currentChapter.value = tableOfContent.value.chapters[currentChapterIndex];
+
+    previousChapter.value = tableOfContent.value.chapters[currentChapterIndex - 1] ?? null;
+    PreviousToRouterLink.name = previousChapter.value ? "fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title": "fictions-fiction_id-fiction_title-sommaire";
+    PreviousToRouterLink.params.chapter_id = previousChapter.value?.chapter_id.toString() ?? null;
+    PreviousToRouterLink.params.chapter_title = previousChapter.value?.titleAsSlug ?? null;
+    
+    nextChapter.value = tableOfContent.value.chapters[currentChapterIndex + 1] ?? null;
+    NextToRouterLink.params.chapter_id = nextChapter.value?.chapter_id.toString() ?? null;
+    NextToRouterLink.params.chapter_title = nextChapter.value?.titleAsSlug ?? null;
   }
-});
-
-const nextChapter = computed(() => {
-  if (currentChapter.value == null) {
-    return tableOfContent.value.chapters?.find((chapter: ChapterModelLight) => chapter.order === 1) ?? null;
-  } else {
-    return tableOfContent.value.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((currentChapter.value.order ?? -1) + 1)) ?? null;
-  }
-});
-
-
-const NextToRouterLink = computed(() => {
-  if (!nextChapter) return "";
-    return { name: "fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title", params: { fiction_id: tableOfContent.value.id.valueOf(), fiction_title: tableOfContent.value.titleAsSlug, chapter_id: nextChapter.value.id.valueOf(), chapter_title: nextChapter.value.titleAsSlug ?? "" } };
-});
-
-const PreviousToRouterLink = computed(() => {
-  console.log("toto")
-  if (!currentChapter) return "";
-  else if (currentChapter != null) {
-    if ((currentChapter.value.order ?? -1) === 1) {
-      return { name: "fictions-fiction_id-fiction_title-sommaire", params: { fiction_id: tableOfContent.value.id.valueOf(), fiction_title: tableOfContent.value.titleAsSlug } };
-    } else {
-      return { name: "fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title", params: { fiction_id: tableOfContent.value.id.valueOf(), fiction_title: tableOfContent.value.titleAsSlug, chapter_id: previousChapter.value.id.valueOf(), chapter_title: previousChapter.value.titleAsSlug ?? "" } };
-    }
-  }
-});
-
-  // #region Watchers
-  // public onItemChanged(): void {
-  //   console.log("currentChapterChanged");
-  //   if (this.currentChapter == null) {
-  //     this.previousChapter = null;
-  //     this.nextChapter = this.tableOfContent?.chapters?.find((chapter: ChapterModelLight) => chapter.order === 1) ?? null;
-  //   } else {
-  //     if (this.currentChapter.order === 1)
-  //       this.previousChapter = null;
-  //     else
-  //       this.previousChapter = this.tableOfContent?.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((this.currentChapter?.order ?? -1) - 1)) ?? null;
-  //     this.nextChapter = this.tableOfContent?.chapters?.find((chapter: ChapterModelLight) => chapter.order === ((this.currentChapter?.order ?? -1) + 1)) ?? null;
-  //   }
-  // }
-
-
-
-
-// private async fetch(): Promise<void> {
-//   this.fictionLoading = true;
-//   try {
-//     this.tableOfContent = (await getTableOfContent(parseInt(this.$route.params.fiction_id)));
-//     this.onRouteChanged();
-//   } catch (error) {
-//     if (process.client) {
-//       this.$buefy.snackbar.open({
-//         duration: 5000,
-//         message: "Une erreur s'est produite lors de la récupération du sommaire",
-//         type: "is-danger",
-//         position: "is-bottom-right",
-//         actionText: null,
-//         pauseOnHover: true,
-//         queue: true
-//       });
-//     } else {
-//       console.log(error);
-//     }
-//   } finally {
-//     this.fictionLoading = false;
-//   }
-// }
+})
 </script>
 
 <style lang="scss" scoped>
