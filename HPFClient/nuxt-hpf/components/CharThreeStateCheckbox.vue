@@ -17,45 +17,36 @@
   </b-checkbox>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
+<script setup lang="ts">
 import { CharacteristicData } from "@/types/characteristics";
 
-@Component({
-  name: "CharThreeStateCheckbox"
+interface Props {
+  characteristic?: CharacteristicData | undefined;
+  externalState?: number | undefined;
+}
+
+const { characteristic, externalState } = defineProps<Props>();
+
+const checkboxStatus = computed<boolean>(() => {
+  return externalState === 1;
+});
+
+const indeterminate = computed<boolean>(() => {
+  return externalState === -1;
 })
-export default class MyComponent extends Vue {
-  // #region Props
-  @Prop()
-  declare public characteristic?: CharacteristicData | undefined;
 
-  @Prop()
-  declare private externalState?: number | undefined;
-  // #endregion
+const $emit = defineEmits(["change"]);
 
-  // #region Computed
-  get checkboxStatus(): boolean {
-    return this.externalState === 1;
+function checkBoxClicked(event: any): void {
+  let internalState: number;
+  if (indeterminate.value) {
+    internalState = 0;
+  } else if (checkboxStatus.value) {
+    internalState = -1;
+  } else {
+    internalState = 1;
   }
-
-  get indeterminate(): boolean {
-    return this.externalState === -1;
-  }
-  // #endregion
-
-  // #region Methods
-  public checkBoxClicked(event: any): void {
-    let internalState;
-    if (this.indeterminate) {
-      internalState = 0;
-    } else if (this.checkboxStatus) {
-      internalState = -1;
-    } else {
-      internalState = 1;
-    }
-    this.$emit("change", this.characteristic?.id, internalState);
-  }
-  // #endregion
+  $emit("change", characteristic?.id, internalState);
 }
 </script>
 

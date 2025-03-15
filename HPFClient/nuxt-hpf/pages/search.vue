@@ -31,7 +31,7 @@
         <FanfictionList
           :fanfiction-filters="fanfictionFilters"
           :is-loading="listLoading"
-          @loadingChange="(value) => (listLoading = value)"
+          @loadingChange="(value: boolean) => (listLoading = value)"
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->
@@ -51,62 +51,41 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
+<script setup lang="ts">
 import { IFanfictionFilters } from "@/types/fanfictions";
 import FanfictionList from "~/components/list/fanfictions/FanfictionList.vue";
 import FanfictionFilters from "~/components/filters/fanfictions/FanfictionFilters.vue";
 import { SortByEnum } from "~/types/basics";
 
-@Component({
-  name: "Recherche",
-  components: {
-    FanfictionList,
-    FanfictionFilters
-  }
-})
-export default class MyComponent extends Vue {
-  // #region Data
-  public filtersOpened: boolean = false;
+const filtersOpened = ref<boolean>(false);
 
-  public fanfictionFilters: IFanfictionFilters = {
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: null,
-    inclusive: false,
-    fromDate: null,
-    toDate: null,
-    page: 1,
-    pageSize: 10,
-    totalPages: true,
-    sortBy: SortByEnum.Descending,
-    sortOn: "last_update_date"
-  };
+const fanfictionFilters = reactive<IFanfictionFilters>({
+  searchTerm: null,
+  searchAuthor: null,
+  searchAuthorId: null,
+  multipleAuthors: null,
+  status: null,
+  wordCount_min: null,
+  wordCount_max: null,
+  includedTags: [],
+  excludedTags: [],
+  customTags: [],
+  featured: null,
+  inclusive: false,
+  fromDate: null,
+  toDate: null,
+  page: 1,
+  pageSize: 10,
+  totalPages: true,
+  sortBy: SortByEnum.Descending,
+  sortOn: "last_update_date"
+});
 
-  public listLoading: boolean = false;
-
-  // #endregion
-
-  // #region Hooks
-
-  // #endregion
-
-  // #region Methods
-
-  // #endregion
-}
+const listLoading = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .btn-filters {
   left: 50%;

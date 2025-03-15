@@ -10,53 +10,44 @@
   </b-checkbox>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
+<script setup lang="ts">
 
-@Component({
-  name: "ThreeStateCheckbox"
-})
-export default class MyComponent extends Vue {
-  // #region Props
-  @Prop()
-  declare private externalValue?: any | undefined;
+interface Props {
+  externalValue?: any;
+  title?: string;
+  checkedValue?: any;
+  excludedValue?: any;
+  uncheckedValue?: any;
+} 
 
-  @Prop()
-  declare public title: string | undefined;
+const { 
+  externalValue,
+  title,
+  checkedValue = true,
+  excludedValue = false,
+  uncheckedValue = null
+} = defineProps<Props>();
 
-  @Prop({ default: true })
-  declare private checkedValue: any;
+const checkboxStatus = computed<boolean>(() => {
+    return externalValue === checkedValue;
+});
 
-  @Prop({ default: false })
-  declare private excludedValue: any;
+const indeterminate = computed<boolean>(() => {
+    return externalValue === excludedValue;
+});
 
-  @Prop({ default: null })
-  declare private uncheckedValue: any;
-  // #endregion
+const $emit = defineEmits(["change"]);
 
-  // #region Computed
-  get checkboxStatus(): boolean {
-    return this.externalValue === this.checkedValue;
+function checkBoxClicked(event: any): void {
+  let internalState: number;
+  if (indeterminate.value) {
+    internalState = uncheckedValue;
+  } else if (checkboxStatus.value) {
+    internalState = excludedValue;
+  } else {
+    internalState = checkedValue;
   }
-
-  get indeterminate(): boolean {
-    return this.externalValue === this.excludedValue;
-  }
-  // #endregion
-
-  // #region Methods
-  public checkBoxClicked(event: any): void {
-    let internalState;
-    if (this.indeterminate) {
-      internalState = this.uncheckedValue;
-    } else if (this.checkboxStatus) {
-      internalState = this.excludedValue;
-    } else {
-      internalState = this.checkedValue;
-    }
-    this.$emit("change", internalState);
-  }
-  // #endregion
+  $emit("change", internalState);
 }
 </script>
 

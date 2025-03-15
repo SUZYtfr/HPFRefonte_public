@@ -21,7 +21,7 @@
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
-      <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
+      <!-- <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false"> -->
         <div class="is-flex is-flex-direction-column">
           <CharThreeStateCheckbox
             v-for="(charac, index) in characteristics"
@@ -32,87 +32,60 @@
             @change="threeStateChanged"
           />
         </div>
-      </simplebar>
+      <!-- </simplebar> -->
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from "nuxt-property-decorator";
-import simplebar from "simplebar-vue";
-// import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics";
+<script setup lang="ts">
+// import simplebar from "simplebar-vue";
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
 import CharThreeStateCheckbox from "~/components/CharThreeStateCheckbox.vue";
-import "simplebar/dist/simplebar.min.css";
-import "simplebar/dist/simplebar.min.js";
+// import "simplebar/dist/simplebar.min.css";
+// import "simplebar/dist/simplebar.min.js";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 // import SimpleBar from "simplebar";
 
-@Component({
-  name: "CharacteristicPanel",
-  components: {
-    CharThreeStateCheckbox,
-    simplebar
-  }
+interface Props {
+  characteristic_type?: CharacteristicTypeModel;
+  characteristics?: CharacteristicModel[];
+}
+
+const { characteristic_type, characteristics } = defineProps<Props>();
+
+const includedIds = ref<number[]>([]);
+const excludedIds = ref<number[]>([]);
+const expanded = ref<boolean>(false);
+
+const totalIds = computed<number>(() => {
+  return includedIds.value.length + excludedIds.value.length;
 })
-export default class MyComponent extends Vue {
-  // #region Props
-  @Prop()
-  declare public characteristic_type?: CharacteristicTypeModel;
 
-  @Prop()
-  declare public characteristics?: CharacteristicModel[];
-  // #endregion
+const $emit = defineEmits(["change"])
 
-  mounted(): void {
-    // console.log(this.characteristic_type);
-    // console.log(this.characteristic_type instanceof CharacteristicTypeModel);
-    // console.log(this.characteristics);
-    // console.log(this.characteristics[0] instanceof CharacteristicModel);
-  }
+function threeStateChanged(caracteristic_id: number, state: number): void {
+  includedIds.value = includedIds.value.filter(
+    item => item !== caracteristic_id
+  );
+  excludedIds.value = excludedIds.value.filter(
+    item => item !== caracteristic_id
+  );
 
-  // #region Datas
-  private includedIds: number[] = [];
-  private excludedIds: number[] = [];
-  public expanded: boolean = false;
-  // #endregion
+  if (state === -1) excludedIds.value.push(caracteristic_id);
+  else if (state === 1) includedIds.value.push(caracteristic_id);
+  $emit("change", new Set(characteristics?.map(t => t.id)), includedIds.value, excludedIds.value);
+}
 
-  // #region Computed
-  get totalIds(): number {
-    return this.includedIds.length + this.excludedIds.length;
-  }
-  // #endregion
-
-  // #region Methods
-  public getCaracteristicTypeColor(characteristic_type_id: number): string {
-    return getCaracteristicTypeColor(characteristic_type_id);
-  }
-
-  public threeStateChanged(caracteristic_id: number, state: number): void {
-    this.includedIds = this.includedIds.filter(
-      item => item !== caracteristic_id
-    );
-    this.excludedIds = this.excludedIds.filter(
-      item => item !== caracteristic_id
-    );
-
-    if (state === -1) this.excludedIds.push(caracteristic_id);
-    else if (state === 1) this.includedIds.push(caracteristic_id);
-    this.$emit("change", new Set(this.characteristics?.map(t => t.id)), this.includedIds, this.excludedIds);
-  }
-
-  public stateForCheckbox(caracteristic_id: number): number {
-    let state = 0;
-    if (this.includedIds.includes(caracteristic_id)) state = 1;
-    else if (this.excludedIds.includes(caracteristic_id)) state = -1;
-    return state;
-  }
-  // #region
+function stateForCheckbox(caracteristic_id: number): number {
+  let state = 0;
+  if (includedIds.value.includes(caracteristic_id)) state = 1;
+  else if (excludedIds.value.includes(caracteristic_id)) state = -1;
+  return state;
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 .container-div {
   border: 1px solid var(--primary);
   border-radius: 5px;
