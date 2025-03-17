@@ -1,34 +1,35 @@
 from django_filters import rest_framework as filters
 
-from .models import NewsArticle
+from news.models import NewsArticle
 
-class NewsArticleFilterSet(filters.FilterSet):
-    searchAuthor = filters.CharFilter(
+
+class NewsArticleFilterSet(filters.FilterSet):    
+    class Meta:
+        model = NewsArticle
+        fields = [
+            "search_author",
+            "search_term",
+            "from_date",
+            "to_date",
+        ]
+
+    search_author = filters.CharFilter(
         field_name="creation_user__username",
         lookup_expr="icontains",
         label="Écrite par",
     )
-    searchTerm = filters.CharFilter(
+    search_term = filters.CharFilter(
         field_name="title",
         lookup_expr="icontains",
         label="Le titre contient",
     )
-    fromDate = filters.DateTimeFilter(
+    from_date = filters.DateTimeFilter(
         field_name="post_date",
         lookup_expr="gt",
         label="Publiée après le",
     )
-    toDate = filters.DateTimeFilter(
+    to_date = filters.DateTimeFilter(
         field_name="post_date",
         lookup_expr="lt",
         label="Publiée avant le",
     )
-
-    class Meta:
-        model = NewsArticle
-        fields = [
-            "searchAuthor",
-            "searchTerm",
-            "fromDate",
-            "toDate",
-        ]

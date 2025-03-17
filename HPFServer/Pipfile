@@ -20,6 +20,7 @@ django-mptt = "*"
 djangorestframework-recursive = "*"
 django-polymorphic-tree = "*"
 django-rest-polymorphic = "*"
+djangorestframework-camel-case = "*"
 
 [dev-packages]
 faker = "*"
