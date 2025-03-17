@@ -21,7 +21,7 @@
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
-      <!-- <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false"> -->
+      <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
         <div class="is-flex is-flex-direction-column">
           <CharThreeStateCheckbox
             v-for="(charac, index) in characteristics"
@@ -32,19 +32,15 @@
             @change="threeStateChanged"
           />
         </div>
-      <!-- </simplebar> -->
+      </simplebar>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import simplebar from "simplebar-vue";
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
 import CharThreeStateCheckbox from "~/components/CharThreeStateCheckbox.vue";
-// import "simplebar/dist/simplebar.min.css";
-// import "simplebar/dist/simplebar.min.js";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
-// import SimpleBar from "simplebar";
 
 interface Props {
   characteristic_type?: CharacteristicTypeModel;
