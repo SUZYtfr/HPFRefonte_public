@@ -7,7 +7,7 @@ from django_filters import (
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-from .models import (
+from reviews.models import (
     BaseReview,
     CollectionReview,
     FictionReview,
@@ -20,12 +20,12 @@ class ReviewFilterset(FilterSet):
         model = BaseReview
         fields = [
             "creation_user",
-            "searchTerm",
+            "search_term",
             "include_item_types",
             "item_id",
         ]
 
-    searchTerm = CharFilter(
+    search_term = CharFilter(
         label="Recherche partielle dans les titres et pseudonymes.",
         method="filter_content",
     )

@@ -2,12 +2,29 @@ from django.db import models
 from django_filters import rest_framework as filters
 
 from characteristics.models import Characteristic
-from .models import Fiction
-from .enums import FictionStatus
+from fictions.models import Fiction
+from fictions.enums import FictionStatus
 
 
 class FictionFilterSet(filters.FilterSet):
-    searchAuthor = filters.CharFilter(
+    class Meta:
+        model = Fiction
+        fields = [
+            "search_author",
+            # "coauthor",
+            # "authors"
+            "search_term",
+            "summary",
+            "word_count",
+            "status",
+            "included_tags",
+            "excluded_tags",
+            "featured",
+            "search_author_id",
+        ]
+
+
+    search_author = filters.CharFilter(
         field_name="creation_user__username",
         lookup_expr="icontains",
         label="Écrite par",
@@ -24,7 +41,7 @@ class FictionFilterSet(filters.FilterSet):
     #     method="filter_authors",
     #     label="écrite par",
     # )
-    searchTerm = filters.CharFilter(
+    search_term = filters.CharFilter(
         field_name="title",
         lookup_expr="icontains",
         label="Le titre contient",
@@ -33,18 +50,18 @@ class FictionFilterSet(filters.FilterSet):
         lookup_expr="icontains",
         label="Le résumé contient",
     )
-    wordCount = filters.RangeFilter(
+    word_count = filters.RangeFilter(
         field_name="_word_count",
         label="Plage de compte de mots",
     )
 
-    includedTags = filters.ModelMultipleChoiceFilter(
+    included_tags = filters.ModelMultipleChoiceFilter(
         field_name="characteristics",
         label="Avec les caractéristiques",
         conjoined=True,
         queryset=Characteristic.objects.allowed(),
     )
-    excludedTags = filters.ModelMultipleChoiceFilter(
+    excluded_tags = filters.ModelMultipleChoiceFilter(
         field_name="characteristics",
         label="Sans les caractéristiques",
         conjoined=False,
@@ -55,41 +72,24 @@ class FictionFilterSet(filters.FilterSet):
         method="filter_finished",
         label="terminée",
     )
-    sortBy = filters.CharFilter(
+    sort_by = filters.CharFilter(
         method="sort_by",
         label="trier selon",
     )
-    fromDate = filters.DateTimeFilter(
+    from_date = filters.DateTimeFilter(
         field_name="creation_date",
         lookup_expr="gt",
         label="Écrite après le",
     )
-    toDate = filters.DateTimeFilter(
+    to_date = filters.DateTimeFilter(
         field_name="creation_date",
         lookup_expr="lt",
         label="Écrite avant le",
     )
-    searchAuthorId = filters.NumberFilter(
+    search_author_id = filters.NumberFilter(
         field_name="creation_user",
         label="ID auteur",
     )
-
-
-    class Meta:
-        model = Fiction
-        fields = [
-            "searchAuthor",
-            # "coauthor",
-            # "authors"
-            "searchTerm",
-            "summary",
-            "wordCount",
-            "status",
-            "includedTags",
-            "excludedTags",
-            "featured",
-            "searchAuthorId",
-        ]
 
     def filter_finished(self, queryset, name, value):
         if value == True:
