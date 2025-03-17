@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "polymorphic_tree",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "ordered_model",
     "django_extensions",
     "django_filters",
