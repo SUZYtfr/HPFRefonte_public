@@ -1,15 +1,27 @@
-# dependencies
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
 node_modules
 
-# logs
-npm-debug.log
-yarn-error.log
+# Logs
+logs
+*.log
 
-# Nuxt build
-.nuxt
+# Misc
+.DS_Store
+.fleet
+.idea
 
-# Nuxt generate
-dist
+# Local env files
+.env
+.env.*
+!.env.example
 
 ### VisualStudioCode ###
 .vscode/*      # Maybe .vscode/**/* instead - see comments
