@@ -21,7 +21,7 @@ export class FetchController {
             }
         }
 
-    public async delete<T>(url: string, model?: (new (arg: any) => T), options?: any): Promise<any> {
+    public async delete<T>(url: string, model?: ClassConstructor<Flatten<Depaginate<T>>>, options?: UseFetchOptions<T>): Promise<any> {
         try {
             return useCustomFetch(
                 url,
@@ -36,7 +36,7 @@ export class FetchController {
         }
     }
 
-    public async post<T>(url: string, payload: any, model?: (new (arg: any) => T), options?: any): Promise<any> {
+    public async post<T>(url: string, payload: any, model?: ClassConstructor<Flatten<Depaginate<T>>>, options?: UseFetchOptions<T>): Promise<any> {
         try {
             return useCustomFetch(
                 url,
@@ -52,15 +52,16 @@ export class FetchController {
         }
     }
 
-    public async put<T>(url: string, payload: any, model?: (new (arg: any) => T), options?: any): Promise<any> {
+    public async put<T>(url: string, payload: any, model?: ClassConstructor<Flatten<Depaginate<T>>>, options?: UseFetchOptions<T>) {
         try {
-          return useCustomFetch(
+          return useCustomFetch<T>(
             url,
-                {
-                    method: "put",
-                    body: payload,
-                    ...options
-                }
+            {
+                method: "put",
+                body: payload,
+                ...options
+            },
+            model
             );
         } catch (error) {
             console.log(error)

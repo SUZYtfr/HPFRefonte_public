@@ -25,7 +25,7 @@
                   :icon="item.icon"
                   :tag="item.tag"
                   :to="item.to"
-                  :active.sync="item.isactive"
+                  :active="item.isactive"
                   @click.native="handleMenuItemClick(item)"
                 >
                   <b-menu-item
@@ -51,7 +51,7 @@
           </header>
           <div class="card-content px-0 py-3">
             <!-- Administration -->
-            <NuxtChild class="px-3" />
+            <NuxtPage class="px-3" />
           </div>
         </div>
       </div>
@@ -59,78 +59,68 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-@Component({
-  layout: "settings",
-  components: {
-  },
-  fetchOnServer: true,
-  fetchKey: "settings"
-})
-export default class MyComponent extends Vue {
-  // #region Data
-  // Menu actif
-  public activeItem: string = "";
+<script setup lang="ts">
+const activeItem = ref<string>("");
 
-  // Filtre
-  private filter: string = "";
 
-  // Tous les menus disponibles
-  private menuItems: any = [
-    { label: "Modération des fictions", icon: "book", tag: "nuxt-link", to: "/settings/fictions", keywords: "moderation fictions", isactive: false },
-    { label: "Modération des news", icon: "newspaper", tag: "nuxt-link", to: "/settings/news", keywords: "moderation news", isactive: false },
-    { label: "Modération des sélections", icon: "trophy", tag: "nuxt-link", to: "/settings/selections", keywords: "moderation selections podiums", isactive: false },
-    { label: "Modération des utilisateurs", icon: "users", tag: "nuxt-link", to: "/settings/users", keywords: "moderation utilisateurs users", isactive: false },
-    { label: "Modération des reviews", icon: "comments", tag: "nuxt-link", to: "/settings/reviews", keywords: "moderation commentaires reviews", isactive: false },
-    { label: "Gestion des catégories", icon: "list-alt", tag: "nuxt-link", to: "/settings/characteristics", keywords: "gestion categories", isactive: false },
-    { label: "Gestion des images", icon: "images", tag: "nuxt-link", to: "/settings/", keywords: "gestion images", isactive: false },
-    { label: "Administration des pages", icon: "columns", tag: "nuxt-link", to: "/settings/", keywords: "page personalisees", isactive: false },
-    { label: "Statistiques", icon: "chart-pie", tag: "nuxt-link", to: "/settings/", keywords: "stats statistiques graph", isactive: false },
-    { label: "Thèmes et charte graphique", icon: "paint-brush", tag: "nuxt-link", to: "/settings/themes", keywords: "design charte graphique themes", isactive: false },
-    { label: "Signalements", icon: "exclamation-triangle", tag: "nuxt-link", to: "/settings/", keywords: "moderation signalements", isactive: false },
-    { label: "Administration", icon: "tools", keywords: "admin", isactive: false, subitems: [{ label: "", icon: "", tag: null, to: null, keywords: "" }, { label: "", icon: "", tag: null, to: null, keywords: "" }] }
-  ];
+// Filtre
+const filter = ref<string>("");
 
-  // Timer de debounce sur le filtre
-  private timerThrottleFilter: number = 0;
-  // #endregion
+// Tous les menus disponibles
+// FIXME - le routage marche, mais le tag: "nuxt-link" est cassé avec vue 3 (mauvais render, pas d'aperçu du lien)
+const menuItems: any = [
+  { label: "Modération des fictions", icon: "book", tag: "nuxt-link", to: "/settings/fictions", keywords: "moderation fictions", isactive: false },
+  { label: "Modération des news", icon: "newspaper", tag: "nuxt-link", to: "/settings/news", keywords: "moderation news", isactive: false },
+  { label: "Modération des sélections", icon: "trophy", tag: "nuxt-link", to: "/settings/selections", keywords: "moderation selections podiums", isactive: false },
+  { label: "Modération des utilisateurs", icon: "users", tag: "nuxt-link", to: "/settings/users", keywords: "moderation utilisateurs users", isactive: false },
+  { label: "Modération des reviews", icon: "comments", tag: "nuxt-link", to: "/settings/reviews", keywords: "moderation commentaires reviews", isactive: false },
+  { label: "Gestion des catégories", icon: "list-alt", tag: "nuxt-link", to: "/settings/characteristics", keywords: "gestion categories", isactive: false },
+  { label: "Gestion des images", icon: "images", tag: "nuxt-link", to: "/settings/", keywords: "gestion images", isactive: false },
+  { label: "Administration des pages", icon: "columns", tag: "nuxt-link", to: "/settings/", keywords: "page personalisees", isactive: false },
+  { label: "Statistiques", icon: "chart-pie", tag: "nuxt-link", to: "/settings/", keywords: "stats statistiques graph", isactive: false },
+  { label: "Thèmes et charte graphique", icon: "paint-brush", tag: "nuxt-link", to: "/settings/themes", keywords: "design charte graphique themes", isactive: false },
+  { label: "Signalements", icon: "exclamation-triangle", tag: "nuxt-link", to: "/settings/", keywords: "moderation signalements", isactive: false },
+  { label: "Administration", icon: "tools", keywords: "admin", isactive: false, subitems: [{ label: "", icon: "", tag: null, to: null, keywords: "" }, { label: "", icon: "", tag: null, to: null, keywords: "" }] }
+];
 
-  // #region Computed
-  // Menus affichés, éventuellement filtrés
-  public get filteredMenuItems(): any {
-    if (this.filter.length > 0) {
-      return this.menuItems.filter((item: any) => item.keywords.includes(this.filter.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036F]/g, "")));
-    } else {
-      return this.menuItems;
-    }
+// Timer de debounce sur le filtre
+let timerThrottleFilter: number = 0;
+// #endregion
+
+// #region Computed
+// Menus affichés, éventuellement filtrés
+const filteredMenuItems = computed(() => {
+  if (filter.value) {
+    return menuItems.filter((item: any) => item.keywords.includes(filter.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036F]/g, "")));
+  } else {
+    return menuItems;
   }
-  // #endregion
+});
+// #endregion
 
-  // #region Methods
-  // Changement de menu à la main
-  public handleMenuItemClick(event: any): void {
-    this.menuItems.forEach((item: any) => {
-      item.isactive = false;
-    });
-    event.isactive = true;
-    this.activeItem = event.label;
-  }
-
-  // Filtre de recherche modifié
-  public filterChanged(e : string) : void {
-    clearTimeout(this.timerThrottleFilter);
-    this.timerThrottleFilter = window.setTimeout(
-      () => { this.filter = e; },
-      300
-    );
-  }
-  // #endregion
+// #region Methods
+// Changement de menu à la main
+function handleMenuItemClick(event: any): void {
+  menuItems.forEach((item: any) => {
+    item.isactive = false;
+  });
+  event.isactive = true;
+  activeItem.value = event.label;
 }
+
+// Filtre de recherche modifié
+function filterChanged(e: Event) : void {
+  clearTimeout(timerThrottleFilter);
+  timerThrottleFilter = window.setTimeout(
+    () => { filter.value = (e.target as HTMLInputElement).value; },
+    300
+  );
+}
+// #endregion
 </script>
 
 <style lang="scss">
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 .fullheight {
   height: 100%;
 }
