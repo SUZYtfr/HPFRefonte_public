@@ -2,6 +2,100 @@
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  auth: {
+    baseURL: "https://hpfrefonte.pythonanywhere.com/api/",
+    isEnabled: true,
+    disableServerSideAuth: false,
+    provider: {
+      type: "local",
+      endpoints: {
+        signIn: { path: "account/token/", method: "post" },
+        signOut: false,
+        signUp: { path: "register", method: "post" },
+        getSession: { path: "account/", method: "get" },
+      },
+      token: {
+        signInResponseTokenPointer: "/access",
+        type: "Bearer",
+        cookieName: "auth.token",
+        headerName: "Authorization",
+        maxAgeInSeconds: 60 * 30,
+        sameSiteAttribute: "strict",
+        secureCookieAttribute: false,
+        httpOnlyCookieAttribute: false,
+        //cookieDomain: "hpfanfiction.fr",
+      },
+      refresh: {
+        isEnabled: false,
+        endpoint: {
+          path: "account/token/refresh/",
+          method: "post",
+        },
+        refreshOnlyToken: false,
+        token: {
+          refreshResponseTokenPointer: "account/token/refresh/",
+          refreshRequestTokenPointer: "/refresh",
+          signInResponseRefreshTokenPointer: "/refresh",
+          cookieName: "auth.refresh",
+          maxAgeInSeconds: 60 * 60 * 24 * 30, // 30 jours
+          sameSiteAttribute: "strict",
+          secureCookieAttribute: false,
+          httpOnlyCookieAttribute: false,
+          //cookieDomain: "hpfanfiction.fr",
+        },
+      },
+      session: {
+        dataType: {
+          id: "number",
+          username: "string",
+          email: "string",
+          profile: {
+            realname: "string | null",
+            birthdate: "date | null",
+            gender: "number",
+            bio: "string | null",
+            bioImages: "[]",
+            externalProfiles: "[]",
+            profilePicture: "string | null",
+            ageConsent: "boolean",
+          },
+          preferences: {
+            font: "string",
+            fontSize: "number",
+            lineSpacing: "number",
+            colorScheme: "number",
+            colorSchemeInReader: "boolean",
+            theme: "number",
+            themeOverridenAt: "date | null",
+            showAnimations: "boolean",
+            showProfilePictures: "boolean",
+            memberReviewPolicy: "number",
+            anonymousReviewPolicy: "number",
+            letterSpacing: "number",
+            paragraphSpacing: "number",
+            redirectToSummary: "boolean",
+            showTriggerWarnings: "boolean",
+            showReviewEditor: "boolean",
+            emailForReview: "boolean",
+            emailForReply: "boolean",
+            emailForNews: "boolean",
+            emailForFavoriteActivity: "boolean",
+            emailForFavorite: "boolean",
+            emailForChapterStatus: "boolean",
+            resultOrder: "number",
+            displayContent: "number",
+          },
+        },
+      },
+    },
+    sessionRefresh: {
+      enablePeriodically: false,
+      enableOnWindowFocus: true,
+    },
+    // Toutes les pages sont protégées par défaut on spécifie les pages publiques via definePageMeta
+    globalAppMiddleware: true,
+  },
+
   compatibilityDate: "2024-11-01",
 
   build: {
@@ -16,7 +110,7 @@ export default defineNuxtConfig({
 
   devtools: {
     enabled: true,
-    vueDevTools: true,
+    //vueDevTools: true,
     timeline: {
       enabled: true,
     },
@@ -43,7 +137,7 @@ export default defineNuxtConfig({
   //   },
   // },
 
-  modules: ["@nuxt/eslint", "@pinia/nuxt"],
+  modules: ["@nuxt/eslint", "@pinia/nuxt", "@sidebase/nuxt-auth"],
 
   runtimeConfig: {
     // The private keys which are only available within server-side

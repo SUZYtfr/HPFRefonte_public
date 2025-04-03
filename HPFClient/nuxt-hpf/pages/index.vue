@@ -26,6 +26,11 @@ import { searchNews } from "@/api/news";
 import NewsThumbnailList from "@/components/list/news/NewsThumbnailList.vue";
 //#endregion
 
+// Metadata, SEO et droits d'accès à la page
+definePageMeta({
+  auth: false,
+});
+
 //#region Datas
 const newsFilters: IBasicQuery = {
   page: 1,

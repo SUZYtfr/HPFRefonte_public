@@ -30,12 +30,14 @@
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "devDependencies": {
     "@nuxt/eslint": "^1.2.0",
+    "@sidebase/nuxt-auth": "^0.10.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "prettier": "3.5.3",
     "sass-embedded": "^1.85.1",
     "typescript": "^5.8.2",
     "vite": "^6.2.1",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^2.2.8",
+    "@nuxt/devtools": "npm:@nuxt/devtools-nightly@latest"
   }
 }

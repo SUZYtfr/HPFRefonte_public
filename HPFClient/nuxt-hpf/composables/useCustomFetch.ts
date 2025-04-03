@@ -18,6 +18,11 @@ export default function useCustomFetch<T>(
       Accept: "application/json",
       "Content-type": "application/json",
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onRequest: ({ request, options }) => {
+      const { token } = useAuth();
+      if (token.value) options.headers.set("Authorization", token.value);
+    },
     onResponseError: ({ response }) => {
       if (import.meta.client) {
         new Snackbar().open({
