@@ -31,7 +31,7 @@
             TEST
           </b-button> -->
           <b-table
-            ref="carac_table"
+            ref="carac-table"
             :data="filteredCharacteristicType"
             :paginated="false"
             :loading="listLoading"
@@ -46,11 +46,11 @@
             aria-page-label="Page"
             aria-current-label="Page actuelle"
             :debounce-search="1000"
-            :selected.sync="selectedItem"
+            :selected="selectedItem"
             :show-detail-icon="true"
             :sticky-header="true"
             :row-class="(row, index) => getTableParentRowClass(row, index)"
-            @click.native="onRowClickNative($event)"
+            @click.native="onRowClickNative"
           >
             <!-- Libelle -->
             <b-table-column
@@ -59,7 +59,7 @@
             >
               <template #subheading>
                 <b-input
-                  v-model="caracFilter"
+                  v-model="refreshFilter"
                   placeholder="Filtrer"
                   type="search"
                   icon="search"
@@ -116,17 +116,17 @@
             </b-table-column>
 
             <!-- Ligne enfant -->
-            <template slot="detail" slot-scope="props">
+            <template #detail="props">
               <tr
                 v-for="(item, index) in props.row.characteristics"
                 :key="item.id"
-                :ref="'child_row_' + item.id.toString()"
+                :ref="(el) => { instance.refs[`child-row-${item.id.toString()}`] = el }"
                 :class="[((index % 2 == 0) ? getCaracteristicTypeColorLight(item.characteristic_type_id) : getCaracteristicTypeColorLighter(item.characteristic_type_id)),
                          { 'highlighted': (item.characteristic_type_id === (droppedOnRow?.object?.characteristic_type_id ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === false) },
                          { 'highlighted-child': (item.characteristic_type_id === (droppedOnRow?.object?.characteristic_type_id ?? -1) && index === (droppedOnRow?.index ?? -1) && (droppedOnRow?.dropAsChild ?? false) === true) }]"
                 :selected="selectedItem"
                 draggable="true"
-                @click="onChildRowClicked(item, $event)"
+                @click="selectedItem = item"
                 @dragstart="dragstart(item, index, $event)"
                 @drop="drop(item, index, $event)"
                 @dragover="dragover(item, index, $event)"
@@ -278,544 +278,458 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import { SerialiseClass } from "@/serialiser-decorator";
-import { VForm, OpenToast } from "@/utils/formHelper";
-import Config from "~/store/modules/Config";
+<script setup lang="ts">
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 import { getCaracteristicTypeColor, getCaracteristicTypeColorLight, getCaracteristicTypeColorLighter } from "@/utils/characteristics";
 import { searchCharacteristics, searchCharacteristicsTypes, updateCharacteristic, updateCharacteristicsType, deleteCharacteristic, createCharacteristic, reorderCharacteristics } from "~/api/private/characteristics";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { nextTick, getCurrentInstance } from "vue";
 
-@Component({
-  name: "SettingsCharateristics",
-  fetchOnServer: true,
-  fetchKey: "settings-charateristics"
+// https://stackoverflow.com/a/79534157/13038487
+const instance = getCurrentInstance()!;
+
+const caracTable = useTemplateRef("carac-table");
+
+let selectedItem = ref<CharacteristicModel | CharacteristicTypeModel | null>(null);
+
+let timerId: number = 0;
+
+const maxOccurenceEnable = ref<boolean>(false);
+const refreshFilter = ref<string | null>(null);
+const caracFilter = ref<string | null>(null);
+
+// Ligne en cours de déplacement
+const draggedRow = ref<any>({
+  target: null,
+  object: null,
+  index: null,
+  childs: []
+});
+
+// Ligne sur laquelle on drop
+const droppedOnRow = ref<any>({
+  target: null,
+  object: null,
+  index: null,
+  dropAsChild: false
+});
+
+const formIsValid = computed<boolean>(() => {
+  if (selectedItem.value == null) return false;
+  return true;
+});
+
+watch(maxOccurenceEnable, () => {
+  if (selectedItem.value instanceof CharacteristicTypeModel) {
+    if (maxOccurenceEnable) selectedItem.value.max_occurence = 0;
+    else selectedItem.value.max_occurence = null;
+  }
+});
+
+watch(refreshFilter, () => {
+  clearTimeout(timerId);
+  timerId = window.setTimeout(() => caracFilter.value = refreshFilter.value, 500);
+});
+
+const { data: characteristics, status: characteristicStatus } = await searchCharacteristics(null);
+const { data: characteristics_types, status: characteristicTypeStatus } = await searchCharacteristicsTypes();
+
+watch(characteristics_types, () => {
+  characteristics_types.value?.forEach((parent: CharacteristicTypeModel) => {
+    parent.characteristics = characteristics.value?.filter((item: CharacteristicModel) => {
+      return item.characteristic_type_id === parent.id;
+    });
+  });
+});
+
+const filteredCharacteristicType = computed<CharacteristicTypeModel[]>(() => {
+  if (characteristics_types.value && characteristics.value) {
+    return prepareFilteredCarac();
+  }
+  return [];
 })
-export default class MyComponent extends Vue {
-  // #region Data
-  @SerialiseClass(CharacteristicModel)
-  private characteristics: CharacteristicModel[] = [];
 
-  @SerialiseClass(CharacteristicTypeModel)
-  public characteristics_types: CharacteristicTypeModel[] = [];
+const listLoading = computed<boolean>(() => {
+  return (characteristicStatus.value === 'pending' || characteristicTypeStatus.value === 'pending');
+});
 
-  // Caractéristiques filtrées
-  public filteredCharacteristicType: CharacteristicTypeModel[] = [];
+const loading = ref<boolean>(false);
 
-  public listLoading: boolean = false;
-  public totalUsers: number = 0;
-
-  public selectedItem: CharacteristicModel | CharacteristicTypeModel | null = null;
-
-  public loading: boolean = false;
-
-  private timerId: number = 0;
-
-  public maxOccurenceEnable: boolean = false;
-
-  public caracFilter: string | null = null;
-
-  // Ligne en cours de déplacement
-  private draggedRow: any = {
-    target: null,
-    object: null,
-    index: null,
-    childs: []
-  };
-
-  // Ligne sur laquelle on drop
-  public droppedOnRow: any = {
-    target: null,
-    object: null,
-    index: null,
-    dropAsChild: false
-  };
-  // #endregion
-
-  // #region Computed
-  get formIsValid(): boolean {
-    if (this.selectedItem == null) return false;
-    return true;
-    // return (((this.selectedUser.username?.length ?? 0) > 0) &&
-    //   ((this.selectedUser.email?.length ?? 0) > 0) &&
-    //   ((this.selectedUser.status === UserStatus.Banned && this.selectedUser.ban_reason.length > 0) || this.selectedUser.status !== UserStatus.Banned));
-  }
-
-  get form(): VForm {
-    return this.$refs.signupForm as VForm;
-  }
-
-  get ConfigModule(): Config {
-    return getModule(Config, this.$store);
-  }
-
-  // #endregion
-
-  // #region Watchers
-  @Watch("maxOccurenceEnable")
-  public onMaxOccurenceEnabledChanged(): void {
-    if (this.selectedItem == null || (this.selectedItem instanceof CharacteristicTypeModel) === false) return;
-    if (this.maxOccurenceEnable) (this.selectedItem as CharacteristicTypeModel).max_occurence = 0;
-    else (this.selectedItem as CharacteristicTypeModel).max_occurence = null;
-  }
-
-  @Watch("caracFilter")
-  public onFiltersChanged(): void {
-    clearTimeout(this.timerId);
-    this.timerId = window.setTimeout(this.prepareFilteredCarac, 500);
-  }
-  // #endregion
-
-  // #region Hooks
-  private mounted(): void {
-    this.caracFilter = null;
-    this.caracFilter = "";
-  }
-
-  private async fetch(): Promise<void> {
-    this.listLoading = true;
-    // Récupération des caractéristiques
-    await this.getCharacteristics();
-    this.listLoading = false;
-  }
-  // #endregion
-
-  // #region Methods
-  public getCaracteristicTypeColor(characteristic_type_id: number): string {
-    return getCaracteristicTypeColor(characteristic_type_id);
-  }
-
-  public getCaracteristicTypeColorLight(characteristic_type_id: number): string {
-    return getCaracteristicTypeColorLight(characteristic_type_id);
-  }
-
-  public getCaracteristicTypeColorLighter(characteristic_type_id: number): string {
-    return getCaracteristicTypeColorLighter(characteristic_type_id);
-  }
-
-  private async getCharacteristics(): Promise<void> {
-    this.characteristics = (await searchCharacteristics(null));
-    this.characteristics_types = (await searchCharacteristicsTypes());
-    this.characteristics_types.forEach((parent: CharacteristicTypeModel) => {
-      parent.characteristics = this.characteristics.filter((item: CharacteristicModel) => {
-        return item.characteristic_type_id === parent.id;
-      });
-    });
-  }
-
-  // private async getUsers(): Promise<void> {
-  //   try {
-  //     const response = (await searchUsers(this.userFilters));
-  //     this.users = response.results;
-  //     // console.log(this.users);
-  //     // console.log("User: " + (this.users[0] instanceof UserModel));
-  //     this.userFilters.page = response.current;
-  //     this.totalUsers = response.count;
-  //   } catch (error) {
-  //     if (process.client) {
-  //       this.$buefy.snackbar.open({
-  //         duration: 5000,
-  //         message: "Une erreur s'est produite lors de la récupération des utilisateurs",
-  //         type: "is-danger",
-  //         position: "is-bottom-right",
-  //         actionText: null,
-  //         pauseOnHover: true,
-  //         queue: true
-  //       });
-  //     } else {
-  //       console.log(error);
-  //     }
-  //   }
-  // }
-
-  // Mettre à jour la caratéristique
-  public async updateItem(): Promise<void> {
-    try {
-      this.loading = true;
-      if (this.selectedItem instanceof CharacteristicModel) {
-        if (this.selectedItem.characteristic_id > 0) {
-          await updateCharacteristic(this.selectedItem);
-        } else {
-          await createCharacteristic(this.selectedItem);
-        }
-      } else if (this.selectedItem instanceof CharacteristicTypeModel) {
-        if (this.selectedItem.characteristic_type_id > 0) {
-          await updateCharacteristicsType(this.selectedItem as CharacteristicTypeModel);
-        }
+// Mettre à jour la caratéristique
+async function updateItem(): Promise<void> {
+  try {
+    loading.value = true;
+    if (selectedItem.value instanceof CharacteristicModel) {
+      if (selectedItem.value.characteristic_id > 0) {
+        await updateCharacteristic(selectedItem.value);
       } else {
-        throw "Erreur"
+        await createCharacteristic(selectedItem.value);
       }
-      OpenToast(
-        "Caractéristique mise à jour",
-        "is-primary",
-        5000,
-        false,
-        true,
-        "is-bottom"
-      );
-    } catch (exception) {
-      OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  public async deleteItem(): Promise<void> {
-    if (this.selectedItem === null) return;
-
-    // Confirmer l'action (seulement si ce n'est pas un nouvel item)
-    if (this.selectedItem.id > 0) {
-      this.$buefy.snackbar.open({
-        indefinite: true,
-        message: "Confirmer la suppression ? (action irréversible)",
-        cancelText: "Annuler",
-        actionText: "Confirmer",
-        type: "is-warning",
-        onAction: () => {
-          try {
-            this.loading = true;
-            if (this.selectedItem instanceof CharacteristicModel) {
-              deleteCharacteristic(this.selectedItem);
-            }
-            this.selectedItem = null;
-            this.characteristics = this.characteristics.filter((item: CharacteristicModel) => item.id !== 0);
-            this.prepareFilteredCarac();
-            OpenToast(
-              "Caractéristique supprimée",
-              "is-primary",
-              5000,
-              false,
-              true,
-              "is-bottom"
-            );
-          } catch (exception) {
-            OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
-          } finally {
-            this.loading = false;
-          }
-        }
-      });
-    } else {
-      this.selectedItem = null;
-      this.characteristics = this.characteristics.filter((item: CharacteristicModel) => item.id !== 0);
-      this.prepareFilteredCarac();
-    }
-  }
-
-  // Construire les caractéristiques affichées (éventuellement filtrées)
-  private prepareFilteredCarac(): void {
-    // On récupère les caractéristiques qui correspondent au filtre
-    const filteredCharacteristics = this.characteristics.filter((child: CharacteristicModel) => {
-      return child.name.toUpperCase().includes((this.caracFilter?.toUpperCase() ?? ""));
-    });
-
-    // On récupère les caractétistiques types qui correspondent
-    const caracTypeIds = filteredCharacteristics.map(({ characteristic_type_id }) => characteristic_type_id);
-    const filteredCharacteristicsTypes = this.characteristics_types.filter((item: CharacteristicTypeModel) => {
-      return caracTypeIds.includes(item.id);
-    });
-
-    // On récupère l'arborescence complète
-    filteredCharacteristics.forEach((item: CharacteristicModel) => {
-      if (item.parent_id != null && filteredCharacteristics.find((parent: CharacteristicModel) => parent.id === item.parent_id) == null) {
-        const missingParent = this.characteristics.filter((parent: CharacteristicModel) => {
-          return parent.id === item.parent_id;
-        });
-        filteredCharacteristics.push(...missingParent);
+    } else if (selectedItem.value instanceof CharacteristicTypeModel) {
+      if (selectedItem.value.characteristic_type_id > 0) {
+        await updateCharacteristicsType(selectedItem.value as CharacteristicTypeModel);
       }
-    });
-
-    // Calculer la profondeur de chaque élément
-    filteredCharacteristics.forEach((item) => {
-      item.depth = this.getDepth(item, filteredCharacteristics);
-    });
-
-    // Enfin on remplit les caracatéristiques types
-    filteredCharacteristicsTypes.forEach((parent: CharacteristicTypeModel) => {
-      // On vide
-      parent.characteristics = [];
-      // On met uniquement celles filtrées
-      parent.characteristics = filteredCharacteristics.filter((item: CharacteristicModel) => {
-        return item.characteristic_type_id === parent.id;
-      });
-      // On tri sur l'ordre
-      parent.characteristics = this.sortItems(parent.characteristics);
-    });
-    this.filteredCharacteristicType = filteredCharacteristicsTypes;
-  }
-
-  // Préparer le style des lignes parent du tableau
-  public getTableParentRowClass(row: object, index: number): string {
-    let style = "";
-    if (row instanceof CharacteristicTypeModel) style += getCaracteristicTypeColor(row.id);
-    return style;
-  }
-
-  // Gestion de la ligne sélectionnée (pour les lignes enfant)
-  public onChildRowClicked(item: any, event: any): void {
-    this.selectedItem = item;
-  }
-
-  // Gestion du style sélection des colonnes
-  public onRowClickNative(event: any):void {
-    if (event.target.nodeName.toLowerCase() !== "td" && event.target.nodeName.toLowerCase() !== "tr") return;
-    (this.$refs.carac_table as any).$el.querySelectorAll("tr").forEach((row: HTMLElement) => {
-      row.classList.remove("is-selected");
-    });
-    if (event.target.nodeName.toLowerCase() === "td") event.target.parentElement.classList.add("is-selected");
-    else event.target.classList.add("is-selected");
-  }
-
-  // Ajout d'une nouvelle caractéristique
-  public onNewCarac(caracteristicType: CharacteristicTypeModel): void {
-    // Enlever les précédents nouveaux items non poussés
-    this.characteristics = this.characteristics.filter((item: CharacteristicModel) => item.id !== 0);
-
-    // Créer la nouvelle entrée
-    const newItem = new CharacteristicModel({
-      characteristic_type_id: caracteristicType.id,
-      parent_id: null,
-      name: "Nouvelle entrée",
-      description: null,
-      visible: false,
-      enabled: false
-    });
-
-    // console.log(newItem);
-    // console.log(newItem instanceof CharacteristicModel);
-    // L'ajouter aux entrées existantes
-    this.characteristics.push(newItem);
-
-    this.prepareFilteredCarac();
-    // // Reset les éventuels filtres
-    // if ((this.caracFilter?.length ?? 0) > 0) this.caracFilter = null;
-
-    // Expand la caractéristique type parent
-    const caracType = this.filteredCharacteristicType.filter((item: CharacteristicTypeModel) => {
-      return item.id === newItem.characteristic_type_id;
-    });
-    (this.$refs.carac_table as any).openDetailRow(caracType[0]);
-
-    // Après l'ajout dans le dom, afficher et cliquer sur le nouvel élément
-    this.$nextTick(() => {
-      const newTableRow = (this.$refs["child_row_" + newItem.id.toString()] as any);
-      newTableRow[0].scrollIntoView({ behavior: "smooth" });
-      newTableRow[0].click();
-      newTableRow[0].classList.add("animate__animated", "animate__flash");
-    });
-  }
-
-  // A l'ouverture du dropdown, reset les filtres éventuels
-  public onDropdownToggled(active: boolean): void {
-    if (active && ((this.caracFilter?.length ?? 0) > 0)) this.caracFilter = null;
-  }
-
-  // Démarrer le déplacement d'une ligne enfant
-  public dragstart(row: CharacteristicModel, index: number, e: DragEvent):void {
-    // Avant un drag, reset les filtres éventuels
-    if (((this.caracFilter?.length ?? 0) > 0)) {
-      this.caracFilter = null;
-      e.preventDefault();
-      return;
-    }
-
-    // Impossible de drag une carac non commitée (nouvel item)
-    if (row.id === 0) {
-      e.preventDefault();
-      return;
-    }
-
-    // Enlever les précédentes marques de sélection
-    (this.$refs.carac_table as any).$el.querySelectorAll("tr").forEach((row: HTMLElement) => {
-      row.classList.remove("is-selected");
-    });
-    this.selectedItem = null;
-
-    // Récupérer en mémoire l'élément qu'on déplace
-    this.draggedRow = { target: e.target, object: row, index: index, childs: this.getAllChildren(this.characteristics, row.id).map(item => item.id) };
-
-    // Mise en évidence de l'élément qu'on déplace
-    this.draggedRow.target.classList.add("is-selected");
-  }
-
-  // Comportement lors du déplacement d'une ligne
-  public dragover(row: CharacteristicModel, index: number, e: DragEvent):void {
-    e.preventDefault();
-    if (e.target == null || e.dataTransfer == null) return;
-    if ((this.droppedOnRow?.index ?? -1) === index && (this.droppedOnRow?.dropAsChild ?? false) === e.shiftKey) return;
-
-    // On ne peut pas bouger une carac en dehors de son parent ni bouger un parent dans un enfant
-    if (row.characteristic_type_id !== this.draggedRow.object.characteristic_type_id ||
-      this.draggedRow.childs.includes(row.id)
-    ) {
-      this.droppedOnRow = null;
-      e.dataTransfer.dropEffect = "none";
     } else {
-      this.droppedOnRow = { target: e.target, object: row, index: index, dropAsChild: e.shiftKey };
-      e.dataTransfer.dropEffect = "move";
+      throw "Erreur"
     }
+    OpenToast(
+      "Caractéristique mise à jour",
+      "is-primary",
+      5000,
+      false,
+      true,
+      "is-bottom"
+    );
+  } catch (exception) {
+    OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+  } finally {
+    loading.value = false;
   }
+}
 
-  // Après un glisser déposer d'un élément
-  public drop(row: CharacteristicModel, index: number, e: DragEvent):void {
-    // Vérifications de base
-    if (this.droppedOnRow == null || // Impossible si pas de cible
-      row.id === 0 || // Impossible de drop une carac non commitée (nouvel item)
-      this.draggedRow.index === this.droppedOnRow.index // Pas de mouvement
-    ) {
-      e.preventDefault();
+async function deleteItem(): Promise<void> {
+  if (selectedItem.value === null) return;
 
-      // Reset
-      this.draggedRow = null;
-      this.droppedOnRow = null;
-      return;
-    }
-
-    // Demander une confirmation après drop pour valider le changement d'ordre
-    let parentObject: CharacteristicModel | null = null;
-    let newPos = this.droppedOnRow.object.order;
-    if (this.droppedOnRow.dropAsChild) {
-      parentObject = this.droppedOnRow.object;
-      newPos = 0;
-    } else if (this.droppedOnRow.object.parent_id != null) {
-      parentObject = this.characteristics.filter(item => item.id === this.droppedOnRow.object.parent_id)[0];
-    }
-
-    let message = "Confirmer le déplacement de \"" + this.draggedRow.object.name + "\" (position " + (this.draggedRow.object.order + 1).toString() + ") vers la position " + (newPos + 1).toString();
-    if (parentObject != null) message += " (sous élement de \"" + parentObject.name + "\") ";
-    message += "?";
-    const confirmSnackbar = this.$buefy.snackbar.open({
+  // Confirmer l'action (seulement si ce n'est pas un nouvel item)
+  if (selectedItem.value.id > 0) {
+    new Snackbar().open({
       indefinite: true,
-      message: message,
+      message: "Confirmer la suppression ? (action irréversible)",
       cancelText: "Annuler",
       actionText: "Confirmer",
-      type: "is-warning"
+      type: "is-warning",
+      onAction: () => {
+        try {
+          loading.value = true;
+          if (selectedItem.value instanceof CharacteristicModel) {
+            deleteCharacteristic(selectedItem.value);
+          }
+          selectedItem.value = null;
+          characteristics.value = characteristics.value.filter((item: CharacteristicModel) => item.id !== 0);
+          // prepareFilteredCarac();
+          OpenToast(
+            "Caractéristique supprimée",
+            "is-primary",
+            5000,
+            false,
+            true,
+            "is-bottom"
+          );
+        } catch (exception) {
+          OpenToast("Erreur", "is-danger", 5000, false, true, "is-bottom");
+        } finally {
+          loading.value = false;
+        }
+      }
     });
+  } else {
+    selectedItem.value = null;
+    characteristics.value = characteristics.value.filter((item: CharacteristicModel) => item.id !== 0);
+    // prepareFilteredCarac();
+  }
+}
 
-    // Récupérer l'événement de fermeture de base en mémoire
-    const baseClose = confirmSnackbar.close;
+// Construire les caractéristiques affichées (éventuellement filtrées)
+function prepareFilteredCarac(): CharacteristicTypeModel[] {
+  // On récupère les caractéristiques qui correspondent au filtre
+  const filteredCharacteristics = characteristics.value?.filter((child: CharacteristicModel) => {
+    return child.name.toUpperCase().includes((caracFilter.value?.toUpperCase() ?? ""));
+  });
 
-    // Binder l'événement de close custom (avec annulation)
-    confirmSnackbar.close = () => {
-      // Reset
-      this.draggedRow = null;
-      this.droppedOnRow = null;
-      baseClose();
-    };
+  // On récupère les caractétistiques types qui correspondent
+  const caracTypeIds = filteredCharacteristics.map(({ characteristic_type_id }) => characteristic_type_id);
+  const filteredCharacteristicsTypes = characteristics_types.value?.filter((item: CharacteristicTypeModel) => {
+    return caracTypeIds.includes(item.id);
+  });
 
-    // Binder l'événement d'action
-    confirmSnackbar.onAction = () => {
+  // On récupère l'arborescence complète
+  filteredCharacteristics.forEach((item: CharacteristicModel) => {
+    if (item.parent_id != null && filteredCharacteristics.find((parent: CharacteristicModel) => parent.id === item.parent_id) == null) {
+      const missingParent = characteristics.value.filter((parent: CharacteristicModel) => {
+        return parent.id === item.parent_id;
+      });
+      filteredCharacteristics.push(...missingParent);
+    }
+  });
+
+  // Calculer la profondeur de chaque élément
+  filteredCharacteristics.forEach((item) => {
+    item.depth = getDepth(item, filteredCharacteristics);
+  });
+
+  // Enfin on remplit les caracatéristiques types
+  filteredCharacteristicsTypes.forEach((parent: CharacteristicTypeModel) => {
+    // On vide
+    parent.characteristics = [];
+    // On met uniquement celles filtrées
+    parent.characteristics = filteredCharacteristics.filter((item: CharacteristicModel) => {
+      return item.characteristic_type_id === parent.id;
+    });
+    // On tri sur l'ordre
+    parent.characteristics = sortItems(parent.characteristics);
+  });
+  return filteredCharacteristicsTypes
+}
+
+// Préparer le style des lignes parent du tableau
+function getTableParentRowClass(row: object, index: number): string {
+  let style = "";
+  if (row instanceof CharacteristicTypeModel) style += getCaracteristicTypeColor(row.id);
+  return style;
+}
+
+// Gestion du style sélection des colonnes
+// FIXME - @click ne donne plus un event comme avant mais la valeur de event.target.value directement
+// event est toujours accessible via window, mais est déprécié
+function onRowClickNative(item: any): void {
+  selectedItem.value = item;
+  const target: HTMLElement = event.target as HTMLElement;
+  if (target.nodeName.toLowerCase() !== "td" && target.nodeName.toLowerCase() !== "tr") return;
+  (caracTable.value as any).$el.querySelectorAll("tr").forEach((row: HTMLElement) => {
+    row.classList.remove("is-selected");
+  });
+  if (target.nodeName.toLowerCase() === "td") target.parentElement.classList.add("is-selected");
+  else target.classList.add("is-selected");
+} 
+
+// Ajout d'une nouvelle caractéristique
+function onNewCarac(caracteristicType: CharacteristicTypeModel): void {
+  // Enlever les précédents nouveaux items non poussés
+  characteristics.value = characteristics.value.filter((item: CharacteristicModel) => item.id !== 0);
+
+  // Créer la nouvelle entrée
+  const newItem = new CharacteristicModel({
+    characteristic_type_id: caracteristicType.id,
+    parent_id: null,
+    name: "Nouvelle entrée",
+    description: null,
+    visible: false,
+    enabled: false
+  });
+
+  // console.log(newItem);
+  // console.log(newItem instanceof CharacteristicModel);
+  // L'ajouter aux entrées existantes
+  characteristics.value.push(newItem);
+
+  // prepareFilteredCarac();
+  // // Reset les éventuels filtres
+  // if ((this.caracFilter?.length ?? 0) > 0) this.caracFilter = null;
+
+  // Expand la caractéristique type parent
+  const caracType = filteredCharacteristicType.value.filter((item: CharacteristicTypeModel) => {
+    return item.id === newItem.characteristic_type_id;
+  });
+  (caracTable.value as any).openDetailRow(caracType[0]);
+
+  // Après l'ajout dans le dom, afficher et cliquer sur le nouvel élément
+  nextTick(() => {
+    const newTableRow = (instance.refs[`child-row-${newItem.id.toString()}`] as any);
+    console.log(newTableRow)
+    newTableRow.scrollIntoView({ behavior: "smooth" });
+    newTableRow.click();
+    newTableRow.classList.add("animate__animated", "animate__flash");
+  });
+}
+
+// A l'ouverture du dropdown, reset les filtres éventuels
+function onDropdownToggled(active: boolean): void {
+  if (active && ((caracFilter.value?.length ?? 0) > 0)) caracFilter.value = null;
+}
+
+// Démarrer le déplacement d'une ligne enfant
+function dragstart(row: CharacteristicModel, index: number, e: DragEvent): void {
+  // Avant un drag, reset les filtres éventuels
+  if (((caracFilter.value?.length ?? 0) > 0)) {
+    caracFilter.value = null;
+    e.preventDefault();
+    return;
+  }
+
+  // Impossible de drag une carac non commitée (nouvel item)
+  if (row.id === 0) {
+    e.preventDefault();
+    return;
+  }
+
+  // Enlever les précédentes marques de sélection
+  (caracTable.value as any).$el.querySelectorAll("tr").forEach((row: HTMLElement) => {
+    row.classList.remove("is-selected");
+  });
+  selectedItem = null;
+
+  // Récupérer en mémoire l'élément qu'on déplace
+  draggedRow.value = { target: e.target, object: row, index: index, childs: getAllChildren(characteristics.value, row.id).map(item => item.id) };
+
+  // Mise en évidence de l'élément qu'on déplace
+  draggedRow.value.target.classList.add("is-selected");
+}
+
+// Comportement lors du déplacement d'une ligne
+function dragover(row: CharacteristicModel, index: number, e: DragEvent):void {
+  e.preventDefault();
+  if (e.target == null || e.dataTransfer == null) return;
+  if ((droppedOnRow.value?.index ?? -1) === index && (droppedOnRow.value?.dropAsChild ?? false) === e.shiftKey) return;
+
+  // On ne peut pas bouger une carac en dehors de son parent ni bouger un parent dans un enfant
+  if (row.characteristic_type_id !== draggedRow.value.object.characteristic_type_id ||
+    draggedRow.value.childs.includes(row.id)
+  ) {
+    droppedOnRow.value = null;
+    e.dataTransfer.dropEffect = "none";
+  } else {
+    droppedOnRow.value = { target: e.target, object: row, index: index, dropAsChild: e.shiftKey };
+    e.dataTransfer.dropEffect = "move";
+  }
+}
+
+// Après un glisser déposer d'un élément
+function drop(row: CharacteristicModel, index: number, e: DragEvent):void {
+  // Vérifications de base
+  if (droppedOnRow.value == null || // Impossible si pas de cible
+    row.id === 0 || // Impossible de drop une carac non commitée (nouvel item)
+    draggedRow.value.index === droppedOnRow.value.index // Pas de mouvement
+  ) {
+    e.preventDefault();
+
+    // Reset
+    draggedRow.value = null;
+    droppedOnRow.value = null;
+    return;
+  }
+
+  // Demander une confirmation après drop pour valider le changement d'ordre
+  let parentObject: CharacteristicModel | null = null;
+  let newPos = droppedOnRow.value.object.order;
+  if (droppedOnRow.value.dropAsChild) {
+    parentObject = droppedOnRow.value.object;
+    newPos = 0;
+  } else if (droppedOnRow.value.object.parent_id != null) {
+    parentObject = characteristics.value.filter(item => item.id === droppedOnRow.value.object.parent_id)[0];
+  }
+
+  let message = "Confirmer le déplacement de \"" + draggedRow.value.object.name + "\" (position " + (draggedRow.value.object.order + 1).toString() + ") vers la position " + (newPos + 1).toString();
+  if (parentObject != null) message += " (sous élement de \"" + parentObject.name + "\") ";
+  message += "?";
+  const confirmSnackbar = new Snackbar().open({
+    indefinite: true,
+    message: message,
+    cancelText: "Annuler",
+    actionText: "Confirmer",
+    type: "is-warning",
+    onAction: () => {
       // Récupérer le type de caractéristiques parent
-      const characteristicType = this.filteredCharacteristicType.find((parent: CharacteristicTypeModel) => {
-        return parent.characteristic_type_id === this.draggedRow.object.characteristic_type_id;
+      const characteristicType = filteredCharacteristicType.value.find((parent: CharacteristicTypeModel) => {
+        return parent.characteristic_type_id === draggedRow.value.object.characteristic_type_id;
       })!;
 
       // Récupére l'élément qu'on drag
-      const draggedItem = characteristicType.characteristics.splice(this.draggedRow.index, 1)[0];
+      const draggedItem = characteristicType.characteristics.splice(draggedRow.value.index, 1)[0];
 
       // Gestion du drop en tant que child
       draggedItem.parent_id = (parentObject != null ? parentObject.id : null);
 
       // Calculer sa nouvelle profondeur
-      draggedItem.depth = this.getDepth(draggedItem, characteristicType.characteristics);
+      draggedItem.depth = getDepth(draggedItem, characteristicType.characteristics);
 
       // Insérer l'élément déplacé à sa nouvelle position
-      characteristicType!.characteristics.splice((this.droppedOnRow.dropAsChild ? this.droppedOnRow.index + 1 : this.droppedOnRow.index), 0, draggedItem);
+      characteristicType!.characteristics.splice((droppedOnRow.value.dropAsChild ? droppedOnRow.value.index + 1 : droppedOnRow.value.index), 0, draggedItem);
 
       // Mettre à jour l'ordre dans le tableau
-      this.reOrder(characteristicType.characteristics, characteristicType.characteristics.filter(t => t.parent_id == null));
+      reOrder(characteristicType.characteristics, characteristicType.characteristics.filter(t => t.parent_id == null));
 
       // S'il faut  déplacer les enfants, on regénère la totalité du tree
-      if (this.draggedRow.childs.length > 0) this.prepareFilteredCarac();
+      // if (draggedRow.value.childs.length > 0) prepareFilteredCarac();
 
       // Réordonner dans la bdd
       reorderCharacteristics(characteristicType, characteristicType.characteristics.map(characteristic => characteristic.id));
       // Mettre-à-jour la caractéristique (peut-être que le parent a changé)
       updateCharacteristic(draggedItem);
-    };
-  }
-
-  // public test():void {
-  //   const t = this.characteristics.filter((item: CharacteristicModel) => {
-  //     return item.parent_id !== null;
-  //   });
-  //   console.log(t);
-  // }
-
-  // Trier récursivement les items
-  private sortItems(items: CharacteristicModel[]) : CharacteristicModel[] {
-    // Trier les items racines
-    const rootItems = items
-      .filter(item => item.parent_id === null)
-      .sort((a, b) => a.order - b.order);
-
-    const sortedList = [];
-    // Pour chaque root item ajouter ses enfants en dessous
-    for (const rootItem of rootItems) {
-      sortedList.push(rootItem);
-      this.addChildren(items, sortedList, rootItem.id);
     }
+  });
 
-    return sortedList;
+  // Récupérer l'événement de fermeture de base en mémoire
+  const baseClose = confirmSnackbar.close;
+
+  // Binder l'événement de close custom (avec annulation)
+  confirmSnackbar.close = () => {
+    // Reset
+    draggedRow.value = null;
+    droppedOnRow.value = null;
+    baseClose();
+  };
+}
+
+// Trier récursivement les items
+function sortItems(items: CharacteristicModel[]): CharacteristicModel[] {
+  // Trier les items racines
+  const rootItems = items
+    .filter(item => item.parent_id === null)
+    .sort((a, b) => a.order - b.order);
+
+  const sortedList = [];
+  // Pour chaque root item ajouter ses enfants en dessous
+  for (const rootItem of rootItems) {
+    sortedList.push(rootItem);
+    addChildren(items, sortedList, rootItem.id);
   }
 
-  // Obtenir les enfants d'un item donné, dans le bon ordre
-  private getChildren(items: CharacteristicModel[], parentId: number | null): CharacteristicModel[] {
-    if (parentId == null) return [];
-    return items
-      .filter(item => item.parent_id === parentId)
-      .sort((a, b) => a.order - b.order);
-  }
+  return sortedList;
+}
 
-  // Pour ajouter les enfants triés à la liste de façon récursive
-  private addChildren(items: CharacteristicModel[], sortedList: CharacteristicModel[], parentId: number): void {
-    const children = this.getChildren(items, parentId);
-    for (const child of children) {
-      sortedList.push(child);
-      this.addChildren(items, sortedList, child.id); // Ajouter les enfants de l'enfant trié
-    }
-  }
+// Obtenir les enfants d'un item donné, dans le bon ordre
+function getChildren(items: CharacteristicModel[], parentId: number | null): CharacteristicModel[] {
+  if (parentId == null) return [];
+  return items
+    .filter(item => item.parent_id === parentId)
+    .sort((a, b) => a.order - b.order);
+}
 
-  // Obtenir les enfants et sous enfants d'un item donné de façon récursive
-  private getAllChildren(items: CharacteristicModel[], parentId: number | null): CharacteristicModel[] {
-    let result: CharacteristicModel[] = [];
-    if (parentId == null) return result;
-
-    const children = items.filter(item => item.parent_id === parentId);
-    result = children;
-    for (const child of children) {
-      result.push(...this.getAllChildren(this.characteristics, child.id));
-    }
-    return result;
+// Pour ajouter les enfants triés à la liste de façon récursive
+function addChildren(items: CharacteristicModel[], sortedList: CharacteristicModel[], parentId: number): void {
+  const children = getChildren(items, parentId);
+  for (const child of children) {
+    sortedList.push(child);
+    addChildren(items, sortedList, child.id); // Ajouter les enfants de l'enfant trié
   }
+}
 
-  //  Ré-ordonner un arbre de façon récursive
-  private reOrder(refArray: CharacteristicModel[], items: CharacteristicModel[]): void {
-    if (items == null || items.length === 0) return;
-    items.forEach((child: CharacteristicModel, index: number) => {
-      child.order = index;
-      this.reOrder(refArray, refArray.filter(t => t.parent_id === child.id));
-    });
-  }
+// Obtenir les enfants et sous enfants d'un item donné de façon récursive
+function getAllChildren(items: CharacteristicModel[], parentId: number | null): CharacteristicModel[] {
+  let result: CharacteristicModel[] = [];
+  if (parentId == null) return result;
 
-  // Récupérer la profondeur d'un élément
-  private getDepth(item: CharacteristicModel, items: CharacteristicModel[]): number {
-    let depth: number = 0;
-    let currentItem: CharacteristicModel | null | undefined = item;
-    while (currentItem != null && currentItem.parent_id !== null) {
-      depth++;
-      currentItem = items.find(item => item.id === currentItem?.parent_id);
-    }
-    return depth;
+  const children = items.filter(item => item.parent_id === parentId);
+  result = children;
+  for (const child of children) {
+    result.push(...getAllChildren(characteristics.value, child.id));
   }
-  // #endregion
+  return result;
+}
+
+//  Ré-ordonner un arbre de façon récursive
+function reOrder(refArray: CharacteristicModel[], items: CharacteristicModel[]): void {
+  if (items == null || items.length === 0) return;
+  items.forEach((child: CharacteristicModel, index: number) => {
+    child.order = index;
+    reOrder(refArray, refArray.filter(t => t.parent_id === child.id));
+  });
+}
+
+// Récupérer la profondeur d'un élément
+function getDepth(item: CharacteristicModel, items: CharacteristicModel[]): number {
+  let depth: number = 0;
+  let currentItem: CharacteristicModel | null | undefined = item;
+  while (currentItem != null && currentItem.parent_id !== null) {
+    depth++;
+    currentItem = items.find(item => item.id === currentItem?.parent_id);
+  }
+  return depth;
 }
 </script>
 
 <style lang="scss">
-@import "~/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 // .b-table .table-wrapper {
 //   height: 600px;
