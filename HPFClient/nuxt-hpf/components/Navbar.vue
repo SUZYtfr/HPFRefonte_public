@@ -233,9 +233,11 @@
 <script setup lang="ts">
 const ModalsStatesModule = ModalsStates();
 
-// async function logout(): Promise<void> {
-//   await this.$auth.logout();
-// }
+async function logout(): Promise<void> {
+  // Remettre le thème par défaut
+  await $auth.logout();
+  changeTheme(Config().currentTheme?.details[0] ?? null);
+}
 </script>
 
 <style lang="css" scoped>

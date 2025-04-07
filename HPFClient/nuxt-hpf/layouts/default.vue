@@ -24,7 +24,15 @@
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
+import { CommonState } from "~/stores/CommonState";
+import { ColorSchemeEnum } from "~/types/themes";
 // import SidebarDebug from "@/components/SidebarDebug.vue";
+
+onMounted(() => {
+  if (CommonState().wasRefreshed) {
+    changeTheme(Config().currentTheme?.details?.find((t) => { return t.colorScheme === (($auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
+  }
+})
 </script>
 
 <style lang="scss" scoped>

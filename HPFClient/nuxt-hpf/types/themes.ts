@@ -11,16 +11,17 @@ export class ThemeData extends BasicClass<ThemeData> {
   public default: boolean = true;
   public enabled: boolean = true;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return value != null ? new Date(value) : null; }, { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public use_default_from: Date | null = null;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => { return value != null ? new Date(value) : null; }, { toClassOnly: true })
   @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
   public use_default_to: Date | null = null;
 
+  // Plusieurs entrées "jsonisées" dans detail (Light, Dark, Contrast)
   @Type(() => ThemeDetail)
-  public detail: ThemeDetail | null = null;
+  public details: ThemeDetail[] = [];
 
   constructor(init?: Partial<ThemeData>) {
     super();
@@ -28,12 +29,32 @@ export class ThemeData extends BasicClass<ThemeData> {
   }
 }
 
+// Type de détail (Schéma de couleur)
+export enum ColorSchemeEnum {
+  Light = 1,
+  Dark = 2,
+  Contrast = 3,
+}
+// Metadata de l'enum
+export const ColorSchemeEnumMetadata = new Map<ColorSchemeEnum, { description: string; icon: string }>([
+  [ColorSchemeEnum.Light, { description: "Clair", icon: "sun" }],
+  [ColorSchemeEnum.Dark, { description: "Sombre", icon: "moon" }],
+  [ColorSchemeEnum.Contrast, { description: "Contraste élevé", icon: "adjust" }]
+]);
+
 export class ThemeDetail {
   primary: string = "#42162b";
   primary_light: string = "#8f5a74";
   hpf_primary_lighter: string = "#f1f2f7";
+  // TODO changer banner_url en bannièreId (stockée dans la table bannière)
+  // Il faut préparer un ecran flottant permettant de choisir une bannière depuis la route des banner (cet outil doit permettre de choisir des images d'une manière générale, d'en ajouter et d'en supprimer)
+  // Une image = a minima :
+  //    - src (chemin relatif sur le serveur)
+  //    - category (theme, banniere utilisateur, autre, (voir l'enum côté serveur))
+  // Cet outil doit aussi permettre d'ajouter une nouvelle banner, dans ce cas là j'envoi au serveur une image comme pour l'avatar lors de l'inscription (byte[] + category = theme)
+  // Je récupère un id de banner que j'utilise dans bannerId du detail.bannerId
   banner_url: string = "https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg";
-  nightTheme: boolean = false;
+  colorScheme: ColorSchemeEnum = ColorSchemeEnum.Light;
 
   constructor(init?: Partial<ThemeDetail>) {
     Object.assign(this, init);

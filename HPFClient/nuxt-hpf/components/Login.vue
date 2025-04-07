@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { UserLoginData } from "@/types/users";
+import { ColorSchemeEnum } from "~/types/themes";
 
 const ModalStatesModule = ModalsStates();
 
@@ -76,7 +77,9 @@ watch(status, () => {
 
 // Vérifier le formulaire avant l'envoi
 function checkAndSubmitForm(): void {
-  if (formIsValid) submitForm();
+  // if (formIsValid) submitForm();
+  $auth.loginWith();
+  changeTheme(Config().currentTheme?.details?.find((t) => { return t.colorScheme === (($auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
 }
 </script>
 
