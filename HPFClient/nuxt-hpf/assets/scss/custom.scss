@@ -206,3 +206,8 @@ $characteristic-excluded: #e63946;
   max-width: 80%;
   max-height: 80%;
 }
+
+// Fix la taille du container pour tenir compte de la hauteur de la navbar
+.fix-container-height {
+  min-height: calc(100vh - var(--navbar-height)) !important;
+}

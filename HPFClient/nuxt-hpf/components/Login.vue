@@ -1,5 +1,5 @@
 <template>
-  <b-modal v-model="modalsStateStore.loginModalActive" width="300px" scroll="keep">
+  <b-modal v-model="modalsStateStore.loginModalActive" width="300px" scroll="keep" @after-enter="modalEntered">
     <form>
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
@@ -8,7 +8,7 @@
         </header>
         <section class="modal-card-body">
           <b-field label="Identifiant">
-            <b-input v-model="loginForm.username" type="text" placeholder="Votre pseudo" required />
+            <b-input ref="txtUsername" v-model="loginForm.username" type="text" placeholder="Votre pseudo" required />
           </b-field>
           <b-field label="Mot de passe">
             <b-input
@@ -42,6 +42,7 @@
 import type { UserLoginData } from "~/types/users";
 import { useChangeTheme } from "~/composables/useTheme";
 import { ColorSchemeEnum } from "~/types/themes";
+import { snackbar } from "~/composables/useBuefy";
 //#endregion
 
 //#region Usings
@@ -56,6 +57,10 @@ const configStore = useConfigStore();
 //#region Ref
 const isLoading = ref(false);
 const loginForm: Ref<UserLoginData> = ref({ username: "", password: "" });
+//#endregion
+
+//#region Reférences de la template
+const userNameInput = useTemplateRef<HTMLElement>("txtUsername");
 //#endregion
 
 //#region Computed
@@ -79,10 +84,25 @@ const login = async (): Promise<void> => {
   } catch (error) {
     if (import.meta.server) {
       console.log(error);
+    } else {
+      snackbar.open({
+        duration: 5000,
+        message: "Une erreur s'est produite lors de la tentative de connexion",
+        type: "is-danger",
+        position: "is-bottom-right",
+        actionText: undefined,
+        pauseOnHover: true,
+        queue: true,
+      });
     }
   } finally {
     isLoading.value = false;
   }
+};
+
+// Focus le champ identifiant à l'ouverture de la modale
+const modalEntered = (): void => {
+  userNameInput.value?.focus();
 };
 //#endregion
 </script>

@@ -1,22 +1,10 @@
 <template>
   <div id="container">
-    <!-- Debug sidebar -->
-    <DevOnly>
-      <DebugSidebarDebug v-if="false" />
-    </DevOnly>
     <!-- Header -->
     <Navbar />
-    <!-- Bannière -->
-    <div id="banner" class="hero">
-      <div class="hero-body">
-        <div class="container">
-          <h1>Harry Potter Fanfiction</h1>
-        </div>
-      </div>
-    </div>
     <div id="wrapper">
       <!-- Main Content -->
-      <slot></slot>
+      <NuxtPage />
     </div>
     <!-- Footer -->
     <Footer />
@@ -25,7 +13,8 @@
 
 <script setup lang="ts">
 //#region Imports
-import Navbar from "~/components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
+import Footer from "@/components/Footer.vue";
 //#endregion
 
 //#region Hooks
@@ -43,7 +32,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-@use "~/assets/scss/custom_bulma_core.scss";
+//@use "~/assets/scss/custom_bulma_core.scss";
 
 #container {
   background-color: var(--primary-light);
@@ -53,8 +42,8 @@ onBeforeUnmount(() => {
 }
 #wrapper {
   flex-grow: 5;
-  // display: flex;
-  // flex-direction: column
+  display: flex;
+  flex-direction: column;
 }
 
 body,
@@ -70,18 +59,6 @@ body {
 }
 
 * {
-  // outline: 1px solid #0f0 !important;
-}
-
-.hero-body {
-  background-image: var(--hpf-banner);
-}
-#banner h1 {
-  font-size: 50px;
-  background-color: rgba(255, 255, 255, 0.6);
-  font-family: "Amiri", serif;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 0px 20px;
+  //outline: 1px solid #0f0 !important;
 }
 </style>

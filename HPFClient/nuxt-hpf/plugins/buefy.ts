@@ -1,9 +1,9 @@
-import Buefy, { DialogProgrammatic, ToastProgrammatic } from "buefy";
+import Buefy from "buefy";
 //import "buefy/dist/buefy.css";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default defineNuxtPlugin((nuxtApp: any) => {
-  const appWithBuefy = nuxtApp.vueApp.use(Buefy, {
+  nuxtApp.vueApp.use(Buefy, {
     //css: false,
     //materialDesignIcons: false,
     defaultIconPack: "fas",
@@ -11,9 +11,14 @@ export default defineNuxtPlugin((nuxtApp: any) => {
     defaultDialogCancelText: "Annuler",
   });
 
-  const dialog = new DialogProgrammatic(appWithBuefy);
-  nuxtApp.provide("dialog", dialog);
+  // Pas pratique finalement, les $dialog,$toast et $snackbar ne sont pas typés de cette façon
+  // Utiliser le composable useBuefy
+  // const dialog = new DialogProgrammatic(appWithBuefy);
+  // nuxtApp.provide("dialog", dialog);
 
-  const toast = new ToastProgrammatic(appWithBuefy);
-  nuxtApp.provide("toast", toast);
+  // const toast = new ToastProgrammatic(appWithBuefy);
+  // nuxtApp.provide("toast", toast);
+
+  // const snackbar = new SnackbarProgrammatic(appWithBuefy);
+  // nuxtApp.provide("snackbar", snackbar);
 });
