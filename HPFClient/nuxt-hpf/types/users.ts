@@ -62,6 +62,11 @@ export class UserData extends BasicClass<UserData> {
     { toPlainOnly: true },
   )
   public lastLogin: Date | null = null;
+
+  constructor(init?: Partial<UserData>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 // Filtres utilisateurs
@@ -182,6 +187,7 @@ export class AuthorData extends BasicClass<AuthorData> {
 
   public username: string | null = null;
   public avatar: string | null = null;
+  public watched: boolean = false;
 
   constructor(init?: Partial<AuthorData>) {
     super();

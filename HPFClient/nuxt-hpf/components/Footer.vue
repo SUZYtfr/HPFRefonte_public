@@ -10,7 +10,7 @@
           <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
             <a href="#">Administration</a>
             <a href="#">Modération</a>
-            <a href="#">Mentions légale</a>
+            <a href="#">Mentions légales</a>
           </div>
         </div>
         <div class="is-flex is-justify-content-center has-text-centered pb-1">

@@ -2,12 +2,23 @@ import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/char
 import type { ThemeModel } from "~/models/themes";
 import { searchCharacteristics, searchCharacteristicsTypes } from "@/api/characteristics.ts";
 import { getPublicThemes } from "@/api/themes.ts";
+import { InvalidationReasonData } from "~/types/config";
 
 export const useConfigStore = defineStore("config", () => {
   //#region State
   const characteristics = ref<CharacteristicModel[]>();
   const characteristicTypes = ref<CharacteristicTypeModel[]>();
   const themes = ref<ThemeModel[]>();
+  // TODO appel à l'api, pour l'instant en dur.
+  const invalidationReasons = ref<InvalidationReasonData[]>([
+    new InvalidationReasonData({ id: 1, reason: "Taille trop courte" }),
+    new InvalidationReasonData({ id: 2, reason: "Orthographe" }),
+    new InvalidationReasonData({ id: 3, reason: "Grammaire" }),
+    new InvalidationReasonData({ id: 4, reason: "Conjugaison" }),
+    new InvalidationReasonData({ id: 5, reason: "Non-respect du réglement" }),
+    new InvalidationReasonData({ id: 6, reason: "Mise en forme" }),
+    new InvalidationReasonData({ id: 7, reason: "Autre" }),
+  ]);
   //#endregion
 
   //#region Getter
@@ -89,6 +100,7 @@ export const useConfigStore = defineStore("config", () => {
     characteristicTypes,
     themes,
     currentTheme,
+    invalidationReasons,
     // setCharacteristics,
     // setCharacteristicTypes,
     fetchCharacteristicTypes,

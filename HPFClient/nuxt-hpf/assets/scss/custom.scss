@@ -211,3 +211,9 @@ $characteristic-excluded: #e63946;
 .fix-container-height {
   min-height: calc(100vh - var(--navbar-height)) !important;
 }
+
+// Mise en valeur d'une sélection
+.item-selected {
+  border: 1px solid var(--primary) !important;
+  cursor: pointer;
+}

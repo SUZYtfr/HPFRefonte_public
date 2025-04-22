@@ -1,18 +1,10 @@
 <template>
   <section>
-    <b-sidebar
-      v-model="open"
-      type="is-light"
-      :fullheight="true"
-      :overlay="true"
-      :right="true"
-    >
+    <b-sidebar v-model="open" type="is-light" :fullheight="true" :overlay="true" :right="true">
       <div class="p-1">
         <b-menu>
           <b-menu-list>
-            <b-switch v-model="connectedValue" @input="connectedChanged()">
-              Connecté
-            </b-switch>
+            <b-switch v-model="connectedValue" @input="connectedChanged()"> Connecté </b-switch>
           </b-menu-list>
         </b-menu>
       </div>

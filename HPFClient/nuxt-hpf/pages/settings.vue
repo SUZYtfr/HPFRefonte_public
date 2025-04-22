@@ -63,10 +63,10 @@ const timerThrottleFilter = ref<number>(0);
 // Menus
 const menuItems = ref<MenuItem[]>([
   {
-    label: "Modération des fictions",
+    label: "Validation des chapitres",
     icon: "book",
     tag: "nuxt-link",
-    to: "/settings/fictions",
+    to: "/settings/chapters-batch",
     keywords: "moderation fictions",
     isActive: false,
   },
