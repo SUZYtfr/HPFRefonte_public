@@ -222,3 +222,13 @@ class ThemeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Theme
         fields = "__all__"
+
+
+class PrivateUserCardSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "is_watched",
+        ]

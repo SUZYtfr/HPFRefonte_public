@@ -57,7 +57,7 @@ class CharacteristicQuerySet(models.QuerySet):
         fiction_count = models.Count(
             "fiction",
             distinct=True,
-            filter=models.Q(fiction__chapters__validation_status=ChapterValidationStage.PUBLISHED)
+            filter=models.Q(fiction__chapters__published_version__isnull=False)
         )
         return self.annotate(_fiction_count=fiction_count)
 

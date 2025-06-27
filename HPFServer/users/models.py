@@ -6,7 +6,7 @@ from django.db import models, transaction
 from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import DatedModel, get_user_deleted_sentinel
-from fictions.models import ChapterTextVersion
+from fictions.models import ChapterVersion
 from images.models import ProfilePicture, Banner, ContentImage
 from images.enums import BannerType, ExplicitContent
 from .enums import (
@@ -135,6 +135,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         editable=True,
     )
+    is_watched = models.BooleanField(
+        default=False,
+    )
 
     # Il faut définir "à la main" quel champ est utilisé comme identifiant
     # La définition du champ "email" n'est pas nécessaire, mais on n'est jamais trop prudent
@@ -165,7 +168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def word_count(self) -> int:
-        last_version = ChapterTextVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
+        last_version = ChapterVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
         word_count = models.Subquery(last_version.values('word_count')[:1])
         return (
             self.created_chapters

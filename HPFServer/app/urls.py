@@ -7,7 +7,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 urlpatterns = [
     path(r"api/", include([
         path(r"users/", include("users.public_urls", namespace="users")),
-        path(r"fictions/", include("fictions.urls", namespace="fictions")),
+        path(r"fictions/", include("fictions.public_urls", namespace="fictions")),
         path(r"characteristics/", include("characteristics.public_urls", namespace="characteristics")),
         path(r"reviews/", include("reviews.urls", namespace="reviews")),
         path(r"news/", include("news.public_urls", namespace="news")),
@@ -16,6 +16,7 @@ urlpatterns = [
         path(r"account/", include("account.urls", namespace="account")),
         path(r"private/", include([
             path(r"users/", include("users.private_urls", namespace="private-users")),
+            path(r"fictions/", include("fictions.private_urls", namespace="private-fictions")),
             path(r"news/", include("news.private_urls", namespace="private-news")),
             path(r"characteristics/", include("characteristics.private_urls", namespace="private-characteristics")),
             path(r"images/", include("images.private_urls", namespace="private-images")),

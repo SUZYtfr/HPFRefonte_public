@@ -153,8 +153,8 @@ class TestSampleFunctions(TestCase):
         test_data = {
             "creation_user_id": self.random_user_id,
             "title": "test title",
-            "startnote": "test startnote",
-            "endnote": "test endnote",
+            "start_note": "test start_note",
+            "end_note": "test end_note",
             "validation_status": ChapterValidationStage.DRAFT,
             "read_count": 1250,
         }

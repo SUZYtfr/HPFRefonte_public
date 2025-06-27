@@ -20,6 +20,7 @@ class ChapterValidationStage(IntegerChoices):
     EDIT_REQUIRED = (5, "En attente de modification")
     EDITED = (6, "Modifié")
     PUBLISHED = (7, "Publié")
+    DISCUTED = (8, "À discuter")
 
 
 class CollectionAccess(IntegerChoices):

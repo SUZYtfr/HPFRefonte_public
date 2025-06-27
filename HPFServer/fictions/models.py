@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from ordered_model import models as ordered_models
-
+from django.db.models import Manager
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -11,11 +11,12 @@ from core.models import (
     TextDependentModel,
     BaseTextVersionModel,
 )
-from .enums import (
+from fictions.enums import (
     FictionStatus,
     ChapterValidationStage,
     CollectionAccess,
 )
+from images.models import ContentImage
 
 
 class FictionQuerySet(models.QuerySet):
@@ -45,9 +46,8 @@ class FictionQuerySet(models.QuerySet):
     def with_word_counts(self):
         """Ajoute le total des comptes de mots des chapitres publiés"""
 
-        grouped_published_chapters = Chapter.objects.with_word_counts().filter(
+        grouped_published_chapters = Chapter.objects.published().with_word_counts().filter(
             fiction_id=models.OuterRef("id"),
-            validation_status=ChapterValidationStage.PUBLISHED,
         ).values("fiction_id")
 
         summed_up_word_counts = grouped_published_chapters.annotate(
@@ -104,6 +104,9 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         verbose_name="état d'écriture",
         choices=FictionStatus.choices,
         default=FictionStatus.PROGRESS,
+    )
+    is_watched = models.BooleanField(
+        default=False,
     )
     featured = models.BooleanField(
         verbose_name="mise en avant",
@@ -231,11 +234,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 
 class ChapterQuerySet(models.QuerySet):
-    def with_word_counts(self):
+    def with_word_counts(self) -> "ChapterQuerySet":
         """Ajoute le total des comptes de mots"""
 
         last_version_word_count = (
-            ChapterTextVersion.objects
+            ChapterVersion.objects
             .filter(chapter_id=models.OuterRef("id"))
             .order_by("-id")
             .values("word_count")
@@ -247,12 +250,12 @@ class ChapterQuerySet(models.QuerySet):
 
         return chapters_with_word_counts
 
-    def with_averages(self):
+    def with_averages(self) -> "ChapterQuerySet":
         average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
-    def published(self):
-        return self.filter(validation_status=ChapterValidationStage.PUBLISHED)
+    def published(self) -> "ChapterQuerySet":
+        return self.filter(published_version__isnull=False)
 
 
 class Chapter(DatedModel, CreatedModel, TextDependentModel):
@@ -261,49 +264,33 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     class Meta:
         verbose_name = "chapitre"
         order_with_respect_to = "fiction"
-        permissions = [
-            ("automatic_validation", "A la validation automatique des chapitres"),
-            ("staff_validation", "A la validation de modérateur des chapitres"),
-        ]
-
-    class InvalidChapterAction(Exception):
-        message = "Cette action est invalide."
 
     objects = ChapterQuerySet.as_manager()
 
-    title = models.CharField(
-        verbose_name="titre",
-        max_length=250,
-        blank=False,
-    )
     fiction = models.ForeignKey(
         to=Fiction,
         verbose_name="fiction",
         related_name="chapters",
         on_delete=models.CASCADE,
     )
-    startnote = models.TextField(
-        verbose_name="note de début",
-        null=False,
+    published_version = models.ForeignKey(
+        verbose_name="version publiée",
+        to="fictions.ChapterVersion",
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        default="",
-    )
-    endnote = models.TextField(
-        verbose_name="note de fin",
-        null=False,
-        blank=True,
-        default="",
+        related_name="+",
     )
     read_count = models.PositiveIntegerField(
         verbose_name="compte de lectures",
         default=0,
         editable=True,
     )
-    validation_status = models.SmallIntegerField(
-        verbose_name="étape de validation",
-        choices=ChapterValidationStage.choices,
-        default=ChapterValidationStage.DRAFT,
-    )
+    # validation_status = models.SmallIntegerField(
+    #     verbose_name="étape de validation",
+    #     choices=ChapterValidationStage.choices,
+    #     default=ChapterValidationStage.DRAFT,
+    # )
     # TODO faire des trigger warnings une table à part
     trigger_warnings = models.ManyToManyField(
         verbose_name="avertissements",
@@ -312,16 +299,50 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         blank=True,
     )
 
-    text_images = models.ManyToManyField(
-        to="images.ContentImage",
-        related_name="chapter_text_images",
-    )
-
     def __str__(self):
         return self.title
 
     def order(self) -> int:
         return self._order + 1
+
+    @property
+    def is_published(self) -> bool:
+        return bool(self.published_version)
+    is_published.fget.short_description = "est publié"
+    
+    @property
+    def title(self) -> bool | None:
+        return self.published_version.title if self.published_version else None
+    title.fget.short_description = "titre"
+
+    @property
+    def text(self) -> str | None:
+        return self.published_version.text if self.published_version else None
+    text.fget.short_description = "texte"
+
+    @property
+    def start_note(self) -> str | None:
+        return self.published_version.start_note if self.published_version else None
+    start_note.fget.short_description = "note de début"
+    
+    @property
+    def end_note(self) -> str | None:
+        return self.published_version.end_note if self.published_version else None
+    end_note.fget.short_description = "note de fin"
+    
+    @property
+    def text_images(self) -> Manager[ContentImage] | None:
+        return self.published_version.text_images if self.published_version else None
+    text_images.fget.short_description = "images incluses"
+
+    @property
+    def last_version(self) -> "ChapterVersion":
+        return self.versions.last()  # TODO latest
+
+    # TODO - sera remplacé par un M2M pour le co-autorat
+    @property
+    def authors(self) -> list:
+        return [self.creation_user]
 
     @property
     def published_reviews(self):
@@ -350,77 +371,12 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     review_count.fget.short_description = "compte de reviews"
 
 
-    def change_status(self, status, modification_user=None, modification_time=None):
-        """Change le status de validation du chapitre"""
-
-        self.validation_status = status
-
-        if modification_user:
-            self.modification_user = modification_user
-            self.modification_date = modification_time or timezone.now()
-
-        self.save()
-
-    def submit(self, user=None):
-        if self.validation_status == ChapterValidationStage.DRAFT:
-            if self.fiction.creation_user.has_perm("fictions.automatic_validation"):
-                self.change_status(
-                    ChapterValidationStage.PUBLISHED,
-                    modification_user=user,
-                    modification_time=timezone.now(),
-                )
-
-            else:
-                self.change_status(
-                    ChapterValidationStage.PENDING,
-                    modification_user=user,
-                    modification_time=timezone.now(),
-                )
-
-        elif self.validation_status == ChapterValidationStage.EDIT_REQUIRED:
-            self.change_status(
-                ChapterValidationStage.EDITED,
-                modification_user=user,
-                modification_time=timezone.now(),
-            )
-
-        else:
-            raise Chapter.InvalidChapterAction
-
-    def validate(self, user=None):
-        if self.validation_status not in [
-            ChapterValidationStage.PENDING,
-            ChapterValidationStage.EDITED,
-        ]:
-            raise Chapter.InvalidChapterAction
-
-        self.change_status(
-            ChapterValidationStage.PUBLISHED,
-            modification_user=user,
-            modification_time=timezone.now(),
-        )
-
-    def invalidate(self, user=None):
-        if self.validation_status not in [
-            ChapterValidationStage.PENDING,
-            ChapterValidationStage.EDITED,
-            ChapterValidationStage.PUBLISHED,
-        ]:
-            raise Chapter.InvalidChapterAction
-
-        self.change_status(
-            ChapterValidationStage.EDIT_REQUIRED,
-            modification_user=user,
-            modification_time=timezone.now(),
-        )
-
-
-class ChapterTextVersion(BaseTextVersionModel):
-    """Modèle de version de texte de chapitre"""
+class ChapterVersion(models.Model):
+    """Modèle de contenu de chapitre"""
     
     class Meta:
-        verbose_name = "version de texte de chapitre"
-        verbose_name_plural = "versions de textes de chapitres"
+        verbose_name = "version de contenu de chapitre"
+        verbose_name_plural = "versions de contenu de chapitre"
 
     chapter = models.ForeignKey(
         verbose_name="chapitre",
@@ -429,10 +385,117 @@ class ChapterTextVersion(BaseTextVersionModel):
         to="fictions.Chapter",
         on_delete=models.CASCADE,
     )
-    word_count = models.IntegerField(
+    title = models.CharField(
+        verbose_name="titre",
+        max_length=250,
+        blank=False,
+    )
+    start_note = models.TextField(
+        verbose_name="note de début",
+        null=False,
+        blank=False,
+        default="",
+    )
+    end_note = models.TextField(
+        verbose_name="note de fin",
+        null=False,
+        blank=False,
+        default="",
+    )
+    word_count = models.PositiveIntegerField(
         editable=True,
         verbose_name="compte de mots",
     )
+    text = models.TextField(
+        verbose_name="texte",
+        editable=True,
+    )
+    creation_date = models.DateTimeField(
+        verbose_name="création",
+        auto_now_add=True,
+        editable=True,
+    )
+    creation_user = models.ForeignKey(
+        verbose_name="créateur",
+        editable=True,
+        related_name="+",
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+    )
+    is_draft = models.BooleanField(
+        verbose_name="brouillon",
+        default=True,
+    )
+
+    text_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="chapter_text_images",
+    )
+
+    # Invalidation
+    public_comment = models.CharField(
+        null=True,
+        max_length=512,
+    )
+    private_comment = models.CharField(
+        null=True,
+        max_length=512,
+    )
+    invalidation_date = models.DateTimeField(
+        null=True,
+        auto_now_add=False,
+    )
+    invalidation_user = models.ForeignKey(
+        null=True,
+        to="users.User",
+        on_delete=models.PROTECT,
+        related_name="+",
+    )
+    invalidation_reasons = models.ManyToManyField(
+        verbose_name="raisons",
+        to="fictions.InvalidationReason",
+        related_name="+",
+    )
+    to_be_discussed = models.BooleanField(
+        verbose_name="discussion en cours",
+        default=False,
+    )
+
+    @property
+    def is_published(self) -> bool:
+        return self == self.chapter.published_version
+
+    @property
+    def is_invalidated(self) -> bool:
+        return bool(self.invalidation_date)
+
+    @property
+    def validation_status(self) -> ChapterValidationStage:
+        # et draft dans tout ça?
+        if self.is_draft:
+            return ChapterValidationStage.DRAFT
+        elif self.is_published:
+            return ChapterValidationStage.PUBLISHED
+        elif self.to_be_discussed:
+            return ChapterValidationStage.DISCUTED
+        elif self.is_invalidated:
+            return ChapterValidationStage.EDIT_REQUIRED
+        else:
+            return ChapterValidationStage.PENDING
+
+
+class InvalidationReason(models.Model):
+    class Meta:
+        verbose_name = "Raison d'invalidation"
+        verbose_name_plural = "Raisons d'invalidation"
+
+    reason = models.CharField(
+        verbose_name="raison",
+        max_length=255,
+    )
+
+    def __str__(self):
+        return self.reason
 
 
 class Collection(DatedModel, CreatedModel, CharacteristicModel):
