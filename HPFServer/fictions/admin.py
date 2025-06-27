@@ -1,15 +1,19 @@
 from django import forms
 from django.contrib import admin
 from django.utils import timezone
+from django.http import HttpRequest
 from ordered_model import admin as ordered_admin
 
 from core.admin import BaseAdminPage
-from .models import (
+from core.text_functions import count_words
+from fictions.models import (
     Collection,
     CollectionItem,
     Fiction,
     Chapter,
-    ChapterTextVersion,
+    ChapterVersion,
+    InvalidationReason,
+    ChapterValidationStage,
 )
 
 
@@ -114,14 +118,24 @@ class FictionAdminPage(BaseAdminPage):
 
 
 class ChapterForm(forms.ModelForm):
+    class Meta:
+        model = Chapter
+        fields = [
+            "title",
+            "start_note",
+            "end_note",
+            "text",
+            "make_published",
+        ]
+
+    title = forms.fields.CharField(label="titre")
+    start_note = forms.fields.CharField(label="start_note", required=False)
+    end_note = forms.fields.CharField(label="end_note", required=False)
     text = forms.fields.CharField(
         widget=forms.Textarea({"cols": "100", "rows": "20"}),
         label="Dernière version"
     )
-
-    class Meta:
-        model = Chapter
-        fields = ["text"]
+    make_published = forms.fields.BooleanField(label="publier cette version", required=False)
 
 
 @admin.register(Chapter)
@@ -130,22 +144,25 @@ class ChapterAdminPage(BaseAdminPage):
 
     ordering = ["-id"]
     list_per_page = 20
-    list_display = ["id", "title", "creation_user", "creation_date", "validation_status"]
+    list_display = ["id", "title", "creation_user", "creation_date", "is_published"]
     list_display_links = ["title"]
-    list_filter = ["validation_status", "creation_date"]
+    list_filter = ["creation_date"]
     search_fields = ["title"]
     fieldsets = [
         (None, {
-            "fields": ("fiction", "title", "startnote", "endnote", "validation_status", "read_count", "text", "trigger_warnings"),
+            "fields": ("fiction", "title", "start_note", "end_note", "is_published", "read_count", "text", "trigger_warnings", "make_published"),
         }),
         ("Statistiques", {
             "fields": ("average", "word_count"),
             "classes": ["collapse"],
         })
     ]
-    readonly_fields = ["word_count", "average"]
+    readonly_fields = ["word_count", "average", "is_published"]
     autocomplete_fields = ["fiction"]
     form = ChapterForm
+
+    # def display_is_published(self, request: HttpRequest, chapter: Chapter) -> bool:
+    #     return chapter.is_published
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
@@ -157,25 +174,61 @@ class ChapterAdminPage(BaseAdminPage):
     def get_form(self, request, obj, change, **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
         if change:
+            form.base_fields["title"].initial = obj.title
             form.base_fields["text"].initial = obj.text
+            form.base_fields["start_note"].initial = obj.start_note
+            form.base_fields["end_note"].initial = obj.end_note
         return form
 
     def save_model(self, request, obj, form, change):
+        title = form.cleaned_data.get("title")
         text = form.cleaned_data.get("text")
-        obj.text = text
+        start_note = form.cleaned_data.get("start_note")
+        end_note = form.cleaned_data.get("end_note")
+        make_published = form.cleaned_data.get("make_published")
+        
+        if any([
+            title != obj.title,
+            text != obj.text,
+            start_note != obj.start_note,
+            end_note != obj.end_note,
+        ]):    
+            version = ChapterVersion.objects.create(
+                chapter=obj,
+                title=title,
+                text=text,
+                start_note=start_note,
+                end_note=end_note,
+                invalidation=obj.invalidation,
+                word_count=count_words(form.cleaned_data.get("text")),
+                creation_user=request.user,
+            )
+            if make_published:
+                obj.published_version = version
         super().save_model(request, obj, form, change)
 
 
-@admin.register(ChapterTextVersion)
-class ChapterTextVersionAdminPage(admin.ModelAdmin):
+@admin.register(ChapterVersion)
+class ChapterVersionAdminPage(admin.ModelAdmin):
     ordering = ["-id"]
     list_per_page = 20
-    list_display = ["id", "chapter", "creation_user", "creation_date", "word_count"]
+    list_display = ["id", "chapter", "creation_user", "creation_date", "word_count", "display_status"]
     list_display_links = ["chapter"]
     search_fields = ["chapter"]
+    readonly_fields = [
+        "creation_date",
+        "creation_user",
+        "chapter",
+        "word_count",
+        "text",
+        "display_status",
+    ]
     fieldsets = [
         (None, {
-            "fields": ["chapter", "text", "word_count"],
+            "fields": ["chapter", "text", "word_count", "is_draft"],
+        }),
+        ("Invalidation", {
+            "fields": ["public_comment", "private_comment", "invalidation_date", "invalidation_user", "display_invalidation_reasons", "to_be_discussed"],
         }),
         ("Métadonnées", {
             "fields": [
@@ -185,8 +238,21 @@ class ChapterTextVersionAdminPage(admin.ModelAdmin):
         })
     ]
 
+    @admin.display(description="raisons d'invalidation")
+    def display_invalidation_reasons(self, chapter_version: ChapterVersion) -> str:
+        return ", ".join(chapter_version.invalidation_reasons.values_list("reason", flat=True))
+
+    @admin.display(description="status")
+    def display_status(self, chapter_version: ChapterVersion) -> str:
+        return chapter_version.validation_status.label
+
     def has_change_permission(self, request, obj=None):
         return False
 
     def has_add_permission(self, request):
         return False
+
+
+@admin.register(InvalidationReason)
+class InvalidationReasonAdmin(admin.ModelAdmin):
+    pass

@@ -1,9 +1,10 @@
 from django.db import models
 from django_filters import rest_framework as filters
+from django.contrib.postgres.search import SearchVector
 
 from characteristics.models import Characteristic
-from fictions.models import Fiction
-from fictions.enums import FictionStatus
+from fictions.models import Fiction, Chapter
+from fictions.enums import FictionStatus, ChapterValidationStage
 
 
 class FictionFilterSet(filters.FilterSet):
@@ -115,3 +116,39 @@ class FictionFilterSet(filters.FilterSet):
             "less_rating": "average",
         }
         return queryset.order_by(corres.get(value, "-creation_date"))
+
+
+class ChapterFilterSet(filters.FilterSet):
+    class Meta:
+        model = Chapter
+        fields = [
+            "validation_status",
+            "search",
+        ]
+
+    validation_status = filters.MultipleChoiceFilter(
+        choices=ChapterValidationStage.choices,
+    )
+    search = filters.CharFilter(
+        method="search_multi",
+    )
+    moderation_date = filters.DateTimeFromToRangeFilter(
+
+    )
+
+    def search_multi(self, queryset, name, value):
+        queryset = queryset.annotate(
+            search=SearchVector(
+                "start_note",
+                "end_note",
+                "creation_user__username",
+                "title",
+                "fiction_title"
+            ),
+        ).filter(
+            search__contains=value,
+        )
+        return queryset
+
+    # moderation__date
+    # chapter__last_version__moderation_date__between=value,value

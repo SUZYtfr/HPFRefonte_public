@@ -19,25 +19,28 @@ from reviews.serializers import (
     CollectionReviewSerializer,
 )
 
-from .models import (
+from fictions.models import (
     Collection,
     Fiction,
     Chapter,
+    ChapterVersion,
 )
-from .enums import ChapterValidationStage
-from .serializers import (
+from fictions.enums import ChapterValidationStage
+from fictions.serializers import (
     CollectionSerializer,
     FictionSerializer,
     ChapterSerializer,
     FictionTableOfContentsSerializer,
+    PrivateChapterSerializer,
+    PrivateChapterVersionListSerializer,
 )
-from .permissions import (
+from fictions.permissions import (
     IsAuthenticated,
     ReadOnly,
     IsParentFictionCreationUser,
     IsParentFictionCoAuthor,
 )
-from .filters import FictionFilterSet
+from fictions.filters import FictionFilterSet, ChapterFilterSet
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -169,35 +172,23 @@ class FictionViewSet(
             return response.Response(data=paginated_serializer.data)
 
 
-class ChapterViewSet(viewsets.ModelViewSet):
+class PublicChapterViewSet(viewsets.ModelViewSet):
     """Ensemble de vues publiques pour les chapitres"""
 
-    queryset = Chapter.objects.all()
+    queryset = Chapter.objects.published()
     serializer_class = ChapterSerializer
     permission_classes = [IsAuthenticated & (IsParentFictionCreationUser | IsParentFictionCoAuthor) | ReadOnly]
 
-    def get_queryset(self):
-        """Détermine la liste des chapitres à afficher."""
-
-        queryset = super().get_queryset()
-
-        if self.request.user.has_perm("fictions.view_chapter"):
-            return queryset.exclude(validation_status=ChapterValidationStage.DRAFT)
-        elif self.request.query_params.get("self"):
-            return queryset.filter(creation_user_id=self.request.user.id)
-        else:
-            return queryset.filter(validation_status=ChapterValidationStage.PUBLISHED)
-
-    def get_object(self):
+    def get_object(self) -> Chapter:
         """Renvoie le chapitre correspondant à l'ordre, incrémente son compte de lectures."""
 
-        chapter = super().get_object()
+        chapter: Chapter = super().get_object()
 
         # https://docs.djangoproject.com/en/4.0/ref/models/expressions/#avoiding-race-conditions-using-f
         if all([
             self.action == "retrieve",
             self.request.user != chapter.fiction.creation_user,
-            chapter.validation_status == ChapterValidationStage.PUBLISHED,
+            chapter.is_published,
         ]):
             chapter.read_count = F("read_count") + 1
             chapter.save_base()
@@ -240,3 +231,21 @@ class ChapterViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(paginated_reviews, many=True)
             paginated_serializer = self.get_paginated_response(data=serializer.data)
             return response.Response(data=paginated_serializer.data)
+
+
+class PrivateChapterViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+):
+    queryset = Chapter.objects.all()
+    serializer_class = PrivateChapterSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = ChapterFilterSet
+    # permission_classes - TODO
+
+
+class PrivateChapterTextVersionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    queryset = ChapterVersion.objects.all()
+    serializer_class = PrivateChapterVersionListSerializer

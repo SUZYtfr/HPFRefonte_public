@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers, exceptions
 from drf_extra_fields import relations as extra_relations
 
-from .models import Fiction, Chapter, Collection
+from fictions.models import Fiction, Chapter, Collection, ChapterVersion
 from core.serializers import ListableModelSerializer
 from users.serializers import UserCardSerializer
 from images.models import ContentImage
@@ -83,17 +83,17 @@ class FirstChapterSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
-            "startnote",
-            "endnote",
+            "start_note",
+            "end_note",
             "text",
             "text_images",
             "trigger_warnings",
         ]
         extra_kwargs = {
-            "startnote": {
+            "start_note": {
                 "write_only": True,
             },
-            "endnote": {
+            "end_note": {
                 "write_only": True,
             },
         }
@@ -328,6 +328,7 @@ class ChapterListSerializer(serializers.ModelSerializer):
 
 class ChapterSerializer(ListableModelSerializer):
     """Sérialiseur de chapitre"""
+
     text = serializers.CharField(
         required=True,
     )
@@ -359,10 +360,10 @@ class ChapterSerializer(ListableModelSerializer):
             "creation_date",
             "modification_user",
             "modification_date",
-            "startnote",
-            "endnote",
+            "start_note",
+            "end_note",
             "order",
-            "validation_status",
+            "is_published",
             "word_count",
             "read_count",
             "review_count",
@@ -384,6 +385,170 @@ class ChapterSerializer(ListableModelSerializer):
             "modification_user",
         ]
         list_serializer_child_class = ChapterListSerializer
+
+
+
+class PrivateChapterListSerializer(serializers.ModelSerializer):
+    """Sérialiseur privé de liste de chapitres"""
+
+    class PrivateChapterListFictionListSerializer(serializers.ModelSerializer):
+        """Sérialiseur privé de fiction de liste de chapitres"""
+
+        class Meta:
+            model = Fiction
+            fields = [
+                "id",
+                "title",
+                "is_watched",
+            ]
+
+    class Meta:
+        model = Chapter
+        fields = [
+            "id",
+            "title",
+            "creation_user",
+            "creation_date",
+            "validation_status",
+            "fiction",
+            "authors",
+            "order",
+        ]
+
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.PrivateUserCardSerializer",
+    )
+    authors = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="users.serializers.PrivateUserCardSerializer",
+    )
+    fiction = PrivateChapterListFictionListSerializer(
+        read_only=True,
+    )
+
+
+class PrivateChapterVersionListSerializer(serializers.ModelSerializer):
+    """Sérialiseur privé de liste de versions de chapitre"""
+    
+    class Meta:
+        model = ChapterVersion
+        fields = [
+            "id",
+            "chapter_id",
+            "word_count",
+            "creation_user",
+            "creation_date",
+            "invalidation_reasons",
+        ]
+
+    creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+        read_only=True,
+        presentation_serializer="users.serializers.PrivateUserCardSerializer",
+    )
+
+
+class PrivateChapterSerializer(ListableModelSerializer):
+    """Sérialiseur privé de chapitre complet"""
+
+    class Meta:
+        model = Chapter
+        fields = [
+            "id",
+            "title",
+            "fiction",
+            # "creation_user",
+            # "creation_date",
+            # "modification_user",
+            # "modification_date",
+            # "start_note",
+            # "end_note",
+            # "order",
+            # "validation_status",
+            # "word_count",
+            # "read_count",
+            # "review_count",
+            # "average",
+            # "text",
+            # "text_images",
+            # "trigger_warnings",
+            # "member_review_policy",
+            # "anonymous_review_policy",
+            "version",
+            "authors",
+        ]
+        list_serializer_child_class = PrivateChapterListSerializer
+
+    class PrivateChapterFictionSerializer(serializers.ModelSerializer):
+        """Sérialiseur privé de fiction de chapitre complet"""
+
+        class Meta:
+            model = Fiction
+            fields = [
+                "id",
+                "title",
+                "is_watched",
+                "characteristics",
+                "summary",
+                "storynote",
+            ]
+
+    class PrivateChapterVersionSerializer(serializers.ModelSerializer):
+        """Sérialiseur privé de version de chapitre complet"""
+
+        class Meta:
+            model = ChapterVersion
+            fields = [
+                "id",
+                "chapter_id",
+                "text",
+                "start_note",
+                "end_note",
+                "word_count",
+                "creation_user",
+                "creation_date",
+                "private_comment",
+                "public_comment",
+                "moderation_user",
+                "moderation_date",
+                "invalidation_reasons",
+            ]
+
+        creation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+            read_only=True,
+            presentation_serializer="users.serializers.PrivateUserCardSerializer",
+        )
+        moderation_user = extra_relations.PresentablePrimaryKeyRelatedField(
+            read_only=True,
+            presentation_serializer="users.serializers.UserCardSerializer",
+        )
+
+        # TODO PUT désimbriquer version et modifier last version de ce chapitre
+        # def update(          
+        # )
+
+    fiction = PrivateChapterFictionSerializer(
+        read_only=True,
+    )
+    # TODO dernière version en date, sur le queryset (annotate)
+    version = PrivateChapterVersionSerializer(
+        read_only=True,
+    )
+
+    authors = extra_relations.PresentablePrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        presentation_serializer="users.serializers.PrivateUserCardSerializer",
+    )
+
+
+    # @transaction.atomic()
+    # def update(self, instance, validated_data):
+    #     version = validated_data.pop("version")
+    #     version_serializer = PrivateChapterVersionSerializer(version)
+    #     version_serializer.save()
+    #     return super().update(instance, validated_data)
 
 
 class ChapterCardSerializer(serializers.ModelSerializer):
