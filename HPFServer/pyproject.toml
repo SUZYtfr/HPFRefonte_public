@@ -25,6 +25,8 @@ django-polymorphic-tree = "*"
 django-rest-polymorphic = "*"
 djangorestframework-camel-case = "*"
 setuptools = "^78.1.0"
+strawberry-graphql-django = "^0.62.0"
+strawberry-django-extras = "^0.1.10"
 
 [tool.poetry.group.dev.dependencies]
 faker = "*"

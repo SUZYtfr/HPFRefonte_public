@@ -3,8 +3,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from app.graphql_api.schema import schema
+from strawberry.django.views import GraphQLView
+
+from django.views.decorators.csrf import csrf_exempt
+
 
 urlpatterns = [
+    path(r"graphql/", csrf_exempt(GraphQLView.as_view(schema=schema)), name="graphql-api"),
     path(r"api/", include([
         path(r"users/", include("users.public_urls", namespace="users")),
         path(r"fictions/", include("fictions.public_urls", namespace="fictions")),

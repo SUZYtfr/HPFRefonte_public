@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "strawberry_django",
     "ordered_model",
     "django_extensions",
     "django_filters",
@@ -72,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'djangorestframework_camel_case.middleware.CamelCaseMiddleWare',
+    "strawberry_django_extras.jwt.middleware.jwt_middleware",
 ]
 
 REST_FRAMEWORK = {
@@ -96,6 +98,11 @@ REST_FRAMEWORK = {
     ),
 }
 
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "strawberry_django_extras.jwt.backend.JWTBackend",
+]
 
 SPECTACULAR_SETTINGS = {
     "CAMELIZE_NAMES": False,
