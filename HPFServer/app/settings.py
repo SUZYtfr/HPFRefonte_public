@@ -45,14 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "mptt",
     "polymorphic_tree",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
+    # "rest_framework",
+    # "rest_framework_simplejwt",
+    # "rest_framework_simplejwt.token_blacklist",
     "strawberry_django",
     "ordered_model",
     "django_extensions",
     "django_filters",
-    "drf_spectacular",
+    # "drf_spectacular",
     "core",
     "users",
     "account",
@@ -72,10 +72,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'djangorestframework_camel_case.middleware.CamelCaseMiddleWare',
+    # 'djangorestframework_camel_case.middleware.CamelCaseMiddleWare',
     "strawberry_django_extras.jwt.middleware.jwt_middleware",
 ]
 
+'''
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.CurrentPagePagination',
@@ -97,6 +98,7 @@ REST_FRAMEWORK = {
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ),
 }
+'''
 
 
 AUTHENTICATION_BACKENDS = [
@@ -104,6 +106,7 @@ AUTHENTICATION_BACKENDS = [
     "strawberry_django_extras.jwt.backend.JWTBackend",
 ]
 
+'''
 SPECTACULAR_SETTINGS = {
     "CAMELIZE_NAMES": False,
     'POSTPROCESSING_HOOKS': [
@@ -120,12 +123,15 @@ SPECTACULAR_SETTINGS = {
         # "MemberReviewPolicyEnum": "users.models.UserPreferences.ReviewPolicy",
     }
 }
+'''
 
+'''
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": True,
 }
+'''
 
 ROOT_URLCONF = 'app.urls'
 

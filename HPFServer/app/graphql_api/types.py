@@ -3,6 +3,15 @@ import strawberry_django
 from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff
 
+from app.graphql_api.permissions import IsStaffOrOwner
+from app.graphql_api.filters import (
+    UserFilters,
+    NewsArticleFilters,
+    FictionFilters,
+    ChapterFilters,
+)
+from app.graphql_api.orders import NewsArticleOrder, FictionOrder, ChapterOrder
+
 from fictions.models import (
     Fiction,
     Chapter,
@@ -21,19 +30,19 @@ from typing import Optional
 
 ### USERS & SITES
 
-# Types
-
 @strawberry_django.type(model=UserPreferences, fields="__all__")
 class UserPreferencesType:
-    pass
+    user: "UserType"
+    theme: "ThemeType"
 
 
 @strawberry_django.type(model=UserProfile, fields="__all__")
 class UserProfileType:
-    pass
+    user: "UserType"
+    modification_user: "UserType"
 
 
-@strawberry_django.type(model=User, exclude=["password"])
+@strawberry_django.type(model=User, exclude=["password"], filters=UserFilters)
 class UserType:
     profile: "UserProfileType"
     preferences: "UserPreferencesType"
@@ -47,24 +56,26 @@ class ThemeType:
 
 ### CHARACTERISTICS
 
-# Types
-
 @strawberry_django.type(model=Characteristic, fields="__all__")
 class CharacteristicType:
-    parent_id: auto
     _order: int
+    creation_user: "UserType"
+    modification_user: "UserType"
+    characteristic_type: "CharacteristicTypeType"
+    parent: Optional["CharacteristicType"]
+    replace_with: Optional["CharacteristicType"]
 
 
 @strawberry_django.type(model=CharType, fields="__all__")
 class CharacteristicTypeType:
     characteristics: list["CharacteristicType"]
+    creation_user: "UserType"
+    modification_user: "UserType"
 
 
 ### FICTIONS
 
-# Types
-
-@strawberry_django.type(model=Chapter, fields="__all__")
+@strawberry_django.type(model=Chapter, fields="__all__", filters=ChapterFilters, order=ChapterOrder)
 class ChapterType:
     is_published: auto = strawberry_django.field(select_related="published_version")
     title: auto = strawberry_django.field(select_related="published_version")
@@ -77,14 +88,23 @@ class ChapterType:
     review_count: auto
     _order: int
     trigger_warnings: list["CharacteristicType"]
-    versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(extensions=[IsStaff()])
+    versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(
+        extensions=[IsStaffOrOwner(owner_field="creation_user")],
+    )
     authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
+    creation_user: "UserType"
+    modification_user: "UserType"
+    fiction: "FictionType"
+    published_version: "ChapterVersionType"
 
 
-@strawberry_django.type(model=Fiction, fields="__all__")
+@strawberry_django.type(model=Fiction, fields="__all__", filters=FictionFilters, order=FictionOrder)
 class FictionType:
-    chapters: list["ChapterType"]
+    chapters: OffsetPaginated["ChapterType"] = strawberry_django.offset_paginated()
     characteristics: list["CharacteristicType"]
+    is_watched: auto = strawberry_django.field(extensions=[IsStaff()])
+    creation_user: "UserType"
+    modification_user: "UserType"
 
 
 @strawberry_django.type(model=Collection, fields="__all__")
@@ -93,6 +113,8 @@ class CollectionType:
     average: auto
     review_count: auto
     collection_items: list["CollectionItemType"]
+    creation_user: "UserType"
+    modification_user: "UserType"
 
 
 @strawberry_django.type(model=CollectionItem, fields="__all__")
@@ -106,7 +128,12 @@ class CollectionItemType:
 
 @strawberry_django.type(model=ChapterVersion, fields="__all__")
 class ChapterVersionType:
-    invalidation_reasons: list["InvalidationReasonType"]
+    invalidation_reasons: list["InvalidationReasonType"]  # TODO IsStaffOrOwner?
+    invalidation_user: Optional["UserType"]
+    private_comment: auto = strawberry_django.field(extensions=[IsStaff()])
+    to_be_discussed: auto = strawberry_django.field(extensions=[IsStaff()])
+    chapter: "ChapterType"
+    creation_user: "UserType"
 
 
 @strawberry_django.type(model=InvalidationReason, fields="__all__")
@@ -116,26 +143,11 @@ class InvalidationReasonType:
 
 ### NEWS
 
-# Ordonnations
-
-@strawberry_django.order_type(model=NewsArticle)
-class NewsArticleOrder:
-    post_date: auto
-
-
-# Filtres
-
-@strawberry_django.filter_type(model=NewsArticle, lookups=True)
-class NewsArticleFilters:
-    title: auto
-    post_date: auto
-
-
-# Types
-
 @strawberry_django.type(model=NewsComment, fields="__all__")
 class NewsCommentType:
-    pass
+    creation_user: "UserType"
+    modification_user: "UserType"
+    newsarticle: "NewsArticleType"
 
 
 @strawberry_django.type(
@@ -149,11 +161,32 @@ class NewsArticleType:
     comments: list["NewsCommentType"]
     authors: list["UserType"]
     content_images: list["ContentImageType"]
+    creation_user: "UserType"
+    modification_user: "UserType"
 
 
 ### IMAGES
 
-# Types
 @strawberry_django.type(model=ContentImage, fields="__all__")
 class ContentImageType:
     src: str
+    creation_user: "UserType"
+    modification_user: "UserType"
+
+
+__all__ = [
+    "UserPreferencesType",
+    "UserProfileType",
+    "UserType",
+    "ThemeType",
+    "CharacteristicType",
+    "CharacteristicTypeType",
+    "ChapterType",
+    "ChapterVersionType",
+    "FictionType",
+    "CollectionType",
+    "CollectionItemType",
+    "NewsCommentType",
+    "NewsArticleType",
+    "ContentImageType",
+]
