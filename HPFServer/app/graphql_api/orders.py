@@ -19,4 +19,6 @@ class FictionOrder:
 @strawberry_django.order_type(model=Chapter)
 class ChapterOrder:
     title: auto  # FIXME ceci est un getter
+    creation_date: auto
+    modification_date: auto
     _order: auto = strawberry_django.order_field(name="order")

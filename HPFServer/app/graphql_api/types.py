@@ -19,6 +19,7 @@ from fictions.models import (
     InvalidationReason,
     Collection,
     CollectionItem,
+    ChapterValidationStage,
 )
 from characteristics.models import Characteristic, CharacteristicType as CharType
 from users.models import User, UserPreferences, UserProfile, Theme
@@ -33,17 +34,22 @@ from typing import Optional
 @strawberry_django.type(model=UserPreferences, fields="__all__")
 class UserPreferencesType:
     user: "UserType"
-    theme: "ThemeType"
+    theme: Optional[int] = strawberry_django.field(field_name="theme_id")
+    # theme: "ThemeType"  # TODO
 
 
 @strawberry_django.type(model=UserProfile, fields="__all__")
 class UserProfileType:
     user: "UserType"
     modification_user: "UserType"
+    bio_images: list["ContentImageType"]
+    profile_picture: "ContentImageType"
 
 
 @strawberry_django.type(model=User, exclude=["password"], filters=UserFilters)
 class UserType:
+    id: int
+    username: str
     profile: "UserProfileType"
     preferences: "UserPreferencesType"
     is_watched: auto = strawberry_django.field(extensions=[IsStaff()])
@@ -77,6 +83,9 @@ class CharacteristicTypeType:
 
 @strawberry_django.type(model=Chapter, fields="__all__", filters=ChapterFilters, order=ChapterOrder)
 class ChapterType:
+    def resolve_validation_status(self: Chapter) -> ChapterValidationStage:
+        return self.last_version.validation_status
+
     is_published: auto = strawberry_django.field(select_related="published_version")
     title: auto = strawberry_django.field(select_related="published_version")
     text: auto = strawberry_django.field(select_related="published_version")
@@ -87,6 +96,7 @@ class ChapterType:
     average: auto
     review_count: auto
     _order: int
+    order: int = strawberry_django.field(field_name="_order")
     trigger_warnings: list["CharacteristicType"]
     versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(
         extensions=[IsStaffOrOwner(owner_field="creation_user")],
@@ -96,6 +106,11 @@ class ChapterType:
     modification_user: "UserType"
     fiction: "FictionType"
     published_version: "ChapterVersionType"
+
+    submitted_version: Optional["ChapterVersionType"] = strawberry_django.field(
+        extensions=[IsStaffOrOwner(owner_field="creation_user")],
+        prefetch_related="versions",
+    )
 
 
 @strawberry_django.type(model=Fiction, fields="__all__", filters=FictionFilters, order=FictionOrder)
@@ -134,6 +149,7 @@ class ChapterVersionType:
     to_be_discussed: auto = strawberry_django.field(extensions=[IsStaff()])
     chapter: "ChapterType"
     creation_user: "UserType"
+    validation_status: "ChapterValidationStage"
 
 
 @strawberry_django.type(model=InvalidationReason, fields="__all__")
@@ -155,7 +171,7 @@ class NewsCommentType:
     fields="__all__",
     pagination=True,
     filters=NewsArticleFilters,
-    ordering=NewsArticleOrder,
+    order=NewsArticleOrder,
 )
 class NewsArticleType:
     comments: list["NewsCommentType"]
@@ -163,6 +179,7 @@ class NewsArticleType:
     content_images: list["ContentImageType"]
     creation_user: "UserType"
     modification_user: "UserType"
+    comment_count: auto
 
 
 ### IMAGES

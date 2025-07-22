@@ -18,6 +18,7 @@ class UserFilters:
 
 @strawberry_django.filter_type(model=NewsArticle, lookups=True)
 class NewsArticleFilters:
+    id: auto
     title: auto
     post_date: auto
 

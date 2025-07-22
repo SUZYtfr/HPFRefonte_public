@@ -348,6 +348,11 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     def last_version(self) -> "ChapterVersion":
         return self.versions.last()  # TODO latest
 
+    # TODO - en faire carrément un FK à la manière de published_version ?
+    @property
+    def submitted_version(self) -> "ChapterVersion":
+        return self.versions.order_by("creation_date").exclude(submission_date__isnull=True).last()
+
     # TODO - sera remplacé par un M2M pour le co-autorat
     @property
     def authors(self) -> list:
@@ -431,9 +436,10 @@ class ChapterVersion(models.Model):
         to=settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    is_draft = models.BooleanField(
-        verbose_name="brouillon",
-        default=True,
+    submission_date = models.DateTimeField(
+        verbose_name="date de soumission",
+        null=True,
+        blank=True,
     )
 
     text_images = models.ManyToManyField(
@@ -484,8 +490,7 @@ class ChapterVersion(models.Model):
 
     @property
     def validation_status(self) -> ChapterValidationStage:
-        # et draft dans tout ça?
-        if self.is_draft:
+        if not self.submission_date:
             return ChapterValidationStage.DRAFT
         elif self.is_published:
             return ChapterValidationStage.PUBLISHED

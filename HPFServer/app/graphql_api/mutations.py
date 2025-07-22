@@ -194,7 +194,7 @@ def invalidate_chapter_version(
     chapter_version = ChapterVersion.objects.get(pk=chapter_version_id)
 
     # vérification
-    if chapter_version.is_draft:
+    if not chapter_version.submission_date:
         raise Exception("Invalidation impossible : La version de texte est un brouillon.")
     if chapter_version != chapter_version.chapter.last_version \
         and chapter_version != chapter_version.chapter.published_version:

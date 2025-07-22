@@ -235,7 +235,7 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
     ]
     fieldsets = [
         (None, {
-            "fields": ["chapter", "text", "word_count", "is_draft"],
+            "fields": ["chapter", "text", "word_count", "submission_date"],
         }),
         ("Invalidation", {
             "fields": ["public_comment", "private_comment", "invalidation_date", "invalidation_user", "display_invalidation_reasons", "to_be_discussed"],
