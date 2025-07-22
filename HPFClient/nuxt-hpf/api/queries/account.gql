@@ -1,0 +1,43 @@
+query getSession {
+    account {
+        id
+        username
+        email
+        profile {
+            realname
+            birthdate
+            gender
+            bio
+            # bioImages
+            # externalProfiles
+            # profilePicture
+            ageConsent
+        }
+        preferences {
+            font
+            fontSize
+            lineSpacing
+            colorScheme
+            colorSchemeInReader
+            theme
+            themeOverridenAt
+            showAnimations
+            showProfilePictures
+            memberReviewPolicy
+            anonymousReviewPolicy
+            letterSpacing
+            paragraphSpacing
+            redirectToSummary
+            showTriggerWarnings
+            showReviewEditor
+            emailForReview
+            emailForReply
+            emailForNews
+            emailForFavoriteActivity
+            emailForFavorite
+            emailForChapterStatus
+            resultOrder
+            displayContent
+        }
+    }
+}

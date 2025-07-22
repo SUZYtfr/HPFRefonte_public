@@ -21,7 +21,7 @@ const isMounted = ref(false);
 //#endregion
 
 //#region Usings
-const { data } = useAuth();
+const { data } = useCustomAuth();
 //#endregion
 
 //#region Stores

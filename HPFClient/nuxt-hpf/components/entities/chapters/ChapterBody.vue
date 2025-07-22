@@ -147,7 +147,7 @@
 <script setup lang="ts">
 //#region Import
 import type { ChapterModel } from "~/models";
-import type { TipTapEditorConfig } from "~/types/tiptap";
+// import type { TipTapEditorConfig } from "~/types/tiptap";
 //#endregion
 
 //#region Props
@@ -156,7 +156,8 @@ defineProps<{
   summary: string | null | undefined;
   storynotes: string | null | undefined;
   fontSizeVisible: boolean;
-  tiptapReadOnlyConfig: TipTapEditorConfig | null;
+  tiptapReadOnlyConfig: {fontSize: number} | null;
+  // tiptapReadOnlyConfig: TipTapEditorConfig | null;
 }>();
 //#endregion
 

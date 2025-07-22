@@ -21,9 +21,11 @@
 
 <script setup lang="ts">
 //#region Imports
-import { SortByEnum, type IBasicQuery } from "~/types/basics";
-import { searchNews } from "@/api/news";
 import NewsThumbnailList from "@/components/list/news/NewsThumbnailList.vue";
+import { plainToInstance } from "class-transformer";
+import { NewsModel } from "~/models";
+import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import { Ordering } from "#gql/default";
 //#endregion
 
 // Metadata, SEO et droits d'accès à la page
@@ -31,17 +33,25 @@ definePageMeta({
   auth: false,
 });
 
-//#region Datas
-const newsFilters: IBasicQuery = {
-  page: 1,
-  pageSize: 20,
-  totalPages: true,
-  sortOn: "post_date",
-  sortBy: SortByEnum.Descending,
+const newsPagination: OffsetPaginationInput = {
+  limit: 20,
+  offset: 0,
+};
+const newsOrder: NewsArticleOrder = {
+  postDate: Ordering.DESC
 };
 
-const { data: paginatedRecentNews, status: newsStatus } = await searchNews(newsFilters, {
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getNews', {
+  pagination: newsPagination,
+  order: newsOrder,
+}, {
   lazy: true,
+  transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
+    return {
+      ...data.news,
+      results: plainToInstance(NewsModel, data.news.results),
+    };
+  }
 });
 //#endregion
 </script>

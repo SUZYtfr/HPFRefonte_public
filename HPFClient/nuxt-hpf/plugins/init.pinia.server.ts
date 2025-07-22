@@ -1,5 +1,5 @@
 export default defineNuxtPlugin(async () => {
-  await useAsyncData("characteristics", () => useConfigStore().fetchCharacteristics());
-  await useAsyncData("characteristicTypes", () => useConfigStore().fetchCharacteristicTypes());
-  await useAsyncData("themes", () => useConfigStore().fetchThemes());
+  await useAsyncData("getCharacteristics", () => useConfigStore().fetchCharacteristics());
+  await useAsyncData("getCharacteristicTypes", () => useConfigStore().fetchCharacteristicTypes());
+  await useAsyncData("getThemes", () => useConfigStore().fetchThemes());
 });

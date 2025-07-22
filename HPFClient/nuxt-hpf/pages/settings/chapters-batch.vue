@@ -375,7 +375,7 @@ enum ModalActionEnum {
 //#endregion
 
 //#region Usings
-const { data } = useAuth();
+const { data } = useCustomAuth();
 //#endregion
 
 //#region Reactive

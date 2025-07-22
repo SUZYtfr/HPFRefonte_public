@@ -46,7 +46,7 @@ import { snackbar } from "~/composables/useBuefy";
 //#endregion
 
 //#region Usings
-const { data, signIn } = useAuth();
+const { data, signIn } = useCustomAuth();
 // #endregion
 
 // #region Stores

@@ -2,8 +2,9 @@
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  // Voir composables/useCustomAuth.ts
   auth: {
-    baseURL: "https://hpfrefonte.pythonanywhere.com/api/",
+    baseURL: "https://hpfrefonte.pythonanywhere.com/graphql/",
     isEnabled: true,
     disableServerSideAuth: false,
     provider: {
@@ -11,7 +12,8 @@ export default defineNuxtConfig({
       endpoints: {
         signIn: { path: "account/token/", method: "post" },
         signOut: false,
-        signUp: { path: "register", method: "post" },
+        // signUp: { path: "register", method: "post" },
+        signUp: false,
         getSession: { path: "account/", method: "get" },
       },
       pages: {
@@ -19,7 +21,7 @@ export default defineNuxtConfig({
       },
       token: {
         signInResponseTokenPointer: "/access",
-        type: "Bearer",
+        type: "JWT",
         cookieName: "auth.token",
         headerName: "Authorization",
         maxAgeInSeconds: 60 * 30,
@@ -140,14 +142,33 @@ export default defineNuxtConfig({
   //   },
   // },
 
-  modules: ["@nuxt/eslint", "@pinia/nuxt", "@sidebase/nuxt-auth"],
+  modules: [
+    '@nuxt/eslint',
+    '@pinia/nuxt',
+    '@sidebase/nuxt-auth',
+    'nuxt-graphql-client',
+  ],
+  'graphql-client': {
+    codegen: {
+      onlyOperationTypes: false,
+    },
+    // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
+    clients: {
+      default: {
+        host: 'https://hpfrefonte.pythonanywhere.com/graphql/',
+        token: {
+          type: 'JWT'
+        },
+      },
+    }
+  },
 
   runtimeConfig: {
     // The private keys which are only available within server-side
-    baseApi: "https://hpfrefonte.pythonanywhere.com/api/",
+    baseApi: "https://hpfrefonte.pythonanywhere.com/graphql/",
     // Keys within public, will be also exposed to the client-side
     public: {
-      baseApi: "https://hpfrefonte.pythonanywhere.com/api/",
+      baseApi: "https://hpfrefonte.pythonanywhere.com/graphql/",
     },
   },
 

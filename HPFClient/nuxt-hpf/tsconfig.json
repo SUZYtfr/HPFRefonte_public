@@ -13,14 +13,15 @@
     ],
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
+    // Fait sauter la découverte de #gql? // TODO
+    // "paths": {
+    //   "~/*": [
+    //     "./*"
+    //   ],
+    //   "@/*": [
+    //     "./*"
+    //   ]
+    // },
     "sourceMap": true,
     "strict": true,
     "types": [

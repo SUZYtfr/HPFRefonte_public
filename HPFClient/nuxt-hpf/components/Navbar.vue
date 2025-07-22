@@ -168,7 +168,7 @@ import Login from "./Login.vue";
 // #endregion
 
 //#region Usings
-const { data, status, signOut } = useAuth();
+const { data, status, signOut } = useCustomAuth();
 //#endregion
 
 // #region Stores

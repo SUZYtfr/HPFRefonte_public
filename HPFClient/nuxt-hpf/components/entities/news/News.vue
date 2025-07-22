@@ -35,7 +35,7 @@
         <span class="has-text-weight-semibold">
           {{
             news.postDate != null
-              ? news.postDate.toLocaleDateString() +
+              ? news.postDate.toLocaleDateString("fr-FR") +
                 " à " +
                 news.postDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
               : ""

@@ -5,7 +5,7 @@
     </header>
     <div class="card-content is-relative p-2">
       <b-loading :active="isLoading" :is-full-page="false" />
-      <div v-if="(news?.count ?? 0) > 0">
+      <div v-if="(news?.totalCount ?? 0) > 0">
         <News
           v-for="(item, innerindex) of news?.results"
           :key="'news_' + (item.newsId?.toString() ?? '0')"
@@ -33,11 +33,16 @@
 
 <script setup lang="ts">
 import type { NewsModel } from "@/models/news";
-import type { Paginated } from "~/types/basics";
+import type { NewsArticleTypeOffsetPaginated } from "#gql";
 import News from "@/components/entities/news/News.vue";
 
+// TODO probablement un meilleur moyen de faire ça
+type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, 'results'> & {
+  results: NewsModel[];
+}
+
 const { isLoading = false } = defineProps<{
-  news?: Paginated<NewsModel[]>;
+  news?: NewsArticleModelOffsetPaginated;
   isLoading?: boolean;
 }>();
 </script>

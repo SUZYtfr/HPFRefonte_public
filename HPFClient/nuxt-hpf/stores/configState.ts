@@ -1,8 +1,9 @@
-import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics.ts";
-import type { ThemeModel } from "~/models/themes";
-import { searchCharacteristics, searchCharacteristicsTypes } from "@/api/characteristics.ts";
-import { getPublicThemes } from "@/api/themes.ts";
+import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics.ts";
+import { ThemeModel } from "~/models/themes";
 import { InvalidationReasonData } from "~/types/config";
+import { plainToInstance } from "class-transformer";
+import type { CharacteristicType, CharacteristicTypeType, ThemeType } from "#gql";
+
 
 export const useConfigStore = defineStore("config", () => {
   //#region State
@@ -25,7 +26,7 @@ export const useConfigStore = defineStore("config", () => {
   const currentTheme = computed(() => {
     if (themes.value == null || themes.value.length === 0) return null;
 
-    const { data, status } = useAuth();
+    const { data, status } = useCustomAuth();
 
     let currentTheme = null;
     // Theme évènementiel
@@ -78,20 +79,32 @@ export const useConfigStore = defineStore("config", () => {
   // (Mais je pense que c'est un Nuxt bug)
   // Il faut aussi rendre une valeur quelconque pour éviter que useAsyncData se plaigne.
   async function fetchCharacteristics(): Promise<true> {
-    const { data: characteristicTemp } = await searchCharacteristics(null);
+    const { data: characteristicTemp } = await useAsyncGql('getCharacteristics', {}, {
+      transform: (data: { characteristics: CharacteristicType[] }) => {
+        return plainToInstance(CharacteristicModel, data.characteristics)
+      }
+    });
     setCharacteristics(characteristicTemp.value ?? []);
     return true;
   }
 
   async function fetchCharacteristicTypes(): Promise<true> {
-    const { data: characteristicTypesTemp } = await searchCharacteristicsTypes();
+    const { data: characteristicTypesTemp } = await useAsyncGql('getCharacteristicTypes', {}, {
+      transform: (data: { characteristicTypes: CharacteristicTypeType[] }) => {
+        return plainToInstance(CharacteristicTypeModel, data.characteristicTypes)
+      }
+    });
     setCharacteristicTypes(characteristicTypesTemp.value ?? []);
     return true;
   }
 
   async function fetchThemes(): Promise<true> {
-    const { data: themesTemp } = await getPublicThemes(null);
-    setThemes(themesTemp.value?.results ?? []);
+    const { data: themesTemp } = await useAsyncGql('getThemes', {}, {
+      transform: (data: { themes: ThemeType[] }) => {
+        return plainToInstance(ThemeModel, data.themes)
+      }
+    })
+    setThemes(themesTemp.value ?? []);
     return true;
   }
 
