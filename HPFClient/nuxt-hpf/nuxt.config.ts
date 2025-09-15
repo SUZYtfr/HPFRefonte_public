@@ -2,7 +2,8 @@
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  // Voir composables/useCustomAuth.ts
+  // Désactivé temporairement (?) - Voir composables/useCustomAuth.ts
+  /*
   auth: {
     baseURL: "https://hpfrefonte.pythonanywhere.com/graphql/",
     isEnabled: true,
@@ -100,6 +101,7 @@ export default defineNuxtConfig({
     // Toutes les pages sont protégées par défaut on spécifie les pages publiques via definePageMeta
     globalAppMiddleware: true,
   },
+  */
 
   compatibilityDate: "2024-11-01",
 
@@ -111,7 +113,7 @@ export default defineNuxtConfig({
 
   css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss"],
 
-  debug: true,
+  debug: false,
 
   devtools: {
     enabled: true,
@@ -145,7 +147,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@pinia/nuxt',
-    '@sidebase/nuxt-auth',
+    // '@sidebase/nuxt-auth',
     'nuxt-graphql-client',
   ],
   'graphql-client': {
@@ -155,7 +157,7 @@ export default defineNuxtConfig({
     // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
     clients: {
       default: {
-        host: 'https://hpfrefonte.pythonanywhere.com/graphql/',
+        host: 'http://127.0.0.1:8000/graphql/',
         token: {
           type: 'JWT'
         },
@@ -165,10 +167,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // The private keys which are only available within server-side
-    baseApi: "https://hpfrefonte.pythonanywhere.com/graphql/",
+    baseApi: "http://127.0.0.1:8000/graphql/",
     // Keys within public, will be also exposed to the client-side
     public: {
-      baseApi: "https://hpfrefonte.pythonanywhere.com/graphql/",
+      baseApi: "http://127.0.0.1:8000/graphql/",
     },
   },
 

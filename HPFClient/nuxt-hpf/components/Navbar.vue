@@ -7,7 +7,7 @@
           <img src="~/assets/img/logo_hpfanfic_court_300.png" width="56" height="36" alt="Logo forum HPF" />
         </b-navbar-item>
         <div class="is-hidden-desktop" style="margin-left: auto">
-          <b-navbar-item v-if="status == 'authenticated'" tag="div">
+          <b-navbar-item v-if="isAuthenticated" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -91,14 +91,14 @@
         </b-navbar-dropdown>
         <b-navbar-item active href="#"> Partenaires </b-navbar-item>
         <b-navbar-item active href="#" @click="modalsStateStore.setContactModalActive(true)"> Contact </b-navbar-item>
-        <b-navbar-item v-if="status == 'authenticated'" active tag="router-link" to="/settings">
+        <b-navbar-item v-if="isStaff" active tag="router-link" to="/settings">
           Administration
         </b-navbar-item>
       </template>
 
       <template #end>
         <div class="is-hidden-touch">
-          <b-navbar-item v-if="status == 'authenticated'" tag="div">
+          <b-navbar-item v-if="isAuthenticated" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -168,7 +168,7 @@ import Login from "./Login.vue";
 // #endregion
 
 //#region Usings
-const { data, status, signOut } = useCustomAuth();
+const { data, isAuthenticated, isStaff, signOut } = useCustomAuth();
 //#endregion
 
 // #region Stores

@@ -26,7 +26,7 @@ export const useConfigStore = defineStore("config", () => {
   const currentTheme = computed(() => {
     if (themes.value == null || themes.value.length === 0) return null;
 
-    const { data, status } = useCustomAuth();
+    const { data, isAuthenticated } = useCustomAuth();
 
     let currentTheme = null;
     // Theme évènementiel
@@ -40,7 +40,7 @@ export const useConfigStore = defineStore("config", () => {
       ) ?? null;
 
     // Cas utilisateur connecté
-    if (status.value === "authenticated" && data.value?.preferences != null) {
+    if (isAuthenticated.value && data.value?.preferences != null) {
       // Theme utilisateur
       // (si le thème évènementiel est null ou si l'utilisateur a overridé son thème)
       if (

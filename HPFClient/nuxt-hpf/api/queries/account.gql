@@ -3,6 +3,7 @@ query getSession {
         id
         username
         email
+        isStaff
         profile {
             realname
             birthdate

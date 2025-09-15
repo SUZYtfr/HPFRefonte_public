@@ -73,7 +73,7 @@ const formIsValid = computed(() => {
 const login = async (): Promise<void> => {
   isLoading.value = true;
   try {
-    await signIn(loginForm.value, { redirect: false });
+    await signIn(loginForm.value);
     // Mettre le thème de l'utilisateur
     useChangeTheme(
       configStore.currentTheme?.details?.find((t) => {

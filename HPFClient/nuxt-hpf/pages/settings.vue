@@ -50,6 +50,7 @@ import type { MenuItem } from "~/types/other.ts";
 // Metadata, SEO et droits d'accès à la page
 definePageMeta({
   auth: true,
+  requireStaff: true,
   layout: "settings",
 });
 
