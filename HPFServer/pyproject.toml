@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
+python = ">=3.12,<3.13"
 django = "^5"
 djangorestframework = "*"
 django-extensions = "*"
@@ -27,6 +27,7 @@ djangorestframework-camel-case = "*"
 setuptools = "^78.1.0"
 strawberry-graphql-django = "^0.62.0"
 strawberry-django-extras = "^0.1.10"
+django-polymorphic = "^4"
 
 [tool.poetry.group.dev.dependencies]
 faker = "*"
