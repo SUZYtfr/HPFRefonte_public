@@ -17,26 +17,8 @@ from fictions.models import (
 )
 
 
-class CollectionItemForm(forms.ModelForm):
-    def clean(self):
-        super().clean()
-
-        collection = self.cleaned_data.get("collection")
-        fiction = self.cleaned_data.get("fiction")
-        chapter = self.cleaned_data.get("chapter")
-        items = list(filter(lambda x: x, [collection, fiction, chapter]))
-        
-        if len(items) < 1:
-            raise forms.ValidationError("Un objet est requis pour l'élément de série.")
-        elif len(items) > 1:
-            raise forms.ValidationError("Un élément de série ne peut pas contenir plus d'un objet.")
-
-        return self.cleaned_data
-
-
 class CollectionItemInline(ordered_admin.OrderedTabularInline):
     verbose_name = "élément"
-    form = CollectionItemForm
     model = CollectionItem
     fk_name = "parent"
     extra = 0

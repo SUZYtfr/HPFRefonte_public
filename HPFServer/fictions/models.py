@@ -591,6 +591,15 @@ class CollectionItem(ordered_models.OrderedModel):
                 name="UQ_fictions_collectionitem_parent_chapter",
                 fields=["parent", "chapter"],
             ),
+            models.CheckConstraint(
+                name="CK_fictions_collectionitem_unique_item_type",
+                check=(
+                    models.Q(collection__isnull=False, fiction__isnull=True, chapter__isnull=True) |
+                    models.Q(collection__isnull=True, fiction__isnull=False, chapter__isnull=True) |
+                    models.Q(collection__isnull=True, fiction__isnull=True, chapter__isnull=False)
+                ),
+                violation_error_message="Un élément de série doit contenir un et seulement un élément",
+            ),
         ]
 
     parent = models.ForeignKey(
