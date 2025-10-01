@@ -361,7 +361,6 @@ import ChapterValidation from "~/components/entities/chapters/ChapterValidation.
 import { AuthorData, UserData } from "~/types/users";
 import { getClassTypeColor } from "~/utils/characteristics";
 import type { CharacteristicData } from "~/types/characteristics";
-import { useConfigStore } from "~/stores/configState";
 import VersionItem from "~/components/entities/chapters/VersionItem.vue";
 import ChapterBody from "~/components/entities/chapters/ChapterBody.vue";
 //#endregion

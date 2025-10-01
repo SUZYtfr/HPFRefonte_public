@@ -162,7 +162,6 @@
 
 <script setup lang="ts">
 // #region Imports
-import { useModalsStateStore } from "~/stores/modalsState";
 import { useChangeTheme } from "~/composables/useTheme";
 import Login from "./Login.vue";
 // #endregion

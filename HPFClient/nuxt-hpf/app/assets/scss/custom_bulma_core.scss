@@ -1,6 +1,6 @@
 @use 'sass:meta';
-@use '../../node_modules/@bulvar/bulma/themes/light.sass';
-@include meta.load-css('../../node_modules/@bulvar/buefy/css/buefy.css');
+@use '../../../node_modules/@bulvar/bulma/themes/light.sass';
+@include meta.load-css('../../../node_modules/@bulvar/buefy/css/buefy.css');
 
 :root {
   // Shades

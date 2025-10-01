@@ -23,7 +23,7 @@
     //   ]
     // },
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "types": [
       "@types/node",
       // "@nuxt/types",
