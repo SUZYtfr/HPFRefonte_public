@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 //#region Imports
-import NewsThumbnailList from "@/components/list/news/NewsThumbnailList.vue";
 import { plainToInstance } from "class-transformer";
 import { NewsModel } from "~/models";
 import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";

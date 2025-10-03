@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 //#region Imports
-import { useChangeTheme } from "./composables/useTheme";
 import { ColorSchemeEnum } from "./types/themes";
 //#endregion
 

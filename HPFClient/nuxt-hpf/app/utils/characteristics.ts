@@ -1,4 +1,4 @@
-import type { CharacteristicData } from "@/types/characteristics";
+import type { CharacteristicData } from "~/types/characteristics";
 
 export function getClassTypeColor(characteristic: CharacteristicData): string {
   return getCaracteristicTypeColor(characteristic.characteristicTypeId);

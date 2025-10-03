@@ -1,5 +1,5 @@
-import { type ThemeDetail, ColorSchemeEnum } from "@/types/themes.ts";
-import { hexToRgb, rgbToHsl } from "@/utils/color.ts";
+import { type ThemeDetail, ColorSchemeEnum } from "~/types/themes";
+import { hexToRgb, rgbToHsl } from "~/utils/color";
 
 export const useChangeTheme = (theme: ThemeDetail | null): void => {
   if (theme === null) return;

@@ -6,7 +6,7 @@
     <div class="card-content is-relative p-2">
       <b-loading :active="isLoading" :is-full-page="false" />
       <div v-if="(news?.totalCount ?? 0) > 0">
-        <News
+        <NewsEntity
           v-for="(item, innerindex) of news?.results"
           :key="'news_' + (item.newsId?.toString() ?? '0')"
           :news="item"
@@ -32,9 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsModel } from "@/models/news";
+import type { NewsModel } from "~/models";
 import type { NewsArticleTypeOffsetPaginated } from "#gql";
-import News from "@/components/entities/news/News.vue";
 
 // TODO probablement un meilleur moyen de faire ça
 type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, 'results'> & {

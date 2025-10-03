@@ -1,5 +1,4 @@
-import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics.ts";
-import { ThemeModel } from "~/models/themes";
+import { CharacteristicModel, CharacteristicTypeModel, ThemeModel } from "~/models";
 import { InvalidationReasonData } from "~/types/config";
 import { plainToInstance } from "class-transformer";
 import type { CharacteristicType, CharacteristicTypeType, ThemeType } from "#gql";

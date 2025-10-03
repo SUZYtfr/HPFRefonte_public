@@ -1,5 +1,5 @@
 import { Exclude } from "class-transformer";
-import { BasicClass } from "@/types/basics.ts";
+import { BasicClass } from "~/types/basics";
 
 export class CharacteristicData extends BasicClass<CharacteristicData> {
   @Exclude()

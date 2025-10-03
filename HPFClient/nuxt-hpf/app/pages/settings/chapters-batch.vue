@@ -36,7 +36,7 @@
                 </div>
                 <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
                   <!-- <b-loading v-model="chaptersStatus" :is-full-page="false" /> -->
-                  <ChapterValidation
+                  <ChaptersValidation
                     v-for="(chapter, index) in chapters"
                     :key="index"
                     :chapter="chapter"
@@ -166,7 +166,7 @@
                 <div class="columns">
                   <!-- Contenu du chapitre -->
                   <div class="column is-10">
-                    <ChapterBody
+                    <ChaptersBody
                       :chapter="selectedChapter"
                       :summary="selectedChapter.fictionMetadata?.summary"
                       :storynotes="selectedChapter.fictionMetadata?.storynote"
@@ -190,7 +190,7 @@
                         </div>
                         <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
                           <!-- <b-loading v-model="chaptersStatus" :is-full-page="false" /> -->
-                          <VersionItem
+                          <ChaptersVersionItem
                             v-for="(version, index) in availableVersions"
                             :key="index"
                             :version="version"
@@ -355,14 +355,11 @@
 
 <script setup lang="ts">
 //#region Imports
-import { ChapterModel, FanfictionModel, VersionModel, type BatchChapterFilters } from "~/models/fanfictions";
+import { ChapterModel, FanfictionModel, VersionModel, type BatchChapterFilters } from "~/models";
 import { ChapterValidationStatusEnum, type ChapterValidationData } from "~/types/fanfictions";
-import ChapterValidation from "~/components/entities/chapters/ChapterValidation.vue";
 import { AuthorData, UserData } from "~/types/users";
 import { getClassTypeColor } from "~/utils/characteristics";
 import type { CharacteristicData } from "~/types/characteristics";
-import VersionItem from "~/components/entities/chapters/VersionItem.vue";
-import ChapterBody from "~/components/entities/chapters/ChapterBody.vue";
 //#endregion
 
 //#region Internal types

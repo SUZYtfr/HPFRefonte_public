@@ -1,5 +1,5 @@
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass, type IBasicQuery } from "@/types/basics.ts";
+import { BasicClass, type IBasicQuery } from "./basics";
 
 // #region News
 enum NewsStatus {

@@ -1,6 +1,6 @@
 <template>
   <div id="main-container" class="container px-5">
-    <News v-if="news[0]" class="mt-2 is-color-odd" :news="news[0]" />
+    <NewsEntity v-if="news[0]" class="mt-2 is-color-odd" :news="news[0]" />
     <br />
     <div>
       <!-- <CommentList v-if="news != null" :news_id="news?.id" :comments="news?.comments" /> -->
@@ -11,7 +11,6 @@
 
 <script setup lang="ts">
 //#region Imports
-import News from "~/components/entities/news/News.vue";
 import type { NewsArticleTypeOffsetPaginated } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { NewsModel } from "~/models";

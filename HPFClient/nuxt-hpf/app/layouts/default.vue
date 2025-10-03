@@ -25,7 +25,6 @@
 
 <script setup lang="ts">
 //#region Imports
-import Navbar from "~/components/Navbar.vue";
 //#endregion
 
 //#region Hooks

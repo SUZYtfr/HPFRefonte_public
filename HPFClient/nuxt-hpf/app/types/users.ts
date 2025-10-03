@@ -1,6 +1,5 @@
 import { Exclude, Transform } from "class-transformer";
-import type { IBasicQuery } from "@/types/basics.ts";
-import { BasicClass } from "@/types/basics.ts";
+import { BasicClass, type IBasicQuery } from "./basics";
 import { ExplicitContentEnum } from "./images";
 
 export enum UserStatus {

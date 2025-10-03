@@ -1,5 +1,5 @@
 import { Type, Exclude, Transform } from "class-transformer";
-import { BasicClass } from "./basics.ts";
+import { BasicClass } from "./basics";
 
 export class ThemeData extends BasicClass<ThemeData> {
   @Exclude()

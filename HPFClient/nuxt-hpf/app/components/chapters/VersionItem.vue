@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 //#region Imports
-import type { VersionModel } from "~/models/fanfictions";
+import type { VersionModel } from "~/models";
 //#endregion
 
 //#region Store

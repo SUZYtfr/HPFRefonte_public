@@ -1,4 +1,4 @@
-import { CharacteristicData, CharacteristicTypeData } from "@/types/characteristics.ts";
+import { CharacteristicData, CharacteristicTypeData } from "~/types/characteristics";
 
 export class CharacteristicModel extends CharacteristicData {
   public fictionCount: number = 0;

@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 //#region Imports
-import type { ChapterModel } from "~/models/fanfictions";
+import type { ChapterModel } from "~/models";
 import { ChapterValidationStatusEnum } from "~/types/fanfictions";
 //#endregion
 

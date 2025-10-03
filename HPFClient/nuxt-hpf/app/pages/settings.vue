@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MenuItem } from "~/types/other.ts";
+import type { MenuItem } from "~/types/other";
 
 // Metadata, SEO et droits d'accès à la page
 definePageMeta({

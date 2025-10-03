@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
-import { CommentData, NewsData } from "@/types/news.ts";
-import { AuthorData } from "@/types//users.ts";
-import type { ImageHPFData } from "@/types/images.ts";
+import { CommentData, NewsData } from "~/types/news";
+import { AuthorData } from "~/types/users";
+import type { ImageHPFData } from "~/types/images";
 
 // #region Comment
 export class CommentModel extends CommentData {
