@@ -445,7 +445,7 @@ for (let i = 1; i <= 100; i++) {
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
-            ]
+            ] as CharacteristicData[]
           : [],
     }),
   });
@@ -473,7 +473,7 @@ for (let i = 1; i <= 100; i++) {
     // Version invalidée
     if (c.validationStatus == ChapterValidationStatusEnum.AwaitingModification) {
       v.invalidationReasonIds = [
-        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))].id,
+        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))]!.id,
       ];
       v.invalidationDate = new Date();
       v.publicComment =
@@ -507,7 +507,7 @@ const selectedTab = computed(() => {
 
 const headerFilterLabel = computed(() => {
   if (activeTab.value >= tabs.value.length) return "";
-  switch (tabs.value[activeTab.value].status) {
+  switch (tabs.value[activeTab.value]!.status) {
     case ChapterValidationStatusEnum.AwaitingValidation:
       return "Chapitres en attente de validation";
     case ChapterValidationStatusEnum.AwaitingModification:
@@ -633,7 +633,7 @@ const onChapterSelected = (chapter: ChapterModel): void => {
   // Pour l'instant simulé ci-dessous
   selectedChapter.value = chapter;
   availableVersions.value = debug_versions.value.filter((t: VersionModel) => t.chapterId == chapter.id);
-  selectedVersion.value = availableVersions.value[0];
+  selectedVersion.value = availableVersions.value[0]!;
 };
 
 const onVersionSelected = (version: VersionModel): void => {
@@ -682,7 +682,7 @@ const versionModelUpdated = (): void => {
 //#endregion
 
 //DEBUG
-selectedChapter.value = debug_chapters.value[0];
+selectedChapter.value = debug_chapters.value[0]!;
 </script>
 
 <style lang="scss" scoped>
