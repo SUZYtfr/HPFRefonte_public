@@ -26,7 +26,7 @@ export class ImageHPFData {
     this.itemId = _itemId;
     this.itemType = _itemType;
     this.index = _index;
-    this.url = _url !== null ? _url : "https://bulma.io/images/placeholders/32x32.png";
+    this.url = _url !== null ? _url : "https://bulma.io/assets/images/placeholders/32x32.png";
     this.credits = _credits;
     this.alt = _alt !== null ? _alt : "";
     this.explicitContentType = _explicitContentType;

@@ -21,14 +21,17 @@ class NewsArticleFilters:
     id: auto
     title: auto
     post_date: auto
+    creation_user: Optional["UserFilters"]
 
 
 @strawberry_django.filter_type(model=Fiction, lookups=True)
 class FictionFilters:
+    id: auto
     title: auto
     creation_user: Optional["UserFilters"]
     last_update_date: auto
-
+    status: auto
+    featured: auto
 
 @strawberry_django.filter_type(model=Chapter, lookups=True)
 class ChapterFilters:

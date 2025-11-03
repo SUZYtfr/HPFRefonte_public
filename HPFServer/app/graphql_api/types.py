@@ -70,6 +70,7 @@ class CharacteristicType:
     characteristic_type: "CharacteristicTypeType"
     parent: Optional["CharacteristicType"]
     replace_with: Optional["CharacteristicType"]
+    characteristic_type_id: auto
 
 
 @strawberry_django.type(model=CharType, fields="__all__")
@@ -120,7 +121,12 @@ class FictionType:
     is_watched: auto = strawberry_django.field(extensions=[IsStaff()])
     creation_user: "UserType"
     modification_user: "UserType"
-
+    authors: list["UserType"]
+    review_count: auto
+    word_count: auto
+    read_count: auto
+    chapter_count: auto
+    author: "UserType" = strawberry_django.field(field_name="creation_user")
 
 @strawberry_django.type(model=Collection, fields="__all__")
 class CollectionType:
@@ -164,7 +170,9 @@ class NewsCommentType:
     creation_user: "UserType"
     modification_user: "UserType"
     newsarticle: "NewsArticleType"
-
+    author: "UserType" = strawberry_django.field(field_name="creation_user")
+    content: auto = strawberry_django.field(field_name="text")
+    post_date: auto = strawberry_django.field(field_name="creation_date")
 
 @strawberry_django.type(
     model=NewsArticle,

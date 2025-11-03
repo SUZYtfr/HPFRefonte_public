@@ -1,10 +1,33 @@
-import { Type } from "class-transformer";
-import { CommentData, NewsData } from "~/types/news";
+import { Type, Exclude, Transform } from "class-transformer";
 import { AuthorData } from "~/types/users";
 import type { ImageHPFData } from "~/types/images";
+import { BasicClass } from "~/types/basics";
 
 // #region Comment
-export class CommentModel extends CommentData {
+export class CommentModel extends BasicClass<CommentModel> {
+  @Exclude()
+  public get commentId(): number {
+    return this.id;
+  }
+
+  public newsId: number = 0;
+  public userId: number = 0;
+  public content: string = "";
+
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public postDate: Date | null = null;
+
   @Type(() => AuthorData)
   public author: AuthorData | null = null;
 
@@ -17,8 +40,39 @@ export class CommentModel extends CommentData {
 }
 // #endregion
 
+
+enum NewsStatus {
+  Pending = 1,
+  Posted = 2,
+  ToPost = 3,
+}
+
+
 // #region News
-export class NewsModel extends NewsData {
+export class NewsModel extends BasicClass<NewsModel> {
+  @Exclude()
+  public get newsId(): string {
+    return this.id.toString();
+  }
+
+  public title: string = "";
+  public content: string = "";
+  public status: NewsStatus = NewsStatus.Pending;
+
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public postDate: Date | null = null;
+
   @Type(() => AuthorData)
   public authors: AuthorData[] | null = null;
 
@@ -26,10 +80,5 @@ export class NewsModel extends NewsData {
   public comments: CommentModel[] | null = null;
 
   public commentCount: number = 0;
-
-  constructor(init?: Partial<NewsModel>) {
-    super();
-    Object.assign(this, init);
-  }
 }
 // #endregion

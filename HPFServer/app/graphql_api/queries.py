@@ -8,7 +8,7 @@ from app.graphql_api.types import *
 
 
 def resolve_public_fictions():
-    return Fiction.objects.published()
+    return Fiction.objects.published().with_word_counts()
 
 
 def resolve_public_chapters():

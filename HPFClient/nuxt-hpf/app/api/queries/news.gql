@@ -1,7 +1,8 @@
 query getNews(
     $pagination: OffsetPaginationInput,
     $order: NewsArticleOrder,
-    $filters: NewsArticleFilters
+    $filters: NewsArticleFilters,
+    $withComments: Boolean = false,
 ) {
     news(pagination: $pagination, order: $order, filters: $filters) {
         totalCount
@@ -21,6 +22,14 @@ query getNews(
             commentCount
             authors {
                 ...BaseUserInfo
+            }
+            comments @include(if: $withComments) {
+                id
+                author: creationUser {
+                    ...BaseUserInfo
+                }
+                content
+                postDate
             }
         }
     }

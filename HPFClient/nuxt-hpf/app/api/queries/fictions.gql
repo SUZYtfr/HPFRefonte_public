@@ -2,12 +2,14 @@ query getFictions(
     $pagination: OffsetPaginationInput,
     $order: FictionOrder,
     $filters: FictionFilters,
+    $chapterFilters: ChapterFilters,
+    $chapterPagination: OffsetPaginationInput,
     $withChapters: Boolean = false,
     $withAuthors: Boolean = false,
 ) {
     fictions(pagination: $pagination, order: $order, filters: $filters) {
         totalCount
-        pageInfo {
+        pageInfo {  # TODO rendre optionnel?
             limit
             offset
         }
@@ -19,13 +21,49 @@ query getFictions(
             creationUser @include(if: $withAuthors) {
                 ...BaseUserInfo
             }
-            chapters @include(if: $withChapters) {
+            authors @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            chapters(filters: $chapterFilters, pagination: $chapterPagination) @include(if: $withChapters) {
                 results {
                     id
                     title
                     creationUser @include(if: $withChapters) {
                         ...BaseUserInfo
                     }
+                }
+            }
+            characteristics {
+                id
+                name
+                characteristicTypeId
+            }
+            lastUpdateDate
+            creationDate
+            reviewCount
+            wordCount
+            readCount
+            chapterCount
+            status
+            featured
+        }
+    }
+}
+
+query getTableOfContents(
+    $fictionId: ID
+) {
+    fictions(filters: { id: { exact: $fictionId } }) {
+        results {
+            id
+            title
+            storynote
+            chapters {
+                results {
+                    id
+                    title
+                    order
+                    # triggerWarnings  # TODO
                 }
             }
         }

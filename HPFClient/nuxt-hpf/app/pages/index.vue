@@ -4,10 +4,10 @@
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <!-- <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" /> -->
+        <FictionsThumbnailList :is-loading="recentFanfictionsStatus == 'pending'" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" />
         <br />
         <!-- Sélections fanfictions -->
-        <!-- <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionsFanfictions" /> -->
+        <FictionsThumbnailList :is-loading="recentFanfictionsStatus == 'pending'" :list-type="FanfictionListType.Selections" :fanfictions="recentFanfictions" />
         <br />
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
@@ -22,9 +22,10 @@
 <script setup lang="ts">
 //#region Imports
 import { plainToInstance } from "class-transformer";
-import { NewsModel } from "~/models";
-import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import { FanfictionModel, NewsModel } from "~/models";
+import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput, FictionOrder, FictionTypeOffsetPaginated } from "#gql";
 import { Ordering } from "#gql/default";
+import { FanfictionListType } from "~/types/other";
 //#endregion
 
 // Metadata, SEO et droits d'accès à la page
@@ -36,19 +37,40 @@ const newsPagination: OffsetPaginationInput = {
   limit: 20,
   offset: 0,
 };
+
+const fictionsPagination: OffsetPaginationInput = {
+  limit: 10,
+  offset: 0,
+}
 const newsOrder: NewsArticleOrder = {
   postDate: Ordering.DESC
 };
+const fictionsOrder: FictionOrder = {}
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getFictions', {
+  pagination: fictionsPagination,
+  // order: fictionsOrder,
+  chapterPagination: { limit: 1 },
+  withChapters: true,
+  withAuthors: true,
+}, {
+  lazy: true,
+  transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
+    return {
+      ...input.fictions,
+      results: plainToInstance(FanfictionModel, input.fictions.results),
+    };
+  }
+});
 
 const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getNews', {
   pagination: newsPagination,
   order: newsOrder,
 }, {
   lazy: true,
-  transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
+  transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
     return {
-      ...data.news,
-      results: plainToInstance(NewsModel, data.news.results),
+      ...input.news,
+      results: plainToInstance(NewsModel, input.news.results),
     };
   }
 });

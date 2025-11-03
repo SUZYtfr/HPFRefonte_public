@@ -14,5 +14,6 @@ query getCharacteristics {
         characteristicType {
             id
         }
+        characteristicTypeId
     }
 }

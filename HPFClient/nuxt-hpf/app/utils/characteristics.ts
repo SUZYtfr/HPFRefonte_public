@@ -1,7 +1,7 @@
-import type { CharacteristicData } from "~/types/characteristics";
+import { CharacteristicData } from "~/types/characteristics";
 
 export function getClassTypeColor(characteristic: CharacteristicData): string {
-  return getCaracteristicTypeColor(characteristic.characteristicTypeId);
+  return getCaracteristicTypeColor(Number(characteristic.characteristicTypeId));
 }
 
 export function getCaracteristicTypeColor(characteristicTypeId: number | null): string {

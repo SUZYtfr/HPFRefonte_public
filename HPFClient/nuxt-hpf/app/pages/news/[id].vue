@@ -3,7 +3,7 @@
     <NewsEntity v-if="news[0]" class="mt-2 is-color-odd" :news="news[0]" />
     <br />
     <div>
-      <!-- <CommentList v-if="news != null" :news_id="news?.id" :comments="news?.comments" /> -->
+      <CommentsList v-if="news[0]" :newsId="news[0]?.newsId" :comments="news[0]?.comments" />
     </div>
     <br />
   </div>
@@ -35,6 +35,7 @@ const { data: news } = await useAsyncGql('getNews', {
       'exact': route.params.id as string
     }
   },
+  withComments: true,
 },
 {
     transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {

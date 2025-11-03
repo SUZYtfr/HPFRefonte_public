@@ -1,9 +1,23 @@
-import { Type, Exclude } from "class-transformer";
+import { Type, Exclude, Transform, plainToInstance } from "class-transformer";
 import { BasicClass } from "~/types/basics";
 import { FanfictionData, SerieData, ChapterData, ReviewData, VersionData } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData } from "~/types/characteristics";
+
+export enum FanfictionStatus {
+  OnGoing = 1,
+  Paused = 2,
+  Abandoned = 3,
+  Finished = 4,
+}
+
+export enum ValidationStatus {
+  Unvalidated = 0,
+  AwaitingCorrection = 2,
+  Validated = 3,
+}
+
 
 // #region Review
 export class ReviewModel extends ReviewData {
@@ -20,7 +34,61 @@ export class SerieModel extends SerieData {
 // #endregion
 
 // #region Fanfiction
-export class FanfictionModel extends FanfictionData {
+export class FanfictionModel extends BasicClass<FanfictionModel> {
+  @Exclude()
+  public get fanfictionId(): number {
+    return this.id;
+  }
+  
+  public title: string = "";
+  public summary: string | null = null;
+  public image: string | null = null;
+  public average: number | null = null;
+  public storynote: string | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public lastUpdateDate: Date = new Date();
+
+  public readCount: number | null = null;
+  public wordCount: number | null = null;
+  public reviewCount: number | null = null;
+  public collectionCount: number | null = null;
+  public status: FanfictionStatus = FanfictionStatus.OnGoing;
+  public featured: boolean = false;
+  public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
+  public watched: boolean = false;
+
+  @Exclude()
+  public get statusAsText(): string {
+    let result: string = "";
+    switch (this.status) {
+      case 1:
+        result = "Mise à jour";
+        break;
+      case 2:
+        result = "Arrêtée";
+        break;
+      case 3:
+        result = "Abandonnée";
+        break;
+      case 4:
+        result = "Terminée";
+        break;
+    }
+    return result;
+  }
+  
+  @Exclude()
+  public get titleAsSlug(): string {
+    return this.title.toLowerCase().replace(/ /g, "-");
+  }
+
   @Type(() => AuthorData)
   public authors: AuthorData[] | null = null;
 
@@ -32,6 +100,9 @@ export class FanfictionModel extends FanfictionData {
 
   @Type(() => SerieModel)
   public series: SerieModel[] | null = null;
+
+  @Type(() => ChapterModel)
+  public chapters: ChapterModel[] | null = null;
 
   public chapterCount: number | null = null;
   public firstChapter: { id: number; title: string; order: number } | null = null;

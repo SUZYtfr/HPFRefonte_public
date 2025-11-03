@@ -37,7 +37,7 @@
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
                   <b-image
-                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
@@ -128,7 +128,7 @@
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
                   <b-image
-                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
