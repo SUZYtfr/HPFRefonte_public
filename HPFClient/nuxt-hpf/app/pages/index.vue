@@ -33,26 +33,7 @@ definePageMeta({
   auth: false,
 });
 
-const newsPagination: OffsetPaginationInput = {
-  limit: 20,
-  offset: 0,
-};
-
-const fictionsPagination: OffsetPaginationInput = {
-  limit: 10,
-  offset: 0,
-}
-const newsOrder: NewsArticleOrder = {
-  postDate: Ordering.DESC
-};
-const fictionsOrder: FictionOrder = {}
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getFictions', {
-  pagination: fictionsPagination,
-  // order: fictionsOrder,
-  chapterPagination: { limit: 1 },
-  withChapters: true,
-  withAuthors: true,
-}, {
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getIndexFictions', {}, {
   lazy: true,
   transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
     return {
@@ -62,10 +43,7 @@ const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAs
   }
 });
 
-const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getNews', {
-  pagination: newsPagination,
-  order: newsOrder,
-}, {
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getIndexNews', {}, {
   lazy: true,
   transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
     return {

@@ -1,6 +1,6 @@
 <template>
   <div class="card is-relative">
-    <b-loading v-if="loading" :is-full-page="false" />
+    <b-loading v-model="listLoading" :is-full-page="false" />
     <header class="card-header sub-title">
       <p class="card-header-title is-centered">
         Filtres
@@ -186,7 +186,7 @@
     <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
-          <a @click.prevent.stop="toggleFilterChanged()">Rechercher</a>
+          <a @click.prevent.stop="execute">Rechercher</a>
         </span>
       </p>
     </footer>
@@ -204,12 +204,23 @@ import { CharacteristicModel, CharacteristicTypeModel } from "@/models";
 
 interface Props {
   fanfictionFilters: FictionFilters;
-  loading?: boolean;
+  isLoading?: boolean;
   isFixedHeightCard?: boolean;
   tooltipPosition?: string;
+  execute: () => {};
 }
 
-const { fanfictionFilters, loading = false, isFixedHeightCard = false, tooltipPosition = "is-right" } = defineProps<Props>();
+const {
+  fanfictionFilters,
+  isLoading = false,
+  isFixedHeightCard = false,
+  tooltipPosition = "is-right",
+  execute,
+} = defineProps<Props>();
+
+
+const listLoading = computed<boolean>(() => isLoading);
+
 
 const sliderTicks = [
   { sliderValue: 1, realValue: 500, displayValue: "<500" },

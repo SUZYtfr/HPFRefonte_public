@@ -42,7 +42,7 @@
         <p class="card-footer-item py-2">
           <span>
             <NuxtLink
-              to="/search"
+              to="/recherche"
               no-prefetch
             > Plus de nouveautés </NuxtLink>
           </span>
@@ -52,7 +52,7 @@
         <p class="card-footer-item py-2">
           <span>
             <NuxtLink
-              to="/search"
+              to="/recherche"
               no-prefetch
             > Plus de sélections </NuxtLink>
           </span>
@@ -77,7 +77,7 @@ type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, 'results
   results: FanfictionModel[];
 }
 
-const { isLoading = false, listType } = defineProps<{
+const { listType } = defineProps<{
   isLoading: boolean;
   fanfictions?: FictionTypeModelOffsetPaginated;
   listType: FanfictionListType;

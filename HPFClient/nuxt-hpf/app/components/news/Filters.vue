@@ -1,5 +1,6 @@
 <template>
   <div class="card is-relative">
+    <b-loading v-model="listLoading" :is-full-page="false" />
     <header class="card-header sub-title">
       <p class="card-header-title is-centered">
         Filtres
@@ -74,7 +75,7 @@
     <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
-          <a @click.prevent.stop="toggleFilterChanged()">Rechercher</a>
+          <a @click.prevent.stop="execute">Rechercher</a>
         </span>
       </p>
     </footer>
@@ -84,23 +85,14 @@
 <script setup lang="ts">
 import type { NewsArticleFilters } from '#gql';
 
-const { newsFilters } = defineProps<{
+const { newsFilters, execute, isLoading } = defineProps<{
     newsFilters: NewsArticleFilters;
+    isLoading: boolean,
+    execute: () => {};
 }>();
 
+const listLoading = computed<boolean>(() => isLoading );
 
-
-const toggleFilterChanged = () => {}
-
-//   // Déclencher le Watcher des filtres sur le clique recherche
-//   public toggleFilterChanged(): void {
-//     if (this.newsFilters == null) return;
-//     this.newsFilters.searchTerm = this.newsFilters.searchTerm + " ";
-//     this.newsFilters.searchTerm = this.newsFilters.searchTerm.slice(
-//       0,
-//       -1
-//     );
-//   }
 </script>
 
 <style lang="scss" scoped>

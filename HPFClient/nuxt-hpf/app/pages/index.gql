@@ -1,0 +1,51 @@
+query getIndexNews {
+    news(pagination: { limit: 10 }, order: { postDate: DESC }) {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            postDate
+            content
+            contentImages {
+                id
+                src
+            }
+            commentCount
+            authors {
+                ...BaseUserInfo
+            }
+        }
+    }
+}
+
+query getIndexFictions {
+    fictions(pagination: { limit: 10 }) {
+        totalCount
+        results {
+            id
+            title
+            summary
+            creationUser {
+                ...BaseUserInfo
+            }
+            authors {
+                ...BaseUserInfo
+            }
+            chapters(pagination: { limit: 1 }) {
+                results {
+                    id
+                    title
+                }
+            }
+            characteristics {
+                id
+                name
+                characteristicTypeId
+            }
+        }
+    }
+}

@@ -9,7 +9,9 @@
       has-modal-card
     >
       <NewsFilters
-        :news-filters="newsFilters"
+        :news-filters
+        :is-loading="newsStatus == 'pending'"
+        :execute
       />
     </b-modal>
     <br>
@@ -19,15 +21,19 @@
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <NewsFilters
-          :news-filters="newsFilters"
+          :news-filters
+          :is-loading="newsStatus == 'pending'"
+          :execute
         />
       </div>
       <!-- Liste des news -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <NewsList
-          :news-filters="newsFilters"
-          :news-pagination="newsPagination"
-          :news-order="newsOrder"
+          :paginated-news
+          :news-pagination
+          :news-order
+          :is-loading="newsStatus == 'pending'"
+          :execute
         />
       </div>
     </div>
@@ -48,8 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleFilters, NewsArticleOrder, OffsetPaginationInput } from '#gql';
+import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from '#gql';
 import { Ordering } from '#gql/default';
+import { plainToInstance } from 'class-transformer';
+import { NewsModel } from '~/models';
 
 const filtersOpened = ref<boolean>(false);
 
@@ -61,6 +69,21 @@ const newsPagination = reactive<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
+
+const { data: paginatedNews, status: newsStatus, execute } = await useAsyncGql('getNews', {
+  pagination: newsPagination,
+  order: newsOrder,
+  filters: newsFilters,
+}, {
+  lazy: true,
+  transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+    return {
+      ...input.news,
+      results: plainToInstance(NewsModel, input.news.results),
+    };
+  }
+});
+
 </script>
 
 <style lang="scss" scoped>

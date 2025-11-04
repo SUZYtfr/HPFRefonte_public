@@ -56,13 +56,13 @@
     <div
       :class="[{ 'card-content': isCard }, 'p-2', 'is-flex-grow-5']"
     >
-      <div v-if="(paginatedNews?.results?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
+      <div v-if="(paginatedNews.results?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
         <div>
           <NewsEntity2
-            v-for="(item, innerindex) of paginatedNews?.results"
+            v-for="(item, innerindex) of paginatedNews.results"
             :key="'news_' + item.newsId.toString()"
             :class="['mb-2', {'is-color-even': (innerindex % 2 != 0) }, {'is-color-odd': (innerindex % 2 == 0) }]"
             :news="item"
@@ -75,7 +75,7 @@
       <b-pagination
         v-model="page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="paginatedNews?.totalCount"
+        :total="paginatedNews.totalCount"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -94,41 +94,36 @@
 <script setup lang="ts">
 import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from '#gql';
 import { Ordering } from '#gql/default';
-import { plainToInstance } from 'class-transformer';
-import { NewsModel } from '~/models';
+import type { NewsModel } from '~/models';
 
-const { isCard = true, showRefreshButton = true, isLoading = false, newsFilters, newsPagination, newsOrder } = defineProps<{
+const {
+  isCard = true,
+  paginatedNews,
+  showRefreshButton = true,
+  isLoading = false,
+  newsPagination,
+  newsOrder,
+  execute,
+} = defineProps<{
   isCard?: boolean,
   showRefreshButton?: boolean,
   isLoading?: boolean,
+  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, 'results'> & { results: NewsModel[]},
   newsFilters?: NewsArticleFilters,
   newsPagination: OffsetPaginationInput,
   newsOrder: NewsArticleOrder,
+  execute: () => {},
 }>();
 
-const { data: paginatedNews, status: newsStatus, execute } = await useAsyncGql('getNews', {
-  pagination: newsPagination,
-  order: newsOrder,
-  filters: newsFilters,
-}, {
-  lazy: true,
-  transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
-    return {
-      ...input.news,
-      results: plainToInstance(NewsModel, input.news.results),
-    };
-  }
-});
-
-const listLoading = computed<boolean>(() => newsStatus.value === 'pending');
+const listLoading = computed<boolean>(() => isLoading );
 
 const timerId: number = 0;
 
 const newsResultLabel = computed<string>(() => {
     let result = "Aucun résultat";
-    if (paginatedNews?.value?.totalCount === 0) return result;
-    result = paginatedNews?.value?.totalCount.toString() + " résultat";
-    result += paginatedNews?.value?.totalCount > 1 ? "s" : "";
+    if (paginatedNews.totalCount === 0) return result;
+    result = paginatedNews.totalCount.toString() + " résultat";
+    result += paginatedNews.totalCount > 1 ? "s" : "";
     return result;
 });
 

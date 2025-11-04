@@ -96,40 +96,29 @@
 
 <script setup lang="ts">
 import { FanfictionModel } from "@/models";
-import type { FictionFilters, FictionOrder, OffsetPaginationInput } from "#gql";
-import { plainToInstance } from "class-transformer";
+import type { FictionFilters, FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 
 interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
   isLoading?: boolean;
+  paginatedFanfictions: Omit<FictionTypeOffsetPaginated, 'results'> & { results: FanfictionModel[]},
+  fictionPagination: OffsetPaginationInput,
+  fictionOrder: FictionOrder,
   fanfictionFilters?: FictionFilters;
+  execute: () => {},
 }
 
-const fictionOrder = ref<FictionOrder>({
-  lastUpdateDate: Ordering.DESC,
-});
-const fictionPagination = reactive<OffsetPaginationInput>({
-  limit: 10,
-  offset: 0,
-});
-
-const { isCard = true, showRefreshButton = true, isLoading = false, fanfictionFilters } = defineProps<Props>();
-const { data: paginatedFanfictions, status, execute } = await useAsyncGql('getFictions', {
-    filters: fanfictionFilters,
-    order: fictionOrder,
-    pagination: fictionPagination,
-    withChapters: true,
-    chapterPagination: { limit: 1 },
-}, {
-    transform: (input) => {
-        return {
-            ...input.fictions,
-            results: plainToInstance(FanfictionModel, input.fictions.results)
-        }
-    }
-});
+const {
+  isCard = true,
+  showRefreshButton = true,
+  isLoading = false,
+  fictionPagination,
+  fictionOrder,
+  paginatedFanfictions,
+  execute
+} = defineProps<Props>();
 
 // Transforme le système offset / limit en page / pageSize et vice versa
 const page = computed<number>(
@@ -143,29 +132,29 @@ const page = computed<number>(
 const fictionsOrderChoice = computed<string>(
     {
         get() { 
-            if (fictionOrder.value.lastUpdateDate === Ordering.DESC) {
+            if (fictionOrder.lastUpdateDate === Ordering.DESC) {
                 return 'most_recent';
             }
-            else if (fictionOrder.value.lastUpdateDate === Ordering.ASC) {
+            else if (fictionOrder.lastUpdateDate === Ordering.ASC) {
                 return 'less_recent';
             }
-            else if (fictionOrder.value.title === Ordering.DESC) {
+            else if (fictionOrder.title === Ordering.DESC) {
                 return 'alpha'
             }
             else {return ''}
         },
         set(value: string) { 
             if (value === 'most_recent') {
-                fictionOrder.value.title = undefined;
-                fictionOrder.value.lastUpdateDate = Ordering.DESC;
+                fictionOrder.title = undefined;
+                fictionOrder.lastUpdateDate = Ordering.DESC;
             }
             else if (value === 'less_recent') {
-                fictionOrder.value.title = undefined;
-                fictionOrder.value.lastUpdateDate = Ordering.ASC;
+                fictionOrder.title = undefined;
+                fictionOrder.lastUpdateDate = Ordering.ASC;
             }
             else if (value === 'alpha') {
-                fictionOrder.value.lastUpdateDate = undefined;
-                fictionOrder.value.title = Ordering.ASC;
+                fictionOrder.lastUpdateDate = undefined;
+                fictionOrder.title = Ordering.ASC;
             }
         },
     },
@@ -173,14 +162,14 @@ const fictionsOrderChoice = computed<string>(
 
 const fanfictionResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
-  if (paginatedFanfictions.value.totalCount === 0) return result;
-  result = paginatedFanfictions.value.totalCount.toString() + " résultat";
-  result += paginatedFanfictions.value.totalCount > 1 ? "s" : "";
+  if (paginatedFanfictions.totalCount === 0) return result;
+  result = paginatedFanfictions.totalCount.toString() + " résultat";
+  result += paginatedFanfictions.totalCount > 1 ? "s" : "";
   return result;
 });
 
 
-const listLoading = computed<boolean>(() => status.value === 'pending');
+const listLoading = computed<boolean>(() => isLoading);
 
 /*
 let timerId: number = 0;

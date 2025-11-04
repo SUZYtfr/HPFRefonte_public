@@ -9,8 +9,9 @@
       has-modal-card
     >
       <FictionsFilters
-        :fanfiction-filters="fanfictionFilters"
-        :loading="listLoading"
+        :fanfiction-filters
+        :is-loading="status === 'pending'"
+        :execute="execute"
         :is-fixed-height-card="true"
         :tooltip-position="'is-top'"
       />
@@ -22,14 +23,19 @@
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <FictionsFilters
-          :fanfiction-filters="fanfictionFilters"
-          :loading="listLoading"
+          :fanfiction-filters
+          :is-loading="status === 'pending'"
+          :execute="execute"
         />
       </div>
       <!-- Liste des fictions -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <FictionsList
-          :fanfiction-filters="fanfictionFilters"
+          :paginated-fanfictions
+          :fiction-order
+          :fiction-pagination
+          :is-loading="status === 'pending'"
+          :execute="execute"
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->
@@ -50,10 +56,19 @@
 </template>
 
 <script setup lang="ts">
-import type { FictionFilters } from "#gql";
+import type { FictionFilters, FictionOrder, OffsetPaginationInput } from "#gql";
+import { Ordering } from "#gql/default";
+import { plainToInstance } from "class-transformer";
+import { FanfictionModel } from "~/models";
 
 const filtersOpened = ref<boolean>(false);
-
+const fictionOrder = ref<FictionOrder>({
+  lastUpdateDate: Ordering.DESC,
+});
+const fictionPagination = reactive<OffsetPaginationInput>({
+  limit: 10,
+  offset: 0,
+});
 const fanfictionFilters = ref<FictionFilters>({});
 
 /* const fanfictionFilters = reactive<IFanfictionFilters>({
@@ -77,6 +92,19 @@ const fanfictionFilters = ref<FictionFilters>({});
   sortBy: SortByEnum.Descending,
   sortOn: "last_update_date"
 }); */
+
+const { data: paginatedFanfictions, status, execute } = await useAsyncGql('searchFictions', {
+    filters: fanfictionFilters,
+    order: fictionOrder,
+    pagination: fictionPagination,
+}, {
+    transform: (input) => {
+        return {
+            ...input.fictions,
+            results: plainToInstance(FanfictionModel, input.fictions.results)
+        }
+    }
+});
 
 const listLoading = ref<boolean>(false);
 </script>

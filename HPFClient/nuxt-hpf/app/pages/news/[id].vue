@@ -28,14 +28,12 @@ const route = useRoute();
 // On peut aussi faire une route dédiée pour chercher un élément sur le serveur
 // TODO - regarder s'il existe une directive / override pour utiliser getNews (liste) pour un seul élément
 // TODO - erreur si l'élément n'est pas récupéré
-const { data: news } = await useAsyncGql('getNews', {
-  pagination: { limit: 1 },
+const { data: news } = await useAsyncGql('getNewsDetails', {
   filters: {
     id: {
       'exact': route.params.id as string
     }
   },
-  withComments: true,
 },
 {
     transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
