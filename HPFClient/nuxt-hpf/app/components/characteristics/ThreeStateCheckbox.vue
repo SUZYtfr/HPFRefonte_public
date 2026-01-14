@@ -1,0 +1,57 @@
+<template>
+  <b-checkbox
+    v-model="checkboxStatus"
+    :indeterminate="indeterminate"
+    :type="indeterminate ? 'is-danger' : ''"
+    :class="[{ excluded: indeterminate }]"
+    @click.native.prevent="checkBoxClicked($event)"
+  >
+    <font-awesome-icon v-if="characteristic?.parentId != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
+    <span
+      :class="[
+        characteristic?.parentId != null
+          ? 'is-italic has-text-weight-light'
+          : 'has-text-weight-medium',
+      ]"
+    >{{ characteristic?.name }}</span>
+  </b-checkbox>
+</template>
+
+<script setup lang="ts">
+import { CharacteristicData } from "@/types/characteristics";
+
+interface Props {
+  characteristic?: CharacteristicData | undefined;
+  externalState?: number | undefined;
+}
+
+const { characteristic, externalState } = defineProps<Props>();
+
+const checkboxStatus = computed<boolean>(() => {
+  return externalState === 1;
+});
+
+const indeterminate = computed<boolean>(() => {
+  return externalState === -1;
+})
+
+const $emit = defineEmits(["change"]);
+
+function checkBoxClicked(event: any): void {
+  let internalState: number;
+  if (indeterminate.value) {
+    internalState = 0;
+  } else if (checkboxStatus.value) {
+    internalState = -1;
+  } else {
+    internalState = 1;
+  }
+  $emit("change", characteristic?.id, internalState);
+}
+</script>
+
+<style lang="scss" scoped>
+.excluded {
+  color: red;
+}
+</style>

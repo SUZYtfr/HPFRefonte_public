@@ -1,0 +1,114 @@
+@use 'sass:meta';
+@use '../../../node_modules/@bulvar/bulma/themes/light.sass';
+@include meta.load-css('../../../node_modules/@bulvar/buefy/css/buefy.css');
+
+:root {
+  // Shades
+  --primary-h: 331deg;
+  --primary-s: 50%;
+  --primary-l: 17%;
+  --primary-light: #8f5a74;
+  --light: #eeeeee;
+  --whitesmoke: #f6f6f6;
+  //--hpf-primary-lighter: #F1F2F7;
+  --hpf-primary-lighter: #E8D7E0;
+  --hpf-banner: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
+  --desktop-width: 1024px;
+  --tablet-width: 769px;
+
+  // Setup $colors to use as bulma classes (e.g. 'is-twitter')
+  --colors: mergeColorMaps(("white": (var(--white),
+          var(--black),
+        ),
+        "black": (var(--black),
+          var(--white),
+        ),
+        "light": (var(--light),
+          var(--light-invert),
+        ),
+        "dark": (var(--dark),
+          var(--dark-invert),
+        ),
+        "primary": (var(--primary),
+          var(--primary-invert),
+          var(--primary-light),
+          var(--primary-dark),
+        ),
+        "link": (var(--link),
+          var(--link-invert),
+          var(--link-light),
+          var(--link-dark),
+        ),
+        "info": (var(--info),
+          var(--info-invert),
+          var(--info-light),
+          var(--info-dark),
+        ),
+        "success": (var(--success),
+          var(--success-invert),
+          var(--success-light),
+          var(--success-dark),
+        ),
+        "warning": (var(--warning),
+          var(--warning-invert),
+          var(--warning-light),
+          var(--warning-dark),
+        ),
+        "danger": (var(--danger),
+          var(--danger-invert),
+          var(--danger-light),
+          var(--danger-dark),
+        ),
+      ),
+      var(--custom-colors));
+
+  // Divers
+  --body-overflow-y: auto;
+
+  // Buttons
+  //--buttons_menus_links_background: #f07800;
+  --buttons_menus_links_background: var(--primary-light);
+  --buttons_menus_links_foreground: #ffffff;
+
+  // Box
+  --box-radius: 0px;
+
+  // Links
+  --link: var(--primary);
+  --link-invert: var(--primary-invert);
+  --link-focus-border: var(--primary);
+  --link-visited: var(--primary);
+
+  // Navbar
+  --navbar-background-color: var(--primary);
+  --navbar-item-color: var(--buttons_menus_links_foreground);
+  --navbar-item-hover-color: var(--buttons_menus_links_foreground);
+  --navbar-item-hover-background-color: var(--buttons_menus_links_background);
+  --navbar-dropdown-background-color: var(--buttons_menus_links_background);
+  --navbar-dropdown-arrow: var(--buttons_menus_links_foreground);
+  --navbar-item-active-color: var(--buttons_menus_links_foreground);
+
+  // Footer
+  --footer-background-color: var(--primary);
+  --footer-color: var(--buttons_menus_links_foreground);
+  --footer-padding: 0rem 0rem 0rem 0rem;
+}
+
+.button {
+  background-color: var(--buttons_menus_links_background);
+  color: var(--buttons_menus_links_foreground);
+}
+
+.upload .upload-draggable:hover.is-primary,
+.upload .upload-draggable.is-hovered.is-primary {
+  border-color: var(--primary);
+  background: var(--hpf-primary-lighter);
+}
+
+.is-color-even {
+  background-color: var(--hpf-primary-lighter);
+}
+
+.is-color-odd {
+  background-color: var(--whitesmoke);
+}

@@ -1,0 +1,127 @@
+query getFictions(
+    $pagination: OffsetPaginationInput,
+    $order: FictionOrder,
+    $filters: FictionFilters,
+    $chapterFilters: ChapterFilters,
+    $chapterPagination: OffsetPaginationInput,
+    $withChapters: Boolean = false,
+    $withAuthors: Boolean = false,
+) {
+    fictions(pagination: $pagination, order: $order, filters: $filters) {
+        totalCount
+        pageInfo {  # TODO rendre optionnel?
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            summary
+            storynote
+            creationUser @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            authors @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            chapters(filters: $chapterFilters, pagination: $chapterPagination) @include(if: $withChapters) {
+                results {
+                    id
+                    title
+                    creationUser @include(if: $withChapters) {
+                        ...BaseUserInfo
+                    }
+                }
+            }
+            characteristics {
+                id
+                name
+                characteristicTypeId
+            }
+            lastUpdateDate
+            creationDate
+            reviewCount
+            wordCount
+            readCount
+            chapterCount
+            status
+            featured
+        }
+    }
+}
+
+query getTableOfContents(
+    $fictionId: ID
+) {
+    fictions(filters: { id: { exact: $fictionId } }) {
+        results {
+            id
+            title
+            storynote
+            chapters {
+                results {
+                    id
+                    title
+                    order
+                    # triggerWarnings  # TODO
+                }
+            }
+        }
+    }
+}
+
+query getChapters(
+    $pagination: OffsetPaginationInput,
+    $order: ChapterOrder,
+    $filters: ChapterFilters,
+    $withAuthors: Boolean = false,
+    $withText: Boolean = false,
+) {
+    chapters {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            creationDate
+            creationUser @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            startNote
+            endNote
+            text @include(if: $withText)
+        }
+    }
+}
+
+
+query getAdminChapterVersions($pagination: OffsetPaginationInput, $withTexts: Boolean = false) {
+    adminChapterVersions(pagination: $pagination) {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            startNote
+            endNote
+            text @include(if: $withTexts)
+            submissionDate
+            creationUser {
+                ...AdminUserInfo
+            }
+            chapter {
+                id
+                fiction {
+                    id
+                    title
+                }
+            }
+        }
+    }
+}

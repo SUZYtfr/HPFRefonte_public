@@ -111,7 +111,7 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss"],
+  css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/scss/custom.scss"],
 
   debug: false,
 
