@@ -1,15 +1,16 @@
-@import '@fortawesome/fontawesome-svg-core/styles.css';
-@import "~/assets/scss/custom_bulma_core.scss";
+@use "sass:color";
+@use '@fortawesome/fontawesome-svg-core/styles.css';
+@use "~/assets/scss/custom_bulma_core.scss";
 
 // Bulma badge
 $badge-height: 16px;
 $badge-padding: 0.05rem 0.15rem;
 $badge-font-size: 0.7rem;
-@import "~/assets/scss/bulma-badge.scss";
+@use "~/assets/scss/bulma-badge.scss";
 
 // Responsive Menu Tabs
 @media screen and (max-width: 768px) {
-  li:not(.is-active) > a > span:not(.icon) {
+  li:not(.is-active)>a>span:not(.icon) {
     visibility: hidden;
     position: absolute;
   }
@@ -40,6 +41,7 @@ $badge-font-size: 0.7rem;
 .sub-title {
   background-color: var(--primary);
 }
+
 .sub-title .card-header-title {
   color: white;
   text-transform: uppercase;
@@ -61,31 +63,38 @@ $characteristic-excluded: #e63946;
   background: $characteristic-litteraire !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-genre {
   background: $characteristic-genre !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-langue {
   background: $characteristic-langue !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-warning {
   /*background: #e63946 !important;*/
   background: $characteristic-warning !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-rating {
   background: $characteristic-rating !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-epoque {
   background: $characteristic-epoque !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-personnage {
   background: $characteristic-personnage !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-relation {
   background: $characteristic-relation !important;
   color: #4A4A4A !important;
@@ -98,83 +107,113 @@ $characteristic-excluded: #e63946;
 
 // Light
 .characteristic-bg-litteraire-light {
-  background: lighten($characteristic-litteraire, 10%) !important;
+  background: color.adjust($characteristic-litteraire, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-genre-light {
-  background: lighten($characteristic-genre, 10%) !important;
+  background: color.adjust($characteristic-genre, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-langue-light {
-  background: lighten($characteristic-langue, 10%) !important;
+  background: color.adjust($characteristic-langue, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-warning-light {
   /*background: #e63946 !important;*/
-  background: lighten($characteristic-warning, 10%) !important;
+  background: color.adjust($characteristic-warning, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-rating-light {
-  background: lighten($characteristic-rating, 10%) !important;
+  background: color.adjust($characteristic-rating, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-epoque-light {
-  background: lighten($characteristic-epoque, 10%) !important;
+  background: color.adjust($characteristic-epoque, $lightness: 10%) !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-personnage-light {
-  background: lighten($characteristic-personnage, 10%) !important;
+  background: color.adjust($characteristic-personnage, $lightness: 10%) !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-relation-light {
-  background: lighten($characteristic-relation, 10%) !important;
+  background: color.adjust($characteristic-relation, $lightness: 10%) !important;
   color: #4A4A4A !important;
 }
 
 .characteristic-bg-excluded-light {
-  background: lighten($characteristic-excluded, 10%) !important;
+  background: color.adjust($characteristic-excluded, $lightness: 10%) !important;
   color: whitesmoke !important;
 }
 
 // Lighter
 .characteristic-bg-litteraire-lighter {
-  background: lighten($characteristic-litteraire, 20%) !important;
+  background: color.adjust($characteristic-litteraire, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-genre-lighter {
-  background: lighten($characteristic-genre, 20%) !important;
+  background: color.adjust($characteristic-genre, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-langue-lighter {
-  background: lighten($characteristic-langue, 20%) !important;
+  background: color.adjust($characteristic-langue, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-warning-lighter {
   /*background: #e63946 !important;*/
-  background: lighten($characteristic-warning, 20%) !important;
+  background: color.adjust($characteristic-warning, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-rating-lighter {
-  background: lighten($characteristic-rating, 20%) !important;
+  background: color.adjust($characteristic-rating, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
+
 .characteristic-bg-epoque-lighter {
-  background: lighten($characteristic-epoque, 20%) !important;
+  background: color.adjust($characteristic-epoque, $lightness: 20%) !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-personnage-lighter {
-  background: lighten($characteristic-personnage, 20%) !important;
+  background: color.adjust($characteristic-personnage, $lightness: 20%) !important;
   color: whitesmoke !important;
 }
+
 .characteristic-bg-relation-lighter {
-  background: lighten($characteristic-relation, 20%) !important;
+  background: color.adjust($characteristic-relation, $lightness: 20%) !important;
   color: #4A4A4A !important;
 }
 
 .characteristic-bg-excluded-lighter {
-  background: lighten($characteristic-excluded, 20%) !important;
+  background: color.adjust($characteristic-excluded, $lightness: 20%) !important;
   color: whitesmoke !important;
 }
 
 // Fix FontAwesome 6 
-.icon svg { width: 1em; height: 1em; max-width: 80%; max-height: 80%; }
+.icon svg {
+  width: 1em;
+  height: 1em;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+// Fix la taille du container pour tenir compte de la hauteur de la navbar
+.fix-container-height {
+  min-height: calc(100vh - var(--navbar-height)) !important;
+}
+
+// Mise en valeur d'une sélection
+.item-selected {
+  border: 1px solid var(--primary) !important;
+  cursor: pointer;
+}

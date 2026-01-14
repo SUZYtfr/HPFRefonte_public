@@ -1,6 +1,5 @@
-
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass, IBasicQuery } from "./basics";
+import { BasicClass, type IBasicQuery } from "@/types/basics.ts";
 
 // #region News
 enum NewsStatus {
@@ -11,7 +10,7 @@ enum NewsStatus {
 
 export class NewsData extends BasicClass<NewsData> {
   @Exclude()
-  public get news_id(): number {
+  public get newsId(): number {
     return this.id;
   }
 
@@ -19,34 +18,54 @@ export class NewsData extends BasicClass<NewsData> {
   public content: string = "";
   public status: NewsStatus = NewsStatus.Pending;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public post_date: Date | null = null;
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public postDate: Date | null = null;
 }
 
 export interface INewsFilters extends IBasicQuery {
-  searchTerm: string,
-  searchAuthor: string,
-  searchAuthorId: number,
-  status: boolean | null,
-  fromDate: Date | null,
-  toDate: Date | null,
+  searchTerm: string;
+  searchAuthor: string;
+  searchAuthorId: number;
+  status: boolean | null;
+  fromDate: Date | null;
+  toDate: Date | null;
 }
 // #endregion
 
 // #region Comment
 export class CommentData extends BasicClass<CommentData> {
   @Exclude()
-  public get comment_id(): number {
+  public get commentId(): number {
     return this.id;
   }
 
-  public news_id: number = 0;
-  public user_id: number = 0;
+  public newsId: number = 0;
+  public userId: number = 0;
   public content: string = "";
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public post_date: Date | null = null;
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public postDate: Date | null = null;
 }
 // #endregion

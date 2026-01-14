@@ -1,0 +1,10 @@
+fragment BaseUserInfo on UserType {
+    id
+    username
+}
+
+fragment AdminUserInfo on UserType {
+    id
+    username
+    isWatched
+}

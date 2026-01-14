@@ -4,55 +4,61 @@
     <Navbar />
     <div id="wrapper">
       <!-- Main Content -->
-      <nuxt />
+      <NuxtPage />
     </div>
     <!-- Footer -->
     <Footer />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script setup lang="ts">
+//#region Imports
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
+//#endregion
 
-  @Component({
-    components: {
-      Navbar,
-      Footer
-    }
-  })
-export default class extends Vue {}
+//#region Hooks
+onMounted(() => {
+  // Fix buefy il faut ajouter la class has-navbar-fixed-top. En csr elle n'est pas ajoutée
+  if (document.body.classList.contains("has-navbar-fixed-top") == false) {
+    document.body.classList.add("has-navbar-fixed-top");
+  }
+});
+
+onBeforeUnmount(() => {
+  document.body.classList.remove("has-navbar-fixed-top");
+});
+//#endregion
 </script>
 
-  <style lang="scss" scoped>
-  @import "~/assets/scss/custom_bulma_core.scss";
+<style lang="scss" scoped>
+//@use "~/assets/scss/custom_bulma_core.scss";
 
-  #container {
-    background-color: var(--primary-light);
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-  #wrapper {
-    flex-grow: 5;
-     display: flex;
-     flex-direction: column
-  }
+#container {
+  background-color: var(--primary-light);
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+#wrapper {
+  flex-grow: 5;
+  display: flex;
+  flex-direction: column;
+}
 
-  body,
-  html {
-    //overflow-x: hidden;
-  }
+body,
+html {
+  //overflow-x: hidden;
+}
 
-  html {
-    //height: 100%;
-  }
-  body {
-    //min-height: 100%;
-  }
+html {
+  //height: 100%;
+}
+body {
+  //min-height: 100%;
+}
 
-  * {
-    //outline: 1px solid #0f0 !important;
-  }
-  </style>
+* {
+  //outline: 1px solid #0f0 !important;
+}
+</style>

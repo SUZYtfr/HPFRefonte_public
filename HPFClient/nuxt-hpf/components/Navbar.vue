@@ -4,15 +4,10 @@
     <b-navbar active :fixed-top="true">
       <template #brand>
         <b-navbar-item>
-          <img
-            :src="require('@/assets/img/logo_hpfanfic_court_300.png')"
-            width="56"
-            height="36"
-            alt="Logo forum HPF"
-          >
+          <img src="~/assets/img/logo_hpfanfic_court_300.png" width="56" height="36" alt="Logo forum HPF" />
         </b-navbar-item>
         <div class="is-hidden-desktop" style="margin-left: auto">
-          <b-navbar-item v-if="$auth.loggedIn" tag="div">
+          <b-navbar-item v-if="isAuthenticated" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -40,123 +35,70 @@
             </b-dropdown>
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
-                <button
-                  type="button"
-                  class="button is-light"
-                  style="padding-left: 8px"
-                >
+                <button type="button" class="button is-light" style="padding-left: 8px">
                   <b-image
-                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
-                    style="width: 22px; height: 22px: margin-left: -8px;"
+                    style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span
-                    class="username-visibility"
-                    style="margin-left: 5px"
-                  >{{ $auth.user?.username }}</span>
+                  <span class="username-visibility" style="margin-left: 5px">{{ data?.username }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem">
-                Mon compte
-              </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem" @click="logout">
-                Se déconnecter
-              </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem"> Mon compte </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem" @click="logout"> Se déconnecter </b-dropdown-item>
             </b-dropdown>
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
-                Se connecter
-              </a>
-              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
-                S'inscrire
-              </a>
+              <a class="button is-light" @click="modalsStateStore.setLoginModalActive(true)"> Se connecter </a>
+              <a class="button" @click="modalsStateStore.setRegisterModalActive(true)"> S'inscrire </a>
             </div>
           </b-navbar-item>
         </div>
       </template>
       <template #start>
-        <b-navbar-item active tag="router-link" to="/">
-          Accueil
-        </b-navbar-item>
+        <b-navbar-item active tag="router-link" to="/"> Accueil </b-navbar-item>
         <b-navbar-dropdown :collapsible="true" label="Association HPF">
-          <b-navbar-item href="#">
-            Link 1
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Link 2
-          </b-navbar-item>
+          <b-navbar-item href="#"> Link 1 </b-navbar-item>
+          <b-navbar-item href="#"> Link 2 </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Lecture">
-          <b-navbar-item href="#">
-            Link 1
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Link 2
-          </b-navbar-item>
+          <b-navbar-item href="#"> Link 1 </b-navbar-item>
+          <b-navbar-item href="#"> Link 2 </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Ecriture">
-          <b-navbar-item href="#">
-            Link 1
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Link 2
-          </b-navbar-item>
+          <b-navbar-item href="#"> Link 1 </b-navbar-item>
+          <b-navbar-item href="#"> Link 2 </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Top fanfictions">
-          <b-navbar-item href="#">
-            Link 1
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Link 2
-          </b-navbar-item>
+          <b-navbar-item href="#"> Link 1 </b-navbar-item>
+          <b-navbar-item href="#"> Link 2 </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Nos sites">
-          <b-navbar-item href="#">
-            L'appli HPF
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Le Héron
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Les éditions HPF
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            L'association
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Le blog HPF
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Le forum
-          </b-navbar-item>
+          <b-navbar-item href="#"> L'appli HPF </b-navbar-item>
+          <b-navbar-item href="#"> Le Héron </b-navbar-item>
+          <b-navbar-item href="#"> Les éditions HPF </b-navbar-item>
+          <b-navbar-item href="#"> L'association </b-navbar-item>
+          <b-navbar-item href="#"> Le blog HPF </b-navbar-item>
+          <b-navbar-item href="#"> Le forum </b-navbar-item>
         </b-navbar-dropdown>
         <b-navbar-dropdown :collapsible="true" label="Boutique">
-          <b-navbar-item href="#">
-            Link 1
-          </b-navbar-item>
-          <b-navbar-item href="#">
-            Link 2
-          </b-navbar-item>
+          <b-navbar-item href="#"> Link 1 </b-navbar-item>
+          <b-navbar-item href="#"> Link 2 </b-navbar-item>
         </b-navbar-dropdown>
-        <b-navbar-item href="#">
-          Partenaires
-        </b-navbar-item>
-        <b-navbar-item href="#" @click="ModalsStatesModule.setContactModalActive(true)">
-          Contact
-        </b-navbar-item>
-        <b-navbar-item active tag="router-link" to="/settings">
+        <b-navbar-item active href="#"> Partenaires </b-navbar-item>
+        <b-navbar-item active href="#" @click="modalsStateStore.setContactModalActive(true)"> Contact </b-navbar-item>
+        <b-navbar-item v-if="isStaff" active tag="router-link" to="/settings">
           Administration
         </b-navbar-item>
       </template>
 
       <template #end>
         <div class="is-hidden-touch">
-          <b-navbar-item v-if="$auth.loggedIn" tag="div">
+          <b-navbar-item v-if="isAuthenticated" tag="div">
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
@@ -184,92 +126,63 @@
             </b-dropdown>
             <b-dropdown aria-role="list">
               <template #trigger="{ active }">
-                <button
-                  type="button"
-                  class="button is-light"
-                  style="padding-left: 8px"
-                >
+                <button type="button" class="button is-light" style="padding-left: 8px">
                   <b-image
-                    :src="$auth.user?.profile.profile_picture ?? 'https://bulma.io/images/placeholders/24x24.png'"
+                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/images/placeholders/24x24.png'"
                     alt="Image de profil"
-                    style="width: 22px; height: 22px: margin-left: -8px;"
+                    style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span style="margin-left: 5px">{{ $auth.user?.username }}</span>
+                  <span style="margin-left: 5px">{{ data?.username }}</span>
                   <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem">
-                Mon compte
-              </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem" @click="logout">
-                Se déconnecter
-              </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem"> Mon compte </b-dropdown-item>
+              <b-dropdown-item aria-role="listitem" @click="logout"> Se déconnecter </b-dropdown-item>
             </b-dropdown>
           </b-navbar-item>
           <b-navbar-item v-else tag="div">
             <div class="buttons">
-              <a class="button is-light" @click="ModalsStatesModule.setLoginModalActive(true)">
-                Se connecter
-              </a>
-              <a class="button" @click="ModalsStatesModule.setRegisterModalActive(true)">
-                S'inscrire
-              </a>
+              <a class="button is-light" @click="modalsStateStore.setLoginModalActive(true)"> Se connecter </a>
+              <a class="button" @click="modalsStateStore.setRegisterModalActive(true)"> S'inscrire </a>
             </div>
           </b-navbar-item>
         </div>
       </template>
     </b-navbar>
     <!-- Modal de contact -->
-    <Contact />
+    <!-- <Contact /> -->
     <!-- Modal de connexion -->
     <Login />
     <!-- Modal d'inscription -->
-    <Register />
+    <!-- <Register /> -->
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import Login from "~/components/Login.vue";
-import Register from "~/components/Register.vue";
-import Contact from "~/components/Contact.vue";
-import ModalsStates from "~/store/modules/ModalsStates";
-import Config from "~/store/modules/Config";
+<script setup lang="ts">
+// #region Imports
+import { useModalsStateStore } from "~/stores/modalsState";
+import { useChangeTheme } from "~/composables/useTheme";
+import Login from "./Login.vue";
+// #endregion
 
-@Component({
-  name: "Navbar",
-  components: {
-    Login,
-    Register,
-    Contact
-  }
-})
-export default class extends Vue {
-  // #region Data
+//#region Usings
+const { data, isAuthenticated, isStaff, signOut } = useCustomAuth();
+//#endregion
 
-  // #endregion
+// #region Stores
+const modalsStateStore = useModalsStateStore();
+const configStore = useConfigStore();
+// #endregion
 
-  // #region Computed
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
-
-  get ConfigModule(): Config {
-    return getModule(Config, this.$store);
-  }
-  // #endregion
-
-  // #region Methods
-  public async logout(): Promise<void> {
-    await this.$auth.logout();
-    // Remettre le thème par défaut
-    this.$changeTheme(this.ConfigModule.currentTheme?.details[0] ?? null);
-  }
-  // #endregion
-}
+// #region Methods
+const logout = async (): Promise<void> => {
+  await signOut();
+  // Remettre le thème par défaut
+  useChangeTheme(configStore.currentTheme?.details[0] ?? null);
+};
+// #endregion
 </script>
 
 <style lang="css" scoped>

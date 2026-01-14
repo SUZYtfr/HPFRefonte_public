@@ -30,9 +30,9 @@
           var(--dark-invert),
         ),
         "primary": (var(--primary),
-        var(--primary-invert),
-        var(--primary-light),
-        var(--primary-dark),
+          var(--primary-invert),
+          var(--primary-light),
+          var(--primary-dark),
         ),
         "link": (var(--link),
           var(--link-invert),
@@ -94,12 +94,13 @@
   --footer-padding: 0rem 0rem 0rem 0rem;
 }
 
-.button{
+.button {
   background-color: var(--buttons_menus_links_background);
   color: var(--buttons_menus_links_foreground);
 }
 
-.upload .upload-draggable:hover.is-primary, .upload .upload-draggable.is-hovered.is-primary {
+.upload .upload-draggable:hover.is-primary,
+.upload .upload-draggable.is-hovered.is-primary {
   border-color: var(--primary);
   background: var(--hpf-primary-lighter);
 }

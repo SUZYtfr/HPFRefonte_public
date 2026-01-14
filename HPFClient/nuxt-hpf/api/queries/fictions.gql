@@ -1,0 +1,89 @@
+query getFictions(
+    $pagination: OffsetPaginationInput,
+    $order: FictionOrder,
+    $filters: FictionFilters,
+    $withChapters: Boolean = false,
+    $withAuthors: Boolean = false,
+) {
+    fictions(pagination: $pagination, order: $order, filters: $filters) {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            summary
+            storynote
+            creationUser @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            chapters @include(if: $withChapters) {
+                results {
+                    id
+                    title
+                    creationUser @include(if: $withChapters) {
+                        ...BaseUserInfo
+                    }
+                }
+            }
+        }
+    }
+}
+
+query getChapters(
+    $pagination: OffsetPaginationInput,
+    $order: ChapterOrder,
+    $filters: ChapterFilters,
+    $withAuthors: Boolean = false,
+    $withText: Boolean = false,
+) {
+    chapters {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            creationDate
+            creationUser @include(if: $withAuthors) {
+                ...BaseUserInfo
+            }
+            startNote
+            endNote
+            text @include(if: $withText)
+        }
+    }
+}
+
+
+query getAdminChapterVersions($pagination: OffsetPaginationInput, $withTexts: Boolean = false) {
+    adminChapterVersions(pagination: $pagination) {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            startNote
+            endNote
+            text @include(if: $withTexts)
+            submissionDate
+            creationUser {
+                ...AdminUserInfo
+            }
+            chapter {
+                id
+                fiction {
+                    id
+                    title
+                }
+            }
+        }
+    }
+}

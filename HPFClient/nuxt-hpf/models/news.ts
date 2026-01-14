@@ -1,14 +1,14 @@
 import { Type } from "class-transformer";
-import { CommentData, NewsData } from "~/types/news";
-import { AuthorData } from "~/types/users";
-import { ImageHPFData } from "~/types/images";
+import { CommentData, NewsData } from "@/types/news.ts";
+import { AuthorData } from "@/types//users.ts";
+import type { ImageHPFData } from "@/types/images.ts";
 
 // #region Comment
 export class CommentModel extends CommentData {
   @Type(() => AuthorData)
   public author: AuthorData | null = null;
 
-  public content_images: ImageHPFData[] | null = null;
+  public contentImages: ImageHPFData[] | null = null;
 
   constructor(init?: Partial<CommentModel>) {
     super();
@@ -25,7 +25,7 @@ export class NewsModel extends NewsData {
   @Type(() => CommentModel)
   public comments: CommentModel[] | null = null;
 
-  public comment_count: number = 0;
+  public commentCount: number = 0;
 
   constructor(init?: Partial<NewsModel>) {
     super();

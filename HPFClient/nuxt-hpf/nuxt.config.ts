@@ -1,179 +1,182 @@
-import type { NuxtConfig } from "@nuxt/types";
-import { instanceToPlain } from "class-transformer";
+// import { Nitro } from "nitropack";
 
-const config: NuxtConfig = {
-  build: {
-    transpile: ["defu"],
-    loaders: {
-      vue: {
-        compiler: require("vue-template-babel-compiler")
-      }
-    },
-    parallel: true,
-    cache: true,
-    extractCSS: process.env.NODE_ENV === "production",
-    optimizeCSS: process.env.NODE_ENV === "production",
-    extend(config2, ctx) {
-      if (ctx.isServer === false) {
-        config2.node = {
-          fs: "empty"
-        };
-      }
-      if (ctx.isDev) {
-        config2.devtool = ctx.isClient ? "source-map" : "inline-source-map";
-      }
-    }
-  },
-  buildModules: [
-    "@nuxt/typescript-build"
-  ],
-  components: false,
-  css: [
-    "@fortawesome/fontawesome-svg-core/styles.css",
-    "@/assets/scss/custom.scss",
-    "@/node_modules/animate.css/animate.css"
-  ],
-  env: {},
-  head: {
-    title: "Harry Potter Fanfiction",
-    meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "Harry Potter Fanfiction: Harry Potter selon ses fans" }
-    ],
-    link: []
-  },
-  loading: { color: "#0c64c1" },
-  modules: [
-    "@nuxtjs/axios",
-    "@nuxtjs/auth-next",
-    ["nuxt-buefy", {
-      css: false,
-      materialDesignIcons: false,
-      defaultIconPack: "fas",
-      defaultIconComponent: "font-awesome-icon"
-    }],
-    ["nuxt-facebook-pixel-module", {
-      /* module options */
-      track: "PageView",
-      pixelId: "FACEBOOK_PIXEL_ID",
-      autoPageView: true,
-      disabled: false
-    }]
-    // "nuxt-ssr-class-serialiser"
-  ],
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  // Désactivé temporairement (?) - Voir composables/useCustomAuth.ts
+  /*
   auth: {
-    localStorage: false,
-    strategies: {
-      local: undefined,
-      cookie: {
-        scheme: "refresh",
+    baseURL: "https://hpfrefonte.pythonanywhere.com/graphql/",
+    isEnabled: true,
+    disableServerSideAuth: false,
+    provider: {
+      type: "local",
+      endpoints: {
+        signIn: { path: "account/token/", method: "post" },
+        signOut: false,
+        // signUp: { path: "register", method: "post" },
+        signUp: false,
+        getSession: { path: "account/", method: "get" },
+      },
+      pages: {
+        login: "/",
+      },
+      token: {
+        signInResponseTokenPointer: "/access",
+        type: "JWT",
+        cookieName: "auth.token",
+        headerName: "Authorization",
+        maxAgeInSeconds: 60 * 30,
+        sameSiteAttribute: "strict",
+        secureCookieAttribute: false,
+        httpOnlyCookieAttribute: false,
+        //cookieDomain: "hpfanfiction.fr",
+      },
+      refresh: {
+        isEnabled: false,
+        endpoint: {
+          path: "account/token/refresh/",
+          method: "post",
+        },
+        refreshOnlyToken: false,
         token: {
-          property: "access",
-          global: true,
-          required: true,
-          type: "Bearer",
-          name: "Authorization",
-          maxAge: 60 * 30 // 30 minutes
+          refreshResponseTokenPointer: "account/token/refresh/",
+          refreshRequestTokenPointer: "/refresh",
+          signInResponseRefreshTokenPointer: "/refresh",
+          cookieName: "auth.refresh",
+          maxAgeInSeconds: 60 * 60 * 24 * 30, // 30 jours
+          sameSiteAttribute: "strict",
+          secureCookieAttribute: false,
+          httpOnlyCookieAttribute: false,
+          //cookieDomain: "hpfanfiction.fr",
         },
-        refreshToken: {
-          property: "refresh",
-          required: true,
-          data: "refresh",
-          maxAge: 60 * 60 * 24 * 30 // 30 jours
+      },
+      session: {
+        dataType: {
+          id: "number",
+          username: "string",
+          email: "string",
+          profile: {
+            realname: "string | null",
+            birthdate: "date | null",
+            gender: "number",
+            bio: "string | null",
+            bioImages: "[]",
+            externalProfiles: "[]",
+            profilePicture: "string | null",
+            ageConsent: "boolean",
+          },
+          preferences: {
+            font: "string",
+            fontSize: "number",
+            lineSpacing: "number",
+            colorScheme: "number",
+            colorSchemeInReader: "boolean",
+            theme: "number",
+            themeOverridenAt: "date | null",
+            showAnimations: "boolean",
+            showProfilePictures: "boolean",
+            memberReviewPolicy: "number",
+            anonymousReviewPolicy: "number",
+            letterSpacing: "number",
+            paragraphSpacing: "number",
+            redirectToSummary: "boolean",
+            showTriggerWarnings: "boolean",
+            showReviewEditor: "boolean",
+            emailForReview: "boolean",
+            emailForReply: "boolean",
+            emailForNews: "boolean",
+            emailForFavoriteActivity: "boolean",
+            emailForFavorite: "boolean",
+            emailForChapterStatus: "boolean",
+            resultOrder: "number",
+            displayContent: "number",
+          },
         },
-        user: {
-          property: false,
-          autoFetch: true
-        },
-        endpoints: {
-          login: { url: "/account/token/", method: "post" },
-          refresh: { url: "/account/token/refresh/", method: "post" },
-          logout: false,
-          user: { url: "/account/", method: "get" }
-        },
-        options: {
-          secure: (process.env.NODE_ENV === "production")
-        }
-      }
+      },
     },
-    // @ts-ignore
-    redirect: false,
-    resetOnError: true
+    sessionRefresh: {
+      enablePeriodically: false,
+      enableOnWindowFocus: true,
+    },
+    // Toutes les pages sont protégées par défaut on spécifie les pages publiques via definePageMeta
+    globalAppMiddleware: true,
   },
-  plugins: [
-    "~/plugins/truncate",
-    "~/plugins/axios",
-    "~/plugins/fontawesome",
-    "~/plugins/classes",
-    "~/plugins/theme"
+  */
+
+  compatibilityDate: "2024-11-01",
+
+  build: {
+    transpile: [
+      "@fortawesome/vue-fontawesome", // https://stackoverflow.com/a/75735153/13038487
+    ],
+  },
+
+  css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss"],
+
+  debug: false,
+
+  devtools: {
+    enabled: true,
+    //vueDevTools: true,
+    timeline: {
+      enabled: true,
+    },
+  },
+
+  // Marche pas
+  // hooks: {
+  //   "nitro:build:before": (nitro: Nitro) => {
+  //     nitro.options.moduleSideEffects.push("reflect-metadata");
+  //   },
+  // },
+
+  // Marche à moitié
+  // nitro: {
+  //   hooks: {
+  //     "rollup:before": (nitro: Nitro) => {
+  //       nitro.options.moduleSideEffects.push("reflect-metadata");
+  //     },
+  //   },
+  //   rollupConfig: {
+  //     output: {
+  //       banner: 'import "reflect-metadata";',
+  //     },
+  //   },
+  // },
+
+  modules: [
+    '@nuxt/eslint',
+    '@pinia/nuxt',
+    // '@sidebase/nuxt-auth',
+    'nuxt-graphql-client',
   ],
-  axios: {
-    baseURL: process.env.SERVER_BASE_API, // Used as fallback if no runtime config is provided,
-    browserBaseURL: process.env.CLIENT_BASE_API,
-    credentials: (process.env.NODE_ENV === "production")
-  },
-  ssr: true,
-  target: "server",
-  hooks: {
-    render: {
-      routeContext(context) {
-        // console.log("Data: ");
-        // console.log(context.data);
-        // console.log("Fetch: ");
-        // console.log(context.fetch);
-        const { fetch } = context || {};
-        // const { fetch } = context.nuxtState || {};
-        if (fetch) {
-          Object.keys(fetch).forEach((fetchkey) => {
-            // console.log("FetchKey: ");
-            // console.log(fetchkey);
-
-            Object.keys(fetch[fetchkey]).forEach((key) => {
-              const asyncFetch = fetch[fetchkey];
-              // console.log("AsyncFetch: ");
-              // console.log(key);
-              // console.log("Instance:");
-              // console.log(asyncFetch[key]);
-              asyncFetch[key] = instanceToPlain(asyncFetch[key]);
-              // console.log("Plain:");
-              // console.log(asyncFetch[key]);
-            });
-          });
-        }
-
-        //   const asyncFetch = fetch[Object.keys(fetch)[0]];
-        //   // const asyncFetch = fetch[0];
-        //   // console.log("AsyncFetch: ");
-        //   // console.log(asyncFetch);
-        //   Object.keys(asyncFetch).forEach((key) => {
-        //     // Converts the class instance to POJO
-        //     console.log("Route Render AsyncFetch: ");
-        //     console.log(key);
-        //     console.log(asyncFetch[key]);
-        //     asyncFetch[key] = instanceToPlain(asyncFetch[key]);
-        //     console.log("Plain: ");
-        //     console.log(asyncFetch[key]);
-        //   });
-        // }
-
-        // const { fetch } = this.$nuxt.context.nuxtState || {};
-        // console.log(context);
-        // console.log(context.data);
-        // console.log(context.fetch);
-        // if (Array.isArray(context?.nuxt?.data)) {
-        //   console.log(context.nuxt.data);
-        //   // This object contain the data fetched in asyncData
-        //   const asyncData = context.nuxt.data[0] || {};
-        //   // For every asyncData, we serialise it
-        //   Object.keys(asyncData).forEach((key) => {
-        //     // Converts the class instance to POJO
-        //     asyncData[key] = instanceToPlain(asyncData[key]);
-        //   });
-        // }
-      }
+  'graphql-client': {
+    codegen: {
+      onlyOperationTypes: false,
+    },
+    // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
+    clients: {
+      default: {
+        host: 'http://127.0.0.1:8000/graphql/',
+        token: {
+          type: 'JWT'
+        },
+      },
     }
-  }
-};
+  },
 
-export default config;
+  runtimeConfig: {
+    // The private keys which are only available within server-side
+    baseApi: "http://127.0.0.1:8000/graphql/",
+    // Keys within public, will be also exposed to the client-side
+    public: {
+      baseApi: "http://127.0.0.1:8000/graphql/",
+    },
+  },
+
+  ssr: true,
+
+  typescript: {
+    typeCheck: true,
+  },
+});

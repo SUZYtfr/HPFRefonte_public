@@ -1,164 +1,59 @@
 <template>
   <div class="container px-5">
-    <br>
+    <br />
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" />
-        <br>
+        <!-- <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Recent" :fanfictions="recentFanfictions" /> -->
+        <br />
         <!-- Sélections fanfictions -->
-        <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionsFanfictions" />
-        <br>
+        <!-- <FanfictionThumbnailList :is-loading="listLoading" :list-type="FanfictionListType.Selections" :fanfictions="selectionsFanfictions" /> -->
+        <br />
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList :is-loading="listLoading" :news="recentNews" />
+        <NewsThumbnailList :is-loading="newsStatus === 'pending'" :news="paginatedRecentNews ?? undefined" />
       </div>
     </div>
-    <br>
+    <br />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-import { SerialiseClass } from "@/serialiser-decorator";
-import { searchNews } from "@/api/news";
-import { NewsModel } from "@/models/news";
-import { searchFanfictions } from "@/api/fanfictions";
-import { FanfictionModel } from "@/models/fanfictions";
-import { IBasicQuery, SortByEnum } from "@/types/basics";
-import { IFanfictionFilters } from "@/types/fanfictions";
-import FanfictionThumbnail from "~/components/FanfictionThumbnail.vue";
-import FanfictionThumbnailList from "~/components/list/fanfictions/FanfictionThumbnailList.vue";
-import NewsThumbnailList from "~/components/list/news/NewsThumbnailList.vue";
+<script setup lang="ts">
+//#region Imports
+import NewsThumbnailList from "@/components/list/news/NewsThumbnailList.vue";
+import { plainToInstance } from "class-transformer";
+import { NewsModel } from "~/models";
+import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import { Ordering } from "#gql/default";
+//#endregion
 
-@Component({
-  components: {
-    FanfictionThumbnail,
-    FanfictionThumbnailList,
-    NewsThumbnailList
-  },
-  fetchOnServer: true,
-  fetchKey: "index"
-})
-export default class extends Vue {
-  // #region  Datas
+// Metadata, SEO et droits d'accès à la page
+definePageMeta({
+  auth: false,
+});
 
-  @SerialiseClass(NewsModel)
-  public recentNews: NewsModel[] = [];
+const newsPagination: OffsetPaginationInput = {
+  limit: 20,
+  offset: 0,
+};
+const newsOrder: NewsArticleOrder = {
+  postDate: Ordering.DESC
+};
 
-  @SerialiseClass(FanfictionModel)
-  public recentFanfictions: FanfictionModel[] = [];
-
-  @SerialiseClass(FanfictionModel)
-  public selectionsFanfictions: FanfictionModel[] = [];
-
-  public listLoading = false;
-  private recentFanfictionFilters : IFanfictionFilters = {
-    page: 1,
-    pageSize: 20,
-    totalPages: false,
-    sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending,
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: null,
-    inclusive: false,
-    fromDate: null,
-    toDate: null
-  };
-
-  private selectionsFanfictionFilters : IFanfictionFilters = {
-    page: 1,
-    pageSize: 20,
-    totalPages: false,
-    sortOn: "last_update_date",
-    sortBy: SortByEnum.Descending,
-    searchTerm: null,
-    searchAuthor: null,
-    searchAuthorId: null,
-    multipleAuthors: null,
-    status: null,
-    wordCount_min: null,
-    wordCount_max: null,
-    includedTags: [],
-    excludedTags: [],
-    customTags: [],
-    featured: true,
-    inclusive: false,
-    fromDate: null,
-    toDate: null
-  };
-
-  private newsFilters : IBasicQuery = {
-    page: 1,
-    pageSize: 20,
-    totalPages: true,
-    sortOn: "post_date",
-    sortBy: SortByEnum.Descending
-  };
-  // #endregion
-
-  // #region Hooks
-  created(): void {}
-
-  async fetch(): Promise<void> {
-    this.listLoading = true;
-    try {
-      this.recentNews = (await searchNews(this.newsFilters)).results;
-      this.recentFanfictions = (await searchFanfictions(this.recentFanfictionFilters)).results;
-      this.selectionsFanfictions = (await searchFanfictions(this.selectionsFanfictionFilters)).results;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la récupération des données",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.listLoading = false;
-    }
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getNews', {
+  pagination: newsPagination,
+  order: newsOrder,
+}, {
+  lazy: true,
+  transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
+    return {
+      ...data.news,
+      results: plainToInstance(NewsModel, data.news.results),
+    };
   }
-
-  beforeMount(): void {}
-
-  mouted(): void {}
-  // #endregion
-}
+});
+//#endregion
 </script>
 
-<style lang="scss">
-@import "~/assets/scss/custom.scss";
-.card-content {
-  padding: 0px;
-}
-
-@media (max-width: var(--desktop-width)) {
-  .columns.is-reversed-touch {
-    flex-direction: column-reverse;
-    display: flex;
-  }
-}
-
-@media (max-width: var(--tablet-width)) {
-  .columns.is-reversed-mobile {
-    flex-direction: column-reverse;
-    display: flex;
-  }
-}
-</style>
+<style scoped></style>

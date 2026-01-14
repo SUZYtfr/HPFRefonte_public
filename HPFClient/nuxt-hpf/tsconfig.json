@@ -1,44 +1,40 @@
 {
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": [
       "esnext",
       "esnext.asynciterable",
-      "dom"
+      "DOM"
     ],
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    // Fait sauter la découverte de #gql? // TODO
+    // "paths": {
+    //   "~/*": [
+    //     "./*"
+    //   ],
+    //   "@/*": [
+    //     "./*"
+    //   ]
+    // },
     "sourceMap": true,
     "strict": true,
-    "noEmit": true,
-    "baseUrl": ".",
-    "verbatimModuleSyntax": false,
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
     "types": [
       "@types/node",
-      "@nuxt/types",
-      "@nuxtjs/axios",
-      "@nuxtjs/auth-next",
-      "buefy/types",
-      "webpack-env", 
+      // "@nuxt/types",
+      // "buefy/types",
     ],
   },
-  "vueCompilerOptions": {
-    "extensions": [
-      ".vue"
-    ],
-    "target": 2
-  },
-  "exclude": [
-    "node_modules"
-  ]
+  "watchOptions": {
+    "excludeDirectories": [
+      "**/node_modules/**",
+      ".nuxt",
+      ".output"
+    ]
+  }
 }

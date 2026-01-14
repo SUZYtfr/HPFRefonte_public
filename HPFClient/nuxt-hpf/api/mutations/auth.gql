@@ -1,0 +1,5 @@
+mutation requestToken ($username: String!, $password: String!) {
+    requestToken(username: $username, password: $password) {
+        token
+    }
+}

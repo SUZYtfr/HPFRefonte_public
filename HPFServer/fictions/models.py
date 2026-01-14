@@ -21,9 +21,9 @@ from images.models import ContentImage
 
 class FictionQuerySet(models.QuerySet):
     def published(self):
-        """Ajoute le statut de publication"""
+        """Retourne les fictions publiées, dont au moins un des chapitres est publié"""
 
-        return self.filter(chapters__validation_status=ChapterValidationStage.PUBLISHED).distinct()
+        return self.filter(chapters__published_version__isnull=False).distinct()
 
     def with_averages(self):
         """Ajoute le total des moyennes des reviews publiées"""
@@ -136,8 +136,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def published_chapters(self):
         """Renvoie les chapitres publiés"""
-    
-        return self.chapters.filter(validation_status=ChapterValidationStage.PUBLISHED)
+        return self.chapters.filter(published_version__isnull=False)
     published_chapters.fget.short_description = "chapitres publiés"
 
     @property
@@ -299,8 +298,13 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         blank=True,
     )
 
-    def __str__(self):
-        return self.title
+    def __str__(self) -> str:
+        if title := self.title:
+            return title
+        elif last_version_title := getattr(self.last_version, "title", None):
+            return f"{last_version_title} (non publié)"
+        else:
+            return "Sans titre"  # ne devrait jamais arriver
 
     def order(self) -> int:
         return self._order + 1
@@ -311,7 +315,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     is_published.fget.short_description = "est publié"
     
     @property
-    def title(self) -> bool | None:
+    def title(self) -> str | None:
         return self.published_version.title if self.published_version else None
     title.fget.short_description = "titre"
 
@@ -331,13 +335,23 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     end_note.fget.short_description = "note de fin"
     
     @property
+    def word_count(self) -> int | None:
+        return self.published_version.word_count if self.published_version else None
+    end_note.fget.word_count = "compte de mots"
+
+    @property
     def text_images(self) -> Manager[ContentImage] | None:
-        return self.published_version.text_images if self.published_version else None
+        return self.published_version.text_images.all() if self.published_version else None
     text_images.fget.short_description = "images incluses"
 
     @property
     def last_version(self) -> "ChapterVersion":
         return self.versions.last()  # TODO latest
+
+    # TODO - en faire carrément un FK à la manière de published_version ?
+    @property
+    def submitted_version(self) -> "ChapterVersion":
+        return self.versions.order_by("creation_date").exclude(submission_date__isnull=True).last()
 
     # TODO - sera remplacé par un M2M pour le co-autorat
     @property
@@ -422,9 +436,10 @@ class ChapterVersion(models.Model):
         to=settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    is_draft = models.BooleanField(
-        verbose_name="brouillon",
-        default=True,
+    submission_date = models.DateTimeField(
+        verbose_name="date de soumission",
+        null=True,
+        blank=True,
     )
 
     text_images = models.ManyToManyField(
@@ -435,21 +450,25 @@ class ChapterVersion(models.Model):
     # Invalidation
     public_comment = models.CharField(
         null=True,
+        blank=True,
         max_length=512,
     )
     private_comment = models.CharField(
         null=True,
+        blank=True,
         max_length=512,
     )
     invalidation_date = models.DateTimeField(
         null=True,
+        blank=True,
         auto_now_add=False,
     )
     invalidation_user = models.ForeignKey(
-        null=True,
         to="users.User",
         on_delete=models.PROTECT,
         related_name="+",
+        null=True,
+        blank="True",
     )
     invalidation_reasons = models.ManyToManyField(
         verbose_name="raisons",
@@ -471,8 +490,7 @@ class ChapterVersion(models.Model):
 
     @property
     def validation_status(self) -> ChapterValidationStage:
-        # et draft dans tout ça?
-        if self.is_draft:
+        if not self.submission_date:
             return ChapterValidationStage.DRAFT
         elif self.is_published:
             return ChapterValidationStage.PUBLISHED
@@ -572,6 +590,15 @@ class CollectionItem(ordered_models.OrderedModel):
             models.UniqueConstraint(
                 name="UQ_fictions_collectionitem_parent_chapter",
                 fields=["parent", "chapter"],
+            ),
+            models.CheckConstraint(
+                name="CK_fictions_collectionitem_unique_item_type",
+                check=(
+                    models.Q(collection__isnull=False, fiction__isnull=True, chapter__isnull=True) |
+                    models.Q(collection__isnull=True, fiction__isnull=False, chapter__isnull=True) |
+                    models.Q(collection__isnull=True, fiction__isnull=True, chapter__isnull=False)
+                ),
+                violation_error_message="Un élément de série doit contenir un et seulement un élément",
             ),
         ]
 

@@ -1,12 +1,12 @@
-import { CharacteristicData } from "@/types/characteristics";
+import type { CharacteristicData } from "@/types/characteristics";
 
 export function getClassTypeColor(characteristic: CharacteristicData): string {
-  return getCaracteristicTypeColor(characteristic.characteristic_type_id);
+  return getCaracteristicTypeColor(characteristic.characteristicTypeId);
 }
 
-export function getCaracteristicTypeColor(characteristic_type_id: number | null): string {
-  if (characteristic_type_id == null) return "";
-  switch (characteristic_type_id) {
+export function getCaracteristicTypeColor(characteristicTypeId: number | null): string {
+  if (characteristicTypeId == null) return "";
+  switch (characteristicTypeId) {
     case 1:
       return "characteristic-bg-litteraire";
     case 2:
@@ -28,28 +28,24 @@ export function getCaracteristicTypeColor(characteristic_type_id: number | null)
   }
 }
 
-export function getCaracteristicTypeColorLight(characteristic_type_id: number | null): string {
-  if (characteristic_type_id == null) return "";
-  return getCaracteristicTypeColor(characteristic_type_id) + "-light";
+export function getCaracteristicTypeColorLight(characteristicTypeId: number | null): string {
+  if (characteristicTypeId == null) return "";
+  return getCaracteristicTypeColor(characteristicTypeId) + "-light";
 }
 
-export function getCaracteristicTypeColorLighter(characteristic_type_id: number | null): string {
-  if (characteristic_type_id == null) return "";
-  return getCaracteristicTypeColor(characteristic_type_id) + "-lighter";
+export function getCaracteristicTypeColorLighter(characteristicTypeId: number | null): string {
+  if (characteristicTypeId == null) return "";
+  return getCaracteristicTypeColor(characteristicTypeId) + "-lighter";
 }
 
 export function getFullPath(characteristic: CharacteristicData, characteristics: CharacteristicData[]): string {
   let result = "";
-  if (characteristic.parent_id != null) {
-    const parentCharacteristic: CharacteristicData | undefined =
-      characteristics.find(
-        (pCharacteristic: CharacteristicData) =>
-          pCharacteristic.id === characteristic.parent_id
-      );
+  if (characteristic.parentId != null) {
+    const parentCharacteristic: CharacteristicData | undefined = characteristics.find(
+      (pCharacteristic: CharacteristicData) => pCharacteristic.id === characteristic.parentId,
+    );
     if (parentCharacteristic != null)
-      result = getFullPath(parentCharacteristic, characteristics) +
-        parentCharacteristic.name +
-        " \\ ";
+      result = getFullPath(parentCharacteristic, characteristics) + parentCharacteristic.name + " \\ ";
   }
   return result;
 }

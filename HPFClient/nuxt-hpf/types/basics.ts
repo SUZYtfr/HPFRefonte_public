@@ -1,4 +1,5 @@
 import { Transform } from "class-transformer";
+import "reflect-metadata";
 
 export enum SortByEnum {
   Ascending = 0,
@@ -13,35 +14,67 @@ export enum RecordStatusEnum {
 }
 
 export interface IBasicQuery {
-  page: number,
-  totalPages: boolean,
-  pageSize: number,
-  sortOn: string,
-  sortBy: SortByEnum
+  page: number;
+  totalPages: boolean;
+  pageSize: number;
+  sortOn: string;
+  sortBy: SortByEnum;
 }
 
 export interface BasicResponse {
-  currentPage: number,
-  totalPages: number,
-  pageSize: number
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
 }
+
+export interface Paginated<T> {
+  count: number;
+  current: number;
+  results: T;
+}
+
+// T | T[] => T
+export type Flatten<T> = T extends object[] ? T[number] : T;
+
+// T | T["results"] => T
+export type Depaginate<T> = T extends Paginated<object> ? T["results"] : T;
 
 export class BasicClass<T> {
   public id: number = 0;
   public recordStatus: RecordStatusEnum = RecordStatusEnum.Unchanged;
-  public creation_user_id: number | null = null;
+  public creationUserId: number | null = null;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public creation_date: Date | null = null;
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public creationDate: Date | null = null;
 
-  public modification_user_id: number | null = null;
+  public modificationUserId: number | null = null;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public modification_date: Date | null = null;
+  @Transform(
+    ({ value }) => {
+      return value != null ? new Date(value) : null;
+    },
+    { toClassOnly: true },
+  )
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public modificationDate: Date | null = null;
 
-  constructor()
+  constructor();
 
   constructor(basicClass?: T) {
     Object.assign(this, basicClass); // or set each prop individually
@@ -50,7 +83,7 @@ export class BasicClass<T> {
   //   Object.assign(this, basicClass); // or set each prop individually
   // }
 
-  public toJSON(): any {
+  public toJSON(): object {
     return { ...this }; // POJO's copy of the class instance
   }
 }

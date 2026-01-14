@@ -1,7 +1,9 @@
 <template>
   <div id="container">
     <!-- Debug sidebar -->
-    <SidebarDebug v-if="false" />
+    <DevOnly>
+      <DebugSidebarDebug v-if="false" />
+    </DevOnly>
     <!-- Header -->
     <Navbar />
     <!-- Bannière -->
@@ -14,53 +16,34 @@
     </div>
     <div id="wrapper">
       <!-- Main Content -->
-      <nuxt />
+      <slot></slot>
     </div>
     <!-- Footer -->
     <Footer />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import Navbar from "@/components/Navbar.vue";
-import Footer from "@/components/Footer.vue";
-import SidebarDebug from "@/components/SidebarDebug.vue";
-import Config from "~/store/modules/Config";
-import Common from "~/store/modules/CommonState";
-import { ColorSchemeEnum } from "~/types/themes";
+<script setup lang="ts">
+//#region Imports
+import Navbar from "~/components/Navbar.vue";
+//#endregion
 
-@Component({
-  components: {
-    Navbar,
-    Footer,
-    SidebarDebug
+//#region Hooks
+onMounted(() => {
+  // Fix buefy il faut ajouter la class has-navbar-fixed-top. En csr elle n'est pas ajoutée
+  if (document.body.classList.contains("has-navbar-fixed-top") == false) {
+    document.body.classList.add("has-navbar-fixed-top");
   }
-})
-export default class extends Vue {
-  // #region Hooks
-  mounted(): void {
-    if (this.CommonModule.wasRefreshed) {
-      this.$changeTheme(this.ConfigModule.currentTheme?.details?.find((t) => { return t.colorScheme === ((this.$auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
-    }
-  }
-  // #endregion
+});
 
-  // #region Computed
-  get ConfigModule(): Config {
-    return getModule(Config, this.$store);
-  }
-
-  get CommonModule(): Common {
-    return getModule(Common, this.$store);
-  }
-  // #endregion
-}
+onBeforeUnmount(() => {
+  document.body.classList.remove("has-navbar-fixed-top");
+});
+//#endregion
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/scss/custom_bulma_core.scss";
+@use "~/assets/scss/custom_bulma_core.scss";
 
 #container {
   background-color: var(--primary-light);
@@ -101,5 +84,4 @@ body {
   text-align: center;
   padding: 0px 20px;
 }
-
 </style>

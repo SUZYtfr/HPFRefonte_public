@@ -1,14 +1,14 @@
 import { Exclude } from "class-transformer";
-import { BasicClass } from "@/types/basics";
+import { BasicClass } from "@/types/basics.ts";
 
 export class CharacteristicData extends BasicClass<CharacteristicData> {
   @Exclude()
-  public get characteristic_id(): number {
+  public get characteristicId(): number {
     return this.id;
   }
 
-  public characteristic_type_id: number = 0;
-  public parent_id: number | null = null;
+  public characteristicTypeId: number = 0;
+  public parentId: number | null = null;
   public name: string = "";
   public description: string | null = null;
   public order: number = 0;
@@ -23,13 +23,13 @@ export class CharacteristicData extends BasicClass<CharacteristicData> {
 
 export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
   @Exclude()
-  public get characteristic_type_id(): number {
+  public get characteristicTypeId(): number {
     return this.id;
   }
 
   public name: string = "";
-  public min_occurence: number = 0;
-  public max_occurence: number | null = null;
+  public minOccurence: number = 0;
+  public maxOccurence: number | null = null;
   public visible: boolean = true;
   public enabled: boolean = true;
 }
@@ -39,7 +39,7 @@ export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
 // }
 
 export interface ICharacteristicFilters {
-  characteristic_type_id: number | null,
-  parent_id: number | null,
+  characteristicTypeId: number | null;
+  parentId: number | null;
   // options: ICharacteristicGetOptions | null,
 }

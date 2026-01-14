@@ -1,5 +1,6 @@
 import { Transform, Exclude } from "class-transformer";
-import { BasicClass, IBasicQuery } from "./basics";
+import type { IBasicQuery } from "./basics";
+import { BasicClass } from "./basics";
 
 // #region Fanfiction
 export enum FanfictionStatus {
@@ -17,7 +18,7 @@ export enum ValidationStatus {
 
 export class FanfictionData extends BasicClass<FanfictionData> {
   @Exclude()
-  public get fanfiction_id(): number {
+  public get fanfictionId(): number {
     return this.id;
   }
 
@@ -28,16 +29,22 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public storynote: string | null = null;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public last_update_date: Date = new Date();
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public lastUpdateDate: Date = new Date();
 
-  public read_count: number | null = null;
-  public word_count: number | null = null;
-  public review_count: number | null = null;
-  public collection_count: number | null = null;
+  public readCount: number | null = null;
+  public wordCount: number | null = null;
+  public reviewCount: number | null = null;
+  public collectionCount: number | null = null;
   public status: FanfictionStatus = FanfictionStatus.OnGoing;
   public featured: boolean = false;
-  public validation_status: ValidationStatus = ValidationStatus.Unvalidated;
+  public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
+  public watched: boolean = false;
 
   @Exclude()
   public get statusAsText(): string {
@@ -63,23 +70,28 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public get titleAsSlug(): string {
     return this.title.toLowerCase().replace(/ /g, "-");
   }
+
+  constructor(init?: Partial<FanfictionData>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export interface IFanfictionFilters extends IBasicQuery {
-  searchTerm: string | null,
-  searchAuthor: string | null,
-  searchAuthorId: number | null,
-  multipleAuthors: boolean | null,
-  status: FanfictionStatus | null,
-  wordCount_min: number | null,
-  wordCount_max: number | null,
-  includedTags: number[],
-  excludedTags: number[],
-  customTags: number[],
-  featured: boolean | null,
-  inclusive: boolean,
-  fromDate: Date | null,
-  toDate: Date | null,
+  searchTerm: string | null;
+  searchAuthor: string | null;
+  searchAuthorId: number | null;
+  multipleAuthors: boolean | null;
+  status: FanfictionStatus | null;
+  wordCountMin: number | null;
+  wordCountMax: number | null;
+  includedTags: number[];
+  excludedTags: number[];
+  customTags: number[];
+  featured: boolean | null;
+  inclusive: boolean;
+  fromDate: Date | null;
+  toDate: Date | null;
 }
 // #endregion
 
@@ -93,30 +105,35 @@ export enum ReviewItemTypeEnum {
 
 export class ReviewData extends BasicClass<ReviewData> {
   @Exclude()
-  public get review_id(): number {
+  public get reviewId(): number {
     return this.id;
   }
 
-  public item_id: number = 0;
-  public review_item_type_id: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
-  public user_id: number | null = null;
-  public group_id: number | null = null;
+  public itemId: number = 0;
+  public reviewItemTypeId: ReviewItemTypeEnum = ReviewItemTypeEnum.Chapter;
+  public userId: number | null = null;
+  public groupId: number | null = null;
   public grading: number | null = null;
   public text: string = "";
-  public parent_id: number | null = null;
-  public is_draft: boolean = false;
-  public is_archived: boolean = false;
+  public parentId: number | null = null;
+  public isDraft: boolean = false;
+  public isArchived: boolean = false;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public post_date: Date | null = null;
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public postDate: Date | null = null;
 }
 
 // Est-ce que finalement ça sert à quelque chose ?
 export interface IReviewFilters extends IBasicQuery {
   searchTerm: string | null;
-  include_item_types: ReviewItemTypeEnum[] | null;
-  item_id: number | null;
+  includeItemTypes: ReviewItemTypeEnum[] | null;
+  itemId: number | null;
 }
 // #endregion
 
@@ -129,19 +146,24 @@ enum SerieStatusEnum {
 
 export class SerieData extends BasicClass<SerieData> {
   @Exclude()
-  public get serie_id(): number {
+  public get serieId(): number {
     return this.id;
   }
 
   public title: string = "";
   public summary: string | null = null;
-  public parent_id: number | null = null;
+  public parentId: number | null = null;
   public status: SerieStatusEnum = SerieStatusEnum.Closed;
 }
 // #endregion
 
 // #region  Chapter
-enum ChapterValidationStatusEnum {
+export interface IChapterFilters extends IBasicQuery {
+  awaitingDiscussionOnly: boolean;
+  searchTerm: string | null;
+}
+
+export enum ChapterValidationStatusEnum {
   Draft = 1,
   BetaPending = 2,
   BetaCompleted = 3,
@@ -149,40 +171,105 @@ enum ChapterValidationStatusEnum {
   AwaitingModification = 5,
   Modified = 6,
   Published = 7,
+  AwaitingDiscussion = 8,
 }
 
 export class ChapterData extends BasicClass<ChapterData> {
   @Exclude()
-  public get chapter_id(): number {
+  public get chapterId(): number {
     return this.id;
   }
 
   public title: string = "";
   public fiction: number | null = null;
 
-  public creation_user: number | null = null;
+  public creationUser: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public creation_date: Date = new Date();
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public submissionDate: Date | null = null;
 
-  public modification_user: number | null = null;
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @Transform(({ value }) => { return ((value instanceof Date) ? value.toISOString() : value); }, { toPlainOnly: true })
-  public modification_date: Date = new Date();
+  public modificationUser: number | null = null;
 
   public startnote: string = "";
+
   public endnote: string = "";
   public order: number | null = null;
 
-  public validation_status: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;
-  public word_count: number | null = null;
-  public read_count: number | null = null;
-  public review_count: number | null = null;
+  public validationStatus: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;
+  public wordCount: number | null = null;
+  public readCount: number | null = null;
+  public reviewCount: number | null = null;
   public average: number | null = null;
 
   @Exclude()
   public get titleAsSlug(): string {
     return this.title.toLowerCase().replace(/ /g, "-");
   }
+}
+
+export class VersionData extends BasicClass<VersionData> {
+  @Exclude()
+  public get versionId(): number {
+    return this.id;
+  }
+
+  // Chapitre Id auquel est liée la version
+  public chapterId: number | null = null;
+
+  // Auteur Id de cette version
+  public authorId: number | null = null;
+
+  // Date de dernière modification de cette version
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public versionDate: Date | null = null;
+
+  // Nombre de mots dans cette version
+  public words: number = 0;
+
+  // Texte de cette version
+  public text: string | null = null;
+
+  // Commentaire public de la modération (visible par l'auteur)
+  public publicComment: string | null = null;
+
+  // Commentaire privé de la modération (visible par la modération uniquement)
+  public privateComment: string | null = null;
+
+  // Motif(s) d'invalidation
+  public invalidationReasonIds: number[] | null = null;
+
+  // Date d'invalidation de cette version
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public invalidationDate: Date | null = null;
+
+  // Utilisateur qui a invalidé cette version
+  public invalidationUserId: number | null = null;
+}
+
+// Formulaire de validation d'un chapitre
+export interface ChapterValidationData {
+  // Commentaire public de la modération (visible par l'auteur)
+  publicComment: string | null;
+  // Commentaire privé de la modération (visible par la modération uniquement)
+  privateComment: string | null;
+  // Motif(s) d'invalidation
+  invalidationReasonIds: number[];
 }
 // #endregion

@@ -1,21 +1,14 @@
 <template>
-  <b-modal v-model="modalActive" width="300px" scroll="keep">
-    <form ref="loginForm">
+  <b-modal v-model="modalsStateStore.loginModalActive" width="300px" scroll="keep" @after-enter="modalEntered">
+    <form>
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-          <p class="modal-card-title">
-            Connexion
-          </p>
-          <button type="button" class="delete" @click="modalActive = false" />
+          <p class="modal-card-title">Connexion</p>
+          <button type="button" class="delete" @click="modalsStateStore.setLoginModalActive(false)"></button>
         </header>
         <section class="modal-card-body">
           <b-field label="Identifiant">
-            <b-input
-              v-model="loginForm.username"
-              type="text"
-              placeholder="Votre pseudo"
-              required
-            />
+            <b-input ref="txtUsername" v-model="loginForm.username" type="text" placeholder="Votre pseudo" required />
           </b-field>
           <b-field label="Mot de passe">
             <b-input
@@ -24,7 +17,7 @@
               password-reveal
               placeholder="Votre mot de passe"
               required
-              @keydown.native.enter="login()"
+              @keydown.enter="login()"
             />
           </b-field>
           <b-checkbox>Se souvenir de moi</b-checkbox>
@@ -35,8 +28,8 @@
             :expanded="true"
             label="Se connecter"
             type="is-primary"
-            :loading="loading"
-            @click="login()"
+            :loading="isLoading"
+            @click="login"
           />
         </footer>
       </div>
@@ -44,79 +37,74 @@
   </b-modal>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "nuxt-property-decorator";
-import { getModule } from "vuex-module-decorators";
-import ModalsStates from "~/store/modules/ModalsStates";
-import Config from "~/store/modules/Config";
-import { UserLoginData } from "@/types/users";
+<script setup lang="ts">
+//#region Imports
+import type { UserLoginData } from "~/types/users";
+import { useChangeTheme } from "~/composables/useTheme";
 import { ColorSchemeEnum } from "~/types/themes";
+import { snackbar } from "~/composables/useBuefy";
+//#endregion
 
-@Component({
-  name: "Connexion"
-})
-export default class extends Vue {
-  // #region Data
-  public loginForm: UserLoginData = {
-    username: "",
-    password: ""
-  };
+//#region Usings
+const { data, signIn } = useCustomAuth();
+// #endregion
 
-  public loading: boolean = false;
-  // #endregion
+// #region Stores
+const modalsStateStore = useModalsStateStore();
+const configStore = useConfigStore();
+// #endregion
 
-  // #region Computed
-  get ConfigModule(): Config {
-    return getModule(Config, this.$store);
-  }
+//#region Ref
+const isLoading = ref(false);
+const loginForm: Ref<UserLoginData> = ref({ username: "", password: "" });
+//#endregion
 
-  get ModalsStatesModule(): ModalsStates {
-    return getModule(ModalsStates, this.$store);
-  }
+//#region Reférences de la template
+const userNameInput = useTemplateRef<HTMLElement>("txtUsername");
+//#endregion
 
-  get modalActive(): boolean {
-    return this.ModalsStatesModule.loginModalActive;
-  }
+//#region Computed
+const formIsValid = computed(() => {
+  return (loginForm.value?.username?.length ?? 0) > 0 && (loginForm.value?.password?.length ?? 0) > 0;
+});
+//#endregion
 
-  set modalActive(value) {
-    this.ModalsStatesModule.setLoginModalActive(value);
-  }
-
-  get formIsValid(): boolean {
-    return ((this.loginForm?.username?.length ?? 0) > 0 && (this.loginForm?.password?.length ?? 0) > 0);
-  }
-  // #endregion
-
-  // #region Methods
-  // Envoyer le formulaire
-  public async login(): Promise<void> {
-    this.loading = true;
-    try {
-      await this.$auth.loginWith("cookie", { data: this.loginForm });
-      this.$changeTheme(this.ConfigModule.currentTheme?.details?.find((t) => { return t.colorScheme === ((this.$auth?.user?.preferences as any)?.color_scheme ?? ColorSchemeEnum.Light); }) ?? null);
-      this.modalActive = false;
-    } catch (error) {
-      if (process.client) {
-        this.$buefy.snackbar.open({
-          duration: 5000,
-          message: "Une erreur s'est produite lors de la tentative de connexion",
-          type: "is-danger",
-          position: "is-bottom-right",
-          actionText: null,
-          pauseOnHover: true,
-          queue: true
-        });
-      } else {
-        console.log(error);
-      }
-    } finally {
-      this.loading = false;
+//#region Functions
+const login = async (): Promise<void> => {
+  isLoading.value = true;
+  try {
+    await signIn(loginForm.value);
+    // Mettre le thème de l'utilisateur
+    useChangeTheme(
+      configStore.currentTheme?.details?.find((t) => {
+        return t.colorScheme === ((data.value?.preferences.colorScheme as ColorSchemeEnum) ?? ColorSchemeEnum.Light);
+      }) ?? null,
+    );
+    modalsStateStore.setLoginModalActive(false);
+  } catch (error) {
+    if (import.meta.server) {
+      console.log(error);
+    } else {
+      snackbar.open({
+        duration: 5000,
+        message: "Une erreur s'est produite lors de la tentative de connexion",
+        type: "is-danger",
+        position: "is-bottom-right",
+        actionText: undefined,
+        pauseOnHover: true,
+        queue: true,
+      });
     }
+  } finally {
+    isLoading.value = false;
   }
-  // #endregion
-}
+};
+
+// Focus le champ identifiant à l'ouverture de la modale
+const modalEntered = (): void => {
+  userNameInput.value?.focus();
+};
+//#endregion
 </script>
 
-<style lang="scss" scoped>
-@import "~/assets/scss/custom.scss";
-</style>
+<style lang="scss" scoped></style>

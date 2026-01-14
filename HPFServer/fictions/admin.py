@@ -17,26 +17,8 @@ from fictions.models import (
 )
 
 
-class CollectionItemForm(forms.ModelForm):
-    def clean(self):
-        super().clean()
-
-        collection = self.cleaned_data.get("collection")
-        fiction = self.cleaned_data.get("fiction")
-        chapter = self.cleaned_data.get("chapter")
-        items = list(filter(lambda x: x, [collection, fiction, chapter]))
-        
-        if len(items) < 1:
-            raise forms.ValidationError("Un objet est requis pour l'élément de série.")
-        elif len(items) > 1:
-            raise forms.ValidationError("Un élément de série ne peut pas contenir plus d'un objet.")
-
-        return self.cleaned_data
-
-
 class CollectionItemInline(ordered_admin.OrderedTabularInline):
     verbose_name = "élément"
-    form = CollectionItemForm
     model = CollectionItem
     fk_name = "parent"
     extra = 0
@@ -144,25 +126,34 @@ class ChapterAdminPage(BaseAdminPage):
 
     ordering = ["-id"]
     list_per_page = 20
-    list_display = ["id", "title", "creation_user", "creation_date", "is_published"]
-    list_display_links = ["title"]
+    list_display = ["id", "display_title", "creation_user", "creation_date", "is_published"]
+    list_display_links = ["display_title"]
     list_filter = ["creation_date"]
     search_fields = ["title"]
     fieldsets = [
         (None, {
-            "fields": ("fiction", "title", "start_note", "end_note", "is_published", "read_count", "text", "trigger_warnings", "make_published"),
+            "fields": ("fiction", "display_title", "start_note", "end_note", "is_published", "read_count", "text", "trigger_warnings", "make_published"),
         }),
         ("Statistiques", {
             "fields": ("average", "word_count"),
             "classes": ["collapse"],
         })
     ]
-    readonly_fields = ["word_count", "average", "is_published"]
+    readonly_fields = ["word_count", "average", "is_published", "display_title"]
     autocomplete_fields = ["fiction"]
     form = ChapterForm
 
     # def display_is_published(self, request: HttpRequest, chapter: Chapter) -> bool:
     #     return chapter.is_published
+
+    @admin.display(description="title")
+    def display_title(self, chapter: Chapter) -> str | None:
+        if title := chapter.title:
+            return title
+        elif last_version_title := getattr(chapter.last_version, "title", None):
+            return f"{last_version_title} (non publié)"
+        else:
+            return "Sans titre"  # ne devrait jamais arriver
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
@@ -222,10 +213,11 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
         "word_count",
         "text",
         "display_status",
+        "display_invalidation_reasons",
     ]
     fieldsets = [
         (None, {
-            "fields": ["chapter", "text", "word_count", "is_draft"],
+            "fields": ["chapter", "text", "word_count", "submission_date"],
         }),
         ("Invalidation", {
             "fields": ["public_comment", "private_comment", "invalidation_date", "invalidation_user", "display_invalidation_reasons", "to_be_discussed"],
@@ -245,9 +237,6 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
     @admin.display(description="status")
     def display_status(self, chapter_version: ChapterVersion) -> str:
         return chapter_version.validation_status.label
-
-    def has_change_permission(self, request, obj=None):
-        return False
 
     def has_add_permission(self, request):
         return False
