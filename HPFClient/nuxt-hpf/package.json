@@ -19,7 +19,9 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@pinia/nuxt": "^0.11.2",
+    "baseline-browser-mapping": "^2.9.14",
     "buefy": "npm:@ntohq/buefy-next",
+    "caniuse-lite": "^1.0.30001764",
     "class-transformer": "^0.5.1",
     "nuxt": "^4.1.2",
     "nuxt-graphql-client": "^0.2.46",
@@ -40,5 +42,6 @@
     "typescript": "^5.8.2",
     "vite": "^6.2.1",
     "vue-tsc": "^2.2.8"
-  }
+  },
+  "version": "4.5.0"
 }
