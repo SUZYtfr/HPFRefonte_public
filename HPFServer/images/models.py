@@ -178,7 +178,7 @@ class BaseUserImage(BaseImage):
     )
     explicit_content_type = models.PositiveSmallIntegerField(
         choices=ExplicitContent.choices,
-        default=ExplicitContent.SAFE,
+        default=ExplicitContent["SAFE"],
         verbose_name="Type de contenu explicite",
     )
     is_visibility_coerced = models.BooleanField(

@@ -4,12 +4,13 @@ import faker
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils import timezone
-from drf_extra_fields.fields import Base64ImageField
+# from drf_extra_fields.fields import Base64ImageField
 
 from core.utils import get_moderation_account
+from core.text_functions import count_words
 from users.models import User
 from characteristics.models import Characteristic, CharacteristicType
-from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage, CollectionAccess
+from fictions.models import Fiction, Chapter, Collection, ChapterValidationStage, CollectionAccess, ChapterVersion
 from reviews.models import FictionReview, ChapterReview, CollectionReview
 from news.models import NewsArticle, NewsComment, NewsStatus
 from images.enums import ExplicitContent
@@ -81,11 +82,13 @@ def sample_user(with_profile_picture: bool = True, **kwargs) -> User:
             "website": french_faker.url(),
         }
     
+        '''
         if with_profile_picture:
             image = generate_image(width=96, height=96)
             profile_data["profile_picture"] = {
                 "src_path": Base64ImageField().to_internal_value(image),
             }
+        '''
 
         return profile_data
 
@@ -103,9 +106,15 @@ def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
     creation_user_id = kwargs.pop("creation_user_id", None) or getattr(sample_user(), "id")
     text = kwargs.pop("text", None)
     text_parts = [format_editor_content(text or french_faker.paragraph(3))]
-    
+    validation_status = kwargs.pop("validation_status", None)
+
+    chapter = Chapter.objects.create(
+        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
+        creation_user_id=creation_user_id,
+    )
+
     text_images = []
-    TextImageModel = Chapter.text_images.through
+    TextImageModel = ChapterVersion.text_images.through
     for i in range(1, image_count + 1):
         width = french_faker.random_int(100, 500)
         height = french_faker.random_int(100, 250)
@@ -124,15 +133,20 @@ def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
         hpf_image_tag = f"<hpf-image index=\"{i}\"></hpf-image>"
         text_parts.extend([hpf_image_tag, format_editor_content(text or french_faker.paragraph(3))])
 
-    chapter = Chapter.objects.create(
+    chapter_version = ChapterVersion.objects.create(
+        chapter_id=chapter.id,
         creation_user_id=creation_user_id,
-        fiction_id=kwargs.pop("fiction_id", None) or getattr(sample_fiction(chapter_count=1, creation_user_id=creation_user_id), "id"),
         title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
-        validation_status=kwargs.pop("validation_status", ChapterValidationStage.PUBLISHED),
+        submission_date=None if ChapterValidationStage.DRAFT else chapter.creation_date,
         text="".join(text_parts),
+        word_count=count_words("".join(text_parts)),
         **kwargs,
     )
     TextImageModel.objects.bulk_create(text_images)
+
+    if validation_status == ChapterValidationStage.PUBLISHED:
+        chapter.published_version_id = chapter_version.id
+        chapter.save()
 
     return chapter
 

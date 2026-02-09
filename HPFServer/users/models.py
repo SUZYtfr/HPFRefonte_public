@@ -343,7 +343,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
             creation_user=self.user,
             display_height=0,  # FIXME - supprimer les dimensions du modèle d'avatar
             display_width=0,
-            explicit_content_type=ExplicitContent.SAFE,
+            explicit_content_type=ExplicitContent["SAFE"],
             is_user_property=True,
             **profile_picture,
         )        
@@ -387,7 +387,7 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
     )
     display_content = models.PositiveSmallIntegerField(
         verbose_name="Contenu explicite à afficher",
-        default=ExplicitContent.SAFE,
+        default=ExplicitContent["SAFE"],
         choices=ExplicitContent.combined_choices,
         help_text="opérateur bitwise sur ExplicitContent"
     )

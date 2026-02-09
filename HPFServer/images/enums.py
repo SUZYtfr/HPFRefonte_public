@@ -27,9 +27,13 @@ class ExplicitContent(IntFlag, metaclass=FlagChoicesMeta):
     IMPORTANT : Risque de confusion en cas de modification :
     - Ne jamais supprimer de type de contenu ou les réordonner
     - En cas de besoin, ajouter un nouvel élément à la suite des autres avec auto()
+
+    NOTE: pour une raison que j'ignore, SAFE n'est pas résolu par le sérialiseur
+    de migrations. Plutôt que ExplicitContent.SAFE, plutôt utiliser ExplicitContent["SAFE"]
+    ou simplement 0
     """
 
-    SAFE = 0
+    SAFE = auto(0)
     MATURE = auto()
     GORE = auto()
 
