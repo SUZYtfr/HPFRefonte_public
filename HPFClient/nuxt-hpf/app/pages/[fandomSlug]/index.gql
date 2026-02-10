@@ -1,0 +1,58 @@
+query getFandomDetails($filters: FandomFilters) {
+    fandoms(filters: $filters) {
+        id
+        name
+    }
+}
+
+query getIndexNews {
+    news(pagination: { limit: 10 }, order: { postDate: DESC }) {
+        totalCount
+        pageInfo {
+            limit
+            offset
+        }
+        results {
+            id
+            title
+            postDate
+            content
+            contentImages {
+                id
+                src
+            }
+            commentCount
+            authors {
+                ...BaseUserInfo
+            }
+        }
+    }
+}
+
+query getFandomFictions($filters: FictionFilters) {
+    fictions(pagination: { limit: 10 }, filters: $filters) {
+        totalCount
+        results {
+            id
+            title
+            summary
+            creationUser {
+                ...BaseUserInfo
+            }
+            authors {
+                ...BaseUserInfo
+            }
+            chapters(pagination: { limit: 1 }) {
+                results {
+                    id
+                    title
+                }
+            }
+            characteristics {
+                id
+                name
+                characteristicTypeId
+            }
+        }
+    }
+}

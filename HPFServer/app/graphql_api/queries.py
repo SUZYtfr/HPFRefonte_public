@@ -4,7 +4,18 @@ from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff
 from fictions.models import Fiction, Chapter, ChapterVersion
 from news.models import NewsArticle, NewsStatus
-from app.graphql_api.types import *
+from app.graphql_api.types import (
+    FandomType,
+    FictionType,
+    ChapterType,
+    ChapterVersionType,
+    CollectionType,
+    NewsArticleType,
+    UserType,
+    ThemeType,
+    CharacteristicType,
+    CharacteristicTypeType,
+)
 
 
 def resolve_public_fictions():
@@ -26,6 +37,7 @@ def resolve_admin_chapter_versions():
 @strawberry.type
 class Query:
     # publique
+    fandoms: list[FandomType] = strawberry_django.field()
     fictions: OffsetPaginated[FictionType] = strawberry_django.offset_paginated(resolver=resolve_public_fictions)
     chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(resolver=resolve_public_chapters)
     collections: OffsetPaginated[CollectionType] = strawberry_django.offset_paginated()

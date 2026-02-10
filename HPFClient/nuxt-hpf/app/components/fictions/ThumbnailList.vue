@@ -77,24 +77,12 @@ type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, 'results
   results: FanfictionModel[];
 }
 
-const { listType } = defineProps<{
+defineProps<{
   isLoading: boolean;
+  title?: string;
   fanfictions?: FictionTypeModelOffsetPaginated;
   listType: FanfictionListType;
 }>();
-
-let title: string = "";
-switch (listType) {
-  case FanfictionListType.Recent:
-    title = "Nouveautés";
-    break;
-  case FanfictionListType.Selections:
-    title = "Sélections du mois";
-    break;
-  default:
-    title = "";
-    break;
-}
 </script>
 
 <style lang="scss" scoped>

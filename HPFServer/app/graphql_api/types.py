@@ -9,10 +9,12 @@ from app.graphql_api.filters import (
     NewsArticleFilters,
     FictionFilters,
     ChapterFilters,
+    FandomFilters,
 )
 from app.graphql_api.orders import NewsArticleOrder, FictionOrder, ChapterOrder
 
 from fictions.models import (
+    Fandom,
     Fiction,
     Chapter,
     ChapterVersion,
@@ -127,6 +129,8 @@ class FictionType:
     read_count: auto
     chapter_count: auto
     author: "UserType" = strawberry_django.field(field_name="creation_user")
+    fandoms: list["FandomType"]
+
 
 @strawberry_django.type(model=Collection, fields="__all__")
 class CollectionType:
@@ -160,6 +164,11 @@ class ChapterVersionType:
 
 @strawberry_django.type(model=InvalidationReason, fields="__all__")
 class InvalidationReasonType:
+    pass
+
+
+@strawberry_django.type(model=Fandom, fields="__all__", filters=FandomFilters)
+class FandomType:
     pass
 
 

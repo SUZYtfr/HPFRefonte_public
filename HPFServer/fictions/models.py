@@ -130,6 +130,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         related_name="fiction_summaries",
     )
 
+    fandoms = models.ManyToManyField(
+        to="fictions.Fandom",
+        related_name="fictions",
+    )
+
     def __str__(self):
         return self.title
 
@@ -643,3 +648,12 @@ class CollectionItem(ordered_models.OrderedModel):
             return self.order + 1
         else:
             return None
+
+
+class Fandom(models.Model):
+    name = models.CharField()
+    slug = models.SlugField()
+
+    def __str__(self) -> str:
+        return self.name
+    

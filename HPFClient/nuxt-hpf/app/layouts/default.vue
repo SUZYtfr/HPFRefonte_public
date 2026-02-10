@@ -10,7 +10,7 @@
     <div id="banner" class="hero">
       <div class="hero-body">
         <div class="container">
-          <h1>Harry Potter Fanfiction</h1>
+          <h1>Hameau Pour Fanfiction</h1>
         </div>
       </div>
     </div>

@@ -5,26 +5,26 @@
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
         <FictionsThumbnailList
-          title="Nouveautés tous fandoms"
-          :is-loading="recentFanfictionsStatus == 'pending'"
-          :list-type="FanfictionListType.Recent"
-          :fanfictions="recentFanfictions"
+            :title="'Nouveautés ' + fandomData.fandoms[0]?.name"
+            :is-loading="recentFanfictionsStatus == 'pending'"
+            :list-type="FanfictionListType.Recent"
+            :fanfictions="recentFanfictions"
         />
         <br />
         <!-- Sélections fanfictions -->
         <FictionsThumbnailList
-          title="Sélections tous fandoms"
-          :is-loading="recentFanfictionsStatus == 'pending'"
-          :list-type="FanfictionListType.Selections"
-          :fanfictions="recentFanfictions"
+            :title="'Sélections ' + fandomData.fandoms[0]?.name"
+            :is-loading="recentFanfictionsStatus == 'pending'"
+            :list-type="FanfictionListType.Selections"
+            :fanfictions="recentFanfictions"
         />
         <br />
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
         <NewsThumbnailList
-          :is-loading="newsStatus === 'pending'"
-          :news="paginatedRecentNews ?? undefined"
+            :is-loading="newsStatus === 'pending'"
+            :news="paginatedRecentNews ?? undefined"
         />
       </div>
     </div>
@@ -36,8 +36,7 @@
 //#region Imports
 import { plainToInstance } from "class-transformer";
 import { FanfictionModel, NewsModel } from "~/models";
-import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput, FictionOrder, FictionTypeOffsetPaginated } from "#gql";
-import { Ordering } from "#gql/default";
+import type { NewsArticleTypeOffsetPaginated, FictionTypeOffsetPaginated } from "#gql";
 import { FanfictionListType } from "~/types/other";
 //#endregion
 
@@ -46,7 +45,27 @@ definePageMeta({
   auth: false,
 });
 
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getIndexFictions', {}, {
+const route = useRoute();
+
+const { data: fandomData } = await useAsyncGql('getFandomDetails', {
+    filters: {
+        slug: { exact: route.params.fandomSlug  as string}
+    }
+});
+
+if (fandomData.value.fandoms.length == 0) {
+    navigateTo('/');
+}
+
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getFandomFictions', {
+    filters: {
+        fandoms: {
+            id: {
+                exact: fandomData.value.fandoms[0]?.id
+            }
+        }
+    }
+}, {
   lazy: true,
   transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
     return {

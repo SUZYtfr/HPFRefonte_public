@@ -1,11 +1,11 @@
 import strawberry_django
 from strawberry import auto, Info
 
-from django.db.models import QuerySet, Q, F
+from django.db.models import QuerySet, Q, F, Count
 
 from users.models import User
 from news.models import NewsArticle
-from fictions.models import Fiction, Chapter
+from fictions.models import Fiction, Chapter, Fandom
 
 from typing import Optional
 
@@ -32,6 +32,8 @@ class FictionFilters:
     last_update_date: auto
     status: auto
     featured: auto
+    fandoms: Optional["FandomFilters"]
+
 
 @strawberry_django.filter_type(model=Chapter, lookups=True)
 class ChapterFilters:
@@ -55,3 +57,31 @@ class ChapterFilters:
             info=info,
             prefix=f"_title__{prefix}",
         )
+
+
+@strawberry_django.filter_type(model=Fandom, lookups=True)
+class FandomFilters:
+    id: auto
+    name: auto
+    slug: auto
+    
+    @strawberry_django.filter_field(name="allIdInList")
+    def all_ids_in_list_lookup(
+        self,
+        info: Info,
+        queryset: QuerySet[Fiction],
+        value: list[int],
+        prefix: str
+    ) -> tuple[QuerySet[Fiction], Q]:
+        number_of_matching_fandoms = Count(
+            "fandoms",
+            filter=Q(fandoms__pk__in=value),
+            distinct=True,
+        )
+        
+        queryset = queryset.alias(
+            number_of_matching_fandoms=number_of_matching_fandoms,
+        )
+        q = Q(number_of_matching_fandoms=len(value))
+
+        return queryset, q

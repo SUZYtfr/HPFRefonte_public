@@ -14,6 +14,7 @@ from fictions.models import (
     ChapterVersion,
     InvalidationReason,
     ChapterValidationStage,
+    Fandom,
 )
 
 
@@ -78,7 +79,7 @@ class FictionAdminPage(BaseAdminPage):
             "fields": ("title", "storynote", "summary", "status", "featured", "published"),
         }),
         ("Caractéristiques", {
-            "fields": ("characteristics",),
+            "fields": ("characteristics", "fandoms"),
             "classes": ["collapse"],
         }),
         ("Statistiques", {
@@ -245,3 +246,12 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
 @admin.register(InvalidationReason)
 class InvalidationReasonAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Fandom)
+class FandomAdmin(admin.ModelAdmin):
+    list_display = ["name", "slug", "display_fiction_count"]
+    
+    @admin.display(description="fictions")
+    def display_fiction_count(self, fandom: "Fandom") -> int:
+        return fandom.fictions.count()
