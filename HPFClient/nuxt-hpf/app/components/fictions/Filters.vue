@@ -85,9 +85,17 @@
       /> -->
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :external-value="(fanfictionFilters.featured ??= {})?.exact"
+        :externalState="(fanfictionFilters.featured ??= {})?.exact"
         title="Histoires médaillés"
         @change="(fanfictionFilters.featured ??= {}).exact = $event"
+      />
+      <Panel
+        name="Fandoms"
+        class="my-2"
+        :options="[{name: 'Harry Potter', value: '1'}, {name: 'Marvel', value: '2'}]"
+        :initial-included-values="fanfictionFilters.fandoms?.allIdsInList || []"
+        :initial-excluded-values="fanfictionFilters.fandoms?.NOT?.id?.inList || []"
+        @change="fandomsChanged"
       />
       <CharacteristicsPanel
         v-for="(type, index) in ConfigModule.characteristicTypes"
@@ -275,15 +283,40 @@ function filteredCharacteristics(characteristicTypeId: number): CharacteristicMo
     return itemsSorted;
 }
 
-function characteristicsChanged(characteristicId: number, action: 'include' | 'exclude' | null) {
+function fandomsChanged(fandomId: string, action: boolean | null) {
+  let newIncluded = ((fanfictionFilters.fandoms ??= {}).allIdsInList || []).filter(t => t !== fandomId.toString());
+  let newExcluded = ((((fanfictionFilters.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== fandomId.toString());
+
+  switch (action) {
+    case true:
+      newIncluded = newIncluded.concat(fandomId.toString());
+      break;
+    case false:
+      newExcluded = newExcluded.concat(fandomId.toString());
+      break;
+    default:
+      break;
+  }
+  
+  fanfictionFilters.fandoms = {
+    allIdsInList: newIncluded.length > 0 ? newIncluded : null,
+    NOT: {
+      id: {
+        inList: newExcluded.length > 0 ? newExcluded : null
+      }
+    }
+  }
+}
+
+function characteristicsChanged(characteristicId: number, action: boolean | null) {
   let newIncluded = ((fanfictionFilters.characteristics ??= {}).allIdsInList || []).filter(t => t !== characteristicId.toString());
   let newExcluded = ((((fanfictionFilters.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== characteristicId.toString());
 
   switch (action) {
-    case 'include':
+    case true:
       newIncluded = newIncluded.concat(characteristicId.toString());
       break;
-    case 'exclude':
+    case false:
       newExcluded = newExcluded.concat(characteristicId.toString());
       break;
     default:

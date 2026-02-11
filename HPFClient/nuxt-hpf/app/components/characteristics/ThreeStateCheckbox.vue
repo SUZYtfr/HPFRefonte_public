@@ -1,10 +1,10 @@
 <template>
   <b-checkbox
     v-model="checkboxStatus"
-    :indeterminate="indeterminate"
-    :type="indeterminate ? 'is-danger' : ''"
-    :class="[{ excluded: indeterminate }]"
-    @click.native.prevent="checkBoxClicked($event)"
+    :indeterminate="externalState === false"
+    :type="externalState === false ? 'is-danger' : ''"
+    :class="[{ excluded: externalState === false }]"
+    @click.native.prevent="checkBoxClicked"
   >
     <font-awesome-icon v-if="characteristic?.parentId != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
@@ -21,32 +21,28 @@
 import { CharacteristicData } from "@/types/characteristics";
 
 interface Props {
+  externalState?: boolean | null;
   characteristic?: CharacteristicData | undefined;
-  externalState?: number | undefined;
 }
 
-const { characteristic, externalState } = defineProps<Props>();
+const { characteristic, externalState = null } = defineProps<Props>();
 
 const checkboxStatus = computed<boolean>(() => {
-  return externalState === 1;
+  return externalState === true;
 });
-
-const indeterminate = computed<boolean>(() => {
-  return externalState === -1;
-})
 
 const $emit = defineEmits(["change"]);
 
-function checkBoxClicked(event: any): void {
-  let internalState: number;
-  if (indeterminate.value) {
-    internalState = 0;
-  } else if (checkboxStatus.value) {
-    internalState = -1;
+// alterne au clic : true (inclus) => false (exclu) => null (vide)
+// Note : "indeterminate" = false (exclu)
+function checkBoxClicked(): void {
+  if (externalState === true) {
+    $emit("change", false);
+  } else if (externalState === false) {
+    $emit("change", null);
   } else {
-    internalState = 1;
+    $emit("change", true);
   }
-  $emit("change", characteristic?.id, internalState);
 }
 </script>
 

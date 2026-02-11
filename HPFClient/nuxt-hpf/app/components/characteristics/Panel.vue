@@ -15,9 +15,9 @@
         characteristicType.name
       }}</span>
       <span
-        v-if="totalIds > 0"
+        v-if="totalChecked > 0"
         class="is-size-6"
-      ><strong> {{ "(" + totalIds + ")" }} </strong></span>
+      ><strong> {{ "(" + totalChecked + ")" }} </strong></span>
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
@@ -29,7 +29,7 @@
             class="py-1 pl-1"
             :characteristic="charac"
             :external-state="stateForCheckbox(charac.characteristicId)"
-            @change="threeStateChanged"
+            @change="(internalState: boolean | null) => threeStateChanged(charac.id, internalState)"
           />
         </div>
       </simplebar>
@@ -50,34 +50,33 @@ interface Props {
 
 const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
 
-const includedIds = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
-const excludedIds = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
+const includedValues = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
+const excludedValues = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
 const expanded = ref<boolean>(false);
 
-const totalIds = computed<number>(() => {
-  return includedIds.value.length + excludedIds.value.length;
+const totalChecked = computed<number>(() => {
+  return includedValues.value.length + excludedValues.value.length;
 })
 
 const $emit = defineEmits(["change"])
 
-function threeStateChanged(characteristicId: number, state: number): void {
-  includedIds.value = includedIds.value.filter(
-    item => item !== Number(characteristicId)
+function threeStateChanged(characteristicId: number, state: boolean | null): void {
+  includedValues.value = includedValues.value.filter(
+    iv => iv !== Number(characteristicId)
   );
-  excludedIds.value = excludedIds.value.filter(
-    item => item !== Number(characteristicId)
+  excludedValues.value = excludedValues.value.filter(
+    iv => iv !== Number(characteristicId)
   );
 
-  if (state === -1) excludedIds.value.push(Number(characteristicId));
-  else if (state === 1) includedIds.value.push(Number(characteristicId));
-  $emit("change", characteristicId, state === -1 ? 'exclude' : state === 1 ? 'include' : null);
+  if (state === true) includedValues.value.push(Number(characteristicId));
+  else if (state === false) excludedValues.value.push(Number(characteristicId));
+  $emit("change", characteristicId, state);
 }
 
-function stateForCheckbox(caracteristic_id: number): number {
-  let state = 0;
-  if (includedIds.value.includes(Number(caracteristic_id))) state = 1;
-  else if (excludedIds.value.includes(Number(caracteristic_id))) state = -1;
-  return state;
+function stateForCheckbox(value: number): boolean | null {
+  if (includedValues.value.includes(Number(value))) return true;
+  else if (excludedValues.value.includes(Number(value))) return false;
+  else return null;
 }
 </script>
 

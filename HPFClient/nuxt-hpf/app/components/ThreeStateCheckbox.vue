@@ -1,10 +1,10 @@
 <template>
   <b-checkbox
     v-model="checkboxStatus"
-    :indeterminate="indeterminate"
-    :type="indeterminate ? 'is-danger' : ''"
-    :class="[{ excluded: indeterminate }]"
-    @click.native.prevent="checkBoxClicked($event)"
+    :indeterminate="externalState === false"
+    :type="externalState === false ? 'is-danger' : ''"
+    :class="[{ excluded: externalState === false }]"
+    @click.native.prevent="checkBoxClicked"
   >
     <span>{{ title }}</span>
   </b-checkbox>
@@ -13,41 +13,28 @@
 <script setup lang="ts">
 
 interface Props {
-  externalValue?: any;
-  title?: string;
-  checkedValue?: any;
-  excludedValue?: any;
-  uncheckedValue?: any;
+  externalState?: boolean | null;
+  title: string;
 } 
 
-const { 
-  externalValue,
-  title,
-  checkedValue = true,
-  excludedValue = false,
-  uncheckedValue = null
-} = defineProps<Props>();
+const { externalState = null } = defineProps<Props>();
 
 const checkboxStatus = computed<boolean>(() => {
-    return externalValue === checkedValue;
-});
-
-const indeterminate = computed<boolean>(() => {
-    return externalValue === excludedValue;
+    return externalState === true;
 });
 
 const $emit = defineEmits(["change"]);
 
-function checkBoxClicked(event: any): void {
-  let internalState: number;
-  if (indeterminate.value) {
-    internalState = uncheckedValue;
-  } else if (checkboxStatus.value) {
-    internalState = excludedValue;
+// alterne au clic : true (inclus) => false (exclu) => null (vide)
+// Note : "indeterminate" = false (exclu)
+function checkBoxClicked(): void {
+  if (externalState === true) {
+    $emit("change", false);
+  } else if (externalState === false) {
+    $emit("change", null);
   } else {
-    internalState = checkedValue;
+    $emit("change", true);
   }
-  $emit("change", internalState);
 }
 </script>
 
