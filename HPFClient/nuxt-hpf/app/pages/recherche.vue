@@ -10,6 +10,8 @@
     >
       <FictionsFilters
         :fanfiction-filters
+        :initial-included-ids
+        :initial-excluded-ids
         :is-loading="status === 'pending'"
         :execute="execute"
         :is-fixed-height-card="true"
@@ -23,6 +25,8 @@
         class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
       >
         <FictionsFilters
+          :initial-included-ids
+          :initial-excluded-ids
           :fanfiction-filters
           :is-loading="status === 'pending'"
           :execute="execute"
@@ -61,6 +65,11 @@ import { Ordering } from "#gql/default";
 import { plainToInstance } from "class-transformer";
 import { FanfictionModel } from "~/models";
 
+const route = useRoute();
+
+const initialIncludedIds = (route.query['tags'] as string || '').split('.').map(t => Number(t)).filter(t => t > 0);
+const initialExcludedIds = (route.query['tags'] as string || '').split('.').map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
+
 const filtersOpened = ref<boolean>(false);
 const fictionOrder = ref<FictionOrder>({
   lastUpdateDate: Ordering.DESC,
@@ -69,7 +78,31 @@ const fictionPagination = reactive<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
-const fanfictionFilters = ref<FictionFilters>({});
+const fanfictionFilters = ref<FictionFilters>({
+  characteristics: {
+    allIdsInList: initialIncludedIds.length > 0 ? initialIncludedIds.map(t => t.toString()) : null,
+    AND: {
+      NOT: {
+        id: {
+          inList: initialExcludedIds.length > 0 ? initialExcludedIds.map(t => t.toString()) : null
+        }
+      }
+    }
+  }
+});
+
+// Met à jour l'URL avec les paramètres de recherche actuels
+watch(fanfictionFilters.value, () => {
+  const newSearchParams = new URLSearchParams();
+  const tagsParams = (fanfictionFilters.value.characteristics?.allIdsInList || [])
+    .concat(fanfictionFilters.value.characteristics?.NOT?.id?.inList?.map(t => '-' + t) || [])
+    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) )
+
+  if (tagsParams.length > 0) {
+    newSearchParams.append('tags', tagsParams.join('.'));
+  }
+  history.replaceState({}, '', '/recherche?' + newSearchParams.toString());
+})
 
 /* const fanfictionFilters = reactive<IFanfictionFilters>({
   searchTerm: null,

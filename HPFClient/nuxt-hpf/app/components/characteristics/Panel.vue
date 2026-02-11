@@ -40,17 +40,18 @@
 <script setup lang="ts">
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
 import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
-import ThreeStateCheckbox from "./ThreeStateCheckbox.vue";
 
 interface Props {
   characteristicType: CharacteristicTypeModel;
   characteristics: CharacteristicModel[];
+  initialIncludedIds: number[];
+  initialExcludedIds: number[];
 }
 
-const { characteristicType, characteristics } = defineProps<Props>();
+const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
 
-const includedIds = ref<number[]>([]);
-const excludedIds = ref<number[]>([]);
+const includedIds = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
+const excludedIds = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
 const expanded = ref<boolean>(false);
 
 const totalIds = computed<number>(() => {
@@ -59,23 +60,23 @@ const totalIds = computed<number>(() => {
 
 const $emit = defineEmits(["change"])
 
-function threeStateChanged(caracteristic_id: number, state: number): void {
+function threeStateChanged(characteristicId: number, state: number): void {
   includedIds.value = includedIds.value.filter(
-    item => item !== caracteristic_id
+    item => item !== Number(characteristicId)
   );
   excludedIds.value = excludedIds.value.filter(
-    item => item !== caracteristic_id
+    item => item !== Number(characteristicId)
   );
 
-  if (state === -1) excludedIds.value.push(caracteristic_id);
-  else if (state === 1) includedIds.value.push(caracteristic_id);
-  $emit("change", new Set(characteristics?.map(t => t.id)), includedIds.value, excludedIds.value);
+  if (state === -1) excludedIds.value.push(Number(characteristicId));
+  else if (state === 1) includedIds.value.push(Number(characteristicId));
+  $emit("change", characteristicId, state === -1 ? 'exclude' : state === 1 ? 'include' : null);
 }
 
 function stateForCheckbox(caracteristic_id: number): number {
   let state = 0;
-  if (includedIds.value.includes(caracteristic_id)) state = 1;
-  else if (excludedIds.value.includes(caracteristic_id)) state = -1;
+  if (includedIds.value.includes(Number(caracteristic_id))) state = 1;
+  else if (excludedIds.value.includes(Number(caracteristic_id))) state = -1;
   return state;
 }
 </script>

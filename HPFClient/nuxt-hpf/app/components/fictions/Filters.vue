@@ -91,6 +91,8 @@
       />
       <CharacteristicsPanel
         v-for="(type, index) in ConfigModule.characteristicTypes"
+        :initial-included-ids
+        :initial-excluded-ids
         :key="'tag_' + index.toString()"
         class="my-2"
         :characteristicType="type"
@@ -194,16 +196,14 @@
 </template>
 
 <script setup lang="ts">
-// import ThreeStateCheckbox from "~/components/ThreeStateCheckbox.vue";
-// import CharacteristicPanel from "@/components/CharacteristicPanel.vue";
-// import { IFanfictionFilters } from "~/types/fanfictions";
 import { groupBy } from "@/utils/es6-utils";
 import type { FictionFilters } from "#gql";
 import { CharacteristicModel, CharacteristicTypeModel } from "@/models";
 
-
 interface Props {
   fanfictionFilters: FictionFilters;
+  initialIncludedIds: number[];
+  initialExcludedIds: number[];
   isLoading?: boolean;
   isFixedHeightCard?: boolean;
   tooltipPosition?: string;
@@ -215,12 +215,9 @@ const {
   isLoading = false,
   isFixedHeightCard = false,
   tooltipPosition = "is-right",
-  execute,
 } = defineProps<Props>();
 
-
 const listLoading = computed<boolean>(() => isLoading);
-
 
 const sliderTicks = [
   { sliderValue: 1, realValue: 500, displayValue: "<500" },
@@ -230,8 +227,6 @@ const sliderTicks = [
   { sliderValue: 5, realValue: 50000, displayValue: "50k" },
   { sliderValue: 6, realValue: 100000, displayValue: ">100k" }
 ];
-
-const filteredTags: CharacteristicModel[] = [];
 
 const sliderWords = ref<number[]>([1, 6]);
 
@@ -280,43 +275,30 @@ function filteredCharacteristics(characteristicTypeId: number): CharacteristicMo
     return itemsSorted;
 }
 
-// Récupération des tags utilisateurs
-async function getFilteredTags(text: string): Promise<void> {
-  // this.filteredTags =
+function characteristicsChanged(characteristicId: number, action: 'include' | 'exclude' | null) {
+  let newIncluded = ((fanfictionFilters.characteristics ??= {}).allIdsInList || []).filter(t => t !== characteristicId.toString());
+  let newExcluded = ((((fanfictionFilters.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== characteristicId.toString());
+
+  switch (action) {
+    case 'include':
+      newIncluded = newIncluded.concat(characteristicId.toString());
+      break;
+    case 'exclude':
+      newExcluded = newExcluded.concat(characteristicId.toString());
+      break;
+    default:
+      break;
+  }
+  
+  fanfictionFilters.characteristics = {
+    allIdsInList: newIncluded.length > 0 ? newIncluded : null,
+    NOT: {
+      id: {
+        inList: newExcluded.length > 0 ? newExcluded : null
+      }
+    }
+  }
 }
-const toggleFilterChanged = () => {}
-const characteristicsChanged = () => {}
-// Mise à jour des filtres des caractéristiques incluses / excluses
-/* function characteristicsChanged(
-  allIds: Set<number>,
-  includedIds: number[],
-  excludedIds: number[]
-): void {
-  if (fanfictionFilters == null) return;
-  fanfictionFilters.excludedTags =
-    fanfictionFilters.excludedTags.filter(
-      excludedId => !allIds.has(excludedId)
-    );
-  fanfictionFilters.excludedTags =
-    fanfictionFilters.excludedTags.concat(excludedIds);
-  fanfictionFilters.includedTags =
-    fanfictionFilters.includedTags.filter(
-      includedId => !allIds.has(includedId)
-    );
-  fanfictionFilters.includedTags =
-    fanfictionFilters.includedTags.concat(includedIds);
-}
- */
-// Utiliser peut-être un emit vers newsList.execute?
-// Déclencher le Watcher des filtres sur le clique recherche
-/* function toggleFilterChanged(): void {
-  if (fanfictionFilters == null) return;
-  fanfictionFilters.searchTerm = (fanfictionFilters.searchTerm ?? "") + " ";
-  fanfictionFilters.searchTerm = fanfictionFilters.searchTerm.slice(
-    0,
-    -1
-  );
-} */
 </script>
 
 <style lang="scss" scoped>
