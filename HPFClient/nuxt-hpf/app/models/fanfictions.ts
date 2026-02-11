@@ -1,6 +1,6 @@
 import { Type, Exclude, Transform, plainToInstance } from "class-transformer";
 import { BasicClass } from "~/types/basics";
-import { FanfictionData, SerieData, ChapterData, ReviewData, VersionData } from "~/types/fanfictions";
+import { SerieData, ChapterData, ReviewData, VersionData, type FandomData } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData } from "~/types/characteristics";
@@ -106,6 +106,8 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
 
   public chapterCount: number | null = null;
   public firstChapter: { id: number; title: string; order: number } | null = null;
+
+  public fandoms: FandomData[] | null = null;
 
   constructor(init?: Partial<FanfictionModel>) {
     super();

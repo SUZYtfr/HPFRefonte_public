@@ -125,3 +125,11 @@ query getAdminChapterVersions($pagination: OffsetPaginationInput, $withTexts: Bo
         }
     }
 }
+
+query getFandoms {
+    fandoms {
+        id
+        name
+        slug
+    }
+}

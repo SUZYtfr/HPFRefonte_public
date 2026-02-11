@@ -2,6 +2,7 @@ query getFandomDetails($filters: FandomFilters) {
     fandoms(filters: $filters) {
         id
         name
+        slug
     }
 }
 
@@ -52,6 +53,11 @@ query getFandomFictions($filters: FictionFilters) {
                 id
                 name
                 characteristicTypeId
+            }
+            fandoms {
+                id
+                name
+                slug
             }
         }
     }

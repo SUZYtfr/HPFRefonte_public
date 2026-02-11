@@ -6,6 +6,7 @@
         <!-- Nouveautés fanfictions -->
         <FictionsThumbnailList
             :title="'Nouveautés ' + fandomData.fandoms[0]?.name"
+            :fandom="fandomData.fandoms[0]"
             :is-loading="recentFanfictionsStatus == 'pending'"
             :list-type="FanfictionListType.Recent"
             :fanfictions="recentFanfictions"
@@ -14,6 +15,7 @@
         <!-- Sélections fanfictions -->
         <FictionsThumbnailList
             :title="'Sélections ' + fandomData.fandoms[0]?.name"
+            :fandom="fandomData.fandoms[0]"
             :is-loading="recentFanfictionsStatus == 'pending'"
             :list-type="FanfictionListType.Selections"
             :fanfictions="recentFanfictions"
@@ -48,9 +50,9 @@ definePageMeta({
 const route = useRoute();
 
 const { data: fandomData } = await useAsyncGql('getFandomDetails', {
-    filters: {
-        slug: { exact: route.params.fandomSlug  as string}
-    }
+  filters: {
+    slug: { exact: route.params.fandomSlug  as string}
+  }
 });
 
 if (fandomData.value.fandoms.length == 0) {

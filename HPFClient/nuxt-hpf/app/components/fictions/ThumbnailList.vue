@@ -31,6 +31,7 @@
               :key="fanfiction.fanfictionId"
               :fanfiction="fanfiction"
               :index="innerindex"
+              :fandom
             />
           </div>
         </div>
@@ -42,7 +43,12 @@
         <p class="card-footer-item py-2">
           <span>
             <NuxtLink
-              to="/recherche"
+              :to="{
+                name: 'recherche',
+                query: {
+                  fandoms: fandom?.id
+                }
+              }"
               no-prefetch
             > Plus de nouveautés </NuxtLink>
           </span>
@@ -52,7 +58,12 @@
         <p class="card-footer-item py-2">
           <span>
             <NuxtLink
-              to="/recherche"
+              :to="{
+                name: 'recherche',
+                query: {
+                  fandoms: fandom?.id
+                }
+              }"
               no-prefetch
             > Plus de sélections </NuxtLink>
           </span>
@@ -70,6 +81,7 @@
 <script setup lang="ts">
 import { FanfictionModel } from "@/models/fanfictions";
 import { FanfictionListType } from "@/types/other";
+import type { FandomData } from "@/types/fanfictions";
 import type { FictionTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça
@@ -80,6 +92,7 @@ type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, 'results
 defineProps<{
   isLoading: boolean;
   title?: string;
+  fandom?: FandomData;
   fanfictions?: FictionTypeModelOffsetPaginated;
   listType: FanfictionListType;
 }>();

@@ -92,7 +92,7 @@
       <Panel
         name="Fandoms"
         class="my-2"
-        :options="[{name: 'Harry Potter', value: '1'}, {name: 'Marvel', value: '2'}]"
+        :options="ConfigModule.fandoms?.map(f => { return {name: f.name, value: f.id} }) || []"
         :initial-included-values="fanfictionFilters.fandoms?.allIdsInList || []"
         :initial-excluded-values="fanfictionFilters.fandoms?.NOT?.id?.inList || []"
         @change="fandomsChanged"

@@ -62,7 +62,7 @@
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">
-        <a
+        <NuxtLink
           v-for="characteristic in fanfiction.characteristics"
           :key="
             'ff_' +
@@ -70,11 +70,17 @@
               '_characteristic_' +
               characteristic.id.toString()
           "
-          :href="'auteurs/' + characteristic.id"
+          :to="{
+            name: 'recherche',
+            query: {
+              fandoms: fandom?.id,
+              tags: characteristic.id
+            }
+          }"
         ><b-tag
           :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']"
           type="is-info"
-        >{{ characteristic.name }}</b-tag></a>
+        >{{ characteristic.name }}</b-tag></NuxtLink>
       </div>
     </div>
     <p
@@ -89,9 +95,11 @@
 import { FanfictionModel } from "~/models";
 import { getClassTypeColor } from "~/utils/characteristics";
 import { CharacteristicData } from "~/types/characteristics";
+import type { FandomData } from "~/types/fanfictions";
 
 const { fanfiction } = defineProps<{
   fanfiction: FanfictionModel;
+  fandom?: FandomData;
 }>();
 
 // https://vuejs.org/guide/reusability/custom-directives.html#when-to-use

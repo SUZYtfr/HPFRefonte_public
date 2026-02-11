@@ -1,4 +1,5 @@
 import { CharacteristicModel, CharacteristicTypeModel, ThemeModel } from "~/models";
+import type { FandomData } from "~/types/fanfictions";
 import { InvalidationReasonData } from "~/types/config";
 import { plainToInstance } from "class-transformer";
 import type { CharacteristicType, CharacteristicTypeType, ThemeType } from "#gql";
@@ -9,6 +10,7 @@ export const useConfigStore = defineStore("config", () => {
   const characteristics = ref<CharacteristicModel[]>();
   const characteristicTypes = ref<CharacteristicTypeModel[]>();
   const themes = ref<ThemeModel[]>();
+  const fandoms = ref<FandomData[]>();
   // TODO appel à l'api, pour l'instant en dur.
   const invalidationReasons = ref<InvalidationReasonData[]>([
     new InvalidationReasonData({ id: 1, reason: "Taille trop courte" }),
@@ -68,6 +70,9 @@ export const useConfigStore = defineStore("config", () => {
   function setThemes(thms: ThemeModel[]): void {
     themes.value = thms;
   }
+  function setFandoms(fdoms: FandomData[]): void {
+    fandoms.value = fdoms;
+  }
   //#endregion
 
   // Bizarrement il faut séparer ces deux appels dans leur méthodes respectives
@@ -107,16 +112,28 @@ export const useConfigStore = defineStore("config", () => {
     return true;
   }
 
+  async function fetchFandoms(): Promise<true> {
+    const { data: fdoms } = await useAsyncGql('getFandoms', {}, {
+      transform: (data: { fandoms: FandomData[] }) => {
+        return data.fandoms
+      }
+    });
+    setFandoms(fdoms.value ?? []);
+    return true;
+  }
+
   return {
     characteristics,
     characteristicTypes,
     themes,
     currentTheme,
+    fandoms,
     invalidationReasons,
     // setCharacteristics,
     // setCharacteristicTypes,
     fetchCharacteristicTypes,
     fetchCharacteristics,
     fetchThemes,
+    fetchFandoms,
   };
 });

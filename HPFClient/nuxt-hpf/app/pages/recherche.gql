@@ -25,6 +25,11 @@ query searchFictions(
                 name
                 characteristicTypeId
             }
+            fandoms {
+                id
+                name
+                slug
+            }
             lastUpdateDate
             creationDate
             reviewCount

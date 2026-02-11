@@ -60,6 +60,20 @@
         </a>
       </div>
     </div>
+    <div class="is-flex is-flex-direction-row is-align-items-center">
+      <div class="is-flex-grow-5">
+        <span class="is-size-6"><strong>{{
+          "Fandom" + ((fanfiction?.fandoms?.length ?? 0) > 1 ? "s" : "") + " : "
+        }}</strong></span>
+        <template v-for="(fandom, index) in fanfiction?.fandoms" :key="'author_' + fandom.id.toString()">
+          <template v-if="index > 0">, </template>
+          <NuxtLink
+            class="is-size-6-5 has-text-weight-normal"
+            :to="{name: 'fandomSlug', params: {fandomSlug: fandom.slug}}"
+          >{{ fandom.name }}</NuxtLink>
+        </template>
+      </div>
+    </div>
     <div
       v-if="(fanfiction?.collectionCount ?? 0) > 0"
       class="is-flex is-flex-direction-row"
@@ -81,14 +95,13 @@
       </div>
     </div>
     <b-taglist class="mb-0">
-      <a
+      <span
         v-for="characteristic in fanfiction?.characteristics"
         :key="'tag_' + characteristic.id.toString()"
-        :href="'auteurs/' + characteristic.id"
       ><b-tag
         :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
         type="is-info"
-      >{{ characteristic.name }}</b-tag></a>
+      >{{ characteristic.name }}</b-tag></span>
     </b-taglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">

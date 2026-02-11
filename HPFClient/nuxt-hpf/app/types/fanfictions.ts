@@ -273,3 +273,10 @@ export interface ChapterValidationData {
   invalidationReasonIds: number[];
 }
 // #endregion
+
+
+export interface FandomData {
+  id: string;
+  name: string;
+  slug: string;
+}
