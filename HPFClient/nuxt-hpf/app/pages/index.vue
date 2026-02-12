@@ -1,4 +1,7 @@
 <template>
+  <Head>
+    <Title>HPF - Hameau Pour Fanfiction</Title>
+  </Head>
   <div class="container px-5">
     <br />
     <div class="columns is-reversed-mobile">

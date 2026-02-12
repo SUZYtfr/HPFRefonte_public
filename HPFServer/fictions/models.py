@@ -651,8 +651,8 @@ class CollectionItem(ordered_models.OrderedModel):
 
 
 class Fandom(models.Model):
-    name = models.CharField()
-    slug = models.SlugField()
+    name = models.CharField(unique=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self) -> str:
         return self.name

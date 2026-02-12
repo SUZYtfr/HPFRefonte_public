@@ -37,7 +37,7 @@ export class SerieModel extends SerieData {
 export class FanfictionModel extends BasicClass<FanfictionModel> {
   @Exclude()
   public get fanfictionId(): number {
-    return this.id;
+    return Number(this.id);
   }
   
   public title: string = "";
@@ -118,7 +118,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
 export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
   @Exclude()
   public get fanfictionId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string | null = null;
@@ -132,7 +132,7 @@ export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
 export class TableOfContent extends BasicClass<TableOfContent> {
   @Exclude()
   public get fanfictionId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string | null = null;
@@ -205,7 +205,7 @@ export class ChapterModel extends ChapterData {
 export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   @Exclude()
   public get chapterId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string | null = null;

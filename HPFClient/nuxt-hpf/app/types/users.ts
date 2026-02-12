@@ -1,5 +1,5 @@
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass, type IBasicQuery } from "./basics";
+import { BasicClass } from "./basics";
 import { ExplicitContentEnum } from "./images";
 
 export enum UserStatus {
@@ -22,7 +22,7 @@ export enum UserGender {
 export class UserData extends BasicClass<UserData> {
   @Exclude()
   public get userId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public status: UserStatus = UserStatus.Unvalidated;
@@ -68,24 +68,12 @@ export class UserData extends BasicClass<UserData> {
   }
 }
 
-// Filtres utilisateurs
-export interface IUserFilters extends IBasicQuery {
-  username: string | null;
-  email: string | null;
-  id: number | null;
-  status: UserStatus | null;
-  premium: boolean | null;
-  published: boolean | null;
-  team: number[] | null;
-  creationDate: Date | null;
-}
-
 // Table UserProfile
 // Informations secondaire (de profil) d'un utilisateur
 export class UserProfileData extends BasicClass<UserProfileData> {
   @Exclude()
   public get userProfileId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public realname: string = "";
@@ -115,7 +103,7 @@ export class UserProfileData extends BasicClass<UserProfileData> {
 export class UserPreferencesData extends BasicClass<UserPreferencesData> {
   @Exclude()
   public get userPreferenceId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   @Transform(
@@ -149,7 +137,7 @@ export class UserPreferencesData extends BasicClass<UserPreferencesData> {
 export class UserLinkData extends BasicClass<UserLinkData> {
   @Exclude()
   public get userLinkId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public userId: number = 0;
@@ -181,7 +169,7 @@ export interface UserLoginData {
 export class AuthorData extends BasicClass<AuthorData> {
   @Exclude()
   public get userId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public username: string | null = null;

@@ -41,7 +41,7 @@
                     :key="index"
                     :chapter="chapter"
                     :class="['mb-2', 'mr-4', { 'is-color-even': index % 2 != 0 }, { 'is-color-odd': index % 2 == 0 }]"
-                    :is-selected="(selectedChapter?.id ?? 0) == chapter.id"
+                    :is-selected="(selectedChapter?.chapterId ?? 0) == chapter.chapterId"
                     @click="() => onChapterSelected(chapter)"
                   />
                 </simplebar>
@@ -98,8 +98,8 @@
                   <b-taglist class="mb-0">
                     <a
                       v-for="characteristic in selectedChapter.fictionMetadata?.characteristics"
-                      :key="'tag_' + characteristic.id.toString()"
-                      :href="'auteurs/' + characteristic.id"
+                      :key="'tag_' + characteristic.characteristicId.toString()"
+                      :href="'auteurs/' + characteristic.characteristicId"
                       ><b-tag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
                         characteristic.name
                       }}</b-tag></a
@@ -122,7 +122,7 @@
                             >
                               <span v-if="index > 0">, </span>
                               <strong>{{
-                                configStore.invalidationReasons.find((t) => t.id == invalidationReasonId)?.reason
+                                configStore.invalidationReasons.find((t) => t.invalidationReasonId == invalidationReasonId)?.reason
                               }}</strong>
                             </span>
                           </p>
@@ -200,7 +200,7 @@
                               { 'is-color-even': index % 2 != 0 },
                               { 'is-color-odd': index % 2 == 0 },
                             ]"
-                            :is-selected="(selectedVersion?.id ?? 0) == version.id"
+                            :is-selected="(selectedVersion?.versionId ?? 0) == version.versionId"
                             @click="() => onVersionSelected(version)"
                           />
                         </simplebar>
@@ -296,9 +296,9 @@
               <div class="pt-3 px-2">
                 <b-checkbox
                   v-for="reason in configStore.invalidationReasons"
-                  :key="reason.id"
+                  :key="reason.invalidationReasonId"
                   v-model="chapterValidationForm.invalidationReasonIds"
-                  :native-value="reason.id"
+                  :native-value="reason.invalidationReasonId"
                   :required="currentValidationOption == ModalActionEnum.Unvalidate"
                 >
                   {{ reason.reason }}
@@ -412,7 +412,7 @@ const debug_versions = ref<VersionModel[]>([]);
 for (let i = 1; i <= 100; i++) {
   // Ajout des chapitres debug
   const c = new ChapterModel({
-    id: i,
+    chapterId: i,
     order: i % 3 == 0 ? 1 : i,
     title: "Chapitre " + i.toString(),
     validationStatus:
@@ -459,7 +459,7 @@ for (let i = 1; i <= 100; i++) {
   // Ajout des versions debug, pour chaque chapitre entre 1 et 5 versions
   for (let j = 1; j < Math.random() * 5 + 1; j++) {
     const v = new VersionModel({
-      id: j * i,
+      versionId: j * i,
       chapterId: i,
       authors: c.authors,
       words: Math.random() * 5000,
@@ -470,7 +470,7 @@ for (let i = 1; i <= 100; i++) {
     // Version invalidée
     if (c.validationStatus == ChapterValidationStatusEnum.AwaitingModification) {
       v.invalidationReasonIds = [
-        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))]!.id,
+        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))]!.invalidationReasonId,
       ];
       v.invalidationDate = new Date();
       v.publicComment =
@@ -478,7 +478,7 @@ for (let i = 1; i <= 100; i++) {
       v.privateComment = "Ce morceau de commentaire n'est visible que par la modération.";
       if (data.value != null) {
         v.invalidationUserId = data.value.id ?? 0;
-        v.invalidationUser = new UserData({ username: data.value.username, id: data.value.id });
+        v.invalidationUser = new UserData({ username: data.value.username, userId: data.value.id });
       }
     }
     debug_versions.value.push(v);
@@ -629,7 +629,7 @@ const onChapterSelected = (chapter: ChapterModel): void => {
   // TODO lancer les appels de chargement du chapitre et de la liste des version
   // Pour l'instant simulé ci-dessous
   selectedChapter.value = chapter;
-  availableVersions.value = debug_versions.value.filter((t: VersionModel) => t.chapterId == chapter.id);
+  availableVersions.value = debug_versions.value.filter((t: VersionModel) => t.chapterId == chapter.chapterId);
   selectedVersion.value = availableVersions.value[0]!;
 };
 
@@ -656,7 +656,7 @@ const versionModelUpdated = (): void => {
       selectedVersion.value.publicComment = chapterValidationForm.value.publicComment;
       selectedVersion.value.invalidationReasonIds = chapterValidationForm.value.invalidationReasonIds;
       selectedVersion.value.invalidationUserId = data.value.id;
-      selectedVersion.value.invalidationUser = new UserData({ username: data.value.username, id: data.value.id });
+      selectedVersion.value.invalidationUser = new UserData({ username: data.value.username, userId: data.value.id });
       selectedVersion.value.invalidationDate = new Date();
       // TODO côté serveur il faut envoyer un mail de notification
       break;

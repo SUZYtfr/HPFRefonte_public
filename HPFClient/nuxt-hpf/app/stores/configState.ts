@@ -13,13 +13,13 @@ export const useConfigStore = defineStore("config", () => {
   const fandoms = ref<FandomData[]>();
   // TODO appel à l'api, pour l'instant en dur.
   const invalidationReasons = ref<InvalidationReasonData[]>([
-    new InvalidationReasonData({ id: 1, reason: "Taille trop courte" }),
-    new InvalidationReasonData({ id: 2, reason: "Orthographe" }),
-    new InvalidationReasonData({ id: 3, reason: "Grammaire" }),
-    new InvalidationReasonData({ id: 4, reason: "Conjugaison" }),
-    new InvalidationReasonData({ id: 5, reason: "Non-respect du réglement" }),
-    new InvalidationReasonData({ id: 6, reason: "Mise en forme" }),
-    new InvalidationReasonData({ id: 7, reason: "Autre" }),
+    new InvalidationReasonData({ id: '1', reason: "Taille trop courte" }),
+    new InvalidationReasonData({ id: '2', reason: "Orthographe" }),
+    new InvalidationReasonData({ id: '3', reason: "Grammaire" }),
+    new InvalidationReasonData({ id: '4', reason: "Conjugaison" }),
+    new InvalidationReasonData({ id: '5', reason: "Non-respect du réglement" }),
+    new InvalidationReasonData({ id: '6', reason: "Mise en forme" }),
+    new InvalidationReasonData({ id: '7', reason: "Autre" }),
   ]);
   //#endregion
 
@@ -50,7 +50,7 @@ export const useConfigStore = defineStore("config", () => {
           currentTheme.useDefaultTo != null &&
           new Date(data.value.preferences.themeOverridenAt) > currentTheme.useDefaultTo)
       )
-        currentTheme = themes.value.find((theme) => theme.id === data?.value?.preferences.theme) ?? null;
+        currentTheme = themes.value.find((theme) => theme.themeId === data?.value?.preferences.theme) ?? null;
     }
 
     // Theme par défaut si pas de thème évènementiel / pas de thème utilisateur

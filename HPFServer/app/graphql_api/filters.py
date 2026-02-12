@@ -49,7 +49,9 @@ class ChapterFilters:
         self,
         info: Info,
         queryset: QuerySet[Chapter],
-        value: strawberry_django.FilterLookup[str],
+        # FIXME - remplacer par strawberry_django.FilterLookup[str] quand ce bug connu sera corrigé :
+        # https://github.com/strawberry-graphql/strawberry-django/issues/845
+        value: strawberry_django.fields.filter_types.StrFilterLookup[str],
         prefix: str
     ) -> tuple[QuerySet[Chapter], Q]:
         queryset = queryset.alias(_title=F("published_version__title"))

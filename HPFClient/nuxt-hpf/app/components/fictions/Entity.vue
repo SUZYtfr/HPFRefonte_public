@@ -97,7 +97,7 @@
     <b-taglist class="mb-0">
       <span
         v-for="characteristic in fanfiction?.characteristics"
-        :key="'tag_' + characteristic.id.toString()"
+        :key="'tag_' + characteristic.characteristicId.toString()"
       ><b-tag
         :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']"
         type="is-info"

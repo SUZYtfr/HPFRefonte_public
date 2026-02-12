@@ -1,0 +1,42 @@
+[
+{
+    "model": "fictions.fandom",
+    "pk": 1,
+    "fields": {
+        "name": "Harry Potter",
+        "slug": "harry-potter"
+    }
+},
+{
+    "model": "fictions.fandom",
+    "pk": 2,
+    "fields": {
+        "name": "Marvel",
+        "slug": "marvel"
+    }
+},
+{
+    "model": "fictions.fandom",
+    "pk": 3,
+    "fields": {
+        "name": "Twilight",
+        "slug": "twilight"
+    }
+},
+{
+    "model": "fictions.fandom",
+    "pk": 4,
+    "fields": {
+        "name": "One piece",
+        "slug": "one-piece"
+    }
+},
+{
+    "model": "fictions.fandom",
+    "pk": 5,
+    "fields": {
+        "name": "Naruto",
+        "slug": "naruto"
+    }
+}
+]

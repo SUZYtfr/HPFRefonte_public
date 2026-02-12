@@ -4,7 +4,7 @@ import { BasicClass } from "~/types/basics";
 export class CharacteristicData extends BasicClass<CharacteristicData> {
   @Exclude()
   public get characteristicId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public characteristicTypeId: number = 0;
@@ -24,7 +24,7 @@ export class CharacteristicData extends BasicClass<CharacteristicData> {
 export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
   @Exclude()
   public get characteristicTypeId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public name: string = "";
@@ -32,14 +32,4 @@ export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
   public maxOccurence: number | null = null;
   public visible: boolean = true;
   public enabled: boolean = true;
-}
-
-// export class ICharacteristicGetOptions {
-//   with_stats: boolean = false;
-// }
-
-export interface ICharacteristicFilters {
-  characteristicTypeId: number | null;
-  parentId: number | null;
-  // options: ICharacteristicGetOptions | null,
 }

@@ -42,7 +42,7 @@
           }}
         </span>
         <span> par </span>
-        <span v-for="(author, index) in news.authors" :key="author.id" class="has-text-weight-semibold">
+        <span v-for="(author, index) in news.authors" :key="author.userId.toString()" class="has-text-weight-semibold">
           {{ author.username + (index != (news.authors?.length ?? 0) - 1 ? ", " : "") }}
         </span>
       </div>

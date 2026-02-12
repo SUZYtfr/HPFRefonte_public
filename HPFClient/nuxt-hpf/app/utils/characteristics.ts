@@ -42,7 +42,7 @@ export function getFullPath(characteristic: CharacteristicData, characteristics:
   let result = "";
   if (characteristic.parentId != null) {
     const parentCharacteristic: CharacteristicData | undefined = characteristics.find(
-      (pCharacteristic: CharacteristicData) => pCharacteristic.id === characteristic.parentId,
+      (pCharacteristic: CharacteristicData) => pCharacteristic.characteristicId === characteristic.parentId,
     );
     if (parentCharacteristic != null)
       result = getFullPath(parentCharacteristic, characteristics) + parentCharacteristic.name + " \\ ";

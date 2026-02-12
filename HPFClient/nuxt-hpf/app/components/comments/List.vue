@@ -46,7 +46,7 @@ import type { CommentModel } from '~/models';
 
 const { comments, newsId } = defineProps<{
     comments: CommentModel[] | null;
-    newsId: string,
+    newsId: number,
 }>()
 
 /* const editorContent = ref<TipTapEditorContent | null>(null);

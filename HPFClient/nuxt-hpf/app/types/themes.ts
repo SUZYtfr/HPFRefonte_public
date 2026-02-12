@@ -4,7 +4,7 @@ import { BasicClass } from "./basics";
 export class ThemeData extends BasicClass<ThemeData> {
   @Exclude()
   public get themeId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public name: string = "";

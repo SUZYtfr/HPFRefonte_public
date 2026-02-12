@@ -13,34 +13,8 @@ export enum RecordStatusEnum {
   Deleted = 4,
 }
 
-export interface IBasicQuery {
-  page: number;
-  totalPages: boolean;
-  pageSize: number;
-  sortOn: string;
-  sortBy: SortByEnum;
-}
-
-export interface BasicResponse {
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-}
-
-export interface Paginated<T> {
-  count: number;
-  current: number;
-  results: T;
-}
-
-// T | T[] => T
-export type Flatten<T> = T extends object[] ? T[number] : T;
-
-// T | T["results"] => T
-export type Depaginate<T> = T extends Paginated<object> ? T["results"] : T;
-
 export class BasicClass<T> {
-  public id: number = 0;
+  public id: string = '';
   public recordStatus: RecordStatusEnum = RecordStatusEnum.Unchanged;
   public creationUserId: number | null = null;
 

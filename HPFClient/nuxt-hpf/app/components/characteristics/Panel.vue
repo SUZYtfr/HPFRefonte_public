@@ -29,7 +29,7 @@
             class="py-1 pl-1"
             :characteristic="charac"
             :external-state="stateForCheckbox(charac.characteristicId)"
-            @change="(internalState: boolean | null) => threeStateChanged(charac.id, internalState)"
+            @change="(internalState: boolean | null) => threeStateChanged(charac.characteristicId, internalState)"
           />
         </div>
       </simplebar>
@@ -50,8 +50,8 @@ interface Props {
 
 const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
 
-const includedValues = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
-const excludedValues = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => Number(c.characteristicId)).includes(iii)));
+const includedValues = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => c.characteristicId).includes(iii)));
+const excludedValues = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => c.characteristicId).includes(iii)));
 const expanded = ref<boolean>(false);
 
 const totalChecked = computed<number>(() => {
@@ -62,20 +62,20 @@ const $emit = defineEmits(["change"])
 
 function threeStateChanged(characteristicId: number, state: boolean | null): void {
   includedValues.value = includedValues.value.filter(
-    iv => iv !== Number(characteristicId)
+    iv => iv !== characteristicId
   );
   excludedValues.value = excludedValues.value.filter(
-    iv => iv !== Number(characteristicId)
+    iv => iv !== characteristicId
   );
 
-  if (state === true) includedValues.value.push(Number(characteristicId));
-  else if (state === false) excludedValues.value.push(Number(characteristicId));
+  if (state === true) includedValues.value.push(characteristicId);
+  else if (state === false) excludedValues.value.push(characteristicId);
   $emit("change", characteristicId, state);
 }
 
 function stateForCheckbox(value: number): boolean | null {
-  if (includedValues.value.includes(Number(value))) return true;
-  else if (excludedValues.value.includes(Number(value))) return false;
+  if (includedValues.value.includes(value)) return true;
+  else if (excludedValues.value.includes(value)) return false;
   else return null;
 }
 </script>

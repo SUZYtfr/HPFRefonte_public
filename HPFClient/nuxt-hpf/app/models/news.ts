@@ -7,7 +7,7 @@ import { BasicClass } from "~/types/basics";
 export class CommentModel extends BasicClass<CommentModel> {
   @Exclude()
   public get commentId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public newsId: number = 0;
@@ -51,8 +51,8 @@ enum NewsStatus {
 // #region News
 export class NewsModel extends BasicClass<NewsModel> {
   @Exclude()
-  public get newsId(): string {
-    return this.id.toString();
+  public get newsId(): number {
+    return Number(this.id);
   }
 
   public title: string = "";

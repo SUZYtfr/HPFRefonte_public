@@ -1,5 +1,4 @@
 import { Transform, Exclude } from "class-transformer";
-import type { IBasicQuery } from "./basics";
 import { BasicClass } from "./basics";
 
 // #region Fanfiction
@@ -19,7 +18,7 @@ export enum ValidationStatus {
 export class FanfictionData extends BasicClass<FanfictionData> {
   @Exclude()
   public get fanfictionId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string = "";
@@ -77,24 +76,6 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   }
 }
 
-export interface IFanfictionFilters extends IBasicQuery {
-  searchTerm: string | null;
-  searchAuthor: string | null;
-  searchAuthorId: number | null;
-  multipleAuthors: boolean | null;
-  status: FanfictionStatus | null;
-  wordCountMin: number | null;
-  wordCountMax: number | null;
-  includedTags: number[];
-  excludedTags: number[];
-  customTags: number[];
-  featured: boolean | null;
-  inclusive: boolean;
-  fromDate: Date | null;
-  toDate: Date | null;
-}
-// #endregion
-
 // #region Reviews
 export enum ReviewItemTypeEnum {
   Fanfiction = 1,
@@ -106,7 +87,7 @@ export enum ReviewItemTypeEnum {
 export class ReviewData extends BasicClass<ReviewData> {
   @Exclude()
   public get reviewId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public itemId: number = 0;
@@ -129,14 +110,6 @@ export class ReviewData extends BasicClass<ReviewData> {
   public postDate: Date | null = null;
 }
 
-// Est-ce que finalement ça sert à quelque chose ?
-export interface IReviewFilters extends IBasicQuery {
-  searchTerm: string | null;
-  includeItemTypes: ReviewItemTypeEnum[] | null;
-  itemId: number | null;
-}
-// #endregion
-
 // #region  Serie
 enum SerieStatusEnum {
   Closed = 1,
@@ -147,7 +120,7 @@ enum SerieStatusEnum {
 export class SerieData extends BasicClass<SerieData> {
   @Exclude()
   public get serieId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string = "";
@@ -156,12 +129,6 @@ export class SerieData extends BasicClass<SerieData> {
   public status: SerieStatusEnum = SerieStatusEnum.Closed;
 }
 // #endregion
-
-// #region  Chapter
-export interface IChapterFilters extends IBasicQuery {
-  awaitingDiscussionOnly: boolean;
-  searchTerm: string | null;
-}
 
 export enum ChapterValidationStatusEnum {
   Draft = 1,
@@ -177,7 +144,7 @@ export enum ChapterValidationStatusEnum {
 export class ChapterData extends BasicClass<ChapterData> {
   @Exclude()
   public get chapterId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string = "";
@@ -215,7 +182,7 @@ export class ChapterData extends BasicClass<ChapterData> {
 export class VersionData extends BasicClass<VersionData> {
   @Exclude()
   public get versionId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   // Chapitre Id auquel est liée la version

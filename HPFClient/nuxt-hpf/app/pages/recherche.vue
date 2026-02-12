@@ -1,4 +1,7 @@
 <template>
+  <Head>
+    <Title>HPF - Recherche de fanfictions</Title>
+  </Head>
   <div class="container px-5">
     <!-- Modal filtres -->
     <b-modal

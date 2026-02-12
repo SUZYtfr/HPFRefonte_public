@@ -275,7 +275,7 @@ function filteredCharacteristics(characteristicTypeId: number): CharacteristicMo
         (g: CharacteristicModel) => g.parentId
     ).forEach((value: CharacteristicModel[], key: number) => {
         if (key != null) {
-            const index = itemsSorted.findIndex(c => c.id.toString() === key.toString());
+            const index = itemsSorted.findIndex(c => c.characteristicId.toString() === key.toString());
         if (index === -1) itemsSorted.splice(0, 0, ...value);
             else itemsSorted.splice(index + 1, 0, ...value);
         }

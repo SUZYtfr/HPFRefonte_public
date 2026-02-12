@@ -16,7 +16,7 @@
       <span class="has-text-danger is-size-7 has-text-weight-semibold">
         {{
           configStore.invalidationReasons.find(
-            (t) => t.id == (version.invalidationReasonIds != null ? version.invalidationReasonIds[0] : 0),
+            (t) => t.invalidationReasonId == (version.invalidationReasonIds != null ? version.invalidationReasonIds[0] : 0),
           )?.reason
         }}
       </span>

@@ -5,7 +5,7 @@ import { BasicClass } from "./basics";
 export class InvalidationReasonData extends BasicClass<InvalidationReasonData> {
   @Exclude()
   public get invalidationReasonId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   // Libelle du motif d'invalidation

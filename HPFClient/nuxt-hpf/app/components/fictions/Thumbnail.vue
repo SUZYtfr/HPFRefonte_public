@@ -68,13 +68,13 @@
             'ff_' +
               fanfiction.fanfictionId +
               '_characteristic_' +
-              characteristic.id.toString()
+              characteristic.characteristicId.toString()
           "
           :to="{
             name: 'recherche',
             query: {
               fandoms: fandom?.id,
-              tags: characteristic.id
+              tags: characteristic.characteristicId
             }
           }"
         ><b-tag

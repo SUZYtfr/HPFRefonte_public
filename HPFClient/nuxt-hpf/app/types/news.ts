@@ -1,5 +1,5 @@
 import { Exclude, Transform } from "class-transformer";
-import { BasicClass, type IBasicQuery } from "./basics";
+import { BasicClass } from "./basics";
 
 // #region News
 enum NewsStatus {
@@ -11,7 +11,7 @@ enum NewsStatus {
 export class NewsData extends BasicClass<NewsData> {
   @Exclude()
   public get newsId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public title: string = "";
@@ -33,21 +33,12 @@ export class NewsData extends BasicClass<NewsData> {
   public postDate: Date | null = null;
 }
 
-export interface INewsFilters extends IBasicQuery {
-  searchTerm: string;
-  searchAuthor: string;
-  searchAuthorId: number;
-  status: boolean | null;
-  fromDate: Date | null;
-  toDate: Date | null;
-}
-// #endregion
 
 // #region Comment
 export class CommentData extends BasicClass<CommentData> {
   @Exclude()
   public get commentId(): number {
-    return this.id;
+    return Number(this.id);
   }
 
   public newsId: number = 0;
