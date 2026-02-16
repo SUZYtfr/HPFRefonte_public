@@ -1,15 +1,12 @@
 <template>
-  <Head>
-    <Title>HPF - Fanfictions {{ fandomData.fandoms[0]?.name }}</Title>
-  </Head>
   <div class="container px-5">
     <br />
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
         <FictionsThumbnailList
-            :title="'Nouveautés ' + fandomData.fandoms[0]?.name"
-            :fandom="fandomData.fandoms[0]"
+            :title="'Nouveautés ' + fandom?.name"
+            :fandom
             :is-loading="recentFanfictionsStatus == 'pending'"
             :list-type="FanfictionListType.Recent"
             :fanfictions="recentFanfictions"
@@ -17,8 +14,8 @@
         <br />
         <!-- Sélections fanfictions -->
         <FictionsThumbnailList
-            :title="'Sélections ' + fandomData.fandoms[0]?.name"
-            :fandom="fandomData.fandoms[0]"
+            :title="'Sélections ' + fandom?.name"
+            :fandom
             :is-loading="recentFanfictionsStatus == 'pending'"
             :list-type="FanfictionListType.Selections"
             :fanfictions="recentFanfictions"
@@ -43,6 +40,7 @@ import { plainToInstance } from "class-transformer";
 import { FanfictionModel, NewsModel } from "~/models";
 import type { NewsArticleTypeOffsetPaginated, FictionTypeOffsetPaginated } from "#gql";
 import { FanfictionListType } from "~/types/other";
+import type { FandomData } from "~/types/fanfictions";
 //#endregion
 
 // Metadata, SEO et droits d'accès à la page
@@ -52,21 +50,26 @@ definePageMeta({
 
 const route = useRoute();
 
-const { data: fandomData } = await useAsyncGql('getFandomDetails', {
+const { data: fandom } = await useAsyncGql("getFandomDetails", {
   filters: {
     slug: { exact: route.params.fandomSlug  as string}
+  },
+},
+{
+  transform: (input: { fandoms: FandomData[] }) => {
+    return input.fandoms[0];
   }
 });
 
-if (fandomData.value.fandoms.length == 0) {
-    navigateTo('/');
+if (!fandom.value) {
+    navigateTo("/");
 }
 
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getFandomFictions', {
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql("getFandomFictions", {
     filters: {
         fandoms: {
             id: {
-                exact: fandomData.value.fandoms[0]?.id
+                exact: fandom.value?.id
             }
         }
     }
@@ -80,7 +83,7 @@ const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAs
   }
 });
 
-const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getIndexNews', {}, {
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql("getIndexNews", {}, {
   lazy: true,
   transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
     return {
@@ -88,6 +91,10 @@ const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('get
       results: plainToInstance(NewsModel, input.news.results),
     };
   }
+});
+
+useHead({
+  title: "HPF - Fanfictions " + fandom.value?.name,
 });
 //#endregion
 </script>

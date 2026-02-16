@@ -67,19 +67,20 @@
 <script setup lang="ts">
 import type { FictionTypeOffsetPaginated } from "#gql";
 import { plainToInstance } from "class-transformer";
-import { TableOfContent, ChapterModelLight } from "~/models";
+import type { ChapterModelLight } from "~/models";
+import { TableOfContent } from "~/models";
 
 const route = useRoute();
 
-const { data: tableOfContent, status } = await useAsyncGql('getTableOfContents', {
+const { data: tableOfContent, status } = await useAsyncGql("getTableOfContents", {
   fictionId: route.params.fictionId as string,
 }, {
   transform: (data: { fictions: FictionTypeOffsetPaginated }) => {
     // Pas très beau tout ça, mais ça fonctionne
     const tableOfContent = data.fictions.results[0];
     //@ts-ignore
-    tableOfContent.chapters = tableOfContent?.chapters.results
-    return plainToInstance(TableOfContent, data.fictions.results[0])
+    tableOfContent.chapters = tableOfContent?.chapters.results;
+    return plainToInstance(TableOfContent, data.fictions.results[0]);
   }
 }
 
@@ -110,7 +111,7 @@ const PreviousToRouterLink = reactive<RouterLink>({
     chapterId: null,
     chapterTitle: null,
   }
-})
+});
 
 const NextToRouterLink = reactive<RouterLink>({
   name: "fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle",
@@ -120,7 +121,7 @@ const NextToRouterLink = reactive<RouterLink>({
     chapterId: null,
     chapterTitle: null,
   }
-})
+});
 
 effect(() => {
   const currentChapterIndex = tableOfContent.value.chapters?.findIndex((c) => c.chapterId.toString() === route.params.chapterId as string) || -1;
@@ -147,7 +148,7 @@ effect(() => {
     NextToRouterLink.params.chapterId = nextChapter.value?.chapterId.toString() ?? null;
     NextToRouterLink.params.chapterTitle = nextChapter.value?.titleAsSlug ?? null;
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>

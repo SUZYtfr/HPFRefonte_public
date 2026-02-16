@@ -1,7 +1,4 @@
 <template>
-  <Head>
-    <Title>HPF - Recherche de fanfictions</Title>
-  </Head>
   <div class="container px-5">
     <!-- Modal filtres -->
     <b-modal
@@ -21,7 +18,7 @@
         :tooltip-position="'is-top'"
       />
     </b-modal>
-    <br>
+    <br/>
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div
@@ -57,7 +54,7 @@
           Afficher les filtres
         </b-button>
       </div>
-      <br>
+      <br/>
     </div>
   </div>
 </template>
@@ -70,10 +67,10 @@ import { FanfictionModel } from "~/models";
 
 const route = useRoute();
 
-const initialIncludedFandomIds = (route.query['fandoms'] as string || '').split('.').map(t => Number(t)).filter(t => t > 0);
-const initialExcludedFandomIds = (route.query['fandoms'] as string || '').split('.').map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
-const initialIncludedTagIds = (route.query['tags'] as string || '').split('.').map(t => Number(t)).filter(t => t > 0);
-const initialExcludedTagIds = (route.query['tags'] as string || '').split('.').map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
+const initialIncludedFandomIds = (route.query["fandoms"] as string || "").split(".").map(t => Number(t)).filter(t => t > 0);
+const initialExcludedFandomIds = (route.query["fandoms"] as string || "").split(".").map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
+const initialIncludedTagIds = (route.query["tags"] as string || "").split(".").map(t => Number(t)).filter(t => t > 0);
+const initialExcludedTagIds = (route.query["tags"] as string || "").split(".").map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
 
 const filtersOpened = ref<boolean>(false);
 const fictionOrder = ref<FictionOrder>({
@@ -106,20 +103,20 @@ const fanfictionFilters = ref<FictionFilters>({
 watch(fanfictionFilters.value, () => {
   const newSearchParams = new URLSearchParams();
   const fandomsParams = (fanfictionFilters.value.fandoms?.allIdsInList || [])
-    .concat(fanfictionFilters.value.fandoms?.NOT?.id?.inList?.map(t => '-' + t) || [])
-    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) )
+    .concat(fanfictionFilters.value.fandoms?.NOT?.id?.inList?.map(t => "-" + t) || [])
+    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) );
   const tagsParams = (fanfictionFilters.value.characteristics?.allIdsInList || [])
-    .concat(fanfictionFilters.value.characteristics?.NOT?.id?.inList?.map(t => '-' + t) || [])
-    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) )
+    .concat(fanfictionFilters.value.characteristics?.NOT?.id?.inList?.map(t => "-" + t) || [])
+    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) );
 
   if (fandomsParams.length > 0) {
-    newSearchParams.append('fandoms', fandomsParams.join('.'));
+    newSearchParams.append("fandoms", fandomsParams.join("."));
   }
   if (tagsParams.length > 0) {
-    newSearchParams.append('tags', tagsParams.join('.'));
+    newSearchParams.append("tags", tagsParams.join("."));
   }
-  history.replaceState({}, '', '/recherche?' + newSearchParams.toString());
-})
+  history.replaceState({}, "", "/recherche?" + newSearchParams.toString());
+});
 
 /* const fanfictionFilters = reactive<IFanfictionFilters>({
   searchTerm: null,
@@ -143,7 +140,7 @@ watch(fanfictionFilters.value, () => {
   sortOn: "last_update_date"
 }); */
 
-const { data: paginatedFanfictions, status, execute } = await useAsyncGql('searchFictions', {
+const { data: paginatedFanfictions, status, execute } = await useAsyncGql("searchFictions", {
     filters: fanfictionFilters,
     order: fictionOrder,
     pagination: fictionPagination,
@@ -152,11 +149,14 @@ const { data: paginatedFanfictions, status, execute } = await useAsyncGql('searc
         return {
             ...input.fictions,
             results: plainToInstance(FanfictionModel, input.fictions.results)
-        }
+        };
     }
 });
 
-const listLoading = ref<boolean>(false);
+
+useHead({
+  title: "HPF - Recherche de fanfictions",
+});
 </script>
 
 <style lang="scss" scoped>

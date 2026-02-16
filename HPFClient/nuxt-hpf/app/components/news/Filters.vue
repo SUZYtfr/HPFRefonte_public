@@ -83,12 +83,12 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleFilters } from '#gql';
+import type { NewsArticleFilters } from "#gql";
 
 const { newsFilters, execute, isLoading } = defineProps<{
     newsFilters: NewsArticleFilters;
     isLoading: boolean,
-    execute: () => {};
+    execute: () => void;
 }>();
 
 const listLoading = computed<boolean>(() => isLoading );

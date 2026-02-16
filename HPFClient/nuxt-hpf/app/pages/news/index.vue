@@ -14,7 +14,7 @@
         :execute
       />
     </b-modal>
-    <br>
+    <br/>
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div
@@ -49,15 +49,15 @@
         Afficher les filtres
       </b-button>
     </div>
-    <br>
+    <br/>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from '#gql';
-import { Ordering } from '#gql/default';
-import { plainToInstance } from 'class-transformer';
-import { NewsModel } from '~/models';
+import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import { Ordering } from "#gql/default";
+import { plainToInstance } from "class-transformer";
+import { NewsModel } from "~/models";
 
 const filtersOpened = ref<boolean>(false);
 
@@ -70,7 +70,7 @@ const newsPagination = reactive<OffsetPaginationInput>({
   offset: 0,
 });
 
-const { data: paginatedNews, status: newsStatus, execute } = await useAsyncGql('getNews', {
+const { data: paginatedNews, status: newsStatus, execute } = await useAsyncGql("getNews", {
   pagination: newsPagination,
   order: newsOrder,
   filters: newsFilters,
@@ -82,6 +82,10 @@ const { data: paginatedNews, status: newsStatus, execute } = await useAsyncGql('
       results: plainToInstance(NewsModel, input.news.results),
     };
   }
+});
+
+useHead({
+  title: "HPF - Recherche d'actualités",
 });
 
 </script>

@@ -13,13 +13,13 @@ export const useConfigStore = defineStore("config", () => {
   const fandoms = ref<FandomData[]>();
   // TODO appel à l'api, pour l'instant en dur.
   const invalidationReasons = ref<InvalidationReasonData[]>([
-    new InvalidationReasonData({ id: '1', reason: "Taille trop courte" }),
-    new InvalidationReasonData({ id: '2', reason: "Orthographe" }),
-    new InvalidationReasonData({ id: '3', reason: "Grammaire" }),
-    new InvalidationReasonData({ id: '4', reason: "Conjugaison" }),
-    new InvalidationReasonData({ id: '5', reason: "Non-respect du réglement" }),
-    new InvalidationReasonData({ id: '6', reason: "Mise en forme" }),
-    new InvalidationReasonData({ id: '7', reason: "Autre" }),
+    new InvalidationReasonData({ id: "1", reason: "Taille trop courte" }),
+    new InvalidationReasonData({ id: "2", reason: "Orthographe" }),
+    new InvalidationReasonData({ id: "3", reason: "Grammaire" }),
+    new InvalidationReasonData({ id: "4", reason: "Conjugaison" }),
+    new InvalidationReasonData({ id: "5", reason: "Non-respect du réglement" }),
+    new InvalidationReasonData({ id: "6", reason: "Mise en forme" }),
+    new InvalidationReasonData({ id: "7", reason: "Autre" }),
   ]);
   //#endregion
 
@@ -83,9 +83,9 @@ export const useConfigStore = defineStore("config", () => {
   // (Mais je pense que c'est un Nuxt bug)
   // Il faut aussi rendre une valeur quelconque pour éviter que useAsyncData se plaigne.
   async function fetchCharacteristics(): Promise<true> {
-    const { data: characteristicTemp } = await useAsyncGql('getCharacteristics', {}, {
+    const { data: characteristicTemp } = await useAsyncGql("getCharacteristics", {}, {
       transform: (data: { characteristics: CharacteristicType[] }) => {
-        return plainToInstance(CharacteristicModel, data.characteristics)
+        return plainToInstance(CharacteristicModel, data.characteristics);
       }
     });
     setCharacteristics(characteristicTemp.value ?? []);
@@ -93,9 +93,9 @@ export const useConfigStore = defineStore("config", () => {
   }
 
   async function fetchCharacteristicTypes(): Promise<true> {
-    const { data: characteristicTypesTemp } = await useAsyncGql('getCharacteristicTypes', {}, {
+    const { data: characteristicTypesTemp } = await useAsyncGql("getCharacteristicTypes", {}, {
       transform: (data: { characteristicTypes: CharacteristicTypeType[] }) => {
-        return plainToInstance(CharacteristicTypeModel, data.characteristicTypes)
+        return plainToInstance(CharacteristicTypeModel, data.characteristicTypes);
       }
     });
     setCharacteristicTypes(characteristicTypesTemp.value ?? []);
@@ -103,19 +103,19 @@ export const useConfigStore = defineStore("config", () => {
   }
 
   async function fetchThemes(): Promise<true> {
-    const { data: themesTemp } = await useAsyncGql('getThemes', {}, {
+    const { data: themesTemp } = await useAsyncGql("getThemes", {}, {
       transform: (data: { themes: ThemeType[] }) => {
-        return plainToInstance(ThemeModel, data.themes)
+        return plainToInstance(ThemeModel, data.themes);
       }
-    })
+    });
     setThemes(themesTemp.value ?? []);
     return true;
   }
 
   async function fetchFandoms(): Promise<true> {
-    const { data: fdoms } = await useAsyncGql('getFandoms', {}, {
+    const { data: fdoms } = await useAsyncGql("getFandoms", {}, {
       transform: (data: { fandoms: FandomData[] }) => {
-        return data.fandoms
+        return data.fandoms;
       }
     });
     setFandoms(fdoms.value ?? []);

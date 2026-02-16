@@ -162,7 +162,7 @@ defineProps<{
 //#endregion
 
 //#region Emits
-const emit = defineEmits<{ (e: "quote", quote: string): void }>();
+// const emit = defineEmits<{ (e: "quote", quote: string): void }>();
 //#endregion
 </script>
 

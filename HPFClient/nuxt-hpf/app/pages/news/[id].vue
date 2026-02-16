@@ -1,9 +1,9 @@
 <template>
   <div id="main-container" class="container px-5">
-    <NewsEntity v-if="news[0]" class="mt-2 is-color-odd" :news="news[0]" />
+    <NewsEntity v-if="news" class="mt-2 is-color-odd" :news="news" />
     <br />
     <div>
-      <CommentsList v-if="news[0]" :newsId="news[0]?.newsId" :comments="news[0]?.comments" />
+      <CommentsList v-if="news" :news-id="news.newsId" :comments="news.comments" />
     </div>
     <br />
   </div>
@@ -17,8 +17,8 @@ import { NewsModel } from "~/models";
 //#endregion
 
 definePageMeta({
-  auth: false
-})
+  auth: false,
+});
 
 //#region Usings
 const route = useRoute();
@@ -28,17 +28,25 @@ const route = useRoute();
 // On peut aussi faire une route dédiée pour chercher un élément sur le serveur
 // TODO - regarder s'il existe une directive / override pour utiliser getNews (liste) pour un seul élément
 // TODO - erreur si l'élément n'est pas récupéré
-const { data: news } = await useAsyncGql('getNewsDetails', {
+const { data: news } = await useAsyncGql("getNewsDetails", {
   filters: {
     id: {
-      'exact': route.params.id as string
+      "exact": route.params.id as string
     }
   },
 },
 {
     transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
-      return plainToInstance(NewsModel, data.news.results)
+      return plainToInstance(NewsModel, data.news.results[0]);
     }
+});
+
+if (!news.value) {
+  navigateTo("/");
+}
+
+useHead({
+  title: "HPF - " + news.value.title,
 });
 
 //#endregion

@@ -105,7 +105,7 @@
     </b-taglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
-        <p v-html="fanfiction?.summary" />
+        <p v-html="fanfiction?.summary" ></p>
       </div>
     </div>
     <div class="is-flex is-flex-direction-row is-justify-content-space-evenly">
@@ -159,9 +159,9 @@
 </template>
 
 <script setup lang="ts">
-import { FanfictionModel, FanfictionEntityConfig } from "~/models";
+import type { FanfictionModel, FanfictionEntityConfig } from "~/models";
 import { getClassTypeColor } from "~/utils/characteristics";
-import { CharacteristicData } from "~/types/characteristics";
+import type { CharacteristicData } from "~/types/characteristics";
 
 interface Props {
   fanfiction: FanfictionModel;

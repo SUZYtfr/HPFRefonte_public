@@ -2,7 +2,7 @@
   <article class="media mt-0 mb-3">
     <figure class="media-left mx-2 mb-5">
       <p class="image is-48x48">
-        <img src="https://bulma.io/assets/images/placeholders/96x96.png">
+        <img src="https://bulma.io/assets/images/placeholders/96x96.png"/>
       </p>
     </figure>
     <div class="media-content">
@@ -16,7 +16,7 @@
         <p>
           <span
             v-html="comment.content"
-          />
+          ></span>
         </p>
       </div>
     </div>

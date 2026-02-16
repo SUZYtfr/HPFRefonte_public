@@ -49,7 +49,7 @@ definePageMeta({
   auth: false,
 });
 
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql('getIndexFictions', {}, {
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql("getIndexFictions", {}, {
   lazy: true,
   transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
     return {
@@ -59,7 +59,7 @@ const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAs
   }
 });
 
-const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql('getIndexNews', {}, {
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql("getIndexNews", {}, {
   lazy: true,
   transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
     return {

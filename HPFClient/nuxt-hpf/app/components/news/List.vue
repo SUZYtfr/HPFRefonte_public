@@ -38,10 +38,10 @@
           custom-class="has-text-primary"
         >
           <b-select
+            v-model="newsOrderChoice"
             placeholder="Trier par"
             icon="sort"
             expanded
-            v-model="newsOrderChoice"
           >
             <option value="most_recent">
               Plus récent au plus ancien
@@ -92,9 +92,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from '#gql';
-import { Ordering } from '#gql/default';
-import type { NewsModel } from '~/models';
+import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import { Ordering } from "#gql/default";
+import type { NewsModel } from "~/models";
 
 const {
   isCard = true,
@@ -108,16 +108,16 @@ const {
   isCard?: boolean,
   showRefreshButton?: boolean,
   isLoading?: boolean,
-  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, 'results'> & { results: NewsModel[]},
+  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[]},
   newsFilters?: NewsArticleFilters,
   newsPagination: OffsetPaginationInput,
   newsOrder: NewsArticleOrder,
-  execute: () => {},
+  execute: () => void,
 }>();
 
 const listLoading = computed<boolean>(() => isLoading );
 
-const timerId: number = 0;
+// const timerId: number = 0;
 
 const newsResultLabel = computed<string>(() => {
     let result = "Aucun résultat";
@@ -130,20 +130,20 @@ const newsResultLabel = computed<string>(() => {
 // Transforme le système offset / limit en page / pageSize et vice versa
 const page = computed<number>(
   {
-    get() { return (newsPagination.offset! / newsPagination.limit!) + 1 },
-    set(page: number) { newsPagination.offset = (page - 1) * newsPagination.limit! },
+    get() { return (newsPagination.offset! / newsPagination.limit!) + 1; },
+    set(page: number) { newsPagination.offset = (page - 1) * newsPagination.limit!; },
   },
 );
 
 const newsOrderChoice = computed<string>(
   {
-    get() { return newsOrder.postDate === Ordering.DESC ? 'most_recent' : 'less_recent' },
-    set(value: string) { newsOrder.postDate = value == 'most_recent' ? Ordering.DESC : Ordering.ASC },
+    get() { return newsOrder.postDate === Ordering.DESC ? "most_recent" : "less_recent"; },
+    set(value: string) { newsOrder.postDate = value == "most_recent" ? Ordering.DESC : Ordering.ASC; },
   },
 );
 
 // TODO à la place, tenter un debounce sur useAsyncData.execut ou .watch
-const onFiltersChanged = () => {};
+// const onFiltersChanged = () => {};
 
 </script>
 

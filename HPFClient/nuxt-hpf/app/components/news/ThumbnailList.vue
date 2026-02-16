@@ -36,7 +36,7 @@ import type { NewsModel } from "~/models";
 import type { NewsArticleTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça
-type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, 'results'> & {
+type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "results"> & {
   results: NewsModel[];
 }
 

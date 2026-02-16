@@ -4,7 +4,7 @@
     :indeterminate="externalState === false"
     :type="externalState === false ? 'is-danger' : ''"
     :class="[{ excluded: externalState === false }]"
-    @click.native.prevent="checkBoxClicked"
+    @click.prevent="checkBoxClicked"
   >
     <font-awesome-icon v-if="characteristic?.parentId != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
     <span
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { CharacteristicData } from "@/types/characteristics";
+import type { CharacteristicData } from "@/types/characteristics";
 
 interface Props {
   externalState?: boolean | null;

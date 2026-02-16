@@ -17,7 +17,7 @@
           />
         </div>
       </div>
-      <br>
+      <br/>
     </section>
 
     <!-- Notes de fiction -->
@@ -49,7 +49,7 @@
           </div>
         </div>
       </b-collapse>
-      <br>
+      <br/>
     </section>
 
     <!-- Trigger warning -->
@@ -108,12 +108,12 @@
                   <span class="has-text-danger">{{ triggerWarning.caption }}</span>
                 </div>
               </div>
-              <br>
+              <br/>
             </div>
           </div>
         </div>
       </b-collapse>
-      <br>
+      <br/>
     </section>
 
     <!-- Reviews -->
@@ -145,13 +145,14 @@
           </div>
         </div>
       </b-collapse>
-      <br>
+      <br/>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FanfictionModel, FanfictionEntityConfig, TableOfContent, ChapterModelLight } from "~/models";
+import type { FanfictionEntityConfig, TableOfContent, ChapterModelLight } from "~/models";
+import { FanfictionModel } from "~/models";
 import { ReviewItemTypeEnum } from "~/types/fanfictions";
 // import ReviewList from "~/components/list/reviews/ReviewList.vue";
 import { plainToInstance } from "class-transformer";
@@ -164,7 +165,7 @@ const { tableOfContent } = defineProps<{
 
 const route = useRoute();
 
-const { data: fiction } = await useAsyncGql('getFictions', {
+const { data: fiction } = await useAsyncGql("getFictions", {
   filters: {
     id: {
       exact: route.params.fictionId as string
@@ -193,7 +194,7 @@ const reviewListType = computed(() => {
 // const reviewEditorVisible = ref<boolean>(false);
 
 // TODO potentielle reactif?
-let fanfictionEntityConfig: FanfictionEntityConfig = {
+const fanfictionEntityConfig: FanfictionEntityConfig = {
   inList: false
 };
 

@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { FanfictionModel } from "@/models";
+import type { FanfictionModel } from "@/models";
 import type { FictionFilters, FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 
@@ -103,12 +103,13 @@ interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
   isLoading?: boolean;
-  paginatedFanfictions: Omit<FictionTypeOffsetPaginated, 'results'> & { results: FanfictionModel[]},
+  paginatedFanfictions: Omit<FictionTypeOffsetPaginated, "results"> & { results: FanfictionModel[]},
   fictionPagination: OffsetPaginationInput,
   fictionOrder: FictionOrder,
   fanfictionFilters?: FictionFilters;
-  execute: () => {},
+  execute: () => void,
 }
+
 
 const {
   isCard = true,
@@ -123,8 +124,8 @@ const {
 // Transforme le système offset / limit en page / pageSize et vice versa
 const page = computed<number>(
   {
-    get() { return (fictionPagination.offset! / fictionPagination.limit!) + 1 },
-    set(page: number) { fictionPagination.offset = (page - 1) * fictionPagination.limit! },
+    get() { return (fictionPagination.offset! / fictionPagination.limit!) + 1; },
+    set(page: number) { fictionPagination.offset = (page - 1) * fictionPagination.limit!; },
   },
 );
 
@@ -133,26 +134,26 @@ const fictionsOrderChoice = computed<string>(
     {
         get() { 
             if (fictionOrder.lastUpdateDate === Ordering.DESC) {
-                return 'most_recent';
+                return "most_recent";
             }
             else if (fictionOrder.lastUpdateDate === Ordering.ASC) {
-                return 'less_recent';
+                return "less_recent";
             }
             else if (fictionOrder.title === Ordering.DESC) {
-                return 'alpha'
+                return "alpha";
             }
-            else {return ''}
+            else {return "";}
         },
         set(value: string) { 
-            if (value === 'most_recent') {
+            if (value === "most_recent") {
                 fictionOrder.title = undefined;
                 fictionOrder.lastUpdateDate = Ordering.DESC;
             }
-            else if (value === 'less_recent') {
+            else if (value === "less_recent") {
                 fictionOrder.title = undefined;
                 fictionOrder.lastUpdateDate = Ordering.ASC;
             }
-            else if (value === 'alpha') {
+            else if (value === "alpha") {
                 fictionOrder.lastUpdateDate = undefined;
                 fictionOrder.title = Ordering.ASC;
             }

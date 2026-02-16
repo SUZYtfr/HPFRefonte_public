@@ -42,12 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import type { CommentModel } from '~/models';
+import type { CommentModel } from "~/models";
 
-const { comments, newsId } = defineProps<{
+const { comments } = defineProps<{
     comments: CommentModel[] | null;
     newsId: number,
-}>()
+}>();
 
 /* const editorContent = ref<TipTapEditorContent | null>(null);
 
@@ -66,7 +66,7 @@ canUseImage: false
 };
 */
 
-const ModalStatesModule = useModalsStateStore()
+// const ModalStatesModule = useModalsStateStore();
 
   // #region Methods
 /*   public async PostComment(): Promise<void> {

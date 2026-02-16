@@ -4,7 +4,7 @@
     :indeterminate="externalState === false"
     :type="externalState === false ? 'is-danger' : ''"
     :class="[{ excluded: externalState === false }]"
-    @click.native.prevent="checkBoxClicked"
+    @click.prevent="checkBoxClicked"
   >
     <span>{{ title }}</span>
   </b-checkbox>

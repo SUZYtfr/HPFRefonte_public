@@ -2,6 +2,11 @@
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  app: {
+    head: {
+      "title": "HPF - Hameau Pour Fanfiction"
+    }
+  },
   // Désactivé temporairement (?) - Voir composables/useCustomAuth.ts
   /*
   auth: {
@@ -145,21 +150,21 @@ export default defineNuxtConfig({
   // },
 
   modules: [
-    '@nuxt/eslint',
-    '@pinia/nuxt',
+    "@nuxt/eslint",
+    "@pinia/nuxt",
     // '@sidebase/nuxt-auth',
-    'nuxt-graphql-client',
+    "nuxt-graphql-client",
   ],
-  'graphql-client': {
+  "graphql-client": {
     codegen: {
       onlyOperationTypes: false,
     },
     // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
     clients: {
       default: {
-        host: 'http://127.0.0.1:8000/graphql/',
+        host: "http://127.0.0.1:8000/graphql/",
         token: {
-          type: 'JWT'
+          type: "JWT"
         },
       },
     }

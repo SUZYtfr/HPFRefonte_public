@@ -14,7 +14,7 @@ export enum RecordStatusEnum {
 }
 
 export class BasicClass<T> {
-  public id: string = '';
+  public id: string = "";
   public recordStatus: RecordStatusEnum = RecordStatusEnum.Unchanged;
   public creationUserId: number | null = null;
 

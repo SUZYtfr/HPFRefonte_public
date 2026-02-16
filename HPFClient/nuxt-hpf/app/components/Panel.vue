@@ -25,7 +25,7 @@
             :key="index"
             :title="option.name"
             class="py-1 pl-1"
-            :externalState="stateForCheckbox(option.value)"
+            :external-state="stateForCheckbox(option.value)"
             @change="(internalState: boolean | null) => threeStateChanged(option.value, internalState)"
           />
         </div>
@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script setup lang="ts", generic="T extends { name: string, value: string }">
+<script setup lang="ts" generic="T extends { name: string, value: string }">
 interface Props {
   name: string;
   options: T[];
@@ -53,9 +53,9 @@ const expanded = ref<boolean>(false);
 
 const totalChecked = computed<number>(() => {
   return includedValues.value.length + excludedValues.value.length;
-})
+});
 
-const $emit = defineEmits(["change"])
+const $emit = defineEmits(["change"]);
 
 function threeStateChanged(value: string, state: boolean | null): void {
   includedValues.value = includedValues.value.filter(

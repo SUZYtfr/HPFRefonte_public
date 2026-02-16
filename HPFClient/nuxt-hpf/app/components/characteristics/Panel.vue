@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { getCaracteristicTypeColor } from "@/utils/characteristics";
-import { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
+import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 
 interface Props {
   characteristicType: CharacteristicTypeModel;
@@ -56,9 +56,9 @@ const expanded = ref<boolean>(false);
 
 const totalChecked = computed<number>(() => {
   return includedValues.value.length + excludedValues.value.length;
-})
+});
 
-const $emit = defineEmits(["change"])
+const $emit = defineEmits(["change"]);
 
 function threeStateChanged(characteristicId: number, state: boolean | null): void {
   includedValues.value = includedValues.value.filter(

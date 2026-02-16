@@ -87,14 +87,14 @@
       v-plaintext
       class="text-ellipsis-three-line"
       v-html="fanfiction.summary"
-    />
+    ></p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FanfictionModel } from "~/models";
+import type { FanfictionModel } from "~/models";
 import { getClassTypeColor } from "~/utils/characteristics";
-import { CharacteristicData } from "~/types/characteristics";
+import type { CharacteristicData } from "~/types/characteristics";
 import type { FandomData } from "~/types/fanfictions";
 
 const { fanfiction } = defineProps<{
@@ -106,7 +106,7 @@ const { fanfiction } = defineProps<{
 const vPlaintext = {
     //@ts-ignore
     mounted: el => el.innerHTML = el.innerText.trimStart(),
-}
+};
 
 const hover = ref<boolean>(false);
 

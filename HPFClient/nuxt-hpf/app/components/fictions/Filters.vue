@@ -85,7 +85,7 @@
       /> -->
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :externalState="(fanfictionFilters.featured ??= {})?.exact"
+        :external-state="(fanfictionFilters.featured ??= {})?.exact"
         title="Histoires médaillés"
         @change="(fanfictionFilters.featured ??= {}).exact = $event"
       />
@@ -99,11 +99,11 @@
       />
       <CharacteristicsPanel
         v-for="(type, index) in ConfigModule.characteristicTypes"
+        :key="'tag_' + index.toString()"
         :initial-included-ids
         :initial-excluded-ids
-        :key="'tag_' + index.toString()"
         class="my-2"
-        :characteristicType="type"
+        :characteristic-type="type"
         :characteristics="filteredCharacteristics(type.characteristicTypeId)"
         @change="characteristicsChanged"
       />
@@ -206,7 +206,7 @@
 <script setup lang="ts">
 import { groupBy } from "@/utils/es6-utils";
 import type { FictionFilters } from "#gql";
-import { CharacteristicModel, CharacteristicTypeModel } from "@/models";
+import type { CharacteristicModel} from "@/models";
 
 interface Props {
   fanfictionFilters: FictionFilters;
@@ -215,7 +215,7 @@ interface Props {
   isLoading?: boolean;
   isFixedHeightCard?: boolean;
   tooltipPosition?: string;
-  execute: () => {};
+  execute: () => void;
 }
 
 const {
@@ -283,7 +283,7 @@ function filteredCharacteristics(characteristicTypeId: number): CharacteristicMo
     return itemsSorted;
 }
 
-function fandomsChanged(fandomId: string, action: boolean | null) {
+function fandomsChanged(fandomId: string, action: boolean | null): void {
   let newIncluded = ((fanfictionFilters.fandoms ??= {}).allIdsInList || []).filter(t => t !== fandomId.toString());
   let newExcluded = ((((fanfictionFilters.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== fandomId.toString());
 
@@ -305,7 +305,7 @@ function fandomsChanged(fandomId: string, action: boolean | null) {
         inList: newExcluded.length > 0 ? newExcluded : null
       }
     }
-  }
+  };
 }
 
 function characteristicsChanged(characteristicId: number, action: boolean | null) {
@@ -330,7 +330,7 @@ function characteristicsChanged(characteristicId: number, action: boolean | null
         inList: newExcluded.length > 0 ? newExcluded : null
       }
     }
-  }
+  };
 }
 </script>
 

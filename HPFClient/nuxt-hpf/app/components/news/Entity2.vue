@@ -24,7 +24,7 @@
         >
           <span class="badge">{{ news.commentCount }}</span>
         </b-button>
-        <hr>
+        <hr/>
       </div>
     </div>
     <!-- Content -->
@@ -34,7 +34,7 @@
           :id="'news-' + news.newsId"
           class="max-lines"
           v-html="news.content"
-        />
+        ></span>
       </div>
     </div>
     <!-- Footer -->
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { NewsModel } from "~/models/news";
+import type { NewsModel } from "~/models/news";
 
 const { news } = defineProps<{
   news: NewsModel;
