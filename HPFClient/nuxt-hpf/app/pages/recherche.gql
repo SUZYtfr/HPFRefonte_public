@@ -1,43 +1,39 @@
-query searchFictions(
-    $pagination: OffsetPaginationInput,
-    $order: FictionOrder,
-    $filters: FictionFilters,
-) {
-    fictions(pagination: $pagination, order: $order, filters: $filters) {
-        totalCount
-        pageInfo {
-            limit
-            offset
-        }
-        results {
-            id
-            title
-            summary
-            storynote
-            creationUser {
-                ...BaseUserInfo
-            }
-            authors {
-                ...BaseUserInfo
-            }
-            characteristics {
-                id
-                name
-                characteristicTypeId
-            }
-            fandoms {
-                id
-                name
-                slug
-            }
-            lastUpdateDate
-            creationDate
-            reviewCount
-            wordCount
-            readCount
-            chapterCount
-            status
-            featured
-        }
+query searchFictions($pagination: OffsetPaginationInput, $order: FictionOrder, $filters: FictionFilters) {
+  fictions(pagination: $pagination, order: $order, filters: $filters) {
+    totalCount
+    pageInfo {
+      limit
+      offset
     }
+    results {
+      id
+      title
+      summary
+      storynote
+      creationUser {
+        ...BaseUserInfo
+      }
+      authors {
+        ...BaseUserInfo
+      }
+      characteristics {
+        id
+        name
+        characteristicTypeId
+      }
+      fandoms {
+        id
+        name
+        slug
+      }
+      lastUpdateDate
+      creationDate
+      reviewCount
+      wordCount
+      readCount
+      chapterCount
+      status
+      featured
+    }
+  }
 }

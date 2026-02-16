@@ -33,7 +33,6 @@ export class NewsData extends BasicClass<NewsData> {
   public postDate: Date | null = null;
 }
 
-
 // #region Comment
 export class CommentData extends BasicClass<CommentData> {
   @Exclude()

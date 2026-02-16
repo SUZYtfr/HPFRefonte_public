@@ -156,7 +156,7 @@ defineProps<{
   summary: string | null | undefined;
   storynotes: string | null | undefined;
   fontSizeVisible: boolean;
-  tiptapReadOnlyConfig: {fontSize: number} | null;
+  tiptapReadOnlyConfig: { fontSize: number } | null;
   // tiptapReadOnlyConfig: TipTapEditorConfig | null;
 }>();
 //#endregion

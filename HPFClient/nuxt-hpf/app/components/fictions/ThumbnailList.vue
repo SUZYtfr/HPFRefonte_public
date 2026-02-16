@@ -10,34 +10,22 @@
         <b-loading v-if="isLoading" :is-full-page="false" />
         <div
           v-if="fanfictions?.totalCount || 0 > 0"
-          class="
-                columns
-                is-variable
-                is-1-mobile
-                is-2-tablet
-                is-3-desktop
-                is-3-widescreen
-                is-2-fullhd
-                is-multiline
-              "
+          class="columns is-variable is-1-mobile is-2-tablet is-3-desktop is-3-widescreen is-2-fullhd is-multiline"
         >
           <div
-
             v-for="(fanfiction, innerindex) of fanfictions?.results"
-            :key="'ff_' + (listType == FanfictionListType.Recent ? 'recent' : 'selection' )+'_' + fanfiction.fanfictionId.toString()"
+            :key="
+              'ff_' +
+              (listType == FanfictionListType.Recent ? 'recent' : 'selection') +
+              '_' +
+              fanfiction.fanfictionId.toString()
+            "
             class="column is-half py-2"
           >
-            <FictionsThumbnail
-              :key="fanfiction.fanfictionId"
-              :fanfiction="fanfiction"
-              :index="innerindex"
-              :fandom
-            />
+            <FictionsThumbnail :key="fanfiction.fanfictionId" :fanfiction="fanfiction" :index="innerindex" :fandom />
           </div>
         </div>
-        <p v-else class="has-text-centered my-2">
-          Aucune fanfiction trouvée
-        </p>
+        <p v-else class="has-text-centered my-2">Aucune fanfiction trouvée</p>
       </div>
       <footer v-if="listType == FanfictionListType.Recent" class="card-footer">
         <p class="card-footer-item py-2">
@@ -46,11 +34,13 @@
               :to="{
                 name: 'recherche',
                 query: {
-                  fandoms: fandom?.id
-                }
+                  fandoms: fandom?.id,
+                },
               }"
               no-prefetch
-            > Plus de nouveautés </NuxtLink>
+            >
+              Plus de nouveautés
+            </NuxtLink>
           </span>
         </p>
       </footer>
@@ -61,11 +51,13 @@
               :to="{
                 name: 'recherche',
                 query: {
-                  fandoms: fandom?.id
-                }
+                  fandoms: fandom?.id,
+                },
               }"
               no-prefetch
-            > Plus de sélections </NuxtLink>
+            >
+              Plus de sélections
+            </NuxtLink>
           </span>
         </p>
         <p class="card-footer-item py-2">
@@ -87,7 +79,7 @@ import type { FictionTypeOffsetPaginated } from "#gql";
 // TODO probablement un meilleur moyen de faire ça
 type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, "results"> & {
   results: FanfictionModel[];
-}
+};
 
 defineProps<{
   isLoading: boolean;
@@ -98,6 +90,4 @@ defineProps<{
 }>();
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

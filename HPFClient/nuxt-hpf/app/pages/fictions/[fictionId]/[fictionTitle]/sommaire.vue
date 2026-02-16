@@ -8,7 +8,7 @@
             {{ fiction.title }}
           </p>
         </header>
-        <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px;">
+        <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px">
           <FictionsEntity
             :key="'ff_' + fiction.fanfictionId.toString()"
             class="my-2"
@@ -17,26 +17,15 @@
           />
         </div>
       </div>
-      <br/>
+      <br />
     </section>
 
     <!-- Notes de fiction -->
     <section>
-      <b-collapse
-        class="card"
-        animation="slide"
-        aria-id="fictionNotes"
-      >
+      <b-collapse class="card" animation="slide" aria-id="fictionNotes">
         <template #trigger="props">
-          <div
-            class="card-header"
-            role="button"
-            aria-controls="fictionNotes"
-            :aria-expanded="props.open"
-          >
-            <p class="card-header-title is-unselectable">
-              Notes de fiction
-            </p>
+          <div class="card-header" role="button" aria-controls="fictionNotes" :aria-expanded="props.open">
+            <p class="card-header-title is-unselectable">Notes de fiction</p>
             <a class="card-header-icon">
               <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
             </a>
@@ -49,7 +38,7 @@
           </div>
         </div>
       </b-collapse>
-      <br/>
+      <br />
     </section>
 
     <!-- Trigger warning -->
@@ -59,30 +48,21 @@
           <b-icon icon="exclamation-triangle" /><span><strong> TW / CW </strong></span>
         </div>
         <p>
-          <ul v-for="(tw, index) in fictionTriggerWarnings()" :key="index">
-            <li>{{ tw.caption }}</li>
-          </ul>
+          <template v-for="(tw, index) in fictionTriggerWarnings()" :key="index">
+            <ul>
+              <li>{{ tw.caption }}</li>
+            </ul>
+          </template>
         </p>
       </div>
     </article>
 
     <!-- Sommaire -->
     <section>
-      <b-collapse
-        class="card"
-        animation="slide"
-        aria-id="fictionTableOfContent"
-      >
+      <b-collapse class="card" animation="slide" aria-id="fictionTableOfContent">
         <template #trigger="props">
-          <div
-            class="card-header"
-            role="button"
-            aria-controls="fictionTableOfContent"
-            :aria-expanded="props.open"
-          >
-            <p class="card-header-title is-unselectable">
-              Sommaire
-            </p>
+          <div class="card-header" role="button" aria-controls="fictionTableOfContent" :aria-expanded="props.open">
+            <p class="card-header-title is-unselectable">Sommaire</p>
             <a class="card-header-icon">
               <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
             </a>
@@ -91,47 +71,51 @@
 
         <div class="card-content p-2">
           <div class="content p-2">
-            <div v-for="(chapter, index) in tableOfContent?.chapters" :key="index" class="is-flex is-flex-direction-row is-justify-content-center">
+            <div
+              v-for="(chapter, index) in tableOfContent?.chapters"
+              :key="index"
+              class="is-flex is-flex-direction-row is-justify-content-center"
+            >
               <NuxtLink
                 no-prefetch
                 class="has-text-weight-normal"
-                :to="{ name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle', params: { fictionId: tableOfContent?.id.valueOf(), fictionTitle: tableOfContent?.titleAsSlug, chapterId: chapter.id.valueOf(), chapterTitle: chapter.titleAsSlug ?? ''}}"
+                :to="{
+                  name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
+                  params: {
+                    fictionId: tableOfContent?.id.valueOf(),
+                    fictionTitle: tableOfContent?.titleAsSlug,
+                    chapterId: chapter.id.valueOf(),
+                    chapterTitle: chapter.titleAsSlug ?? '',
+                  },
+                }"
               >
                 {{ chapter.title }}
               </NuxtLink>
-              <div v-if="(chapter?.triggerWarningsLoaded?.length ?? 0) > 0" class="is-danger ml-2 is-flex is-flex-direction-row is-align-items-baseline">
+              <div
+                v-if="(chapter?.triggerWarningsLoaded?.length ?? 0) > 0"
+                class="is-danger ml-2 is-flex is-flex-direction-row is-align-items-baseline"
+              >
                 <b-icon icon="exclamation-triangle" size="is-small" type="is-danger" class="mr-1" />
                 <div v-for="(triggerWarning, index) in chapter.triggerWarningsLoaded" :key="index">
-                  <span v-if="index > 0">
-                    ,
-                  </span>
+                  <span v-if="index > 0"> , </span>
                   <span class="has-text-danger">{{ triggerWarning.caption }}</span>
                 </div>
               </div>
-              <br/>
+              <br />
             </div>
           </div>
         </div>
       </b-collapse>
-      <br/>
+      <br />
     </section>
 
     <!-- Reviews -->
     <section v-if="fiction != null">
-      <b-collapse
-        class="card"
-        animation="slide"
-        aria-id="fictionReviews"
-      >
+      <b-collapse class="card" animation="slide" aria-id="fictionReviews">
         <template #trigger="props">
-          <div
-            class="card-header  sub-title"
-            role="button"
-            aria-controls="fictionReviews"
-            :aria-expanded="props.open"
-          >
+          <div class="card-header sub-title" role="button" aria-controls="fictionReviews" :aria-expanded="props.open">
             <p class="card-header-title is-unselectable">
-              {{ 'Reviews (' + fiction?.reviewCount?.toString() + ")" }}
+              {{ "Reviews (" + fiction?.reviewCount?.toString() + ")" }}
             </p>
             <a class="card-header-icon">
               <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" type="is-light" />
@@ -145,7 +129,7 @@
           </div>
         </div>
       </b-collapse>
-      <br/>
+      <br />
     </section>
   </div>
 </template>
@@ -165,21 +149,24 @@ const { tableOfContent } = defineProps<{
 
 const route = useRoute();
 
-const { data: fiction } = await useAsyncGql("getFictions", {
-  filters: {
-    id: {
-      exact: route.params.fictionId as string
-    }
+const { data: fiction } = await useAsyncGql(
+  "getFictions",
+  {
+    filters: {
+      id: {
+        exact: route.params.fictionId as string,
+      },
+    },
+    pagination: {
+      limit: 1,
+    },
+    withAuthors: true,
   },
-  pagination: {
-    limit: 1
+  {
+    transform: (input) => {
+      return plainToInstance(FanfictionModel, input.fictions.results[0]);
+    },
   },
-  withAuthors: true
-}, {
-  transform: (input) => {
-    return plainToInstance(FanfictionModel, input.fictions.results[0]);
-  }
-}
 );
 
 const reviewListItemId = computed(() => {
@@ -195,27 +182,23 @@ const reviewListType = computed(() => {
 
 // TODO potentielle reactif?
 const fanfictionEntityConfig: FanfictionEntityConfig = {
-  inList: false
+  inList: false,
 };
 
-
-function fictionTriggerWarnings() : {id: number, caption: string }[] {
-  let triggerWarningsGrouped: {id: number, caption: string }[] = [];
-  tableOfContent?.chapters?.filter(
-    (t: ChapterModelLight) =>
-      ((t.triggerWarnings?.length ?? 0) > 0)
-  ).forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.triggerWarningsLoaded));
-  triggerWarningsGrouped = triggerWarningsGrouped.filter((value, index, self) =>
-    index === self.findIndex(t => (
-      t.id === value.id
-    ))
+function fictionTriggerWarnings(): { id: number; caption: string }[] {
+  let triggerWarningsGrouped: { id: number; caption: string }[] = [];
+  tableOfContent?.chapters
+    ?.filter((t: ChapterModelLight) => (t.triggerWarnings?.length ?? 0) > 0)
+    .forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.triggerWarningsLoaded));
+  triggerWarningsGrouped = triggerWarningsGrouped.filter(
+    (value, index, self) => index === self.findIndex((t) => t.id === value.id),
   );
   return triggerWarningsGrouped;
 }
 </script>
 
 <style lang="scss" scoped>
-*{
+* {
   // border: 1px solid green;
 }
 

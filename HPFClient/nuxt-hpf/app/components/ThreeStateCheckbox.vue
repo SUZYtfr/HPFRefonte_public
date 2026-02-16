@@ -11,16 +11,15 @@
 </template>
 
 <script setup lang="ts">
-
 interface Props {
   externalState?: boolean | null;
   title: string;
-} 
+}
 
 const { externalState = null } = defineProps<Props>();
 
 const checkboxStatus = computed<boolean>(() => {
-    return externalState === true;
+  return externalState === true;
 });
 
 const $emit = defineEmits(["change"]);

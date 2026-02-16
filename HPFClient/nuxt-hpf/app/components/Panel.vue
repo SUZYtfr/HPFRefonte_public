@@ -1,20 +1,13 @@
 <template>
   <div class="container-div">
     <div
-      :class="[
-        { 'header-expanded': expanded },
-        'is-flex',
-        'is-flex-direction-row',
-        'is-align-items-center',
-        'header',
-      ]"
+      :class="[{ 'header-expanded': expanded }, 'is-flex', 'is-flex-direction-row', 'is-align-items-center', 'header']"
       @click="expanded = !expanded"
     >
       <span class="is-6 is-clickable py-1 pl-1 is-flex-grow-5">{{ name }}</span>
-      <span
-        v-if="totalChecked > 0"
-        class="is-size-6"
-      ><strong> {{ "(" + totalChecked + ")" }} </strong></span>
+      <span v-if="totalChecked > 0" class="is-size-6"
+        ><strong> {{ "(" + totalChecked + ")" }} </strong></span
+      >
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
@@ -34,7 +27,7 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T extends { name: string, value: string }">
+<script setup lang="ts" generic="T extends { name: string; value: string }">
 interface Props {
   name: string;
   options: T[];
@@ -42,10 +35,7 @@ interface Props {
   initialExcludedValues: string[];
 }
 
-const {
-  initialIncludedValues,
-  initialExcludedValues
-} = defineProps<Props>();
+const { initialIncludedValues, initialExcludedValues } = defineProps<Props>();
 
 const includedValues = ref<string[]>(initialIncludedValues);
 const excludedValues = ref<string[]>(initialExcludedValues);
@@ -58,12 +48,8 @@ const totalChecked = computed<number>(() => {
 const $emit = defineEmits(["change"]);
 
 function threeStateChanged(value: string, state: boolean | null): void {
-  includedValues.value = includedValues.value.filter(
-    iv => iv !== value
-  );
-  excludedValues.value = excludedValues.value.filter(
-    iv => iv !== value
-  );
+  includedValues.value = includedValues.value.filter((iv) => iv !== value);
+  excludedValues.value = excludedValues.value.filter((iv) => iv !== value);
   if (state === true) includedValues.value.push(value);
   else if (state === false) excludedValues.value.push(value);
   $emit("change", value, state);

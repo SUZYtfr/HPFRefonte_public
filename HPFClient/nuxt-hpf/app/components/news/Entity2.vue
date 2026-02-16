@@ -1,15 +1,10 @@
 <template>
-  <div
-    :class="['news', 'px-3']"
-  >
+  <div :class="['news', 'px-3']">
     <!-- Header -->
     <div class="columns is-vcentered is-mobile mb-1">
       <div class="column">
         <h3 class="h3 is-inline">
-          <NuxtLink
-            class="pl-0"
-            :to="{ name: 'news-id', params: { id: news.newsId } }"
-          >
+          <NuxtLink class="pl-0" :to="{ name: 'news-id', params: { id: news.newsId } }">
             {{ news.title }}
           </NuxtLink>
         </h3>
@@ -24,17 +19,13 @@
         >
           <span class="badge">{{ news.commentCount }}</span>
         </b-button>
-        <hr/>
+        <hr />
       </div>
     </div>
     <!-- Content -->
     <div class="columns mb-0">
       <div id="content-container" class="column is-full py-0">
-        <span
-          :id="'news-' + news.newsId"
-          class="max-lines"
-          v-html="news.content"
-        ></span>
+        <span :id="'news-' + news.newsId" class="max-lines" v-html="news.content"></span>
       </div>
     </div>
     <!-- Footer -->
@@ -42,11 +33,17 @@
       <div class="column pt-2 pb-1">
         <span>Le </span>
         <span class="has-text-weight-semibold">
-          {{ news.postDate != null ? (news.postDate.toLocaleDateString("fr-FR") + " à " + news.postDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}
+          {{
+            news.postDate != null
+              ? news.postDate.toLocaleDateString("fr-FR") +
+                " à " +
+                news.postDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+              : ""
+          }}
         </span>
         <span> par </span>
         <span v-for="(author, index) in news.authors" :key="author.userId" class="has-text-weight-semibold">
-          {{ author.username + (index != ((news.authors?.length ?? 0) - 1) ? ", " : "") }}
+          {{ author.username + (index != (news.authors?.length ?? 0) - 1 ? ", " : "") }}
         </span>
       </div>
     </div>
@@ -59,7 +56,6 @@ import type { NewsModel } from "~/models/news";
 const { news } = defineProps<{
   news: NewsModel;
 }>();
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

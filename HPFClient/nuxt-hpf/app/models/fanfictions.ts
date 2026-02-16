@@ -18,7 +18,6 @@ export enum ValidationStatus {
   Validated = 3,
 }
 
-
 // #region Review
 export class ReviewModel extends ReviewData {
   @Type(() => AuthorData)
@@ -39,7 +38,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   public get fanfictionId(): number {
     return Number(this.id);
   }
-  
+
   public title: string = "";
   public summary: string | null = null;
   public image: string | null = null;
@@ -83,7 +82,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
     }
     return result;
   }
-  
+
   @Exclude()
   public get titleAsSlug(): string {
     return this.title.toLowerCase().replace(/ /g, "-");

@@ -1,13 +1,7 @@
 <template>
   <div class="container px-5">
     <!-- Modal filtres -->
-    <b-modal
-      v-model="filtersOpened"
-      scroll="clip"
-      width="70vw"
-      class="is-hidden-desktop"
-      has-modal-card
-    >
+    <b-modal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
       <FictionsFilters
         :fanfiction-filters
         :initial-included-ids="initialIncludedTagIds"
@@ -18,12 +12,10 @@
         :tooltip-position="'is-top'"
       />
     </b-modal>
-    <br/>
+    <br />
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
-      <div
-        class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch"
-      >
+      <div class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch">
         <FictionsFilters
           :initial-included-ids="initialIncludedTagIds"
           :initial-excluded-ids="initialExcludedTagIds"
@@ -54,7 +46,7 @@
           Afficher les filtres
         </b-button>
       </div>
-      <br/>
+      <br />
     </div>
   </div>
 </template>
@@ -67,10 +59,24 @@ import { FanfictionModel } from "~/models";
 
 const route = useRoute();
 
-const initialIncludedFandomIds = (route.query["fandoms"] as string || "").split(".").map(t => Number(t)).filter(t => t > 0);
-const initialExcludedFandomIds = (route.query["fandoms"] as string || "").split(".").map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
-const initialIncludedTagIds = (route.query["tags"] as string || "").split(".").map(t => Number(t)).filter(t => t > 0);
-const initialExcludedTagIds = (route.query["tags"] as string || "").split(".").map(t => Number(t)).filter(t => t < 0).map(t => Math.abs(t));
+const initialIncludedFandomIds = ((route.query["fandoms"] as string) || "")
+  .split(".")
+  .map((t) => Number(t))
+  .filter((t) => t > 0);
+const initialExcludedFandomIds = ((route.query["fandoms"] as string) || "")
+  .split(".")
+  .map((t) => Number(t))
+  .filter((t) => t < 0)
+  .map((t) => Math.abs(t));
+const initialIncludedTagIds = ((route.query["tags"] as string) || "")
+  .split(".")
+  .map((t) => Number(t))
+  .filter((t) => t > 0);
+const initialExcludedTagIds = ((route.query["tags"] as string) || "")
+  .split(".")
+  .map((t) => Number(t))
+  .filter((t) => t < 0)
+  .map((t) => Math.abs(t));
 
 const filtersOpened = ref<boolean>(false);
 const fictionOrder = ref<FictionOrder>({
@@ -82,32 +88,32 @@ const fictionPagination = reactive<OffsetPaginationInput>({
 });
 const fanfictionFilters = ref<FictionFilters>({
   fandoms: {
-    allIdsInList: initialIncludedFandomIds.length > 0 ? initialIncludedFandomIds.map(t => t.toString()) : null,
+    allIdsInList: initialIncludedFandomIds.length > 0 ? initialIncludedFandomIds.map((t) => t.toString()) : null,
     NOT: {
       id: {
-        inList: initialExcludedFandomIds.length > 0 ? initialExcludedFandomIds.map(t => t.toString()) : null
-      }
-    }
+        inList: initialExcludedFandomIds.length > 0 ? initialExcludedFandomIds.map((t) => t.toString()) : null,
+      },
+    },
   },
   characteristics: {
-    allIdsInList: initialIncludedTagIds.length > 0 ? initialIncludedTagIds.map(t => t.toString()) : null,
+    allIdsInList: initialIncludedTagIds.length > 0 ? initialIncludedTagIds.map((t) => t.toString()) : null,
     NOT: {
       id: {
-        inList: initialExcludedTagIds.length > 0 ? initialExcludedTagIds.map(t => t.toString()) : null
-      }
-    }
-  }
+        inList: initialExcludedTagIds.length > 0 ? initialExcludedTagIds.map((t) => t.toString()) : null,
+      },
+    },
+  },
 });
 
 // Met à jour l'URL avec les paramètres de recherche actuels
 watch(fanfictionFilters.value, () => {
   const newSearchParams = new URLSearchParams();
   const fandomsParams = (fanfictionFilters.value.fandoms?.allIdsInList || [])
-    .concat(fanfictionFilters.value.fandoms?.NOT?.id?.inList?.map(t => "-" + t) || [])
-    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) );
+    .concat(fanfictionFilters.value.fandoms?.NOT?.id?.inList?.map((t) => "-" + t) || [])
+    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)));
   const tagsParams = (fanfictionFilters.value.characteristics?.allIdsInList || [])
-    .concat(fanfictionFilters.value.characteristics?.NOT?.id?.inList?.map(t => "-" + t) || [])
-    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)) );
+    .concat(fanfictionFilters.value.characteristics?.NOT?.id?.inList?.map((t) => "-" + t) || [])
+    .toSorted((a, b) => Math.abs(Number(a)) - Math.abs(Number(b)));
 
   if (fandomsParams.length > 0) {
     newSearchParams.append("fandoms", fandomsParams.join("."));
@@ -140,19 +146,26 @@ watch(fanfictionFilters.value, () => {
   sortOn: "last_update_date"
 }); */
 
-const { data: paginatedFanfictions, status, execute } = await useAsyncGql("searchFictions", {
+const {
+  data: paginatedFanfictions,
+  status,
+  execute,
+} = await useAsyncGql(
+  "searchFictions",
+  {
     filters: fanfictionFilters,
     order: fictionOrder,
     pagination: fictionPagination,
-}, {
+  },
+  {
     transform: (input) => {
-        return {
-            ...input.fictions,
-            results: plainToInstance(FanfictionModel, input.fictions.results)
-        };
-    }
-});
-
+      return {
+        ...input.fictions,
+        results: plainToInstance(FanfictionModel, input.fictions.results),
+      };
+    },
+  },
+);
 
 useHead({
   title: "HPF - Recherche de fanfictions",

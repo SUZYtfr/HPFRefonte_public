@@ -49,13 +49,7 @@ function hexToHsl(hexColor: string): [number, number, number] | null {
 
 function invertHex(hexColor: string): string {
   if (hexColor.startsWith("#")) hexColor = hexColor.substring(1);
-  return (
-    "#" +
-    (Number(`0x1${hexColor}`) ^ 0xffffff)
-      .toString(16)
-      .substring(1)
-      .toUpperCase()
-  );
+  return "#" + (Number(`0x1${hexColor}`) ^ 0xffffff).toString(16).substring(1).toUpperCase();
 }
 
 export { rgbToHsl, hexToRgb, hexToHsl, invertHex };

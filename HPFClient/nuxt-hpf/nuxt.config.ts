@@ -4,8 +4,8 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      "title": "HPF - Hameau Pour Fanfiction"
-    }
+      title: "HPF - Hameau Pour Fanfiction",
+    },
   },
   // Désactivé temporairement (?) - Voir composables/useCustomAuth.ts
   /*
@@ -164,10 +164,10 @@ export default defineNuxtConfig({
       default: {
         host: "http://127.0.0.1:8000/graphql/",
         token: {
-          type: "JWT"
+          type: "JWT",
         },
       },
-    }
+    },
   },
 
   runtimeConfig: {

@@ -1,10 +1,10 @@
 fragment BaseUserInfo on UserType {
-    id
-    username
+  id
+  username
 }
 
 fragment AdminUserInfo on UserType {
-    id
-    username
-    isWatched
+  id
+  username
+  isWatched
 }

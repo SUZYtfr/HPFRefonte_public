@@ -40,13 +40,11 @@ export class CommentModel extends BasicClass<CommentModel> {
 }
 // #endregion
 
-
 enum NewsStatus {
   Pending = 1,
   Posted = 2,
   ToPost = 3,
 }
-
 
 // #region News
 export class NewsModel extends BasicClass<NewsModel> {

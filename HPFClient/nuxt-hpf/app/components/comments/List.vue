@@ -1,18 +1,19 @@
 <template>
   <div class="card">
     <header class="card-header sub-title">
-      <p class="card-header-title is-centered">
-        Commentaires
-      </p>
+      <p class="card-header-title is-centered">Commentaires</p>
     </header>
     <div class="card-content">
       <div class="content">
-        <div v-if="(comments?.length ?? 0) > 0 ">
-          <CommentsEntity v-for="(item, innerindex) of comments" :key="'comment_' + item.commentId.toString()" :index="innerindex" :comment="item" />
+        <div v-if="(comments?.length ?? 0) > 0">
+          <CommentsEntity
+            v-for="(item, innerindex) of comments"
+            :key="'comment_' + item.commentId.toString()"
+            :index="innerindex"
+            :comment="item"
+          />
         </div>
-        <p v-else class="has-text-centered">
-          Aucun commentaire
-        </p>
+        <p v-else class="has-text-centered">Aucun commentaire</p>
       </div>
       <!-- <div v-if="$auth.loggedIn">
         <client-only>
@@ -45,8 +46,8 @@
 import type { CommentModel } from "~/models";
 
 const { comments } = defineProps<{
-    comments: CommentModel[] | null;
-    newsId: number,
+  comments: CommentModel[] | null;
+  newsId: number;
 }>();
 
 /* const editorContent = ref<TipTapEditorContent | null>(null);
@@ -68,7 +69,7 @@ canUseImage: false
 
 // const ModalStatesModule = useModalsStateStore();
 
-  // #region Methods
+// #region Methods
 /*   public async PostComment(): Promise<void> {
 if (this.news_id === null) return;
 if ((this.editorContent?.wordcount ?? 0) < 3) return;
@@ -87,5 +88,4 @@ try {
 
 <style lang="scss" scoped>
 @use "~/assets/scss/custom.scss";
-
 </style>

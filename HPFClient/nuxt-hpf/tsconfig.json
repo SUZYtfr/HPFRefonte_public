@@ -6,11 +6,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": [
-      "esnext",
-      "esnext.asynciterable",
-      "DOM"
-    ],
+    "lib": ["esnext", "esnext.asynciterable", "DOM"],
     "esModuleInterop": true,
     "experimentalDecorators": true,
     // Fait sauter la découverte de #gql? // TODO
@@ -25,16 +21,12 @@
     "sourceMap": true,
     "strict": true,
     "types": [
-      "@types/node",
+      "@types/node"
       // "@nuxt/types",
       // "buefy/types",
-    ],
+    ]
   },
   "watchOptions": {
-    "excludeDirectories": [
-      "**/node_modules/**",
-      ".nuxt",
-      ".output"
-    ]
+    "excludeDirectories": ["**/node_modules/**", ".nuxt", ".output"]
   }
 }

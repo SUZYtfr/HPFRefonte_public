@@ -7,13 +7,9 @@
     @click.prevent="checkBoxClicked"
   >
     <font-awesome-icon v-if="characteristic?.parentId != null" icon="level-up-alt" rotation="90" class="mr-1 ml-2" />
-    <span
-      :class="[
-        characteristic?.parentId != null
-          ? 'is-italic has-text-weight-light'
-          : 'has-text-weight-medium',
-      ]"
-    >{{ characteristic?.name }}</span>
+    <span :class="[characteristic?.parentId != null ? 'is-italic has-text-weight-light' : 'has-text-weight-medium']">{{
+      characteristic?.name
+    }}</span>
   </b-checkbox>
 </template>
 

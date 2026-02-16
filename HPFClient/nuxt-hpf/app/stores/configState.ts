@@ -4,7 +4,6 @@ import { InvalidationReasonData } from "~/types/config";
 import { plainToInstance } from "class-transformer";
 import type { CharacteristicType, CharacteristicTypeType, ThemeType } from "#gql";
 
-
 export const useConfigStore = defineStore("config", () => {
   //#region State
   const characteristics = ref<CharacteristicModel[]>();
@@ -83,41 +82,57 @@ export const useConfigStore = defineStore("config", () => {
   // (Mais je pense que c'est un Nuxt bug)
   // Il faut aussi rendre une valeur quelconque pour éviter que useAsyncData se plaigne.
   async function fetchCharacteristics(): Promise<true> {
-    const { data: characteristicTemp } = await useAsyncGql("getCharacteristics", {}, {
-      transform: (data: { characteristics: CharacteristicType[] }) => {
-        return plainToInstance(CharacteristicModel, data.characteristics);
-      }
-    });
+    const { data: characteristicTemp } = await useAsyncGql(
+      "getCharacteristics",
+      {},
+      {
+        transform: (data: { characteristics: CharacteristicType[] }) => {
+          return plainToInstance(CharacteristicModel, data.characteristics);
+        },
+      },
+    );
     setCharacteristics(characteristicTemp.value ?? []);
     return true;
   }
 
   async function fetchCharacteristicTypes(): Promise<true> {
-    const { data: characteristicTypesTemp } = await useAsyncGql("getCharacteristicTypes", {}, {
-      transform: (data: { characteristicTypes: CharacteristicTypeType[] }) => {
-        return plainToInstance(CharacteristicTypeModel, data.characteristicTypes);
-      }
-    });
+    const { data: characteristicTypesTemp } = await useAsyncGql(
+      "getCharacteristicTypes",
+      {},
+      {
+        transform: (data: { characteristicTypes: CharacteristicTypeType[] }) => {
+          return plainToInstance(CharacteristicTypeModel, data.characteristicTypes);
+        },
+      },
+    );
     setCharacteristicTypes(characteristicTypesTemp.value ?? []);
     return true;
   }
 
   async function fetchThemes(): Promise<true> {
-    const { data: themesTemp } = await useAsyncGql("getThemes", {}, {
-      transform: (data: { themes: ThemeType[] }) => {
-        return plainToInstance(ThemeModel, data.themes);
-      }
-    });
+    const { data: themesTemp } = await useAsyncGql(
+      "getThemes",
+      {},
+      {
+        transform: (data: { themes: ThemeType[] }) => {
+          return plainToInstance(ThemeModel, data.themes);
+        },
+      },
+    );
     setThemes(themesTemp.value ?? []);
     return true;
   }
 
   async function fetchFandoms(): Promise<true> {
-    const { data: fdoms } = await useAsyncGql("getFandoms", {}, {
-      transform: (data: { fandoms: FandomData[] }) => {
-        return data.fandoms;
-      }
-    });
+    const { data: fdoms } = await useAsyncGql(
+      "getFandoms",
+      {},
+      {
+        transform: (data: { fandoms: FandomData[] }) => {
+          return data.fandoms;
+        },
+      },
+    );
     setFandoms(fdoms.value ?? []);
     return true;
   }

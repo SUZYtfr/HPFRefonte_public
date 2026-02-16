@@ -241,7 +241,6 @@ export interface ChapterValidationData {
 }
 // #endregion
 
-
 export interface FandomData {
   id: string;
   name: string;

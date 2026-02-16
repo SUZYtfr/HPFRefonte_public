@@ -122,7 +122,9 @@
                             >
                               <span v-if="index > 0">, </span>
                               <strong>{{
-                                configStore.invalidationReasons.find((t) => t.invalidationReasonId == invalidationReasonId)?.reason
+                                configStore.invalidationReasons.find(
+                                  (t) => t.invalidationReasonId == invalidationReasonId,
+                                )?.reason
                               }}</strong>
                             </span>
                           </p>
@@ -437,12 +439,12 @@ for (let i = 1; i <= 100; i++) {
       watched: i == 6,
       characteristics:
         configStore.characteristics != null
-          ? [
+          ? ([
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
-            ] as CharacteristicData[]
+            ] as CharacteristicData[])
           : [],
     }),
   });
@@ -470,7 +472,8 @@ for (let i = 1; i <= 100; i++) {
     // Version invalidée
     if (c.validationStatus == ChapterValidationStatusEnum.AwaitingModification) {
       v.invalidationReasonIds = [
-        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))]!.invalidationReasonId,
+        configStore.invalidationReasons[Math.floor(Math.random() * (configStore.invalidationReasons.length - 1))]!
+          .invalidationReasonId,
       ];
       v.invalidationDate = new Date();
       v.publicComment =

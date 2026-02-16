@@ -1,6 +1,6 @@
-@use 'sass:meta';
-@use '../../../node_modules/@bulvar/bulma/themes/light.sass';
-@include meta.load-css('../../../node_modules/@bulvar/buefy/css/buefy.css');
+@use "sass:meta";
+@use "../../../node_modules/@bulvar/bulma/themes/light.sass";
+@include meta.load-css("../../../node_modules/@bulvar/buefy/css/buefy.css");
 
 :root {
   // Shades
@@ -11,56 +11,69 @@
   --light: #eeeeee;
   --whitesmoke: #f6f6f6;
   //--hpf-primary-lighter: #F1F2F7;
-  --hpf-primary-lighter: #E8D7E0;
+  --hpf-primary-lighter: #e8d7e0;
   --hpf-banner: url("https://cdn.pixabay.com/photo/2017/02/04/04/56/hogwarts-2036645_960_720.jpg");
   --desktop-width: 1024px;
   --tablet-width: 769px;
 
   // Setup $colors to use as bulma classes (e.g. 'is-twitter')
-  --colors: mergeColorMaps(("white": (var(--white),
-          var(--black),
-        ),
-        "black": (var(--black),
-          var(--white),
-        ),
-        "light": (var(--light),
-          var(--light-invert),
-        ),
-        "dark": (var(--dark),
-          var(--dark-invert),
-        ),
-        "primary": (var(--primary),
-          var(--primary-invert),
-          var(--primary-light),
-          var(--primary-dark),
-        ),
-        "link": (var(--link),
-          var(--link-invert),
-          var(--link-light),
-          var(--link-dark),
-        ),
-        "info": (var(--info),
-          var(--info-invert),
-          var(--info-light),
-          var(--info-dark),
-        ),
-        "success": (var(--success),
-          var(--success-invert),
-          var(--success-light),
-          var(--success-dark),
-        ),
-        "warning": (var(--warning),
-          var(--warning-invert),
-          var(--warning-light),
-          var(--warning-dark),
-        ),
-        "danger": (var(--danger),
-          var(--danger-invert),
-          var(--danger-light),
-          var(--danger-dark),
-        ),
+  --colors: mergeColorMaps(
+    (
+      "white": (
+        var(--white),
+        var(--black),
       ),
-      var(--custom-colors));
+      "black": (
+        var(--black),
+        var(--white),
+      ),
+      "light": (
+        var(--light),
+        var(--light-invert),
+      ),
+      "dark": (
+        var(--dark),
+        var(--dark-invert),
+      ),
+      "primary": (
+        var(--primary),
+        var(--primary-invert),
+        var(--primary-light),
+        var(--primary-dark),
+      ),
+      "link": (
+        var(--link),
+        var(--link-invert),
+        var(--link-light),
+        var(--link-dark),
+      ),
+      "info": (
+        var(--info),
+        var(--info-invert),
+        var(--info-light),
+        var(--info-dark),
+      ),
+      "success": (
+        var(--success),
+        var(--success-invert),
+        var(--success-light),
+        var(--success-dark),
+      ),
+      "warning": (
+        var(--warning),
+        var(--warning-invert),
+        var(--warning-light),
+        var(--warning-dark),
+      ),
+      "danger": (
+        var(--danger),
+        var(--danger-invert),
+        var(--danger-light),
+        var(--danger-dark),
+      ),
+    ),
+    var(--custom-colors)
+  );
 
   // Divers
   --body-overflow-y: auto;

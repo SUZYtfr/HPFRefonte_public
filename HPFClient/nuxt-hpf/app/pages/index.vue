@@ -25,10 +25,7 @@
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList
-          :is-loading="newsStatus === 'pending'"
-          :news="paginatedRecentNews ?? undefined"
-        />
+        <NewsThumbnailList :is-loading="newsStatus === 'pending'" :news="paginatedRecentNews ?? undefined" />
       </div>
     </div>
     <br />
@@ -39,7 +36,13 @@
 //#region Imports
 import { plainToInstance } from "class-transformer";
 import { FanfictionModel, NewsModel } from "~/models";
-import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput, FictionOrder, FictionTypeOffsetPaginated } from "#gql";
+import type {
+  NewsArticleOrder,
+  NewsArticleTypeOffsetPaginated,
+  OffsetPaginationInput,
+  FictionOrder,
+  FictionTypeOffsetPaginated,
+} from "#gql";
 import { Ordering } from "#gql/default";
 import { FanfictionListType } from "~/types/other";
 //#endregion
@@ -49,25 +52,33 @@ definePageMeta({
   auth: false,
 });
 
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql("getIndexFictions", {}, {
-  lazy: true,
-  transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
-    return {
-      ...input.fictions,
-      results: plainToInstance(FanfictionModel, input.fictions.results),
-    };
-  }
-});
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql(
+  "getIndexFictions",
+  {},
+  {
+    lazy: true,
+    transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
+      return {
+        ...input.fictions,
+        results: plainToInstance(FanfictionModel, input.fictions.results),
+      };
+    },
+  },
+);
 
-const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql("getIndexNews", {}, {
-  lazy: true,
-  transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
-    return {
-      ...input.news,
-      results: plainToInstance(NewsModel, input.news.results),
-    };
-  }
-});
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql(
+  "getIndexNews",
+  {},
+  {
+    lazy: true,
+    transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+      return {
+        ...input.news,
+        results: plainToInstance(NewsModel, input.news.results),
+      };
+    },
+  },
+);
 //#endregion
 </script>
 

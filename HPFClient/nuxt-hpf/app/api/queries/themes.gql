@@ -1,10 +1,10 @@
 query getThemes {
-    themes {
-        name
-        default
-        enabled
-        useDefaultFrom
-        useDefaultTo
-        details
-    }
+  themes {
+    name
+    default
+    enabled
+    useDefaultFrom
+    useDefaultTo
+    details
+  }
 }

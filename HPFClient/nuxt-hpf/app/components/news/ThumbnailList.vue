@@ -38,7 +38,7 @@ import type { NewsArticleTypeOffsetPaginated } from "#gql";
 // TODO probablement un meilleur moyen de faire ça
 type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "results"> & {
   results: NewsModel[];
-}
+};
 
 const { isLoading = false } = defineProps<{
   news?: NewsArticleModelOffsetPaginated;

@@ -91,9 +91,7 @@
         </b-navbar-dropdown>
         <b-navbar-item active href="#"> Partenaires </b-navbar-item>
         <b-navbar-item active href="#" @click="modalsStateStore.setContactModalActive(true)"> Contact </b-navbar-item>
-        <b-navbar-item v-if="isStaff" active tag="router-link" to="/settings">
-          Administration
-        </b-navbar-item>
+        <b-navbar-item v-if="isStaff" active tag="router-link" to="/settings"> Administration </b-navbar-item>
       </template>
 
       <template #end>

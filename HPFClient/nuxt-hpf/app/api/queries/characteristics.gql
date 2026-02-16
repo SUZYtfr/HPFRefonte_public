@@ -1,19 +1,19 @@
 query getCharacteristicTypes {
-    characteristicTypes {
-        id
-        name
-        minLimit
-        maxLimit
-    }
+  characteristicTypes {
+    id
+    name
+    minLimit
+    maxLimit
+  }
 }
 
 query getCharacteristics {
-    characteristics {
-        id
-        name
-        characteristicType {
-            id
-        }
-        characteristicTypeId
+  characteristics {
+    id
+    name
+    characteristicType {
+      id
     }
+    characteristicTypeId
+  }
 }

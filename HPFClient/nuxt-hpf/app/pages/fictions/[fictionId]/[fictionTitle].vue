@@ -1,5 +1,9 @@
 <template>
-  <div id="main-container" class="container pt-3 is-flex is-flex-direction-column is-flex-grow-5" style="/*background-color: red; */">
+  <div
+    id="main-container"
+    class="container pt-3 is-flex is-flex-direction-column is-flex-grow-5"
+    style="/*background-color: red; */"
+  >
     <b-loading v-if="status === 'pending'" :is-full-page="false" />
     <div class="is-flex-grow-5">
       <!-- Sous page fiction / chapitre -->
@@ -18,23 +22,35 @@
         tag="router-link"
         :to="PreviousToRouterLink"
       >
-        <span class="is-hidden-mobile">{{ (previousChapter != null ? ((previousChapter?.title ?? "").length > 25 ? (previousChapter?.title ?? "").substring(0,25) + "..." : previousChapter?.title) : ((tableOfContent?.title ?? "").length > 25 ? (tableOfContent?.title ?? "").substring(0,25) + "..." : tableOfContent?.title)) }}</span>
+        <span class="is-hidden-mobile">{{
+          previousChapter != null
+            ? (previousChapter?.title ?? "").length > 25
+              ? (previousChapter?.title ?? "").substring(0, 25) + "..."
+              : previousChapter?.title
+            : (tableOfContent?.title ?? "").length > 25
+              ? (tableOfContent?.title ?? "").substring(0, 25) + "..."
+              : tableOfContent?.title
+        }}</span>
       </b-button>
       <!-- Sommaire -->
-      <b-dropdown v-if="currentChapter != null" aria-role="list" position="is-top-right" :class="[{'mr-auto': nextChapter == null }, {'ml-auto': nextChapter == null }]">
+      <b-dropdown
+        v-if="currentChapter != null"
+        aria-role="list"
+        position="is-top-right"
+        :class="[{ 'mr-auto': nextChapter == null }, { 'ml-auto': nextChapter == null }]"
+      >
         <template #trigger="{ active }">
-          <b-button
-            label="Sommaire"
-            type="is-primary"
-            :icon-right="active ? 'angle-up' : 'angle-down'"
-          />
+          <b-button label="Sommaire" type="is-primary" :icon-right="active ? 'angle-up' : 'angle-down'" />
         </template>
         <b-dropdown-item aria-role="listitem">
           <b-icon icon="book-open" />
           <NuxtLink
             no-prefetch
             class="has-text-weight-normal"
-            :to="{ name: 'fictions-fictionId-fictionTitle-sommaire', params: { fictionId: tableOfContent?.id.valueOf(), fictionTitle: tableOfContent?.titleAsSlug }}"
+            :to="{
+              name: 'fictions-fictionId-fictionTitle-sommaire',
+              params: { fictionId: tableOfContent?.id.valueOf(), fictionTitle: tableOfContent?.titleAsSlug },
+            }"
           >
             {{ tableOfContent?.title }}
           </NuxtLink>
@@ -43,7 +59,15 @@
           <NuxtLink
             no-prefetch
             class="has-text-weight-normal"
-            :to="{ name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle', params: { fictionId: tableOfContent?.id.valueOf(), fictionTitle: tableOfContent?.titleAsSlug, chapterId: chapter.id.valueOf(), chapterTitle: chapter.titleAsSlug ?? ''}}"
+            :to="{
+              name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
+              params: {
+                fictionId: tableOfContent?.id.valueOf(),
+                fictionTitle: tableOfContent?.titleAsSlug,
+                chapterId: chapter.id.valueOf(),
+                chapterTitle: chapter.titleAsSlug ?? '',
+              },
+            }"
           >
             {{ chapter.title }}
           </NuxtLink>
@@ -56,9 +80,13 @@
         icon-right="angle-right"
         tag="router-link"
         :to="NextToRouterLink"
-        :class="[{'ml-auto': (currentChapter == null) }]"
+        :class="[{ 'ml-auto': currentChapter == null }]"
       >
-        <span class="is-hidden-mobile">{{ ((nextChapter?.title ?? "").length > 25 ? (nextChapter?.title ?? "").substring(0,25) + "..." : nextChapter?.title) }}</span>
+        <span class="is-hidden-mobile">{{
+          (nextChapter?.title ?? "").length > 25
+            ? (nextChapter?.title ?? "").substring(0, 25) + "..."
+            : nextChapter?.title
+        }}</span>
       </b-button>
     </div>
   </div>
@@ -72,20 +100,21 @@ import { TableOfContent } from "~/models";
 
 const route = useRoute();
 
-const { data: tableOfContent, status } = await useAsyncGql("getTableOfContents", {
-  fictionId: route.params.fictionId as string,
-}, {
-  transform: (data: { fictions: FictionTypeOffsetPaginated }) => {
-    // Pas très beau tout ça, mais ça fonctionne
-    const tableOfContent = data.fictions.results[0];
-    //@ts-ignore
-    tableOfContent.chapters = tableOfContent?.chapters.results;
-    return plainToInstance(TableOfContent, data.fictions.results[0]);
-  }
-}
-
+const { data: tableOfContent, status } = await useAsyncGql(
+  "getTableOfContents",
+  {
+    fictionId: route.params.fictionId as string,
+  },
+  {
+    transform: (data: { fictions: FictionTypeOffsetPaginated }) => {
+      // Pas très beau tout ça, mais ça fonctionne
+      const tableOfContent = data.fictions.results[0];
+      //@ts-ignore
+      tableOfContent.chapters = tableOfContent?.chapters.results;
+      return plainToInstance(TableOfContent, data.fictions.results[0]);
+    },
+  },
 );
-
 
 // const { data: tableOfContent, status } = await getTableOfContent(parseInt(route.params.fictionId as string));
 
@@ -110,7 +139,7 @@ const PreviousToRouterLink = reactive<RouterLink>({
     fictionTitle: tableOfContent.value.titleAsSlug,
     chapterId: null,
     chapterTitle: null,
-  }
+  },
 });
 
 const NextToRouterLink = reactive<RouterLink>({
@@ -120,30 +149,33 @@ const NextToRouterLink = reactive<RouterLink>({
     fictionTitle: tableOfContent.value.titleAsSlug,
     chapterId: null,
     chapterTitle: null,
-  }
+  },
 });
 
 effect(() => {
-  const currentChapterIndex = tableOfContent.value.chapters?.findIndex((c) => c.chapterId.toString() === route.params.chapterId as string) || -1;
-  if(currentChapterIndex === -1) {
+  const currentChapterIndex =
+    tableOfContent.value.chapters?.findIndex((c) => c.chapterId.toString() === (route.params.chapterId as string)) ||
+    -1;
+  if (currentChapterIndex === -1) {
     currentChapter.value = null;
 
     previousChapter.value = null;
     PreviousToRouterLink.params.chapterId = null;
     PreviousToRouterLink.params.chapterTitle = null;
-   
+
     nextChapter.value = tableOfContent.value.chapters![currentChapterIndex + 1] ?? null;
     NextToRouterLink.params.chapterId = tableOfContent.value.chapters![0]?.chapterId.toString() ?? null;
     NextToRouterLink.params.chapterTitle = tableOfContent.value.chapters![0]?.titleAsSlug ?? null;
-  }
-  else {
+  } else {
     currentChapter.value = tableOfContent.value.chapters![currentChapterIndex]!;
 
     previousChapter.value = tableOfContent.value.chapters![currentChapterIndex - 1] ?? null;
-    PreviousToRouterLink.name = previousChapter.value ? "fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle": "fictions-fictionId-fictionTitle-sommaire";
+    PreviousToRouterLink.name = previousChapter.value
+      ? "fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle"
+      : "fictions-fictionId-fictionTitle-sommaire";
     PreviousToRouterLink.params.chapterId = previousChapter.value?.chapterId.toString() ?? null;
     PreviousToRouterLink.params.chapterTitle = previousChapter.value?.titleAsSlug ?? null;
-    
+
     nextChapter.value = tableOfContent.value.chapters![currentChapterIndex + 1] ?? null;
     NextToRouterLink.params.chapterId = nextChapter.value?.chapterId.toString() ?? null;
     NextToRouterLink.params.chapterTitle = nextChapter.value?.titleAsSlug ?? null;
@@ -153,10 +185,10 @@ effect(() => {
 
 <style lang="scss" scoped>
 @use "~/assets/scss/custom_bulma_core.scss";
-*{
+* {
   // border: 1px solid green;
 }
-#main-container{
+#main-container {
   background-color: var(--hpf-primary-lighter);
 }
 </style>

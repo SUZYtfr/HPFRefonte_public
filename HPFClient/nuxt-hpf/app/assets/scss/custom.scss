@@ -1,5 +1,5 @@
 @use "sass:color";
-@use '@fortawesome/fontawesome-svg-core/styles.css';
+@use "@fortawesome/fontawesome-svg-core/styles.css";
 @use "~/assets/scss/custom_bulma_core.scss";
 
 // Bulma badge
@@ -10,7 +10,7 @@ $badge-font-size: 0.7rem;
 
 // Responsive Menu Tabs
 @media screen and (max-width: 768px) {
-  li:not(.is-active)>a>span:not(.icon) {
+  li:not(.is-active) > a > span:not(.icon) {
     visibility: hidden;
     position: absolute;
   }
@@ -61,28 +61,28 @@ $characteristic-excluded: #e63946;
 // Normal
 .characteristic-bg-litteraire {
   background: $characteristic-litteraire !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-genre {
   background: $characteristic-genre !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-langue {
   background: $characteristic-langue !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-warning {
   /*background: #e63946 !important;*/
   background: $characteristic-warning !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-rating {
   background: $characteristic-rating !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-epoque {
@@ -97,7 +97,7 @@ $characteristic-excluded: #e63946;
 
 .characteristic-bg-relation {
   background: $characteristic-relation !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-excluded {
@@ -108,28 +108,28 @@ $characteristic-excluded: #e63946;
 // Light
 .characteristic-bg-litteraire-light {
   background: color.adjust($characteristic-litteraire, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-genre-light {
   background: color.adjust($characteristic-genre, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-langue-light {
   background: color.adjust($characteristic-langue, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-warning-light {
   /*background: #e63946 !important;*/
   background: color.adjust($characteristic-warning, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-rating-light {
   background: color.adjust($characteristic-rating, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-epoque-light {
@@ -144,7 +144,7 @@ $characteristic-excluded: #e63946;
 
 .characteristic-bg-relation-light {
   background: color.adjust($characteristic-relation, $lightness: 10%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-excluded-light {
@@ -155,28 +155,28 @@ $characteristic-excluded: #e63946;
 // Lighter
 .characteristic-bg-litteraire-lighter {
   background: color.adjust($characteristic-litteraire, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-genre-lighter {
   background: color.adjust($characteristic-genre, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-langue-lighter {
   background: color.adjust($characteristic-langue, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-warning-lighter {
   /*background: #e63946 !important;*/
   background: color.adjust($characteristic-warning, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-rating-lighter {
   background: color.adjust($characteristic-rating, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-epoque-lighter {
@@ -191,7 +191,7 @@ $characteristic-excluded: #e63946;
 
 .characteristic-bg-relation-lighter {
   background: color.adjust($characteristic-relation, $lightness: 20%) !important;
-  color: #4A4A4A !important;
+  color: #4a4a4a !important;
 }
 
 .characteristic-bg-excluded-lighter {
@@ -199,7 +199,7 @@ $characteristic-excluded: #e63946;
   color: whitesmoke !important;
 }
 
-// Fix FontAwesome 6 
+// Fix FontAwesome 6
 .icon svg {
   width: 1em;
   height: 1em;

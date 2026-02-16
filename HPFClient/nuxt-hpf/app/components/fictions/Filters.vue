@@ -2,23 +2,10 @@
   <div class="card is-relative">
     <b-loading v-model="listLoading" :is-full-page="false" />
     <header class="card-header sub-title">
-      <p class="card-header-title is-centered">
-        Filtres
-      </p>
+      <p class="card-header-title is-centered">Filtres</p>
     </header>
-    <div
-      :class="[
-        'card-content',
-        'px-2',
-        'py-3',
-        { 'fixed-height-card': isFixedHeightCard },
-      ]"
-    >
-      <b-field
-        label="Rechercher un titre, un mot-clé..."
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+    <div :class="['card-content', 'px-2', 'py-3', { 'fixed-height-card': isFixedHeightCard }]">
+      <b-field label="Rechercher un titre, un mot-clé..." label-position="on-border" custom-class="has-text-primary">
         <b-input
           v-model="(fanfictionFilters.title ??= {}).contains"
           placeholder="Rechercher..."
@@ -26,11 +13,7 @@
           icon="search"
         />
       </b-field>
-      <b-field
-        label="Rechercher un auteur"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Rechercher un auteur" label-position="on-border" custom-class="has-text-primary">
         <b-input
           v-model="((fanfictionFilters.creationUser ??= {}).username ??= {}).contains"
           placeholder="Rechercher..."
@@ -38,11 +21,7 @@
           icon="search"
         />
       </b-field>
-      <b-field
-        label="Nombre de mots"
-        label-position="on-border"
-        custom-class="has-text-primary z-index-zero"
-      >
+      <b-field label="Nombre de mots" label-position="on-border" custom-class="has-text-primary z-index-zero">
         <b-slider
           v-model="sliderWords"
           type="is-primary"
@@ -55,14 +34,8 @@
           append-to-body
           ticks
         >
-        <template
-          v-for="val in sliderTicks"
-          :key="val.displayValue"
-        >
-            <b-slider-tick
-              :value="val.sliderValue"
-              class="has-text-weight-semibold"
-            >
+          <template v-for="val in sliderTicks" :key="val.displayValue">
+            <b-slider-tick :value="val.sliderValue" class="has-text-weight-semibold">
               {{ val.displayValue }}
             </b-slider-tick>
           </template>
@@ -77,7 +50,7 @@
         title="Histoires terminées"
         @change="fanfictionFilters.status = $event"
       /> -->
-<!--       <ThreeStateCheckbox
+      <!--       <ThreeStateCheckbox
         class="py-1 pl-1"
         :external-value="fanfictionFilters.multipleAuthors"
         title="Histoires co-écrites"
@@ -92,7 +65,11 @@
       <Panel
         name="Fandoms"
         class="my-2"
-        :options="ConfigModule.fandoms?.map(f => { return {name: f.name, value: f.id} }) || []"
+        :options="
+          ConfigModule.fandoms?.map((f) => {
+            return { name: f.name, value: f.id };
+          }) || []
+        "
         :initial-included-values="fanfictionFilters.fandoms?.allIdsInList || []"
         :initial-excluded-values="fanfictionFilters.fandoms?.NOT?.id?.inList || []"
         @change="fandomsChanged"
@@ -107,7 +84,7 @@
         :characteristics="filteredCharacteristics(type.characteristicTypeId)"
         @change="characteristicsChanged"
       />
-<!--       <b-field
+      <!--       <b-field
         label="Tags personnalisés"
         label-position="on-border"
         custom-class="has-text-primary"
@@ -124,11 +101,7 @@
           @typing="getFilteredTags"
         />
       </b-field> -->
-      <b-field
-        label="Publiée après le"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Publiée après le" label-position="on-border" custom-class="has-text-primary">
         <b-datepicker
           v-model="(fanfictionFilters.lastUpdateDate ??= {}).gt"
           locale="fr-FR"
@@ -141,11 +114,7 @@
           @icon-right-click="(fanfictionFilters.lastUpdateDate ??= {}).gt = null"
         />
       </b-field>
-      <b-field
-        label="Publiée avant le"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Publiée avant le" label-position="on-border" custom-class="has-text-primary">
         <b-datepicker
           v-model="(fanfictionFilters.lastUpdateDate ??= {}).lt"
           locale="fr-FR"
@@ -165,28 +134,16 @@
       >
         Recherche inclusive
       </b-switch> -->
-      <b-tooltip
-        :position="tooltipPosition"
-        type="is-primary"
-        append-to-body
-        multilined
-      >
-        <b-icon
-          pack="fas"
-          class="is-clickable"
-          type="is-primary"
-          icon="question-circle"
-        />
+      <b-tooltip :position="tooltipPosition" type="is-primary" append-to-body multilined>
+        <b-icon pack="fas" class="is-clickable" type="is-primary" icon="question-circle" />
         <template #content>
           <p>
-            <strong class="has-text-white">Activé:</strong> Recherche les
-            fictions Aventure/Action
+            <strong class="has-text-white">Activé:</strong> Recherche les fictions Aventure/Action
             <strong class="has-text-white"><em>ET</em></strong>
             Comédie/Humour.
           </p>
           <p>
-            <strong class="has-text-white">Désactivé:</strong> Recherche les
-            fictions Aventure/Action
+            <strong class="has-text-white">Désactivé:</strong> Recherche les fictions Aventure/Action
             <strong class="has-text-white"><em>OU</em></strong>
             Comédie/Humour.
           </p>
@@ -206,7 +163,7 @@
 <script setup lang="ts">
 import { groupBy } from "@/utils/es6-utils";
 import type { FictionFilters } from "#gql";
-import type { CharacteristicModel} from "@/models";
+import type { CharacteristicModel } from "@/models";
 
 interface Props {
   fanfictionFilters: FictionFilters;
@@ -233,7 +190,7 @@ const sliderTicks = [
   { sliderValue: 3, realValue: 5000, displayValue: "5k" },
   { sliderValue: 4, realValue: 10000, displayValue: "10k" },
   { sliderValue: 5, realValue: 50000, displayValue: "50k" },
-  { sliderValue: 6, realValue: 100000, displayValue: ">100k" }
+  { sliderValue: 6, realValue: 100000, displayValue: ">100k" },
 ];
 
 const sliderWords = ref<number[]>([1, 6]);
@@ -258,34 +215,32 @@ function sliderCustomFormatter(sliderValue: number): string {
 }
 
 function filteredCharacteristics(characteristicTypeId: number): CharacteristicModel[] {
-    const itemsSorted: CharacteristicModel[] = ConfigModule.characteristics!
-        .filter(
-            (t: CharacteristicModel) =>
-                t.characteristicTypeId.toString() === characteristicTypeId.toString() &&
-                t.parentId == null
-        )
-        .sort((a: CharacteristicModel, b: CharacteristicModel) => {
-            return a.order - b.order;
-        });
-    groupBy(
-        ConfigModule.characteristics!.filter(
-            (t: CharacteristicModel) =>
-                t.characteristicTypeId.toString() === characteristicTypeId.toString()
-        ),
-        (g: CharacteristicModel) => g.parentId
-    ).forEach((value: CharacteristicModel[], key: number) => {
-        if (key != null) {
-            const index = itemsSorted.findIndex(c => c.characteristicId.toString() === key.toString());
-        if (index === -1) itemsSorted.splice(0, 0, ...value);
-            else itemsSorted.splice(index + 1, 0, ...value);
-        }
-    });
-    return itemsSorted;
+  const itemsSorted: CharacteristicModel[] = ConfigModule.characteristics!.filter(
+    (t: CharacteristicModel) =>
+      t.characteristicTypeId.toString() === characteristicTypeId.toString() && t.parentId == null,
+  ).sort((a: CharacteristicModel, b: CharacteristicModel) => {
+    return a.order - b.order;
+  });
+  groupBy(
+    ConfigModule.characteristics!.filter(
+      (t: CharacteristicModel) => t.characteristicTypeId.toString() === characteristicTypeId.toString(),
+    ),
+    (g: CharacteristicModel) => g.parentId,
+  ).forEach((value: CharacteristicModel[], key: number) => {
+    if (key != null) {
+      const index = itemsSorted.findIndex((c) => c.characteristicId.toString() === key.toString());
+      if (index === -1) itemsSorted.splice(0, 0, ...value);
+      else itemsSorted.splice(index + 1, 0, ...value);
+    }
+  });
+  return itemsSorted;
 }
 
 function fandomsChanged(fandomId: string, action: boolean | null): void {
-  let newIncluded = ((fanfictionFilters.fandoms ??= {}).allIdsInList || []).filter(t => t !== fandomId.toString());
-  let newExcluded = ((((fanfictionFilters.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== fandomId.toString());
+  let newIncluded = ((fanfictionFilters.fandoms ??= {}).allIdsInList || []).filter((t) => t !== fandomId.toString());
+  let newExcluded = ((((fanfictionFilters.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
+    (t) => t !== fandomId.toString(),
+  );
 
   switch (action) {
     case true:
@@ -297,20 +252,24 @@ function fandomsChanged(fandomId: string, action: boolean | null): void {
     default:
       break;
   }
-  
+
   fanfictionFilters.fandoms = {
     allIdsInList: newIncluded.length > 0 ? newIncluded : null,
     NOT: {
       id: {
-        inList: newExcluded.length > 0 ? newExcluded : null
-      }
-    }
+        inList: newExcluded.length > 0 ? newExcluded : null,
+      },
+    },
   };
 }
 
 function characteristicsChanged(characteristicId: number, action: boolean | null) {
-  let newIncluded = ((fanfictionFilters.characteristics ??= {}).allIdsInList || []).filter(t => t !== characteristicId.toString());
-  let newExcluded = ((((fanfictionFilters.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(t => t !== characteristicId.toString());
+  let newIncluded = ((fanfictionFilters.characteristics ??= {}).allIdsInList || []).filter(
+    (t) => t !== characteristicId.toString(),
+  );
+  let newExcluded = ((((fanfictionFilters.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
+    (t) => t !== characteristicId.toString(),
+  );
 
   switch (action) {
     case true:
@@ -322,14 +281,14 @@ function characteristicsChanged(characteristicId: number, action: boolean | null
     default:
       break;
   }
-  
+
   fanfictionFilters.characteristics = {
     allIdsInList: newIncluded.length > 0 ? newIncluded : null,
     NOT: {
       id: {
-        inList: newExcluded.length > 0 ? newExcluded : null
-      }
-    }
+        inList: newExcluded.length > 0 ? newExcluded : null,
+      },
+    },
   };
 }
 </script>
@@ -347,7 +306,7 @@ function characteristicsChanged(characteristicId: number, action: boolean | null
 
 .fixed-height-card {
   height: 70vh;
-  overflow-y: scroll
+  overflow-y: scroll;
 }
 
 .z-index-zero {

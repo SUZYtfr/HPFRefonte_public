@@ -1,5 +1,5 @@
 mutation postComment($newsArticleId: Int!, $commentData: NewsCommentInput!) {
-    postComment(newsArticleId: $newsArticleId, commentData: $commentData) {
-        id
-    }
+  postComment(newsArticleId: $newsArticleId, commentData: $commentData) {
+    id
+  }
 }

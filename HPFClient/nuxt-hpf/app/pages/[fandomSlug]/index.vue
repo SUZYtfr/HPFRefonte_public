@@ -5,29 +5,26 @@
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
         <FictionsThumbnailList
-            :title="'Nouveautés ' + fandom?.name"
-            :fandom
-            :is-loading="recentFanfictionsStatus == 'pending'"
-            :list-type="FanfictionListType.Recent"
-            :fanfictions="recentFanfictions"
+          :title="'Nouveautés ' + fandom?.name"
+          :fandom
+          :is-loading="recentFanfictionsStatus == 'pending'"
+          :list-type="FanfictionListType.Recent"
+          :fanfictions="recentFanfictions"
         />
         <br />
         <!-- Sélections fanfictions -->
         <FictionsThumbnailList
-            :title="'Sélections ' + fandom?.name"
-            :fandom
-            :is-loading="recentFanfictionsStatus == 'pending'"
-            :list-type="FanfictionListType.Selections"
-            :fanfictions="recentFanfictions"
+          :title="'Sélections ' + fandom?.name"
+          :fandom
+          :is-loading="recentFanfictionsStatus == 'pending'"
+          :list-type="FanfictionListType.Selections"
+          :fanfictions="recentFanfictions"
         />
         <br />
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList
-            :is-loading="newsStatus === 'pending'"
-            :news="paginatedRecentNews ?? undefined"
-        />
+        <NewsThumbnailList :is-loading="newsStatus === 'pending'" :news="paginatedRecentNews ?? undefined" />
       </div>
     </div>
     <br />
@@ -50,48 +47,59 @@ definePageMeta({
 
 const route = useRoute();
 
-const { data: fandom } = await useAsyncGql("getFandomDetails", {
-  filters: {
-    slug: { exact: route.params.fandomSlug  as string}
+const { data: fandom } = await useAsyncGql(
+  "getFandomDetails",
+  {
+    filters: {
+      slug: { exact: route.params.fandomSlug as string },
+    },
   },
-},
-{
-  transform: (input: { fandoms: FandomData[] }) => {
-    return input.fandoms[0];
-  }
-});
+  {
+    transform: (input: { fandoms: FandomData[] }) => {
+      return input.fandoms[0];
+    },
+  },
+);
 
 if (!fandom.value) {
-    navigateTo("/");
+  navigateTo("/");
 }
 
-const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql("getFandomFictions", {
+const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAsyncGql(
+  "getFandomFictions",
+  {
     filters: {
-        fandoms: {
-            id: {
-                exact: fandom.value?.id
-            }
-        }
-    }
-}, {
-  lazy: true,
-  transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
-    return {
-      ...input.fictions,
-      results: plainToInstance(FanfictionModel, input.fictions.results),
-    };
-  }
-});
+      fandoms: {
+        id: {
+          exact: fandom.value?.id,
+        },
+      },
+    },
+  },
+  {
+    lazy: true,
+    transform: (input: { fictions: FictionTypeOffsetPaginated }) => {
+      return {
+        ...input.fictions,
+        results: plainToInstance(FanfictionModel, input.fictions.results),
+      };
+    },
+  },
+);
 
-const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql("getIndexNews", {}, {
-  lazy: true,
-  transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
-    return {
-      ...input.news,
-      results: plainToInstance(NewsModel, input.news.results),
-    };
-  }
-});
+const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql(
+  "getIndexNews",
+  {},
+  {
+    lazy: true,
+    transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+      return {
+        ...input.news,
+        results: plainToInstance(NewsModel, input.news.results),
+      };
+    },
+  },
+);
 
 useHead({
   title: "HPF - Fanfictions " + fandom.value?.name,

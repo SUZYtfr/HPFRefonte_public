@@ -1,7 +1,6 @@
 // @ts-nocheck
 import type { UserType } from "#gql";
 
-
 /*
 La version 1.0.0 "stable" de @sidebase/nuxt-auth est sortie récemment.
 La roadmap indique des améliorations à venir, notamment la mise en disposition de hooks 
@@ -14,60 +13,59 @@ Autre option, se passer entièrement de sidebase/nuxt-auth pour écrire ses prop
 composables et middlewares avec nuxt-graphql-client.
 */
 
-
 const token = ref<string>("");
 const refresh = ref<string>("");
 const isAuthenticated = computed<boolean>(() => token.value.length > 0);
 const loading = ref<boolean>(false);
-const data = ref<UserType | null>(null);  // TODO
-const isStaff = computed<boolean>(() => data.value?.isStaff || false);  // TODO token claims ou accountData.isStaff?
+const data = ref<UserType | null>(null); // TODO
+const isStaff = computed<boolean>(() => data.value?.isStaff || false); // TODO token claims ou accountData.isStaff?
 
 export function useCustomAuth() {
-    async function signIn(credentials: { username: string, password: string }) {
-        useGqlToken(null);
-        token.value = "";
-        data.value = null;
+  async function signIn(credentials: { username: string; password: string }) {
+    useGqlToken(null);
+    token.value = "";
+    data.value = null;
 
-        loading.value = true;
-        const { requestToken } = await GqlRequestToken(credentials);
-        // TODO gérer les erreurs
-        token.value = requestToken.token;
-        useGqlToken({
-            token: requestToken.token,
-            config: {
-                type: "JWT",
-                name: "Authorization",
-            }
-        });
-        await nextTick(getAccountData);
-        loading.value = false;
-        // TODO return value?
+    loading.value = true;
+    const { requestToken } = await GqlRequestToken(credentials);
+    // TODO gérer les erreurs
+    token.value = requestToken.token;
+    useGqlToken({
+      token: requestToken.token,
+      config: {
+        type: "JWT",
+        name: "Authorization",
+      },
+    });
+    await nextTick(getAccountData);
+    loading.value = false;
+    // TODO return value?
+  }
+
+  async function getAccountData() {
+    if (!isAuthenticated) {
+      throw "Pas authentifié";
     }
+    const { account } = await GqlGetSession();
+    data.value = account;
+    return account;
+  }
 
-    async function getAccountData() {
-        if(!isAuthenticated) {
-            throw "Pas authentifié";
-        }
-        const { account } = await GqlGetSession();
-        data.value = account;
-        return account;
-    }
+  async function signOut() {
+    useGqlToken(null);
+    token.value = "";
+    data.value = null;
+  }
 
-    async function signOut() {
-        useGqlToken(null);
-        token.value = "";
-        data.value = null;
-    }
-
-    return {
-        token,
-        refresh,
-        isAuthenticated,
-        data,
-        isStaff,
-        loading,
-        signIn,
-        signOut,
-        getAccountData,
-    };
+  return {
+    token,
+    refresh,
+    isAuthenticated,
+    data,
+    isStaff,
+    loading,
+    signIn,
+    signOut,
+    getAccountData,
+  };
 }

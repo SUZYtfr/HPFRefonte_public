@@ -1,27 +1,23 @@
-query getSearchNews(
-    $pagination: OffsetPaginationInput,
-    $order: NewsArticleOrder,
-    $filters: NewsArticleFilters,
-) {
-    news(pagination: $pagination, order: $order, filters: $filters) {
-        totalCount
-        pageInfo {
-            limit
-            offset
-        }
-        results {
-            id
-            title
-            postDate
-            content
-            contentImages {
-                id
-                src
-            }
-            commentCount
-            authors {
-                ...BaseUserInfo
-            }
-        }
+query getSearchNews($pagination: OffsetPaginationInput, $order: NewsArticleOrder, $filters: NewsArticleFilters) {
+  news(pagination: $pagination, order: $order, filters: $filters) {
+    totalCount
+    pageInfo {
+      limit
+      offset
     }
+    results {
+      id
+      title
+      postDate
+      content
+      contentImages {
+        id
+        src
+      }
+      commentCount
+      authors {
+        ...BaseUserInfo
+      }
+    }
+  }
 }

@@ -2,22 +2,10 @@
   <div class="card is-relative">
     <b-loading v-model="listLoading" :is-full-page="false" />
     <header class="card-header sub-title">
-      <p class="card-header-title is-centered">
-        Filtres
-      </p>
+      <p class="card-header-title is-centered">Filtres</p>
     </header>
-    <div
-      :class="[
-        'card-content',
-        'px-2',
-        'py-3',
-      ]"
-    >
-      <b-field
-        label="Rechercher un titre, un mot-clé..."
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+    <div :class="['card-content', 'px-2', 'py-3']">
+      <b-field label="Rechercher un titre, un mot-clé..." label-position="on-border" custom-class="has-text-primary">
         <b-input
           v-model="(newsFilters.title ??= {}).contains"
           placeholder="Rechercher..."
@@ -25,11 +13,7 @@
           icon="search"
         />
       </b-field>
-      <b-field
-        label="Rechercher un auteur"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Rechercher un auteur" label-position="on-border" custom-class="has-text-primary">
         <b-input
           v-model="((newsFilters.creationUser ??= {}).username! ??= {}).contains"
           placeholder="Rechercher..."
@@ -37,11 +21,7 @@
           icon="search"
         />
       </b-field>
-      <b-field
-        label="Publiée après le"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Publiée après le" label-position="on-border" custom-class="has-text-primary">
         <b-datepicker
           v-model="(newsFilters.postDate ??= {}).gt"
           locale="fr-FR"
@@ -54,11 +34,7 @@
           @icon-right-click="(newsFilters.postDate ??= {}).gt = undefined"
         />
       </b-field>
-      <b-field
-        label="Publiée avant le"
-        label-position="on-border"
-        custom-class="has-text-primary"
-      >
+      <b-field label="Publiée avant le" label-position="on-border" custom-class="has-text-primary">
         <b-datepicker
           v-model="(newsFilters.postDate ??= {}).lt"
           locale="fr-FR"
@@ -86,13 +62,12 @@
 import type { NewsArticleFilters } from "#gql";
 
 const { newsFilters, execute, isLoading } = defineProps<{
-    newsFilters: NewsArticleFilters;
-    isLoading: boolean,
-    execute: () => void;
+  newsFilters: NewsArticleFilters;
+  isLoading: boolean;
+  execute: () => void;
 }>();
 
-const listLoading = computed<boolean>(() => isLoading );
-
+const listLoading = computed<boolean>(() => isLoading);
 </script>
 
 <style lang="scss" scoped>

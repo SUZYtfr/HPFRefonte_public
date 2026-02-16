@@ -11,13 +11,10 @@
       ]"
       @click="expanded = !expanded"
     >
-      <span class="is-6 is-clickable py-1 pl-1 is-flex-grow-5">{{
-        characteristicType.name
-      }}</span>
-      <span
-        v-if="totalChecked > 0"
-        class="is-size-6"
-      ><strong> {{ "(" + totalChecked + ")" }} </strong></span>
+      <span class="is-6 is-clickable py-1 pl-1 is-flex-grow-5">{{ characteristicType.name }}</span>
+      <span v-if="totalChecked > 0" class="is-size-6"
+        ><strong> {{ "(" + totalChecked + ")" }} </strong></span
+      >
       <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
@@ -50,8 +47,12 @@ interface Props {
 
 const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
 
-const includedValues = ref<number[]>(initialIncludedIds.filter(iii => characteristics.map(c => c.characteristicId).includes(iii)));
-const excludedValues = ref<number[]>(initialExcludedIds.filter(iii => characteristics.map(c => c.characteristicId).includes(iii)));
+const includedValues = ref<number[]>(
+  initialIncludedIds.filter((iii) => characteristics.map((c) => c.characteristicId).includes(iii)),
+);
+const excludedValues = ref<number[]>(
+  initialExcludedIds.filter((iii) => characteristics.map((c) => c.characteristicId).includes(iii)),
+);
 const expanded = ref<boolean>(false);
 
 const totalChecked = computed<number>(() => {
@@ -61,12 +62,8 @@ const totalChecked = computed<number>(() => {
 const $emit = defineEmits(["change"]);
 
 function threeStateChanged(characteristicId: number, state: boolean | null): void {
-  includedValues.value = includedValues.value.filter(
-    iv => iv !== characteristicId
-  );
-  excludedValues.value = excludedValues.value.filter(
-    iv => iv !== characteristicId
-  );
+  includedValues.value = includedValues.value.filter((iv) => iv !== characteristicId);
+  excludedValues.value = excludedValues.value.filter((iv) => iv !== characteristicId);
 
   if (state === true) includedValues.value.push(characteristicId);
   else if (state === false) excludedValues.value.push(characteristicId);
