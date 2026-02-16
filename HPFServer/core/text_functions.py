@@ -1,8 +1,6 @@
 import re
 import html
-from django.conf import settings
 from docx2python import docx2python
-from tempfile import NamedTemporaryFile
 import logging
 
 

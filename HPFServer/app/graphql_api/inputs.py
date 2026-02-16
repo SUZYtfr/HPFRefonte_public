@@ -1,8 +1,6 @@
 import strawberry_django
 from strawberry import auto
 
-from app.graphql_api.types import ChapterVersion
-
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion
 

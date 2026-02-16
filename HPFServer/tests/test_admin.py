@@ -1,17 +1,17 @@
 from django.test import TestCase, Client, override_settings
 from core.management.utils.samples import (
-    sample_user,
+    # sample_user,
     sample_news,
     sample_fiction,
-    sample_chapter,
+    # sample_chapter,
     sample_fiction_review,
     get_random_characteristic_type,
 )
 from users.models import User
 from news.models import NewsArticle, NewsComment
 from news.enums import NewsCategory, NewsStatus
-from fictions.models import Chapter, Fiction, Collection
-from fictions.enums import ChapterValidationStage, FictionStatus, CollectionAccess
+from fictions.models import Chapter, Fiction
+from fictions.enums import ChapterValidationStage, FictionStatus
 from characteristics.models import CharacteristicType, Characteristic
 from reviews.models import BaseReview, FictionReview
 

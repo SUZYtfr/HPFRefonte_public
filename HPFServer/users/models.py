@@ -3,7 +3,6 @@ from decimal import Decimal
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models, transaction
-from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import DatedModel, get_user_deleted_sentinel
 from fictions.models import ChapterVersion

@@ -1,15 +1,12 @@
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
 from ordered_model import models as ordered_models
 from django.db.models import Manager
 from core.models import (
     DatedModel,
     CreatedModel,
-    AuthoredModel,
     CharacteristicModel,
     TextDependentModel,
-    BaseTextVersionModel,
 )
 from fictions.enums import (
     FictionStatus,

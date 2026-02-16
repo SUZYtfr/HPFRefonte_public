@@ -1,12 +1,17 @@
 import django.db.transaction
 from django.utils import timezone
 import strawberry
-from strawberry import Info, cast, auto
+from strawberry import Info, cast
 import strawberry_django
 from strawberry_django.auth.utils import get_current_user
 from strawberry_django.permissions import IsAuthenticated, IsStaff
 from strawberry_django_extras import JWTMutations
-from app.graphql_api.types import *
+from app.graphql_api.types import (
+    NewsCommentType,
+    FictionType,
+    ChapterType,
+    ChapterVersionType,
+)
 from app.graphql_api.inputs import NewsCommentInput, FictionInput, ChapterInput, InvalidationInput
 from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
 from news.models import NewsComment
@@ -49,7 +54,7 @@ def create_fiction(
             creation_user=current_user,
             modification_user=current_user,
         )
-        first_chapter_version = ChapterVersion.objects.create(
+        ChapterVersion.objects.create(
             chapter=first_chapter,
             creation_user=current_user,
             title=first_chapter_data.title,
@@ -118,7 +123,7 @@ def create_chapter(
             creation_user=current_user,
             modification_user=current_user,
         )
-        chapter_version = ChapterVersion.objects.create(
+        ChapterVersion.objects.create(
             chapter=chapter,
             creation_user=current_user,
             title=chapter_data.title,
@@ -146,7 +151,7 @@ def update_chapter(
     with django.db.transaction.atomic():
         # TODO peut-être des champs à Chapter ici ?
         # TODO est-ce qu'on update update.modification_user ?
-        chapter_version = ChapterVersion.objects.create(
+        ChapterVersion.objects.create(
             chapter=chapter,
             creation_user=current_user,
             title=chapter_data.title,
@@ -203,7 +208,7 @@ def invalidate_chapter_version(
     # mutation
     with django.db.transaction.atomic():
         for field, value in vars(invalidation_data).items():
-            if field == "invalidation_reasons": continue  # TODO moche
+            if field == "invalidation_reasons": continue  # TODO moche  #noqa:E701
             setattr(chapter_version, field, value)
             chapter_version.invalidation_date = timezone.now()
             chapter_version.invalidation_user = current_user

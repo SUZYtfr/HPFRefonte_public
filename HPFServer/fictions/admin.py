@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-from django.utils import timezone
 from django.http import HttpRequest
 from ordered_model import admin as ordered_admin
 
@@ -13,7 +12,6 @@ from fictions.models import (
     Chapter,
     ChapterVersion,
     InvalidationReason,
-    ChapterValidationStage,
     Fandom,
 )
 
@@ -96,7 +94,7 @@ class FictionAdminPage(BaseAdminPage):
     readonly_fields = ["read_count", "last_update_date", "published", "average", "word_count", "chapter_count"]
 
     @admin.display(description="publiée", boolean=True)
-    def published(self, obj):
+    def published(self, obj) -> bool:
         return obj.is_published
 
 
@@ -156,23 +154,23 @@ class ChapterAdminPage(BaseAdminPage):
         else:
             return "Sans titre"  # ne devrait jamais arriver
 
-    def get_readonly_fields(self, request, obj=None):
-        readonly_fields = super().get_readonly_fields(request, obj)
-        if obj:
+    def get_readonly_fields(self, request: HttpRequest, chapter: Chapter | None = None):
+        readonly_fields = super().get_readonly_fields(request, chapter)
+        if chapter:
             return readonly_fields + ["fiction"]
         else:
             return readonly_fields
 
-    def get_form(self, request, obj, change, **kwargs):
-        form = super().get_form(request, obj, change, **kwargs)
+    def get_form(self, request: HttpRequest, chapter: Chapter, change: bool, **kwargs):
+        form = super().get_form(request, chapter, change, **kwargs)
         if change:
-            form.base_fields["title"].initial = obj.title
-            form.base_fields["text"].initial = obj.text
-            form.base_fields["start_note"].initial = obj.start_note
-            form.base_fields["end_note"].initial = obj.end_note
+            form.base_fields["title"].initial = chapter.title
+            form.base_fields["text"].initial = chapter.text
+            form.base_fields["start_note"].initial = chapter.start_note
+            form.base_fields["end_note"].initial = chapter.end_note
         return form
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request: HttpRequest, chapter: Chapter, form, change: bool):
         title = form.cleaned_data.get("title")
         text = form.cleaned_data.get("text")
         start_note = form.cleaned_data.get("start_note")
@@ -180,24 +178,24 @@ class ChapterAdminPage(BaseAdminPage):
         make_published = form.cleaned_data.get("make_published")
         
         if any([
-            title != obj.title,
-            text != obj.text,
-            start_note != obj.start_note,
-            end_note != obj.end_note,
+            title != chapter.title,
+            text != chapter.text,
+            start_note != chapter.start_note,
+            end_note != chapter.end_note,
         ]):    
             version = ChapterVersion.objects.create(
-                chapter=obj,
+                chapter=chapter,
                 title=title,
                 text=text,
                 start_note=start_note,
                 end_note=end_note,
-                invalidation=obj.invalidation,
+                invalidation=chapter.invalidation,
                 word_count=count_words(form.cleaned_data.get("text")),
                 creation_user=request.user,
             )
             if make_published:
-                obj.published_version = version
-        super().save_model(request, obj, form, change)
+                chapter.published_version = version
+        super().save_model(request, chapter, form, change)
 
 
 @admin.register(ChapterVersion)
@@ -239,7 +237,7 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
     def display_status(self, chapter_version: ChapterVersion) -> str:
         return chapter_version.validation_status.label
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request: HttpRequest) -> bool:
         return False
 
 

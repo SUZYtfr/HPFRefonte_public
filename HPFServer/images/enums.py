@@ -16,7 +16,7 @@ class FlagChoicesMeta(ChoicesMeta):
         """Permet à la manière de la méthode .choices d'obtenir la liste des choix combinés"""
 
         combination_count = (len(ExplicitContent) - 1) ** 2  # -1 pour ne pas tenir compte du SAFE = 0
-        extract_labels = lambda i: ", ".join(str(ExplicitContent(i)).split(".")[-1].title().split("|"))
+        extract_labels = lambda i: ", ".join(str(ExplicitContent(i)).split(".")[-1].title().split("|"))  #noqa:E731
         return [(ExplicitContent(i).value, extract_labels(i)) for i in range(combination_count)]
 
 

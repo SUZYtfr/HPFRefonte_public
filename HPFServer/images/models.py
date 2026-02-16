@@ -1,6 +1,5 @@
 import os.path
 from django.db import models
-from django.conf import settings
 from core.models import CreatedModel, DatedModel
 
 from images.enums import BannerType, ExplicitContent

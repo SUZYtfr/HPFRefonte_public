@@ -19,12 +19,13 @@ psycopg = "^3.2.10"
 django-mptt = "^0.18.0"
 django-polymorphic-tree = "^2.1"
 setuptools = "^78.1.0"
-strawberry-graphql-django = "^0.62.0"
-strawberry-django-extras = "^0.1.10"
+strawberry-graphql-django = "0.75.1"
+strawberry-django-extras = "0.2.6"
 django-polymorphic = "4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 faker = "*"
+ruff = "^0.15.1"
 
 [build-system]
 requires = ["poetry-core"]

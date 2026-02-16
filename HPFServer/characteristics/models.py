@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from core.models import DatedModel, CreatedModel
-from fictions.models import Chapter
-from fictions.enums import ChapterValidationStage
 
 
 class CharacteristicTypeQuerySet(models.QuerySet):
