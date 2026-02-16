@@ -5,7 +5,7 @@ from strawberry import Info, cast
 import strawberry_django
 from strawberry_django.auth.utils import get_current_user
 from strawberry_django.permissions import IsAuthenticated, IsStaff
-from strawberry_django_extras import JWTMutations
+from strawberry_django_extras.jwt.mutations import JWTMutations
 from app.graphql_api.types import (
     NewsCommentType,
     FictionType,
