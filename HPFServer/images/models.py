@@ -19,8 +19,7 @@ def upload_function(instance: models.Model, filename: str) -> str:
 
 class BaseImage(CreatedModel, DatedModel):
     """Modèle de base pour les images
-    
-    
+
     :src_url est l'URL de l'image si hébergée extérieurement
     :src_path est le chemin d'accès de l'image si hébergée intérieurement
     :src renvoie l'URL dans le premier cas absolu, dans le second relatif, de l'image
@@ -32,7 +31,7 @@ class BaseImage(CreatedModel, DatedModel):
 
     :display_height et
     :display_width sont les dimensions de l'image déclarées
-    Qu'il s'agisse d'une image interne, que l'on contrôle, ou externe, que l'on ne contrôle pas,
+    Qu'il s'agisse d'une image interne, que l'on contrôle, ou externe, que l'on ne contrôle pas, \
     ce sont les dimensions selon lesquelles l'image devrait apparaître dans le contenu, si applicable.
 """
 
@@ -60,7 +59,7 @@ class BaseImage(CreatedModel, DatedModel):
         null=True,
         blank=True,
         verbose_name="URL de la balise",
-        help_text="URL de la balise de lien de l'image si applicable.", 
+        help_text="URL de la balise de lien de l'image si applicable.",
     )
     alt = models.CharField(
         max_length=200,
@@ -137,7 +136,7 @@ class Banner(BaseImage):
         return f"Bannière{owner} {status}{on_disk}"
 
 """
-Ce modèle était pensé pour mettre une image en exergue pour les news, un peu comme sur WP
+Ce modèle était pensé pour mettre une image en exergue pour les news, un peu comme sur WP \
 Mais du moins pour commencer, utiliser plutôt ContentImage
 """
 # class NewsPicture(BaseImage):
@@ -160,11 +159,11 @@ Mais du moins pour commencer, utiliser plutôt ContentImage
 class BaseUserImage(BaseImage):
     """
     Modèle de base d'image ajoutée par les utilisateurs
-    
+
     :explicit_content_type indique si l'image a un public restreint
     :is_visibility_coerced indique si seule la modération peut modifier la valeur précédente
     """
-    
+
     is_user_property = models.BooleanField(
         verbose_name="propriété de l'utilisateur",
         help_text="Indique si l'utilisateur a spécifiquement indiqué que l'image lui appartient ou que les droits lui ont été cédés.",
@@ -212,8 +211,8 @@ class ProfilePicture(BaseUserImage):
 class ContentImage(BaseUserImage):
     """
     Modèle d'image de contenu
-    
-    Ces images sont intégrées dans un corps de texte et doivent être liées
+
+    Ces images sont intégrées dans un corps de texte et doivent être liées \
     à la ressource contenant ce texte par un M2M :
     Chapter.text_images = M2M -> ContentImage
     Chapter.start_note_images = M2M -> ContentImage

@@ -320,7 +320,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     def is_published(self) -> bool:
         return bool(self.published_version)
     is_published.fget.short_description = "est publié"
-    
+
     @property
     def title(self) -> str | None:
         return self.published_version.title if self.published_version else None
@@ -335,12 +335,12 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     def start_note(self) -> str | None:
         return self.published_version.start_note if self.published_version else None
     start_note.fget.short_description = "note de début"
-    
+
     @property
     def end_note(self) -> str | None:
         return self.published_version.end_note if self.published_version else None
     end_note.fget.short_description = "note de fin"
-    
+
     @property
     def word_count(self) -> int | None:
         return self.published_version.word_count if self.published_version else None
@@ -394,7 +394,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
 class ChapterVersion(models.Model):
     """Modèle de contenu de chapitre"""
-    
+
     class Meta:
         verbose_name = "version de contenu de chapitre"
         verbose_name_plural = "versions de contenu de chapitre"
@@ -658,4 +658,3 @@ class Fandom(models.Model):
 
     def __str__(self) -> str:
         return self.name
-    

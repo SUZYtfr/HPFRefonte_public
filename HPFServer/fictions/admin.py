@@ -179,13 +179,13 @@ class ChapterAdminPage(BaseAdminPage):
         start_note = form.cleaned_data.get("start_note")
         end_note = form.cleaned_data.get("end_note")
         make_published = form.cleaned_data.get("make_published")
-        
+
         if any([
             title != chapter.title,
             text != chapter.text,
             start_note != chapter.start_note,
             end_note != chapter.end_note,
-        ]):    
+        ]):
             version = ChapterVersion.objects.create(
                 chapter=chapter,
                 title=title,
@@ -252,7 +252,7 @@ class InvalidationReasonAdmin(admin.ModelAdmin):
 @admin.register(Fandom)
 class FandomAdmin(admin.ModelAdmin):
     list_display = ["name", "slug", "display_fiction_count"]
-    
+
     @admin.display(description="fictions")
     def display_fiction_count(self, fandom: "Fandom") -> int:
         return fandom.fictions.count()

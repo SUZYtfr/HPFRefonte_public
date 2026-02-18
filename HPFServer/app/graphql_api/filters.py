@@ -68,7 +68,7 @@ class FandomFilters:
     id: auto
     name: auto
     slug: auto
-    
+
     @strawberry_django.filter_field(name="allIdsInList")
     def all_ids_in_list_lookup(
         self,
@@ -82,7 +82,7 @@ class FandomFilters:
             filter=Q(fandoms__pk__in=value),
             distinct=True,
         )
-        
+
         queryset = queryset.alias(
             number_of_matching_fandoms=number_of_matching_fandoms,
         )
@@ -108,7 +108,7 @@ class CharacteristicFilters:
             filter=Q(characteristics__pk__in=value),
             distinct=True,
         )
-        
+
         queryset = queryset.alias(
             number_of_matching_characteristics=number_of_matching_characteristics,
         )

@@ -81,7 +81,7 @@ class TextDependentModel(models.Model):
     @property
     def text(self) -> str:
         """Renvoie la dernière version en date du texte"""
-        
+
         try:
             return getattr(self.versions.latest("creation_date"), "text", "")
         except self.versions.model.DoesNotExist:

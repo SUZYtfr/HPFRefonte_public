@@ -245,10 +245,10 @@ class UserProfileManager(models.Manager):
         **extra_fields,
     ) -> "UserProfile":
         user_profile = super().create(**extra_fields)
-        
+
         if profile_picture:
             user_profile.profile_picture = profile_picture
-        
+
         if banner:
             user_profile.banner = banner
 
@@ -256,21 +256,21 @@ class UserProfileManager(models.Manager):
             images = [
                 ContentImage(
                     **_hpf_image,
-                    creation_user=user_profile.user,                
+                    creation_user=user_profile.user,
                 ) for _hpf_image in bio_images
             ]
             ContentImage.objects.bulk_create(images)
             user_profile.bio_images.set(images)
-            
+
         return user_profile
 
 
 class UserProfile(DatedModel):  # TODO - renverser le O2O
     class Meta:
         verbose_name = "profil"
-    
+
     objects = UserProfileManager()
-    
+
     user = models.OneToOneField(
         to=User,
         on_delete=models.CASCADE,
@@ -291,7 +291,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
     realname = models.CharField(
         max_length=200,
         verbose_name="nom",
-        null=True, 
+        null=True,
         blank=True,
         default="",
     )
@@ -347,12 +347,12 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
             explicit_content_type=ExplicitContent["SAFE"],
             is_user_property=True,
             **profile_picture,
-        )        
+        )
 
     @property
     def banner(self) -> Banner | None:
         return getattr(self, "user_banner", None)
-    
+
     @banner.setter
     def banner(self, banner: Banner) -> None:
         if current_banner := getattr(self, "banner", None):
@@ -367,7 +367,7 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         )
 
 
-class UserPreferences(models.Model):  # TODO - renverser le O2O  
+class UserPreferences(models.Model):  # TODO - renverser le O2O
     class Meta:
         verbose_name = "préférences"
         verbose_name_plural = "préférences"
@@ -392,7 +392,7 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         choices=ExplicitContent.combined_choices,
         help_text="opérateur bitwise sur ExplicitContent",
     )
-    
+
     # APPARENCE
     theme = models.ForeignKey(
         verbose_name="thème préféré",
@@ -563,7 +563,7 @@ class ExternalProfile(models.Model):
 
     def __str__(self) -> str:
         return f"{self.external_username} sur {str(self.website_type)}"
-  
+
 
 class Theme(models.Model):
     class Meta:

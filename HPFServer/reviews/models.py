@@ -14,7 +14,7 @@ from polymorphic_tree.models import (
     PolymorphicTreeForeignKey,
 )
 from polymorphic_tree.managers import PolymorphicMPTTQuerySet
- 
+
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from users.models import User
-    
+
 
 MIN_GRADING_VALUE = 1
 MAX_GRADING_VALUE = 10
@@ -73,7 +73,7 @@ class ReviewQuerySet(PolymorphicMPTTQuerySet):
             text=text,
         )
         return instance
-    
+
     '''
     def create_anonymous(self, email, **extra_fields):
         creation_user = User.objects.filter(email=email).first()
@@ -257,28 +257,28 @@ class BaseReviewTextVersion(BaseTextVersionModel):
 class Review(mptt_models.MPTTModel, DatedModel, CreatedModel):
     """
     Modèle abstrait de review et réponse à review
-    
-    Ce modèle abstrait ordonne les reviews et réponses à reviews les unes aux autres
+
+    Ce modèle abstrait ordonne les reviews et réponses à reviews les unes aux autres \
     en arborescence à l'aide de la technique MPTT :
     https://django-mptt.readthedocs.io/en/latest/index.html
     Ce modèle abstrait comporte les champs communs à tous les types de reviews.
-    Il est concrétisé par les types particuliers de reviews qui ajoutent le lien
+    Il est concrétisé par les types particuliers de reviews qui ajoutent le lien \
     vers la ressource en question (fiction, chapitre, série).
-    Chaque type de review (et réponse à review) a donc sa propre table ainsi que sa
-    propre table de versions de texte associée, ce qui permet de pouvoir le
-    différencier des autres dans le futur, par exemple en rajoutant un champ
+    Chaque type de review (et réponse à review) a donc sa propre table ainsi que sa \
+    propre table de versions de texte associée, ce qui permet de pouvoir le \
+    différencier des autres dans le futur, par exemple en rajoutant un champ \
     spécifique à ce type de review.
     Les modèles concrets introduisent deux contraintes :
-    - Une review (de premier niveau) peut contenir une note mais pas un lien vers
-      une review parente ; réciproquement, une réponse à review doit comporter un 
+    - Une review (de premier niveau) peut contenir une note mais pas un lien vers \
+      une review parente ; réciproquement, une réponse à review doit comporter un \
       lien vers un parent, mais pas une note.
       Contrainte : (NOT (level>0 AND grading NOT NULL))
-    - Une réponse à review (de niveau supérieur) ne peut contenir un lien vers une 
+    - Une réponse à review (de niveau supérieur) ne peut contenir un lien vers une \
       ressource (fiction, chapitre, série), et vers un parent.
-      Cela permet de récupérer facilement les reviews de premier niveau depuis la 
-      ressource en question (ex. fiction.reviews.all()) plutôt que de devoir les
-      filtrer, et accentue la distinction entre review et réponse à review pour 
-      éviter la confusion par exemple d'une review et de sa réponse ne portant 
+      Cela permet de récupérer facilement les reviews de premier niveau depuis la \
+      ressource en question (ex. fiction.reviews.all()) plutôt que de devoir les \
+      filtrer, et accentue la distinction entre review et réponse à review pour \
+      éviter la confusion par exemple d'une review et de sa réponse ne portant \
       accidentellement pas sur la même ressource).
       Contrainte : (level>0 XOR fiction NULL)
     """

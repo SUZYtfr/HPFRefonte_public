@@ -81,7 +81,7 @@ def sample_user(with_profile_picture: bool = True, **kwargs) -> User:
             "realname": french_faker.name(),
             "website": french_faker.url(),
         }
-    
+
         '''
         if with_profile_picture:
             image = generate_image(width=96, height=96)

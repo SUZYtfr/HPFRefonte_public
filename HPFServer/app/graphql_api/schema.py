@@ -5,7 +5,7 @@ from app.graphql_api.queries import Query
 from app.graphql_api.mutations import Mutation
 
 
-""" 
+"""
 TODO :
 - permission IsOwner(target_fields=[creation_user, authors, etc.]) (ex. ChapterVersion)
 - exceptions mieux définies ? IllogicalActionError ?

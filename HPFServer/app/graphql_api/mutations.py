@@ -22,7 +22,7 @@ from fictions.models import Fiction, Chapter, ChapterVersion
 def post_comment(news_article_id: int, comment_data: NewsCommentInput, info: Info) -> NewsCommentType:
     # récupération
     current_user = get_current_user(info)
-    
+
     # mutation
     comment = NewsComment.objects.create(
         newsarticle_id=news_article_id,
@@ -41,7 +41,7 @@ def create_fiction(
 ) -> FictionType:
     # récupération
     current_user = get_current_user(info)
-    
+
     # mutation
     with django.db.transaction.atomic():
         fiction = Fiction.objects.create(
@@ -77,7 +77,7 @@ def update_fiction(
     # vérification
     if fiction.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
-    
+
     # mutation
     for field, value in vars(fiction_data).items():  # TODO moche
         setattr(fiction, field, value)
@@ -91,7 +91,7 @@ def delete_fiction(fiction_id: int, info: Info) -> None:
     # récupération
     current_user = get_current_user(info)
     fiction = Fiction.objects.get(pk=fiction_id)
-    
+
     # vérification
     if fiction.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
@@ -170,7 +170,7 @@ def delete_chapter(
     # récupération
     current_user = get_current_user(info)
     chapter = Chapter.objects.get(pk=chapter_id)
-    
+
     # vérification
     if chapter.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError

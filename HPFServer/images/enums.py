@@ -22,14 +22,14 @@ class FlagChoicesMeta(ChoicesMeta):
 
 class ExplicitContent(IntFlag, metaclass=FlagChoicesMeta):
     """\
-    Types d'images sensibles, permet des opérations binaires 
-    
+    Types d'images sensibles, permet des opérations binaires
+
     IMPORTANT : Risque de confusion en cas de modification :
     - Ne jamais supprimer de type de contenu ou les réordonner
     - En cas de besoin, ajouter un nouvel élément à la suite des autres avec auto()
 
-    NOTE: pour une raison que j'ignore, SAFE n'est pas résolu par le sérialiseur
-    de migrations. Plutôt que ExplicitContent.SAFE, plutôt utiliser ExplicitContent["SAFE"]
+    NOTE: pour une raison que j'ignore, SAFE n'est pas résolu par le sérialiseur \
+    de migrations. Plutôt que ExplicitContent.SAFE, plutôt utiliser ExplicitContent["SAFE"] \
     ou simplement 0
     """
 
