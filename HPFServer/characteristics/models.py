@@ -170,6 +170,7 @@ class Characteristic(DatedModel, CreatedModel):
     def save(self, *args, **kwargs) -> None:
         if hasattr(self.parent, "parent"):
             if self.parent.parent:
-                raise RecursionError("La caractéristique parente est déjà sous-ordonnée.")
+                msg = "La caractéristique parente est déjà sous-ordonnée."
+                raise RecursionError(msg)
             self.characteristic_type = self.parent.characteristic_type  # Impose que la catégorie de l'enfant soit celle du parent
         super().save(*args, **kwargs)

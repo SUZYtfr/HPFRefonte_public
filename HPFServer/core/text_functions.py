@@ -45,9 +45,11 @@ def read_text_file(file: File) -> str:
     #         return extract_text_from_odt_file(file)
     except Exception as e:
         logging.error(e)
-        raise IOError("Une erreur s'est produite lors du traitement du document.")
+        msg = "Une erreur s'est produite lors du traitement du document."
+        raise IOError(msg)
     else:
-        raise TypeError(f"Ce type de fichier n'est pas pris en charge: {file.content_type}.")
+        msg = f"Ce type de fichier n'est pas pris en charge: {file.content_type}."
+        raise TypeError(msg)
 
 
 def parse_text(text: str) -> str:

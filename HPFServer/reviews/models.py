@@ -54,10 +54,12 @@ def check_draft_permission(creation_user):
 class ReviewQuerySet(PolymorphicMPTTQuerySet):
     @atomic
     def create(self, creation_user: "User", text: str, parent: Optional["BaseReview"] = None, **extra_fields) -> "BaseReview":
-        if not parent and not self.model.can_be_root: 
-            raise IntegrityError("Une réponse à review doit avoir un parent.")
+        if not parent and not self.model.can_be_root:
+            msg = "Une réponse à review doit avoir un parent."
+            raise IntegrityError(msg)
         if parent and self.model.can_be_root:
-            raise IntegrityError("Une review ne peut pas avoir de parent.")
+            msg = "Une review ne peut pas avoir de parent."
+            raise IntegrityError(msg)
 
         # if self.filter(creation_user=creation_user).exists():
         #     raise utils.IntegrityError

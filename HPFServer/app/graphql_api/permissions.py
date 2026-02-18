@@ -22,7 +22,8 @@ class IsStaffOrOwner(DjangoPermissionExtension):
 
     def __init__(self, *, message: str | None = None, use_directives: bool = True, fail_silently: bool = True, owner_field: str | None = None) -> None:
         if owner_field is None:
-            raise Exception("Le champ de propriété de la source doit être indiqué.")
+            msg = "Le champ de propriété de la source doit être indiqué."
+            raise Exception(msg)
         self._owner_field = owner_field
         super().__init__(message=message, use_directives=use_directives, fail_silently=fail_silently)
 

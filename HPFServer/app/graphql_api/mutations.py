@@ -200,10 +200,12 @@ def invalidate_chapter_version(
 
     # vérification
     if not chapter_version.submission_date:
-        raise Exception("Invalidation impossible : La version de texte est un brouillon.")
+        msg = "Invalidation impossible : La version de texte est un brouillon."
+        raise Exception(msg)
     if chapter_version != chapter_version.chapter.last_version \
         and chapter_version != chapter_version.chapter.published_version:
-        raise Exception("Invalidation impossible : La version de texte n'est pas une version publiée ou de travail.")
+        msg = "Invalidation impossible : La version de texte n'est pas une version publiée ou de travail."
+        raise Exception(msg)
 
     # mutation
     with django.db.transaction.atomic():
