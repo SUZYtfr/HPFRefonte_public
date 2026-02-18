@@ -2,8 +2,13 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 
+from typing import TYPE_CHECKING
 
-def get_moderation_account():
+if TYPE_CHECKING:
+    from users.models import User
+
+
+def get_moderation_account() -> "User":
     """Renvoie le compte de modération"""
 
     moderation_accout, created = get_user_model().objects.get_or_create(
@@ -21,7 +26,7 @@ def get_moderation_account():
 # En cas de suppression pure et dure d'un compte créateur ou modificateur d'un élément, remplacement par la sentinelle
 # Permet de conserver par exemple une fiction dont le créateur supprimant son compte n'était plus l'auteur
 # Cette sentinelle concerne la BBD, les règles d'autorat sont déterminées au niveau des modèles
-def get_user_deleted_sentinel():
+def get_user_deleted_sentinel() -> "User":
     """Renvoie le compte sentinelle"""
 
     deleted_sentinel, created = get_user_model().objects.get_or_create(

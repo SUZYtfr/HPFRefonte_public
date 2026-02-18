@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.http import HttpRequest
+from django.forms import ModelForm
 from ordered_model import admin as ordered_admin
 
 from core.admin import BaseAdminPage
@@ -14,6 +15,8 @@ from fictions.models import (
     InvalidationReason,
     Fandom,
 )
+
+from typing import Any
 
 
 class CollectionItemInline(ordered_admin.OrderedTabularInline):
@@ -94,8 +97,8 @@ class FictionAdminPage(BaseAdminPage):
     readonly_fields = ["read_count", "last_update_date", "published", "average", "word_count", "chapter_count"]
 
     @admin.display(description="publiée", boolean=True)
-    def published(self, obj) -> bool:
-        return obj.is_published
+    def published(self, fiction: Fiction) -> bool:
+        return fiction.is_published
 
 
 class ChapterForm(forms.ModelForm):
@@ -154,14 +157,14 @@ class ChapterAdminPage(BaseAdminPage):
         else:
             return "Sans titre"  # ne devrait jamais arriver
 
-    def get_readonly_fields(self, request: HttpRequest, chapter: Chapter | None = None):
+    def get_readonly_fields(self, request: HttpRequest, chapter: Chapter | None = None) -> list[str] | tuple[str, Any]:
         readonly_fields = super().get_readonly_fields(request, chapter)
         if chapter:
             return readonly_fields + ["fiction"]
         else:
             return readonly_fields
 
-    def get_form(self, request: HttpRequest, chapter: Chapter, change: bool, **kwargs):
+    def get_form(self, request: HttpRequest, chapter: Chapter, change: bool, **kwargs) -> ModelForm:
         form = super().get_form(request, chapter, change, **kwargs)
         if change:
             form.base_fields["title"].initial = chapter.title
@@ -170,7 +173,7 @@ class ChapterAdminPage(BaseAdminPage):
             form.base_fields["end_note"].initial = chapter.end_note
         return form
 
-    def save_model(self, request: HttpRequest, chapter: Chapter, form, change: bool):
+    def save_model(self, request: HttpRequest, chapter: Chapter, form: ModelForm, change: bool) -> None:
         title = form.cleaned_data.get("title")
         text = form.cleaned_data.get("text")
         start_note = form.cleaned_data.get("start_note")

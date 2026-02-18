@@ -12,7 +12,7 @@ class BannerType(IntegerChoices):
 
 class FlagChoicesMeta(ChoicesMeta):
     @property
-    def combined_choices(cls):
+    def combined_choices(cls) -> tuple[str, str]:
         """Permet à la manière de la méthode .choices d'obtenir la liste des choix combinés"""
 
         combination_count = (len(ExplicitContent) - 1) ** 2  # -1 pour ne pas tenir compte du SAFE = 0
@@ -38,5 +38,5 @@ class ExplicitContent(IntFlag, metaclass=FlagChoicesMeta):
     GORE = auto()
 
     @property
-    def label(self):
+    def label(self) -> str:
         return self._label_

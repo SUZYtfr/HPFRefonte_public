@@ -2,9 +2,14 @@ from django.db import models
 from django.utils import timezone
 from core.models import DatedModel, CreatedModel
 
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from users.models import User
+
 
 class CharacteristicTypeQuerySet(models.QuerySet):
-    def open(self):
+    def open(self) -> models.QuerySet["CharacteristicType"]:
         return self.filter(is_closed=False)
 
 
@@ -40,18 +45,18 @@ class CharacteristicType(DatedModel, CreatedModel):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
 class CharacteristicQuerySet(models.QuerySet):
-    def allowed(self):
+    def allowed(self) -> models.QuerySet["Characteristic"]:
         return self.filter(is_forbidden=False)
 
-    def forbidden(self):
+    def forbidden(self) -> models.QuerySet["Characteristic"]:
         return self.filter(is_forbidden=True)
 
-    def with_fiction_counts(self):
+    def with_fiction_counts(self) -> models.QuerySet["Characteristic"]:
         fiction_count = models.Count(
             "fiction",
             distinct=True,
@@ -127,7 +132,7 @@ class Characteristic(DatedModel, CreatedModel):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @property
@@ -137,7 +142,7 @@ class Characteristic(DatedModel, CreatedModel):
         published_fictions = self.fiction_set.filter(chapters__validation_status=7).distinct()
         return getattr(self, "_fiction_count", None) or published_fictions.count()
 
-    def ban(self, modification_user, replace_with=None):
+    def ban(self, modification_user: "User", replace_with: Optional["Characteristic"] = None) -> None:
         """Interdit l'usage de la caractéristique
         - Indique que la caractéristique est interdite
         - Indique la règle de remplacement
@@ -162,9 +167,9 @@ class Characteristic(DatedModel, CreatedModel):
         self.save()
 
     # Ceci fonctionne pour empêcher la récursion, mais pas si on appelle parent.children.add(enfant)...
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, *args, **kwargs) -> None:
         if hasattr(self.parent, "parent"):
             if self.parent.parent:
                 raise RecursionError("La caractéristique parente est déjà sous-ordonnée.")
             self.characteristic_type = self.parent.characteristic_type  # Impose que la catégorie de l'enfant soit celle du parent
-        super().save(force_insert=False, force_update=False, using=None, update_fields=None)
+        super().save(*args, **kwargs)

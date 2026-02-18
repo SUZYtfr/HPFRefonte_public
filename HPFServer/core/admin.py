@@ -1,6 +1,12 @@
 from django.contrib.auth.models import Group
 from django.contrib import admin
 from django.utils import timezone
+from django.http import HttpRequest
+from django.db.models import Model
+from django.forms import ModelForm
+
+from typing import Any
+
 
 admin.site.site_header = "Section d'administration HPF"
 admin.site.unregister(Group)
@@ -9,7 +15,7 @@ admin.site.unregister(Group)
 class BaseAdminPage(admin.ModelAdmin):
     """Base de page d'administrateur"""
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request: HttpRequest, obj: Model, form: ModelForm, change: bool) -> None:
         """Sauvegarde le modèle : le créateur ou modificateur est l'utilisateur authentifié"""
 
         if change:
@@ -21,7 +27,7 @@ class BaseAdminPage(admin.ModelAdmin):
 
         super().save_model(request, obj, form, change)
 
-    def get_fieldsets(self, request, obj=None):
+    def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> list[tuple[str | None, dict[str | Any]]]:
         metadata_fieldset = [
             ("Métadonnées", {
                 "fields": [
@@ -34,7 +40,7 @@ class BaseAdminPage(admin.ModelAdmin):
         fieldsets = list(super().get_fieldsets(request, obj))
         return fieldsets + metadata_fieldset
 
-    def get_readonly_fields(self, request, obj=None):
+    def get_readonly_fields(self, request: HttpRequest, obj: Model | None = None) -> list[str] | tuple[str, Any]:
         readonly_fields = list(super().get_readonly_fields(request, obj))
         metadata_readonly_fields = ["creation_user", "creation_date", "modification_user", "modification_date"]
 

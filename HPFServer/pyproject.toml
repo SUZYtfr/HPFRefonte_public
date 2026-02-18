@@ -27,6 +27,11 @@ django-polymorphic = "4.1.0"
 faker = "*"
 ruff = "^0.15.1"
 
+[tool.ruff.lint]
+exclude = ["**/tests/**"]
+select = ["E4", "E7", "E9", "F", "ANN"]
+ignore = ["ANN002", "ANN003", "ANN401"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

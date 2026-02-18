@@ -15,14 +15,19 @@ from fictions.enums import (
 )
 from images.models import ContentImage
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from reviews.models import FictionReview, ChapterReview, CollectionReview
+
 
 class FictionQuerySet(models.QuerySet):
-    def published(self):
+    def published(self) -> models.QuerySet["Fiction"]:
         """Retourne les fictions publiées, dont au moins un des chapitres est publié"""
 
         return self.filter(chapters__published_version__isnull=False).distinct()
 
-    def with_averages(self):
+    def with_averages(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des moyennes des reviews publiées"""
 
         average = models.Sum(
@@ -31,7 +36,7 @@ class FictionQuerySet(models.QuerySet):
         ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
-    def with_read_counts(self):
+    def with_read_counts(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des comptes de lectures des chapitres publiés"""
 
         read_count = models.Sum(
@@ -40,7 +45,7 @@ class FictionQuerySet(models.QuerySet):
         )
         return self.annotate(_read_count=read_count)
 
-    def with_word_counts(self):
+    def with_word_counts(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des comptes de mots des chapitres publiés"""
 
         grouped_published_chapters = Chapter.objects.published().with_word_counts().filter(
@@ -57,7 +62,7 @@ class FictionQuerySet(models.QuerySet):
 
         return fictions_with_word_counts
 
-    def with_review_counts(self):
+    def with_review_counts(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des reviews publiées"""
 
         review_count = models.Count(
@@ -132,11 +137,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         related_name="fictions",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
     @property
-    def published_chapters(self):
+    def published_chapters(self) -> models.QuerySet["Chapter"]:
         """Renvoie les chapitres publiés"""
         return self.chapters.filter(published_version__isnull=False)
     published_chapters.fget.short_description = "chapitres publiés"
@@ -185,7 +190,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     read_count.fget.short_description = "compte de lectures"
 
     @property
-    def published_reviews(self):
+    def published_reviews(self) -> models.QuerySet["FictionReview"]:
         return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 
@@ -210,10 +215,10 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
 
-    def first_chapter(self):
+    def first_chapter(self) -> "Chapter":
         return self.published_chapters.first()
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self, *args, **kwargs) -> None:
         """Supprime la fiction
 
             Supprime tous les chapitres de la fiction. Si la fiction persiste, la supprime."""
@@ -221,7 +226,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         for chapter in self.chapters.all():
             chapter.delete()
         if self.id:
-            super().delete(using, keep_parents)
+            super().delete(*args, **kwargs)
 
     # TODO - sera remplacé par un M2M pour le co-autorat
     @property
@@ -361,7 +366,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         return [self.creation_user]
 
     @property
-    def published_reviews(self):
+    def published_reviews(self) -> models.QuerySet["ChapterReview"]:
         return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 
@@ -514,7 +519,7 @@ class InvalidationReason(models.Model):
         max_length=255,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.reason
 
 
@@ -546,7 +551,7 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         return self.title
 
     @property
-    def published_reviews(self):
+    def published_reviews(self) -> models.QuerySet["CollectionReview"]:
         return self.reviews.filter(is_draft=False)
     published_reviews.fget.short_description = "reviews publiées"
 

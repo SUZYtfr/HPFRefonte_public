@@ -88,7 +88,7 @@ class TextDependentModel(models.Model):
             return ""
 
     @text.setter
-    def text(self, text) -> str:
+    def text(self, text: str) -> str:
         if (self.id and self.text != text) or not self.id:
             self._new_text = text
 
@@ -135,5 +135,5 @@ class BaseTextVersionModel(models.Model):
         on_delete=models.SET(get_user_deleted_sentinel),
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{0} ({1})".format(str(self.text)[:50], self.creation_date.strftime("%d/%m/%y, %H:%M"))

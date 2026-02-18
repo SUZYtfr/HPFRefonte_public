@@ -12,7 +12,7 @@ Une image peut être hébergée intérieurement ou extérieurement, selon des dr
 """
 
 
-def upload_function(instance, filename):
+def upload_function(instance: models.Model, filename: str) -> str:
     dirname = instance.upload_folder
     return instance.src_path.field.storage.generate_filename(os.path.join(dirname, filename))
 
@@ -85,7 +85,7 @@ class BaseImage(CreatedModel, DatedModel):
         else:
             return ""
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs) -> None:
         """En cas de suppression de la ressource, s'assure que toute image hébergée intérieurement est également supprimée"""
 
         self.src_path.delete(save=False)
@@ -97,7 +97,7 @@ class BaseImage(CreatedModel, DatedModel):
 
         return bool(self.src_path)
 
-    def __str__(self):
+    def __str__(self) -> str:
         filename = self.src.split("/")[-1]
         on_disk = " (sur disque)" if self.is_on_disk else ""
         return f"{filename}{on_disk}"
@@ -130,7 +130,7 @@ class Banner(BaseImage):
     class Meta:
         verbose_name = "bannière"
 
-    def __str__(self):
+    def __str__(self) -> str:
         owner = " de {}".format(self.user_profile.user.username) if self.user_profile else ""
         status = "active" if self.is_active else "inactive"
         on_disk = " (sur disque)" if self.is_on_disk else ""
@@ -230,5 +230,5 @@ class ContentImage(BaseUserImage):
         verbose_name = "image de contenu"
         verbose_name_plural = "images de contenu"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Image de contenu {}".format("interne" if self.is_on_disk else "externe")

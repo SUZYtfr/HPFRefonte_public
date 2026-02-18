@@ -27,6 +27,12 @@ from fictions.models import (
     Collection,
 )
 
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from users.models import User
+    
+
 MIN_GRADING_VALUE = 1
 MAX_GRADING_VALUE = 10
 
@@ -47,7 +53,7 @@ def check_draft_permission(creation_user):
 
 class ReviewQuerySet(PolymorphicMPTTQuerySet):
     @atomic
-    def create(self, creation_user, text, parent=None, **extra_fields):
+    def create(self, creation_user: "User", text: str, parent: Optional["BaseReview"] = None, **extra_fields) -> "BaseReview":
         if not parent and not self.model.can_be_root: 
             raise IntegrityError("Une réponse à review doit avoir un parent.")
         if parent and self.model.can_be_root:
@@ -77,16 +83,16 @@ class ReviewQuerySet(PolymorphicMPTTQuerySet):
         return self.create(creation_user=creation_user, **extra_fields)
     '''
 
-    def published(self):
+    def published(self) -> PolymorphicMPTTQuerySet["BaseReview"]:
         return self.filter(is_draft=False)
 
-    def non_archived(self):
+    def non_archived(self) -> PolymorphicMPTTQuerySet["BaseReview"]:
         return self.filter(is_archived=False)
 
-    def reviews(self):
+    def reviews(self) -> PolymorphicMPTTQuerySet["BaseReview"]:
         return self.filter(level=0)
 
-    def leaves(self):
+    def leaves(self) -> PolymorphicMPTTQuerySet["BaseReview"]:
         return self.alias(
             boundaries_range=F("rght") - F("lft"),
         ).filter(

@@ -16,9 +16,11 @@ from .enums import (
     Sort,
 )
 
+from typing import Optional
+
 
 class UserQuerySet(models.QuerySet):
-    def active(self):
+    def active(self) -> models.QuerySet["User"]:
         return self.filter(is_active=True)
 
 
@@ -28,13 +30,13 @@ class UserManager(BaseUserManager):
     @transaction.atomic
     def create_user(
         self,
-        username,
-        email,
-        password,
-        profile=None,
-        preferences=None,
+        username: str,
+        email: str,
+        password: str,
+        profile: Optional["UserProfile"] = None,
+        preferences: Optional["UserPreferences"] = None,
         **extra_fields
-    ):
+    ) -> "User":
         """Crée un utilisateur"""
 
         user = self.model(
@@ -57,7 +59,7 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, username: str, email: str, password: str, **extra_fields) -> "User":
         """Crée un super utilisateur"""
 
         superuser = self.model(
@@ -75,7 +77,7 @@ class UserManager(BaseUserManager):
 
         return superuser
 
-    def active(self):
+    def active(self) -> models.QuerySet["User"]:
         return UserQuerySet(self.model).active()
 
 
@@ -146,15 +148,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
 
     @property
-    def profile(self):
+    def profile(self) -> Optional["UserProfile"]:
         return getattr(self, "user_profile", None)
 
     @property
-    def preferences(self):
+    def preferences(self) -> Optional["UserPreferences"]:
         return getattr(self, "user_preferences", None)
 
     @property
@@ -201,7 +203,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.created_reviewreplys.count()
 
     @transaction.atomic
-    def ban(self, anonymise=False, keep_reviews=False):
+    def ban(self, anonymise: bool = False, keep_reviews: bool = False) -> None:
         """Supprime les informations, reviews et fictions personnelles de l'utilisateur et le désactive"""
 
         # if not keep_reviews:
@@ -237,11 +239,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserProfileManager(models.Manager):
     def create(
         self,
-        profile_picture=None,
-        banner=None,
-        bio_images=None,
+        profile_picture: ProfilePicture | None = None,
+        banner: Banner | None = None,
+        bio_images=None,  #noqa
         **extra_fields,
-    ):
+    ) -> "UserProfile":
         user_profile = super().create(**extra_fields)
         
         if profile_picture:
@@ -330,11 +332,11 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         return f"Profil de {str(self.user)}"
 
     @property
-    def profile_picture(self):
+    def profile_picture(self) -> ProfilePicture | None:
         return getattr(self, "user_profile_picture", None)
 
     @profile_picture.setter
-    def profile_picture(self, profile_picture):
+    def profile_picture(self, profile_picture: ProfilePicture) -> None:
         if current_profile_picture := self.profile_picture:
             current_profile_picture.delete()
         ProfilePicture.objects.create(
@@ -348,11 +350,11 @@ class UserProfile(DatedModel):  # TODO - renverser le O2O
         )        
 
     @property
-    def banner(self):
+    def banner(self) -> Banner | None:
         return getattr(self, "user_banner", None)
     
     @banner.setter
-    def banner(self, banner):
+    def banner(self, banner: Banner) -> None:
         if current_banner := getattr(self, "banner", None):
             current_banner.delete()
         Banner.objects.create(
@@ -559,7 +561,7 @@ class ExternalProfile(models.Model):
         verbose_name="visible",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.external_username} sur {str(self.website_type)}"
   
 
@@ -621,5 +623,5 @@ class Theme(models.Model):
         blank=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name

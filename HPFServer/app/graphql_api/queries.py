@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 import strawberry
 import strawberry_django
 from strawberry_django.pagination import OffsetPaginated
@@ -18,19 +19,19 @@ from app.graphql_api.types import (
 )
 
 
-def resolve_public_fictions():
+def resolve_public_fictions() -> QuerySet[Fiction]:
     return Fiction.objects.published().with_word_counts()
 
 
-def resolve_public_chapters():
+def resolve_public_chapters() -> QuerySet[Chapter]:
     return Chapter.objects.published()
 
 
-def resolve_public_news():
+def resolve_public_news() -> QuerySet[NewsArticle]:
     return NewsArticle.objects.filter(status=NewsStatus.PUBLISHED)
 
 
-def resolve_admin_chapter_versions():
+def resolve_admin_chapter_versions() -> QuerySet[ChapterVersion]:
     return ChapterVersion.objects.exclude(submission_date__isnull=True)
 
 

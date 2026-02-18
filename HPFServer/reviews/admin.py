@@ -1,13 +1,15 @@
+from django.db.models import Model
 from django.forms import (
     ModelForm,
     Textarea,
 )
 from django.forms.fields import CharField
 from django.contrib.admin import ModelAdmin, register
+from django.http import HttpRequest
 from mptt.admin import MPTTModelAdmin
 
 from core.admin import BaseAdminPage
-from .models import (
+from reviews.models import (
     BaseReview,
     BaseReviewTextVersion,
     FictionReview,
@@ -17,13 +19,13 @@ from .models import (
 
 
 class TextFieldMixin:
-    def get_form(self, request, obj, change, **kwargs):
+    def get_form(self, request: HttpRequest, obj: Model, change: bool, **kwargs) -> ModelForm:
         form = super().get_form(request, obj, change, **kwargs)
         if change:
             form.base_fields["text"].initial = obj.text
         return form
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request: HttpRequest, obj: Model, form: ModelForm, change: bool) -> None:
         text = form.cleaned_data["text"]
         obj.text = text
         super().save_model(request, obj, form, change)
@@ -139,13 +141,13 @@ class ReviewReplyAdminAccess(TextFieldMixin, BaseAdminPage, MPTTModelAdmin):
     search_fields = ["parent"]
     form = ReviewReplyForm
 
-    def has_change_permission(self, request, obj=None, *args, **kwargs):
-        if obj and obj.level > 0:
+    def has_change_permission(self, request: HttpRequest, reply: BaseReview | None = None, *args, **kwargs) -> bool:
+        if reply and reply.level > 0:
             return True
         return False
 
-    def has_delete_permission(self, request, obj=None, *args, **kwargs):
-        if obj and obj.level > 0:
+    def has_delete_permission(self, request: HttpRequest, reply: BaseReview | None = None, *args, **kwargs) -> bool:
+        if reply and reply.level > 0:
             return True
         return False
 
@@ -169,8 +171,8 @@ class BaseReviewTextVersionAdminPage(ModelAdmin):
         })
     ]
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, request: HttpRequest, reply: BaseReview | None = None) -> False:
         return False
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request: HttpRequest) -> False:
         return False

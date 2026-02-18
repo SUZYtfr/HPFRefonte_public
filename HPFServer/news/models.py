@@ -3,7 +3,12 @@ from django.utils import timezone
 from django.contrib.auth.models import Group
 
 from core.models import DatedModel, CreatedModel, AuthoredModel
-from .enums import NewsCategory, NewsStatus
+from news.enums import NewsCategory, NewsStatus
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from users.models import User
 
 
 class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
@@ -47,14 +52,14 @@ class NewsArticle(DatedModel, CreatedModel, AuthoredModel):
     class Meta:
         verbose_name = "actualité"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
     @property
     def comment_count(self) -> int:
         return self.comments.count()
 
-    def post(self, modification_user):
+    def post(self, modification_user: "User") -> None:
         self.status = NewsStatus.PUBLISHED
         self.post_date = timezone.now()
         self.modification_user = modification_user
@@ -84,5 +89,5 @@ class NewsComment(DatedModel, CreatedModel):
     class Meta:
         verbose_name = "commentaire"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text[:50]
