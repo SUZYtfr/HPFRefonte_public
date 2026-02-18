@@ -1,4 +1,4 @@
-import os.path
+import pathlib
 from django.db import models
 from core.models import CreatedModel, DatedModel
 
@@ -14,7 +14,7 @@ Une image peut être hébergée intérieurement ou extérieurement, selon des dr
 
 def upload_function(instance: models.Model, filename: str) -> str:
     dirname = instance.upload_folder
-    return instance.src_path.field.storage.generate_filename(os.path.join(dirname, filename))
+    return instance.src_path.field.storage.generate_filename(pathlib.Path(dirname) / filename)
 
 
 class BaseImage(CreatedModel, DatedModel):

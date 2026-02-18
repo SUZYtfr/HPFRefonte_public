@@ -12,9 +12,9 @@ def extract_text_from_txt_file(file: File) -> str:
 
 def extract_text_from_doc_file(file: File) -> str:
     pass
-    '''
+    """
     Peut-être nécessaire de transformer doc en docx !
-    '''
+    """
 
 
 def extract_text_from_docx_file(file: File) -> str:
@@ -28,9 +28,9 @@ def extract_text_from_docx_file(file: File) -> str:
 
 def extract_text_from_odt_file(file: File) -> str:
     pass
-    '''
+    """
     Peut-être nécessaire de transformer odt (xml) en docx !
-    '''
+    """
 
 
 def read_text_file(file: File) -> str:

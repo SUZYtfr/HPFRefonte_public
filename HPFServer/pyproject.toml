@@ -29,8 +29,8 @@ ruff = "^0.15.1"
 
 [tool.ruff.lint]
 exclude = ["**/tests/**"]
-select = ["E4", "E7", "E9", "F", "ANN", "COM", "EM", "INP", "T20"]
-ignore = ["ANN002", "ANN003", "ANN401"]
+select = ["E4", "E7", "E9", "F", "ANN", "COM", "EM", "INP", "T20", "Q", "TC", "PTH"]
+ignore = ["ANN002", "ANN003", "ANN401", "Q001"]
 
 [build-system]
 requires = ["poetry-core"]

@@ -170,7 +170,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def word_count(self) -> int:
         last_version = ChapterVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
-        word_count = models.Subquery(last_version.values('word_count')[:1])
+        word_count = models.Subquery(last_version.values("word_count")[:1])
         return (
             self.created_chapters
             .published()

@@ -27,7 +27,7 @@ french_faker = faker.Faker("fr_FR")
 
 
 def format_editor_content(text: str = "") -> str:
-    opening_tag = "<p style=\"margin-left: 0px!important;\"><span style=\"font-family: Arial\">"
+    opening_tag = '<p style="margin-left: 0px!important;"><span style="font-family: Arial">'
     closing_tag = "</span></p>"
 
     return opening_tag + text + closing_tag
@@ -130,7 +130,7 @@ def sample_chapter(image_count: int = 0, **kwargs) -> Chapter:
             index=i,
         )
 
-        hpf_image_tag = f"<hpf-image index=\"{i}\"></hpf-image>"
+        hpf_image_tag = f'<hpf-image index="{i}"></hpf-image>'
         text_parts.extend([hpf_image_tag, format_editor_content(text or french_faker.paragraph(3))])
 
     chapter_version = ChapterVersion.objects.create(
