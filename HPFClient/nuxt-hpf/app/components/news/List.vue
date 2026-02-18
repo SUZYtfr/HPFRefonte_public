@@ -28,13 +28,13 @@
       </div>
     </header>
     <div :class="[{ 'card-content': isCard }, 'p-2', 'is-flex-grow-5']">
-      <div v-if="(paginatedNews.results?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
+      <div v-if="(paginatedNews?.results?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
         <div>
           <NewsEntity2
-            v-for="(item, innerindex) of paginatedNews.results"
+            v-for="(item, innerindex) of paginatedNews?.results"
             :key="'news_' + item.newsId.toString()"
             :class="['mb-2', { 'is-color-even': innerindex % 2 != 0 }, { 'is-color-odd': innerindex % 2 == 0 }]"
             :news="item"
@@ -47,7 +47,7 @@
       <b-pagination
         v-model="page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="paginatedNews.totalCount"
+        :total="paginatedNews?.totalCount || 0"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -80,7 +80,7 @@ const {
   isCard?: boolean;
   showRefreshButton?: boolean;
   isLoading?: boolean;
-  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
+  paginatedNews?: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
   newsFilters?: NewsArticleFilters;
   newsPagination: OffsetPaginationInput;
   newsOrder: NewsArticleOrder;
@@ -93,7 +93,7 @@ const listLoading = computed<boolean>(() => isLoading);
 
 const newsResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
-  if (paginatedNews.totalCount === 0) return result;
+  if (!paginatedNews || paginatedNews?.totalCount === 0) return result;
   result = paginatedNews.totalCount.toString() + " résultat";
   result += paginatedNews.totalCount > 1 ? "s" : "";
   return result;
