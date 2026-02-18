@@ -35,7 +35,7 @@ class UserManager(BaseUserManager):
         password: str,
         profile: Optional["UserProfile"] = None,
         preferences: Optional["UserPreferences"] = None,
-        **extra_fields
+        **extra_fields,
     ) -> "User":
         """Crée un utilisateur"""
 
@@ -68,7 +68,7 @@ class UserManager(BaseUserManager):
             is_active=True,
             is_staff=True,
             is_superuser=True,
-            **extra_fields
+            **extra_fields,
         )
 
         superuser.set_password(password)
@@ -88,7 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "utilisateur·ice"
         verbose_name_plural = "utilisateur·ice·s"
         permissions = [
-            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site")
+            ("user_list_full_view", "Affiche la liste de tous les utilisateurs sur le site"),
         ]
 
     objects = UserManager()
@@ -390,7 +390,7 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
         verbose_name="Contenu explicite à afficher",
         default=ExplicitContent["SAFE"],
         choices=ExplicitContent.combined_choices,
-        help_text="opérateur bitwise sur ExplicitContent"
+        help_text="opérateur bitwise sur ExplicitContent",
     )
     
     # APPARENCE
@@ -436,7 +436,7 @@ class UserPreferences(models.Model):  # TODO - renverser le O2O
     font_size = models.PositiveSmallIntegerField(
         verbose_name="taille de police",
         default=100,
-        help_text="Taille de la police d'écriture en pourcentage de la taille d'origine."
+        help_text="Taille de la police d'écriture en pourcentage de la taille d'origine.",
     )
     line_spacing = models.DecimalField(
         verbose_name="taille d'interligne",

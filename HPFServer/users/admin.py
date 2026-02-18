@@ -37,7 +37,7 @@ class UserAdminPage(UserAdmin):
         }),
         ("Métadonnées", {
             "fields": ("first_seen", "last_login"),
-        })
+        }),
     ]
     inlines = [UserProfileInline, UserPreferencesInline]
     readonly_fields = ["first_seen", "last_login"]

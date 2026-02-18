@@ -23,30 +23,30 @@ class WebsiteType(IntegerChoices):
 
 
 class ReviewPolicy(IntegerChoices):
-    OFF = 0, "désactivé"
-    WRITE_TEXT = 1, "écriture de review"
-    SEE_TEXT = 2, "affichage de texte"  # + écriture
-    WRITE_GRADING = 3, "notation de review"  # + écriture et visibilité
-    SEE_GRADING = 4, "affichage de notation"  # + écriture et visibilité et notation
+    OFF = (0, "désactivé")
+    WRITE_TEXT = (1, "écriture de review")
+    SEE_TEXT = (2, "affichage de texte")  # + écriture
+    WRITE_GRADING = (3, "notation de review")  # + écriture et visibilité
+    SEE_GRADING = (4, "affichage de notation")  # + écriture et visibilité et notation
 
 
 class ColorScheme(IntegerChoices):
-    AUTO = 0, "Préférence système"
-    LIGHT = 1, "Mode clair"
-    DARK = 2, "Mode sombre"
-    CONTRAST = 3, "Mode contraste élevé"
+    AUTO = (0, "Préférence système")
+    LIGHT = (1, "Mode clair")
+    DARK = (2, "Mode sombre")
+    CONTRAST = (3, "Mode contraste élevé")
 
 
 class Sort(IntegerChoices):
-    ALPHA_ASC = 0, "Ordre alphabétique"
-    ALPHA_DESC = 1, "Ordre alphabétique inversé"
-    MOST_RECENT = 2, "Ordre chronologique"
-    MOST_RECENT_DESC = 3, "Ordre chronologique inversé"
+    ALPHA_ASC = (0, "Ordre alphabétique")
+    ALPHA_DESC = (1, "Ordre alphabétique inversé")
+    MOST_RECENT = (2, "Ordre chronologique")
+    MOST_RECENT_DESC = (3, "Ordre chronologique inversé")
 
 
 class UserStatus(IntegerChoices):
-    UNVALIDATED = 1,
-    VALIDATED = 2,
-    MODERATOR = 3,
-    ADMINISTRATOR = 4,
-    BANNED = 5,
+    UNVALIDATED = (1,)
+    VALIDATED = (2,)
+    MODERATOR = (3,)
+    ADMINISTRATOR = (4,)
+    BANNED = (5,)

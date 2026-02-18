@@ -52,7 +52,7 @@ class ChapterFilters:
         # FIXME - remplacer par strawberry_django.FilterLookup[str] quand ce bug connu sera corrigé :
         # https://github.com/strawberry-graphql/strawberry-django/issues/845
         value: strawberry_django.fields.filter_types.StrFilterLookup[str],
-        prefix: str
+        prefix: str,
     ) -> tuple[QuerySet[Chapter], Q]:
         queryset = queryset.alias(_title=F("published_version__title"))
         return strawberry_django.process_filters(
@@ -75,7 +75,7 @@ class FandomFilters:
         info: Info,
         queryset: QuerySet[Fiction],
         value: list[ID],
-        prefix: str
+        prefix: str,
     ) -> tuple[QuerySet[Fiction], Q]:
         number_of_matching_fandoms = Count(
             "fandoms",
@@ -101,7 +101,7 @@ class CharacteristicFilters:
         info: Info,
         queryset: QuerySet[Fiction],
         value: list[ID],
-        prefix: str
+        prefix: str,
     ) -> tuple[QuerySet[Fiction], Q]:
         number_of_matching_characteristics = Count(
             "characteristics",

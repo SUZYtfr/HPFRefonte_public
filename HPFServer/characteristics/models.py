@@ -42,7 +42,7 @@ class CharacteristicType(DatedModel, CreatedModel):
             models.CheckConstraint(
                 name="CK_characteristics_characteristictype_min_limit_lte_max_limit",
                 check=models.Q(min_limit__lte=models.F("max_limit")),
-            )
+            ),
         ]
 
     def __str__(self) -> str:
@@ -60,7 +60,7 @@ class CharacteristicQuerySet(models.QuerySet):
         fiction_count = models.Count(
             "fiction",
             distinct=True,
-            filter=models.Q(fiction__chapters__published_version__isnull=False)
+            filter=models.Q(fiction__chapters__published_version__isnull=False),
         )
         return self.annotate(_fiction_count=fiction_count)
 
@@ -129,7 +129,7 @@ class Characteristic(DatedModel, CreatedModel):
             models.UniqueConstraint(
                 name="UQ_characteristics_characteristic_name",
                 fields=["name"],
-            )
+            ),
         ]
 
     def __str__(self) -> str:

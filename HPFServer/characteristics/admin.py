@@ -17,7 +17,7 @@ class CharacteristicTypeAdminPage(BaseAdminPage):
         ("Autres", {
             "fields": ["is_closed"],
             "classes": ["collapse"],
-        })
+        }),
     ]
 
     # # Les administrateurs ne peuvent pas ajouter de types de caractéristiques
@@ -41,6 +41,6 @@ class CharacteristicAdminPage(BaseAdminPage):
         ("Autres", {
             "fields": ["is_personal", "is_highlighted", "is_forbidden", "replace_with"],
             "classes": ["collapse"],
-        })
+        }),
     ]
     autocomplete_fields = ["parent", "replace_with"]

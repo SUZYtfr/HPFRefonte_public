@@ -131,7 +131,7 @@ LOGGING = {
     },
     "asyncio": {
         "handlers": None,
-    }
+    },
 }
 
 LANGUAGE_CODE = 'fr-fr'

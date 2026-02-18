@@ -63,7 +63,7 @@ class ReviewQuerySet(PolymorphicMPTTQuerySet):
         #     raise utils.IntegrityError
         instance = self.model(
             creation_user=creation_user,
-            **extra_fields
+            **extra_fields,
         )
         instance.save()
         instance.versions.create(
@@ -133,7 +133,7 @@ class BaseReview(DatedModel, CreatedModel, TextDependentModel, PolymorphicMPTTMo
     is_archived = BooleanField(
         verbose_name="archivé",
         default=False,
-        help_text="Indique que le destinataire de ce message l'a explicitement marqué comme archivé."
+        help_text="Indique que le destinataire de ce message l'a explicitement marqué comme archivé.",
     )
     publication_date = DateTimeField(
         verbose_name="publication",
@@ -179,7 +179,7 @@ class CollectionReview(BaseReview):
         validators=[
             MinValueValidator(limit_value=MIN_GRADING_VALUE),
             MaxValueValidator(limit_value=MAX_GRADING_VALUE),
-        ]
+        ],
     )
 
 
@@ -205,7 +205,7 @@ class FictionReview(BaseReview):
         validators=[
             MinValueValidator(limit_value=MIN_GRADING_VALUE),
             MaxValueValidator(limit_value=MAX_GRADING_VALUE),
-        ]
+        ],
     )
 
 
@@ -231,7 +231,7 @@ class ChapterReview(BaseReview):
         validators=[
             MinValueValidator(limit_value=MIN_GRADING_VALUE),
             MaxValueValidator(limit_value=MAX_GRADING_VALUE),
-        ]
+        ],
     )
 
 

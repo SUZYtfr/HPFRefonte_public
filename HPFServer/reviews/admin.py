@@ -34,7 +34,7 @@ class TextFieldMixin:
 class FictionReviewForm(ModelForm):
     text = CharField(
         widget=Textarea({"cols": "100", "rows": "20"}),
-        label="Dernière version"
+        label="Dernière version",
     )
 
     class Meta:
@@ -45,7 +45,7 @@ class FictionReviewForm(ModelForm):
 class ChapterReviewForm(ModelForm):
     text = CharField(
         widget=Textarea({"cols": "100", "rows": "20"}),
-        label="Dernière version"
+        label="Dernière version",
     )
 
     class Meta:
@@ -56,7 +56,7 @@ class ChapterReviewForm(ModelForm):
 class CollectionReviewForm(ModelForm):
     text = CharField(
         widget=Textarea({"cols": "100", "rows": "20"}),
-        label="Dernière version"
+        label="Dernière version",
     )
 
     class Meta:
@@ -67,7 +67,7 @@ class CollectionReviewForm(ModelForm):
 class ReviewReplyForm(ModelForm):
     text = CharField(
         widget=Textarea({"cols": "100", "rows": "20"}),
-        label="Dernière version"
+        label="Dernière version",
     )
 
     class Meta:
@@ -167,8 +167,8 @@ class BaseReviewTextVersionAdminPage(ModelAdmin):
             "fields": [
                 ("creation_user", "creation_date"),
             ],
-            "classes": ["collapse"]
-        })
+            "classes": ["collapse"],
+        }),
     ]
 
     def has_change_permission(self, request: HttpRequest, reply: BaseReview | None = None) -> False:

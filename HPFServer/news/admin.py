@@ -22,7 +22,7 @@ class NewsAdminPage(BaseAdminPage):
         }),
         ("Autorat", {
             "fields": ("authors", "teams"),
-        })
+        }),
     ]
     autocomplete_fields = ["authors"]
 
@@ -43,7 +43,7 @@ class NewsCommentAdminPage(BaseAdminPage):
     fieldsets = [
         (None, {
             "fields": ("newsarticle", "text"),
-        })
+        }),
     ]
     autocomplete_fields = ["newsarticle"]
 

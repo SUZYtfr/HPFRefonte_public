@@ -117,7 +117,7 @@ class ChapterForm(forms.ModelForm):
     end_note = forms.fields.CharField(label="end_note", required=False)
     text = forms.fields.CharField(
         widget=forms.Textarea({"cols": "100", "rows": "20"}),
-        label="Dernière version"
+        label="Dernière version",
     )
     make_published = forms.fields.BooleanField(label="publier cette version", required=False)
 
@@ -139,7 +139,7 @@ class ChapterAdminPage(BaseAdminPage):
         ("Statistiques", {
             "fields": ("average", "word_count"),
             "classes": ["collapse"],
-        })
+        }),
     ]
     readonly_fields = ["word_count", "average", "is_published", "display_title"]
     autocomplete_fields = ["fiction"]
@@ -228,8 +228,8 @@ class ChapterVersionAdminPage(admin.ModelAdmin):
             "fields": [
                 ("creation_user", "creation_date"),
             ],
-            "classes": ["collapse"]
-        })
+            "classes": ["collapse"],
+        }),
     ]
 
     @admin.display(description="raisons d'invalidation")

@@ -32,10 +32,10 @@ class BaseAdminPage(admin.ModelAdmin):
             ("Métadonnées", {
                 "fields": [
                     ("creation_user", "creation_date"),
-                    ("modification_user", "modification_date")
+                    ("modification_user", "modification_date"),
                 ],
-                "classes": ["collapse"]
-            })
+                "classes": ["collapse"],
+            }),
         ]
         fieldsets = list(super().get_fieldsets(request, obj))
         return fieldsets + metadata_fieldset

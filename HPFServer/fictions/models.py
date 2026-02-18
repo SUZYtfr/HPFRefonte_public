@@ -41,7 +41,7 @@ class FictionQuerySet(models.QuerySet):
 
         read_count = models.Sum(
             "chapters__read_count",
-            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED)
+            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED),
         )
         return self.annotate(_read_count=read_count)
 
@@ -185,7 +185,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         return getattr(self, "_read_count", None) or sum(
             self.published_chapters
             .filter(read_count__isnull=False)
-            .values_list("read_count", flat=True)
+            .values_list("read_count", flat=True),
         )
     read_count.fget.short_description = "compte de lectures"
 
@@ -251,7 +251,7 @@ class ChapterQuerySet(models.QuerySet):
         )[:1]
 
         chapters_with_word_counts = self.annotate(
-            _word_count=models.Subquery(last_version_word_count)
+            _word_count=models.Subquery(last_version_word_count),
         )
 
         return chapters_with_word_counts

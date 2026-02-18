@@ -44,13 +44,13 @@ class BaseImage(CreatedModel, DatedModel):
         null=True,
         blank=True,
         verbose_name="chemin de l'image",
-        help_text="Chemin vers l'image si herbergée intérieurement."
+        help_text="Chemin vers l'image si herbergée intérieurement.",
     )
     src_url = models.URLField(
         null=True,
         blank=True,
         verbose_name="URL de l'image",
-        help_text="URL vers l'image si hébergée extérieurement."
+        help_text="URL vers l'image si hébergée extérieurement.",
     )
 
     # Apparence et comportement de l'image
@@ -60,14 +60,14 @@ class BaseImage(CreatedModel, DatedModel):
         null=True,
         blank=True,
         verbose_name="URL de la balise",
-        help_text="URL de la balise de lien de l'image si applicable."    
+        help_text="URL de la balise de lien de l'image si applicable.", 
     )
     alt = models.CharField(
         max_length=200,
         null=True,
         blank=True,
         verbose_name="texte alternatif",
-        help_text="Text alternatif de l'image si applicable."
+        help_text="Text alternatif de l'image si applicable.",
     )
 
     class Meta:
@@ -167,13 +167,13 @@ class BaseUserImage(BaseImage):
     
     is_user_property = models.BooleanField(
         verbose_name="propriété de l'utilisateur",
-        help_text="Indique si l'utilisateur a spécifiquement indiqué que l'image lui appartient ou que les droits lui ont été cédés."
+        help_text="Indique si l'utilisateur a spécifiquement indiqué que l'image lui appartient ou que les droits lui ont été cédés.",
     )
     credits_url = models.URLField(
         null=True,
         blank=True,
         verbose_name="URL du site",
-        help_text="URL du site du propriétaire de l'image si applicable."
+        help_text="URL du site du propriétaire de l'image si applicable.",
     )
     explicit_content_type = models.PositiveSmallIntegerField(
         choices=ExplicitContent.choices,

@@ -196,7 +196,7 @@ def sample_collection(**kwargs) -> Collection:
         title=kwargs.pop("title", None) or french_faker.sentence()[:-1],
         summary=kwargs.pop("summary", None) or french_faker.paragraph(3),
         access=kwargs.pop("access", CollectionAccess.MODERATED),
-        **kwargs
+        **kwargs,
     )
 
     random_characteristics = []
