@@ -162,9 +162,9 @@ export class ChapterData extends BasicClass<ChapterData> {
 
   public modificationUser: number | null = null;
 
-  public startnote: string = "";
+  public startNote: string = "";
 
-  public endnote: string = "";
+  public endNote: string = "";
   public order: number | null = null;
 
   public validationStatus: ChapterValidationStatusEnum = ChapterValidationStatusEnum.Draft;

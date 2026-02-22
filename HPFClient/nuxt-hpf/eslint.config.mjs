@@ -27,7 +27,7 @@ export default withNuxt({
         allowExpressions: true,
       },
     ],
-    "@typescript-eslint/ban-ts-comment": null,
+    "@typescript-eslint/ban-ts-comment": 0,
 
     "lines-between-class-members": [
       "error",

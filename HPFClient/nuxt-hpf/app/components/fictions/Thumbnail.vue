@@ -3,14 +3,22 @@
     <div class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-start is-align-items-center">
       <div class="is-flex-grow-5">
         <h3 class="h3 has-text-weight-semibold text-ellipsis-one-line">
-          <!-- <NuxtLink
+          <NuxtLink
             v-if="fanfiction.chapters?.length || 0 > 0"
             :key="'fiction_' + fanfiction.fanfictionId.toString()"
-            :to="{ name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle', params: { fictionId: fanfiction.fanfictionId, fictionTitle: fanfiction.titleAsSlug, chapterId: fanfiction.chapters![0]!.id, chapterTitle: fanfiction.chapters![0]!.title } }"
+            :to="{
+              name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
+              params: {
+                fictionId: fanfiction.fanfictionId,
+                fictionTitle: fanfiction.titleAsSlug,
+                chapterId: fanfiction.chapters![0]!.id,
+                chapterTitle: fanfiction.chapters![0]!.titleAsSlug,
+              },
+            }"
             no-prefetch
-          > -->
-          {{ fanfiction.title }}
-          <!-- </NuxtLink> -->
+          >
+            {{ fanfiction.title }}
+          </NuxtLink>
         </h3>
       </div>
       <span class="has-text-weight-bold">{{ fanfiction.average }}</span>

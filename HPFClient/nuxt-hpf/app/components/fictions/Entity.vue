@@ -19,13 +19,21 @@
             { 'has-text-centered': (config?.inList ?? true) == false },
           ]"
         >
-          <!-- <NuxtLink
-            v-if="(config?.inList ?? true)"
+          <NuxtLink
+            v-if="(fanfiction.chapters?.length || 0 > 0) && (config?.inList ?? true)"
             :key="'fiction_' + fanfiction.fanfictionId.toString()"
-            :to="{ name: 'fictions-fiction_id-fiction_title-chapitres-chapter_id-chapter_title', params: { fiction_id: fanfiction.fanfictionId, fiction_title: fanfiction.titleAsSlug, chapter_id: fanfiction.firstChapter?.id, chapter_title: fanfiction.firstChapter?.title } }"
-          > -->
-          {{ fanfiction.title }}
-          <!-- </NuxtLink> -->
+            :to="{
+              name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
+              params: {
+                fictionId: fanfiction.fanfictionId,
+                fictionTitle: fanfiction.titleAsSlug,
+                chapterId: fanfiction.chapters![0]!.id,
+                chapterTitle: fanfiction.chapters![0]!.titleAsSlug,
+              },
+            }"
+          >
+            {{ fanfiction.title }}
+          </NuxtLink>
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">

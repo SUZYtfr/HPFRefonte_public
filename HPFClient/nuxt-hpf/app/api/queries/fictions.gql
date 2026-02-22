@@ -62,7 +62,9 @@ query getTableOfContents($fictionId: ID) {
           id
           title
           order
-          # triggerWarnings  # TODO
+          triggerWarnings {
+            id
+          }
         }
       }
     }

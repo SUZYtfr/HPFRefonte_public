@@ -26,6 +26,12 @@ query searchFictions($pagination: OffsetPaginationInput, $order: FictionOrder, $
         name
         slug
       }
+      chapters(pagination: { limit: 1 }) {
+        results {
+          id
+          title
+        }
+      }
       lastUpdateDate
       creationDate
       reviewCount

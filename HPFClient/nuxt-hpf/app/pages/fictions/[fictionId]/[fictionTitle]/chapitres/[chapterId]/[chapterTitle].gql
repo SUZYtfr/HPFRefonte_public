@@ -1,0 +1,38 @@
+query getChapterDetail($filters: ChapterFilters) {
+  chapters(filters: $filters, pagination: { limit: 1 }) {
+    results {
+      id
+      title
+      order
+      text
+      startNote
+      endNote
+      reviewCount
+    }
+  }
+}
+
+query getChapterReviews($filters: ChapterReviewFilters, $pagination: OffsetPaginationInput) {
+  chapterReviews(filters: $filters, pagination: $pagination, order: { publicationDate: DESC }) {
+    totalCount
+    pageInfo {
+      limit
+      offset
+    }
+    results {
+      id
+      grading
+      text
+      authors {
+        id
+        username
+      }
+    }
+  }
+}
+
+mutation createChapterReview($chapterId: Int!, $chapterReviewData: ReviewInput!) {
+  createChapterReview(chapterId: $chapterId, reviewData: $chapterReviewData) {
+    id
+  }
+}

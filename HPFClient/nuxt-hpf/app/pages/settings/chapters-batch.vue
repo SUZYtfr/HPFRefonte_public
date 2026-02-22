@@ -426,9 +426,9 @@ for (let i = 1; i <= 100; i++) {
       i % 2 == 0
         ? [new AuthorData({ username: "SUZYtfr", watched: i == 5 })]
         : [new AuthorData({ username: "PasseMontagne48", watched: i == 5 })],
-    startnote:
+    startNote:
       "Notre jeune toucher défendre paraître. Engager veille cour. Herbe par monter matière environ là supérieur. Remettre connaître passer oncle créer rêver. Refuser rire demande corps important voiture calmer couche. Haine brusquement frapper travers combien. Joue menacer pays éprouver envie. Sorte quelque supporter énorme. Aider coûter ainsi rocher guère. Résoudre parti conscience.",
-    endnote:
+    endNote:
       "Cesse retrouver blanc souffrance quatre mine rayon. Jeune hauteur verre attitude sans. Exécuter aile résistance ton. Décrire musique malgré naître émotion inconnu. Me puis chambre puissance. Supporter regretter reconnaître spectacle.",
     fictionMetadata: new FanfictionModel({
       title: "Le titre de ma fiction " + i.toString(),

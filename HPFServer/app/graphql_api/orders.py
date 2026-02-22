@@ -3,6 +3,7 @@ import strawberry_django
 
 from news.models import NewsArticle
 from fictions.models import Fiction, Chapter
+from reviews.models import ChapterReview, FictionReview
 
 
 @strawberry_django.order_type(model=NewsArticle)
@@ -22,3 +23,13 @@ class ChapterOrder:
     creation_date: auto
     modification_date: auto
     _order: auto = strawberry_django.order_field(name="order")
+
+
+@strawberry_django.order_type(model=ChapterReview)
+class ChapterReviewOrder:
+    publication_date: auto
+
+
+@strawberry_django.order_type(model=FictionReview)
+class FictionReviewOrder:
+    publication_date: auto

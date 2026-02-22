@@ -1,4 +1,4 @@
-from strawberry import auto
+from strawberry import auto, cast
 import strawberry_django
 from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff
@@ -10,8 +10,16 @@ from app.graphql_api.filters import (
     FictionFilters,
     ChapterFilters,
     FandomFilters,
+    ChapterReviewFilters,
+    FictionReviewFilters,
 )
-from app.graphql_api.orders import NewsArticleOrder, FictionOrder, ChapterOrder
+from app.graphql_api.orders import (
+    NewsArticleOrder,
+    FictionOrder,
+    ChapterOrder,
+    ChapterReviewOrder,
+    FictionReviewOrder,
+)
 
 from fictions.models import (
     Fandom,
@@ -23,6 +31,7 @@ from fictions.models import (
     CollectionItem,
     ChapterValidationStage,
 )
+from reviews.models import ChapterReview, FictionReview
 from characteristics.models import Characteristic, CharacteristicType as CharType
 from users.models import User, UserPreferences, UserProfile, Theme
 from news.models import NewsArticle, NewsComment
@@ -160,6 +169,34 @@ class ChapterVersionType:
     chapter: "ChapterType"
     creation_user: "UserType"
     validation_status: "ChapterValidationStage"
+
+
+@strawberry_django.type(
+    model=ChapterReview,
+    exclude=["parent"],
+    filters=ChapterReviewFilters,
+    order=ChapterReviewOrder,
+)
+class ChapterReviewType:
+    text: auto
+
+    @strawberry_django.field(select_related="creation_user")
+    def authors(self) -> list["UserType"]:
+        return [cast(UserType, self.creation_user)]
+
+
+@strawberry_django.type(
+    model=FictionReview,
+    exclude=["parent"],
+    filters=FictionReviewFilters,
+    order=FictionReviewOrder,
+)
+class FictionReviewType:
+    text: auto
+
+    @strawberry_django.field(select_related="creation_user")
+    def authors(self) -> list["UserType"]:
+        return [cast(UserType, self.creation_user)]
 
 
 @strawberry_django.type(model=InvalidationReason, fields="__all__")

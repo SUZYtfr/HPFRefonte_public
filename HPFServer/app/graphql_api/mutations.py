@@ -11,11 +11,20 @@ from app.graphql_api.types import (
     FictionType,
     ChapterType,
     ChapterVersionType,
+    ChapterReviewType,
+    FictionReviewType,
 )
-from app.graphql_api.inputs import NewsCommentInput, FictionInput, ChapterInput, InvalidationInput
+from app.graphql_api.inputs import (
+    NewsCommentInput,
+    FictionInput,
+    ChapterInput,
+    InvalidationInput,
+    ReviewInput,
+)
 from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion
+from reviews.models import ChapterReview, FictionReview
 
 
 ### NEWS
@@ -186,6 +195,48 @@ def delete_chapter(
     return None
 
 
+### REVIEWS
+
+def create_fiction_review(
+    fiction_id: int,
+    review_data: ReviewInput,
+    info: Info,
+) -> FictionReviewType:
+    current_user = get_current_user(info)
+    fiction = Fiction.objects.get(pk=fiction_id)
+
+    # TODO vérifier les conditions de reviews ici
+    fiction_review = FictionReview.objects.create(
+        **vars(review_data),
+        creation_user=current_user,
+        fiction=fiction,
+        is_draft=False,
+        publication_date=timezone.now(),
+    )
+
+    return cast(FictionReviewType, fiction_review)
+
+
+def create_chapter_review(
+    chapter_id: int,
+    review_data: ReviewInput,
+    info: Info,
+) -> ChapterReviewType:
+    current_user = get_current_user(info)
+    chapter = Chapter.objects.get(pk=chapter_id)
+
+    # TODO vérifier les conditions de reviews ici
+    chapter_review = ChapterReview.objects.create(
+        **vars(review_data),
+        creation_user=current_user,
+        chapter=chapter,
+        is_draft=False,
+        publication_date=timezone.now(),
+    )
+
+    return cast(ChapterReviewType, chapter_review)
+
+
 ### ADMIN
 
 ### Fictions
@@ -252,6 +303,14 @@ class Mutation:
     )
     delete_chapter = strawberry_django.mutation(
         resolver=delete_chapter,
+        extensions=[IsAuthenticated()],
+    )
+    create_fiction_review = strawberry_django.mutation(
+        resolver=create_fiction_review,
+        extensions=[IsAuthenticated()],
+    )
+    create_chapter_review = strawberry_django.mutation(
+        resolver=create_chapter_review,
         extensions=[IsAuthenticated()],
     )
 

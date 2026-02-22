@@ -42,7 +42,7 @@
     </section>
 
     <!-- Note de début de chapitre -->
-    <section v-if="(chapter?.startnote?.length ?? 0) > 0">
+    <section v-if="(chapter?.startNote?.length ?? 0) > 0">
       <b-collapse class="card" animation="slide" aria-id="chapterStartNote">
         <template #trigger="props">
           <div class="card-header" role="button" aria-controls="chapterStartNote" :aria-expanded="props.open">
@@ -55,7 +55,7 @@
 
         <div class="card-content p-0">
           <div class="content p-2">
-            <p v-html="chapter?.startnote"></p>
+            <p v-html="chapter?.startNote"></p>
           </div>
         </div>
       </b-collapse>
@@ -122,7 +122,7 @@
     </section>
 
     <!-- Note de fin de chapitre -->
-    <section v-if="(chapter?.endnote?.length ?? 0) > 0">
+    <section v-if="(chapter?.endNote?.length ?? 0) > 0">
       <b-collapse class="card" animation="slide" aria-id="chapterEndNote">
         <template #trigger="props">
           <div class="card-header" role="button" aria-controls="chapterEndNote" :aria-expanded="props.open">
@@ -135,7 +135,7 @@
 
         <div class="card-content p-0">
           <div class="content p-2">
-            <p v-html="chapter?.endnote"></p>
+            <p v-html="chapter?.endNote"></p>
           </div>
         </div>
       </b-collapse>

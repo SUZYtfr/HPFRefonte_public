@@ -116,13 +116,13 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/scss/custom.scss"],
+  css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss", "animate.css"],
 
   debug: false,
 
   devtools: {
     enabled: true,
-    //vueDevTools: true,
+    // vueDevTools: true,
     timeline: {
       enabled: true,
     },
@@ -154,6 +154,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     // '@sidebase/nuxt-auth',
     "nuxt-graphql-client",
+    "nuxt-tiptap-editor",
   ],
   "graphql-client": {
     codegen: {
@@ -169,7 +170,9 @@ export default defineNuxtConfig({
       },
     },
   },
-
+  tiptap: {
+    prefix: "Tiptap",
+  },
   runtimeConfig: {
     // The private keys which are only available within server-side
     baseApi: "http://127.0.0.1:8000/graphql/",

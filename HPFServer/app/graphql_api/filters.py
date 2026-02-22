@@ -7,6 +7,7 @@ from users.models import User
 from news.models import NewsArticle
 from fictions.models import Fiction, Chapter, Fandom
 from characteristics.models import Characteristic
+from reviews.models import ChapterReview, FictionReview
 
 from typing import Optional
 
@@ -39,6 +40,7 @@ class FictionFilters:
 
 @strawberry_django.filter_type(model=Chapter, lookups=True)
 class ChapterFilters:
+    id: auto
     creation_user: Optional["UserFilters"]
 
     # La documentation officielle inclut le préfixe avant: {prefix}_title
@@ -61,6 +63,18 @@ class ChapterFilters:
             info=info,
             prefix=f"_title__{prefix}",
         )
+
+
+@strawberry_django.filter_type(model=ChapterReview, lookups=True)
+class ChapterReviewFilters:
+    id: auto
+    chapter: Optional["ChapterFilters"]
+
+
+@strawberry_django.filter_type(model=FictionReview, lookups=True)
+class FictionReviewFilters:
+    id: auto
+    fiction: Optional["FictionFilters"]
 
 
 @strawberry_django.filter_type(model=Fandom, lookups=True)

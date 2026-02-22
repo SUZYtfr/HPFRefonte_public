@@ -1,0 +1,50 @@
+query getFictionDetail($filters: FictionFilters) {
+  fictions(filters: $filters, pagination: { limit: 1 }) {
+    results {
+      id
+      title
+      summary
+      storynote
+      authors {
+        id
+        username
+      }
+      fandoms {
+        id
+        name
+        slug
+      }
+      lastUpdateDate
+      creationDate
+      wordCount
+      readCount
+      reviewCount
+      chapterCount
+    }
+  }
+}
+
+query getFictionReviews($filters: FictionReviewFilters, $pagination: OffsetPaginationInput) {
+  fictionReviews(filters: $filters, pagination: $pagination, order: { publicationDate: DESC }) {
+    totalCount
+    pageInfo {
+      limit
+      offset
+    }
+    results {
+      id
+      grading
+      text
+      authors {
+        id
+        username
+      }
+    }
+  }
+}
+
+mutation createFictionReview($fictionId: Int!, $fictionReviewData: ReviewInput!) {
+  createFictionReview(fictionId: $fictionId, reviewData: $fictionReviewData) {
+    id
+  }
+}

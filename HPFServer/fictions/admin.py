@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.http import HttpRequest
 from django.forms import ModelForm
+from django.db import transaction
 from ordered_model import admin as ordered_admin
 
 from core.admin import BaseAdminPage
@@ -128,34 +129,34 @@ class ChapterAdminPage(BaseAdminPage):
 
     ordering = ["-id"]
     list_per_page = 20
-    list_display = ["id", "display_title", "creation_user", "creation_date", "is_published"]
-    list_display_links = ["display_title"]
+    list_display = ["id", "title", "creation_user", "creation_date", "is_published"]
+    list_display_links = ["title"]
     list_filter = ["creation_date"]
     search_fields = ["title"]
     fieldsets = [
         (None, {
-            "fields": ("fiction", "display_title", "start_note", "end_note", "is_published", "read_count", "text", "trigger_warnings", "make_published"),
+            "fields": ("fiction", "title", "start_note", "end_note", "is_published", "read_count", "text", "trigger_warnings", "make_published"),
         }),
         ("Statistiques", {
             "fields": ("average", "word_count"),
             "classes": ["collapse"],
         }),
     ]
-    readonly_fields = ["word_count", "average", "is_published", "display_title"]
+    readonly_fields = ["word_count", "average", "is_published"]
     autocomplete_fields = ["fiction"]
     form = ChapterForm
 
     # def display_is_published(self, request: HttpRequest, chapter: Chapter) -> bool:
     #     return chapter.is_published
 
-    @admin.display(description="title")
-    def display_title(self, chapter: Chapter) -> str | None:
-        if title := chapter.title:
-            return title
-        elif last_version_title := getattr(chapter.last_version, "title", None):
-            return f"{last_version_title} (non publié)"
-        else:
-            return "Sans titre"  # ne devrait jamais arriver
+    # @admin.display(description="title")
+    # def display_title(self, chapter: Chapter) -> str | None:
+    #     if title := chapter.title:
+    #         return title
+    #     elif last_version_title := getattr(chapter.last_version, "title", None):
+    #         return f"{last_version_title} (non publié)"
+    #     else:
+    #         return "Sans titre"  # ne devrait jamais arriver
 
     def get_readonly_fields(self, request: HttpRequest, chapter: Chapter | None = None) -> list[str] | tuple[str, Any]:
         readonly_fields = super().get_readonly_fields(request, chapter)
@@ -173,12 +174,15 @@ class ChapterAdminPage(BaseAdminPage):
             form.base_fields["end_note"].initial = chapter.end_note
         return form
 
+    @transaction.atomic
     def save_model(self, request: HttpRequest, chapter: Chapter, form: ModelForm, change: bool) -> None:
-        title = form.cleaned_data.get("title")
-        text = form.cleaned_data.get("text")
-        start_note = form.cleaned_data.get("start_note")
-        end_note = form.cleaned_data.get("end_note")
-        make_published = form.cleaned_data.get("make_published")
+        title = form.cleaned_data.pop("title")
+        text = form.cleaned_data.pop("text")
+        start_note = form.cleaned_data.pop("start_note")
+        end_note = form.cleaned_data.pop("end_note")
+        make_published = form.cleaned_data.pop("make_published")
+
+        super().save_model(request, chapter, form, change)
 
         if any([
             title != chapter.title,
@@ -192,14 +196,13 @@ class ChapterAdminPage(BaseAdminPage):
                 text=text,
                 start_note=start_note,
                 end_note=end_note,
-                invalidation=chapter.invalidation,
-                word_count=count_words(form.cleaned_data.get("text")),
+                # invalidation=chapter.invalidation,
+                word_count=count_words(text),
                 creation_user=request.user,
             )
             if make_published:
                 chapter.published_version = version
-        super().save_model(request, chapter, form, change)
-
+                chapter.save()
 
 @admin.register(ChapterVersion)
 class ChapterVersionAdminPage(admin.ModelAdmin):

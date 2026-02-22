@@ -19,3 +19,27 @@ export interface MenuItem {
   isActive: boolean;
   subItems?: MenuItem[];
 }
+
+export interface TipTapEditorConfig {
+  showFooter: boolean;
+  placeholder: string;
+  readOnly: boolean;
+  fixedHeight: boolean;
+  height: number;
+  defaultValue: string;
+  canQuote: boolean;
+  quoteLimit: number;
+  fontSize: number;
+  oneLineToolbar: boolean;
+  canUseImage: boolean;
+}
+
+export interface TiptapEditorContent {
+  content: string;
+  wordCount: number;
+}
+
+export interface ReviewState extends TiptapEditorContent {
+  canGrade: boolean;
+  grading?: number;
+}

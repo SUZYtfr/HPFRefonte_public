@@ -101,6 +101,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   public series: SerieModel[] | null = null;
 
   @Type(() => ChapterModel)
+  @Transform(({ value }) => plainToInstance(ChapterModel, value?.results || value), { toClassOnly: true })
   public chapters: ChapterModel[] | null = null;
 
   public chapterCount: number | null = null;
@@ -209,6 +210,9 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
 
   public title: string | null = null;
   public order: number = 0;
+
+  //@ts-ignore
+  @Transform(({ value }) => value.map((t) => t.characteristicId || t), { toClassOnly: true })
   public triggerWarnings: number[] = [];
 
   @Exclude()

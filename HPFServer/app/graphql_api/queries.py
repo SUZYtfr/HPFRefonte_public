@@ -5,6 +5,7 @@ from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff
 from fictions.models import Fiction, Chapter, ChapterVersion
 from news.models import NewsArticle, NewsStatus
+from reviews.models import ChapterReview, FictionReview
 from app.graphql_api.types import (
     FandomType,
     FictionType,
@@ -16,6 +17,8 @@ from app.graphql_api.types import (
     ThemeType,
     CharacteristicType,
     CharacteristicTypeType,
+    ChapterReviewType,
+    FictionReviewType,
 )
 
 
@@ -27,12 +30,21 @@ def resolve_public_chapters() -> QuerySet[Chapter]:
     return Chapter.objects.published()
 
 
+def resolve_public_fiction_reviews() -> QuerySet[FictionReview]:
+    return FictionReview.objects.reviews().published()
+
+
+def resolve_public_chapter_reviews() -> QuerySet[ChapterReview]:
+    return ChapterReview.objects.reviews().published()
+
+
 def resolve_public_news() -> QuerySet[NewsArticle]:
     return NewsArticle.objects.filter(status=NewsStatus.PUBLISHED)
 
 
 def resolve_admin_chapter_versions() -> QuerySet[ChapterVersion]:
     return ChapterVersion.objects.exclude(submission_date__isnull=True)
+
 
 
 @strawberry.type
@@ -42,6 +54,8 @@ class Query:
     fictions: OffsetPaginated[FictionType] = strawberry_django.offset_paginated(resolver=resolve_public_fictions)
     chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(resolver=resolve_public_chapters)
     collections: OffsetPaginated[CollectionType] = strawberry_django.offset_paginated()
+    fiction_reviews: OffsetPaginated[FictionReviewType] = strawberry_django.offset_paginated()
+    chapter_reviews: OffsetPaginated[ChapterReviewType] = strawberry_django.offset_paginated()
     news: OffsetPaginated[NewsArticleType] = strawberry_django.offset_paginated(resolver=resolve_public_news)
     users: OffsetPaginated[UserType] = strawberry_django.offset_paginated()
     themes: list[ThemeType] = strawberry_django.field()
