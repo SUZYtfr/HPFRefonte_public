@@ -205,7 +205,7 @@
                     :post-review="postChapterReview"
                     :capture-editor-target="'#sidebar-editor'"
                     :capture-editor="reviewEditorVisible"
-                    @page-change="handleReviewPageChange"
+                    @page-change="handlePageChange"
                   />
                 </div>
               </div>
@@ -309,7 +309,7 @@ const reviewPagination = reactive<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
-function handleReviewPageChange(page: number): void {
+function handlePageChange(page: number): void {
   reviewPagination.offset = (page - 1) * reviewPagination.limit!;
 }
 

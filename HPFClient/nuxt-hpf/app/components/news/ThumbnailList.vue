@@ -4,7 +4,7 @@
       <p class="card-header-title is-centered">Actualités</p>
     </header>
     <div class="card-content is-relative p-2">
-      <b-loading :active="isLoading" :is-full-page="false" />
+      <BLoading :active="isLoading" :is-full-page="false" />
       <div v-if="(news?.totalCount ?? 0) > 0">
         <NewsEntity
           v-for="(item, innerindex) of news?.results"
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsModel } from "~/models";
+import type { NewsModel } from "@/models";
 import type { NewsArticleTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça
@@ -41,7 +41,7 @@ type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "res
 };
 
 const { isLoading = false } = defineProps<{
-  news?: NewsArticleModelOffsetPaginated;
+  news: NewsArticleModelOffsetPaginated;
   isLoading?: boolean;
 }>();
 </script>

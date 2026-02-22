@@ -1,7 +1,7 @@
 <template>
   <div class="container px-5">
     <!-- Modal filtres -->
-    <b-modal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
+    <BModal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
       <FictionsFilters
         :fanfiction-filters
         :initial-included-ids="initialIncludedTagIds"
@@ -10,8 +10,9 @@
         :execute="execute"
         :is-fixed-height-card="true"
         :tooltip-position="'is-top'"
+        @filters-change="(filters: FictionFilters) => fanfictionFilters = filters"
       />
-    </b-modal>
+    </BModal>
     <br />
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
@@ -22,6 +23,7 @@
           :fanfiction-filters
           :is-loading="status === 'pending'"
           :execute="execute"
+          @filters-change="(filters: FictionFilters) => fanfictionFilters = filters"
         />
       </div>
       <!-- Liste des fictions -->
@@ -32,11 +34,13 @@
           :fiction-pagination
           :is-loading="status === 'pending'"
           :execute="execute"
+          @pagination-change="(pagination: OffsetPaginationInput) => fictionPagination = pagination"
+          @order-change="(order: FictionOrder) => fictionOrder = order"
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->
       <div class="stick-bottom is-hidden-desktop">
-        <b-button
+        <BButton
           v-if="!filtersOpened"
           type="is-primary"
           icon-right="filter"
@@ -44,7 +48,7 @@
           @click="filtersOpened = true"
         >
           Afficher les filtres
-        </b-button>
+        </BButton>
       </div>
       <br />
     </div>
@@ -55,7 +59,7 @@
 import type { FictionFilters, FictionOrder, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 import { plainToInstance } from "class-transformer";
-import { FanfictionModel } from "~/models";
+import { FanfictionModel } from "@/models";
 
 const route = useRoute();
 
@@ -82,10 +86,11 @@ const filtersOpened = ref<boolean>(false);
 const fictionOrder = ref<FictionOrder>({
   lastUpdateDate: Ordering.DESC,
 });
-const fictionPagination = reactive<OffsetPaginationInput>({
+const fictionPagination = ref<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
+
 const fanfictionFilters = ref<FictionFilters>({
   fandoms: {
     allIdsInList: initialIncludedFandomIds.length > 0 ? initialIncludedFandomIds.map((t) => t.toString()) : null,
@@ -123,28 +128,6 @@ watch(fanfictionFilters.value, () => {
   }
   history.replaceState({}, "", "/recherche?" + newSearchParams.toString());
 });
-
-/* const fanfictionFilters = reactive<IFanfictionFilters>({
-  searchTerm: null,
-  searchAuthor: null,
-  searchAuthorId: null,
-  multipleAuthors: null,
-  status: null,
-  wordCount_min: null,
-  wordCount_max: null,
-  includedTags: [],
-  excludedTags: [],
-  customTags: [],
-  featured: null,
-  inclusive: false,
-  fromDate: null,
-  toDate: null,
-  page: 1,
-  pageSize: 10,
-  totalPages: true,
-  sortBy: SortByEnum.Descending,
-  sortOn: "last_update_date"
-}); */
 
 const {
   data: paginatedFanfictions,

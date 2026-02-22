@@ -8,7 +8,7 @@
             {{ news.title }}
           </NuxtLink>
         </h3>
-        <b-button
+        <BButton
           class="news_comment_button"
           type="is-primary"
           size="is-small"
@@ -18,7 +18,7 @@
           :to="{ name: 'actualites-id', params: { id: news.newsId } }"
         >
           <span class="badge">{{ news.commentCount }}</span>
-        </b-button>
+        </BButton>
         <hr />
       </div>
     </div>
@@ -51,9 +51,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsModel } from "~/models/news";
+import type { NewsModel } from "@/models";
 
-const { news } = defineProps<{
+defineProps<{
   news: NewsModel;
 }>();
 </script>

@@ -22,7 +22,7 @@
         </h3>
       </div>
       <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
-      <b-rate
+      <BRate
         v-if="fanfiction.average"
         icon-pack="fas"
         :value="fanfiction.average / 10"

@@ -15,7 +15,7 @@
       <span v-if="totalChecked > 0" class="is-size-6"
         ><strong> {{ "(" + totalChecked + ")" }} </strong></span
       >
-      <b-icon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
+      <BIcon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
       <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">

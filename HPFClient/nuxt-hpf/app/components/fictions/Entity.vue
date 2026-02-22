@@ -37,9 +37,9 @@
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
-        <b-icon v-if="fanfiction?.featured" pack="fas" type="is-primary" icon="award" />
+        <BIcon v-if="fanfiction?.featured" pack="fas" type="is-primary" icon="award" />
         <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
-        <b-rate
+        <BRate
           v-if="fanfiction.average"
           class="is-align-items-start"
           icon-pack="fas"
@@ -96,7 +96,7 @@
         </template>
       </div>
     </div>
-    <b-taglist class="mb-0">
+    <BTaglist class="mb-0">
       <span
         v-for="characteristic in fanfiction?.characteristics"
         :key="'tag_' + characteristic.characteristicId.toString()"
@@ -104,7 +104,7 @@
           characteristic.name
         }}</b-tag></span
       >
-    </b-taglist>
+    </BTaglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
         <p v-html="fanfiction?.summary"></p>
@@ -138,12 +138,12 @@
         ><span class="is-size-6-5 is-hidden-mobile">)</span>
       </div>
       <div class="is-block">
-        <b-tooltip label="Ajouter à la pile à lire" type="is-primary">
-          <b-button type="is-primary" icon-left="bookmark" size="is-small" outlined class="is-inline" />
-        </b-tooltip>
-        <b-tooltip label="Signaler" type="is-danger">
-          <b-button type="is-danger" icon-left="exclamation-triangle" size="is-small" outlined class="is-inline" />
-        </b-tooltip>
+        <BTooltip label="Ajouter à la pile à lire" type="is-primary">
+          <BButton type="is-primary" icon-left="bookmark" size="is-small" outlined class="is-inline" />
+        </BTooltip>
+        <BTooltip label="Signaler" type="is-danger">
+          <BButton type="is-danger" icon-left="exclamation-triangle" size="is-small" outlined class="is-inline" />
+        </BTooltip>
       </div>
     </div>
   </div>

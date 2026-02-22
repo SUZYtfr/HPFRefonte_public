@@ -1,6 +1,6 @@
 <template>
   <div :class="[{ card: isCard }, 'is-flex', 'is-flex-direction-column', 'is-relative', 'fullheight']">
-    <b-loading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="listLoading" :is-full-page="false" />
     <header
       :class="[
         { 'card-header': isCard },
@@ -12,19 +12,25 @@
       ]"
     >
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
-        <b-button v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
+        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
           <span class="is-italic">
             {{ newsResultLabel }}
           </span>
-        </b-button>
+        </BButton>
       </div>
       <div class="is-flex-shrink-5">
-        <b-field label="Ordre de tri" label-position="on-border" custom-class="has-text-primary">
-          <b-select v-model="newsOrderChoice" placeholder="Trier par" icon="sort" expanded>
+        <BField label="Ordre de tri" label-position="on-border" custom-class="has-text-primary">
+          <BSelect
+            v-model="newsOrderChoice"
+            placeholder="Trier par"
+            icon="sort"
+            expanded
+            @update:model-value="(order: string) => (newsOrderChoice = order)"
+          >
             <option value="most_recent">Plus récent au plus ancien</option>
             <option value="less_recent">Plus ancien au plus récent</option>
-          </b-select>
-        </b-field>
+          </BSelect>
+        </BField>
       </div>
     </header>
     <div :class="[{ 'card-content': isCard }, 'p-2', 'is-flex-grow-5']">
@@ -44,29 +50,30 @@
       </div>
     </div>
     <footer :class="[{ 'card-footer': isCard }]">
-      <b-pagination
-        v-model="page"
+      <BPagination
+        v-model="pageNewsPagination.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="paginatedNews?.totalCount || 0"
+        :total="paginatedNews.totalCount"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="newsPagination.limit"
+        :per-page="pageNewsPagination.pageSize"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
         aria-previous-label="Page précedente"
         aria-page-label="Page"
         aria-current-label="Page actuelle"
+        @change="(page: number) => pageNewsPagination.page = page"
       />
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
-import type { NewsModel } from "~/models";
+import type { NewsModel } from "@/models";
 
 const {
   isCard = true,
@@ -80,16 +87,15 @@ const {
   isCard?: boolean;
   showRefreshButton?: boolean;
   isLoading?: boolean;
-  paginatedNews?: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
-  newsFilters?: NewsArticleFilters;
+  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
   newsPagination: OffsetPaginationInput;
   newsOrder: NewsArticleOrder;
-  execute: () => void;
+  execute: () => Promise<void>;
 }>();
 
 const listLoading = computed<boolean>(() => isLoading);
 
-// const timerId: number = 0;
+const emit = defineEmits(["pagination-change", "order-change"]);
 
 const newsResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
@@ -99,27 +105,38 @@ const newsResultLabel = computed<string>(() => {
   return result;
 });
 
-// Transforme le système offset / limit en page / pageSize et vice versa
-const page = computed<number>({
-  get() {
-    return newsPagination.offset! / newsPagination.limit! + 1;
-  },
-  set(page: number) {
-    newsPagination.offset = (page - 1) * newsPagination.limit!;
-  },
+// Transforme le système offset / limit en page / pageSize
+const pageNewsPagination = reactive({
+  pageSize: newsPagination.limit!,
+  page: newsPagination.offset! / newsPagination.limit! + 1,
+});
+watch(pageNewsPagination, () => {
+  const pagination: OffsetPaginationInput = {
+    limit: pageNewsPagination.pageSize,
+    offset: (pageNewsPagination.page - 1) * pageNewsPagination.pageSize,
+  };
+  emit("pagination-change", pagination);
 });
 
+// TODO très moche
 const newsOrderChoice = computed<string>({
   get() {
-    return newsOrder.postDate === Ordering.DESC ? "most_recent" : "less_recent";
+    if (newsOrder.postDate === Ordering.DESC) {
+      return "most_recent";
+    } else {
+      return "less_recent";
+    }
   },
   set(value: string) {
-    newsOrder.postDate = value == "most_recent" ? Ordering.DESC : Ordering.ASC;
+    const order: NewsArticleOrder = {};
+    if (value === "most_recent") {
+      order.postDate = Ordering.DESC;
+    } else {
+      order.postDate = Ordering.ASC;
+    }
+    emit("order-change", order);
   },
 });
-
-// TODO à la place, tenter un debounce sur useAsyncData.execut ou .watch
-// const onFiltersChanged = () => {};
 </script>
 
 <style lang="scss" scoped>

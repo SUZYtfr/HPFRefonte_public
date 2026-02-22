@@ -1,28 +1,23 @@
 <template>
   <div class="card is-relative">
-    <b-loading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="listLoading" :is-full-page="false" />
     <header class="card-header sub-title">
       <p class="card-header-title is-centered">Filtres</p>
     </header>
     <div :class="['card-content', 'px-2', 'py-3', { 'fixed-height-card': isFixedHeightCard }]">
-      <b-field label="Rechercher un titre, un mot-clé..." label-position="on-border" custom-class="has-text-primary">
-        <b-input
-          v-model="(fanfictionFilters.title ??= {}).contains"
+      <BField label="Rechercher un titre, un mot-clé..." label-position="on-border" custom-class="has-text-primary">
+        <BInput v-model="(filters.title ??= {}).contains" placeholder="Rechercher..." type="search" icon="search" />
+      </BField>
+      <BField label="Rechercher un auteur" label-position="on-border" custom-class="has-text-primary">
+        <BInput
+          v-model="((filters.creationUser ??= {}).username ??= {}).contains"
           placeholder="Rechercher..."
           type="search"
           icon="search"
         />
-      </b-field>
-      <b-field label="Rechercher un auteur" label-position="on-border" custom-class="has-text-primary">
-        <b-input
-          v-model="((fanfictionFilters.creationUser ??= {}).username ??= {}).contains"
-          placeholder="Rechercher..."
-          type="search"
-          icon="search"
-        />
-      </b-field>
-      <b-field label="Nombre de mots" label-position="on-border" custom-class="has-text-primary z-index-zero">
-        <b-slider
+      </BField>
+      <BField label="Nombre de mots" label-position="on-border" custom-class="has-text-primary z-index-zero">
+        <BSlider
           v-model="sliderWords"
           type="is-primary"
           class="px-4 pt-4 pb-3"
@@ -35,12 +30,12 @@
           ticks
         >
           <template v-for="val in sliderTicks" :key="val.displayValue">
-            <b-slider-tick :value="val.sliderValue" class="has-text-weight-semibold">
+            <BSliderTick :value="val.sliderValue" class="has-text-weight-semibold">
               {{ val.displayValue }}
-            </b-slider-tick>
+            </BSliderTick>
           </template>
-        </b-slider>
-      </b-field>
+        </BSlider>
+      </BField>
       <!-- <ThreeStateCheckbox
         class="py-1 pl-1"
         :external-value="fanfictionFilters.status"
@@ -58,9 +53,9 @@
       /> -->
       <ThreeStateCheckbox
         class="py-1 pl-1"
-        :external-state="(fanfictionFilters.featured ??= {})?.exact"
+        :external-state="(filters.featured ??= {})?.exact"
         title="Histoires médaillés"
-        @change="(fanfictionFilters.featured ??= {}).exact = $event"
+        @change="(filters.featured ??= {}).exact = $event"
       />
       <Panel
         name="Fandoms"
@@ -84,7 +79,7 @@
         :characteristics="filteredCharacteristics(type.characteristicTypeId)"
         @change="characteristicsChanged"
       />
-      <!--       <b-field
+      <!--       <BField
         label="Tags personnalisés"
         label-position="on-border"
         custom-class="has-text-primary"
@@ -100,33 +95,33 @@
           class="mt-4"
           @typing="getFilteredTags"
         />
-      </b-field> -->
-      <b-field label="Publiée après le" label-position="on-border" custom-class="has-text-primary">
-        <b-datepicker
-          v-model="(fanfictionFilters.lastUpdateDate ??= {}).gt"
+      </BField> -->
+      <BField label="Publiée après le" label-position="on-border" custom-class="has-text-primary">
+        <BDatepicker
+          v-model="(filters.lastUpdateDate ??= {}).gt"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="(fanfictionFilters.lastUpdateDate ??= {}).gt ? 'times-circle' : ''"
+          :icon-right="(filters.lastUpdateDate ??= {}).gt ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="(fanfictionFilters.lastUpdateDate ??= {}).gt = null"
+          @icon-right-click="(filters.lastUpdateDate ??= {}).gt = null"
         />
-      </b-field>
-      <b-field label="Publiée avant le" label-position="on-border" custom-class="has-text-primary">
-        <b-datepicker
-          v-model="(fanfictionFilters.lastUpdateDate ??= {}).lt"
+      </BField>
+      <BField label="Publiée avant le" label-position="on-border" custom-class="has-text-primary">
+        <BDatepicker
+          v-model="(filters.lastUpdateDate ??= {}).lt"
           locale="fr-FR"
           placeholder="Sélectionner une date"
           append-to-body
           icon="calendar-alt"
           :first-day-of-week="1"
-          :icon-right="(fanfictionFilters.lastUpdateDate ??= {}).lt ? 'times-circle' : ''"
+          :icon-right="(filters.lastUpdateDate ??= {}).lt ? 'times-circle' : ''"
           :icon-right-clickable="true"
-          @icon-right-click="(fanfictionFilters.lastUpdateDate ??= {}).lt = null"
+          @icon-right-click="(filters.lastUpdateDate ??= {}).lt = null"
         />
-      </b-field>
+      </BField>
       <!-- <b-switch
         v-model="fanfictionFilters.inclusive"
         class="ml-1"
@@ -134,8 +129,8 @@
       >
         Recherche inclusive
       </b-switch> -->
-      <b-tooltip :position="tooltipPosition" type="is-primary" append-to-body multilined>
-        <b-icon pack="fas" class="is-clickable" type="is-primary" icon="question-circle" />
+      <BTooltip :position="tooltipPosition" type="is-primary" append-to-body multilined>
+        <BIcon pack="fas" class="is-clickable" type="is-primary" icon="question-circle" />
         <template #content>
           <p>
             <strong class="has-text-white">Activé:</strong> Recherche les fictions Aventure/Action
@@ -148,7 +143,7 @@
             Comédie/Humour.
           </p>
         </template>
-      </b-tooltip>
+      </BTooltip>
     </div>
     <footer class="card-footer">
       <p class="card-footer-item py-2">
@@ -181,6 +176,11 @@ const {
   isFixedHeightCard = false,
   tooltipPosition = "is-right",
 } = defineProps<Props>();
+
+const filters = ref<FictionFilters>(Object.assign({}, fanfictionFilters));
+const emit = defineEmits(["filters-change"]);
+
+watch(filters, () => emit("filters-change", filters.value), { deep: true });
 
 const listLoading = computed<boolean>(() => isLoading);
 
@@ -237,8 +237,8 @@ function filteredCharacteristics(characteristicTypeId: number): CharacteristicMo
 }
 
 function fandomsChanged(fandomId: string, action: boolean | null): void {
-  let newIncluded = ((fanfictionFilters.fandoms ??= {}).allIdsInList || []).filter((t) => t !== fandomId.toString());
-  let newExcluded = ((((fanfictionFilters.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
+  let newIncluded = ((filters.value.fandoms ??= {}).allIdsInList || []).filter((t) => t !== fandomId.toString());
+  let newExcluded = ((((filters.value.fandoms ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
     (t) => t !== fandomId.toString(),
   );
 
@@ -253,7 +253,7 @@ function fandomsChanged(fandomId: string, action: boolean | null): void {
       break;
   }
 
-  fanfictionFilters.fandoms = {
+  filters.value.fandoms = {
     allIdsInList: newIncluded.length > 0 ? newIncluded : null,
     NOT: {
       id: {
@@ -263,11 +263,11 @@ function fandomsChanged(fandomId: string, action: boolean | null): void {
   };
 }
 
-function characteristicsChanged(characteristicId: number, action: boolean | null) {
-  let newIncluded = ((fanfictionFilters.characteristics ??= {}).allIdsInList || []).filter(
+function characteristicsChanged(characteristicId: number, action: boolean | null): void {
+  let newIncluded = ((filters.value.characteristics ??= {}).allIdsInList || []).filter(
     (t) => t !== characteristicId.toString(),
   );
-  let newExcluded = ((((fanfictionFilters.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
+  let newExcluded = ((((filters.value.characteristics ??= {}).NOT ??= {}).id ??= {}).inList || []).filter(
     (t) => t !== characteristicId.toString(),
   );
 
@@ -282,7 +282,7 @@ function characteristicsChanged(characteristicId: number, action: boolean | null
       break;
   }
 
-  fanfictionFilters.characteristics = {
+  filters.value.characteristics = {
     allIdsInList: newIncluded.length > 0 ? newIncluded : null,
     NOT: {
       id: {

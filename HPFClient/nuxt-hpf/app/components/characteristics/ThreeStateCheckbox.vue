@@ -1,5 +1,5 @@
 <template>
-  <b-checkbox
+  <BCheckbox
     v-model="checkboxStatus"
     :indeterminate="externalState === false"
     :type="externalState === false ? 'is-danger' : ''"
@@ -10,7 +10,7 @@
     <span :class="[characteristic?.parentId != null ? 'is-italic has-text-weight-light' : 'has-text-weight-medium']">{{
       characteristic?.name
     }}</span>
-  </b-checkbox>
+  </BCheckbox>
 </template>
 
 <script setup lang="ts">

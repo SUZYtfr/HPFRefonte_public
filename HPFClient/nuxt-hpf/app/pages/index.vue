@@ -1,7 +1,4 @@
 <template>
-  <Head>
-    <Title>HPF - Hameau Pour Fanfiction</Title>
-  </Head>
   <div class="container px-5">
     <br />
     <div class="columns is-reversed-mobile">
@@ -25,7 +22,11 @@
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList :is-loading="newsStatus === 'pending'" :news="paginatedRecentNews ?? undefined" />
+        <NewsThumbnailList
+          v-if="paginatedRecentNews"
+          :is-loading="newsStatus === 'pending'"
+          :news="paginatedRecentNews"
+        />
       </div>
     </div>
     <br />
@@ -36,14 +37,7 @@
 //#region Imports
 import { plainToInstance } from "class-transformer";
 import { FanfictionModel, NewsModel } from "~/models";
-import type {
-  NewsArticleOrder,
-  NewsArticleTypeOffsetPaginated,
-  OffsetPaginationInput,
-  FictionOrder,
-  FictionTypeOffsetPaginated,
-} from "#gql";
-import { Ordering } from "#gql/default";
+import type { NewsArticleTypeOffsetPaginated, FictionTypeOffsetPaginated } from "#gql";
 import { FanfictionListType } from "~/types/other";
 //#endregion
 
@@ -79,7 +73,10 @@ const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql(
     },
   },
 );
-//#endregion
+
+useHead({
+  title: "HPF - Hameau Pour Fanfiction",
+});
 </script>
 
 <style scoped></style>

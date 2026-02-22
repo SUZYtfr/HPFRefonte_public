@@ -7,7 +7,7 @@
         </p>
       </header>
       <div class="card-content is-relative p-2">
-        <b-loading v-if="isLoading" :is-full-page="false" />
+        <BLoading v-if="isLoading" :is-full-page="false" />
         <div
           v-if="fanfictions?.totalCount || 0 > 0"
           class="columns is-variable is-1-mobile is-2-tablet is-3-desktop is-3-widescreen is-2-fullhd is-multiline"

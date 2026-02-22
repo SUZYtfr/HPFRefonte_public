@@ -1,17 +1,23 @@
 <template>
   <div :class="[{ card: isCard }, 'is-flex', 'is-flex-direction-column', 'is-relative', 'fullheight']">
-    <b-loading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="listLoading" :is-full-page="false" />
     <header :class="[{ 'card-header': isCard }, 'p-2', 'is-flex', 'is-flex-direction-row', 'is-align-items-center']">
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
-        <b-button v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
+        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
           <span class="is-italic">
             {{ fanfictionResultLabel }}
           </span>
-        </b-button>
+        </BButton>
       </div>
       <div class="is-flex-shrink-5">
-        <b-field label="Ordre de tri" label-position="on-border" custom-class="has-text-primary">
-          <b-select v-model="fictionsOrderChoice" placeholder="Trier par" icon="sort" expanded>
+        <BField label="Ordre de tri" label-position="on-border" custom-class="has-text-primary">
+          <BSelect
+            v-model="fictionsOrderChoice"
+            placeholder="Trier par"
+            icon="sort"
+            expanded
+            @update:model-value="(order: string) => (fictionsOrderChoice = order)"
+          >
             <option value="alpha">Ordre alphabétique</option>
             <option value="most_recent">Plus récent au plus ancien</option>
             <option value="less_recent">Plus ancien au plus récent</option>
@@ -19,12 +25,12 @@
             <option value="less_reviews">Nombre de reviews - décroissant</option>
             <option value="most_rating">Rating - croissant</option>
             <option value="less_rating">Rating - décroissant</option>
-          </b-select>
-        </b-field>
+          </BSelect>
+        </BField>
       </div>
     </header>
     <div :class="[{ 'card-content': isCard }, 'px-2', 'py-3', 'is-flex-grow-5']">
-      <div v-if="(paginatedFanfictions.results?.length ?? 0) == 0" class="mx-auto my-auto has-text-centered">
+      <div v-if="!paginatedFanfictions.results.length" class="mx-auto my-auto has-text-centered">
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
@@ -38,20 +44,21 @@
       </div>
     </div>
     <footer :class="[{ 'card-footer': isCard }]">
-      <b-pagination
-        v-model="page"
+      <BPagination
+        v-model="pageFictionPagination.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
         :total="paginatedFanfictions.totalCount"
         :range-before="3"
         :range-after="1"
         :rounded="false"
-        :per-page="fictionPagination.limit"
+        :per-page="pageFictionPagination.pageSize"
         icon-prev="chevron-left"
         icon-next="chevron-right"
         aria-next-label="Page suivante"
         aria-previous-label="Page précedente"
         aria-page-label="Page"
         aria-current-label="Page actuelle"
+        @change="(page: number) => pageFictionPagination.page = page"
       />
     </footer>
   </div>
@@ -70,7 +77,7 @@ interface Props {
   fictionPagination: OffsetPaginationInput;
   fictionOrder: FictionOrder;
   fanfictionFilters?: FictionFilters;
-  execute: () => void;
+  execute: () => Promise<void>;
 }
 
 const {
@@ -80,17 +87,21 @@ const {
   fictionPagination,
   fictionOrder,
   paginatedFanfictions,
-  execute,
 } = defineProps<Props>();
 
-// Transforme le système offset / limit en page / pageSize et vice versa
-const page = computed<number>({
-  get() {
-    return fictionPagination.offset! / fictionPagination.limit! + 1;
-  },
-  set(page: number) {
-    fictionPagination.offset = (page - 1) * fictionPagination.limit!;
-  },
+const emit = defineEmits(["pagination-change", "order-change"]);
+
+// Transforme le système offset / limit en page / pageSize
+const pageFictionPagination = reactive({
+  pageSize: fictionPagination.limit!,
+  page: fictionPagination.offset! / fictionPagination.limit! + 1,
+});
+watch(pageFictionPagination, () => {
+  const pagination: OffsetPaginationInput = {
+    limit: pageFictionPagination.pageSize,
+    offset: (pageFictionPagination.page - 1) * pageFictionPagination.pageSize,
+  };
+  emit("pagination-change", pagination);
 });
 
 // TODO très moche
@@ -107,16 +118,15 @@ const fictionsOrderChoice = computed<string>({
     }
   },
   set(value: string) {
+    const order: FictionOrder = {};
     if (value === "most_recent") {
-      fictionOrder.title = undefined;
-      fictionOrder.lastUpdateDate = Ordering.DESC;
+      order.lastUpdateDate = Ordering.DESC;
     } else if (value === "less_recent") {
-      fictionOrder.title = undefined;
-      fictionOrder.lastUpdateDate = Ordering.ASC;
+      order.lastUpdateDate = Ordering.ASC;
     } else if (value === "alpha") {
-      fictionOrder.lastUpdateDate = undefined;
-      fictionOrder.title = Ordering.ASC;
+      order.title = Ordering.ASC;
     }
+    emit("order-change", order);
   },
 });
 
