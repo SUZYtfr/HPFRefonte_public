@@ -133,7 +133,7 @@
               :review-pagination
               :is-loading="reviewsStatus === 'pending'"
               :post-review
-              @page-change="handleReviewPageChange"
+              @pagination-change="(pagination: OffsetPaginationInput) => (reviewPagination = pagination)"
             />
           </div>
         </div>
@@ -178,13 +178,10 @@ const { data: fiction } = await useAsyncGql(
   },
 );
 
-const reviewPagination = reactive<OffsetPaginationInput>({
+const reviewPagination = ref<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
-function handleReviewPageChange(page: number): void {
-  reviewPagination.offset = (page - 1) * reviewPagination.limit!;
-}
 
 // FIXME - les reviews avec de l'html ne passent pas l'hydration !
 const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
@@ -200,6 +197,7 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
     pagination: reviewPagination,
   },
   {
+    lazy: true,
     transform: (input: { fictionReviews: FictionReviewTypeOffsetPaginated }) => {
       return {
         ...input.fictionReviews,
@@ -236,10 +234,6 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-* {
-  // border: 1px solid green;
-}
-
 ul {
   list-style: inside;
 }

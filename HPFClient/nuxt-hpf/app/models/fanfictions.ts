@@ -4,6 +4,7 @@ import { SerieData, ChapterData, ReviewData, VersionData, type FandomData } from
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData } from "~/types/characteristics";
+import slugify from "slugify";
 
 export enum FanfictionStatus {
   OnGoing = 1,
@@ -85,7 +86,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title.toLowerCase().replace(/ /g, "-");
+    return slugify(this.title, { lower: true, locale: "fr", strict: true });
   }
 
   @Type(() => AuthorData)
@@ -125,7 +126,7 @@ export class FanfictionModelLight extends BasicClass<FanfictionModelLight> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfictionId.toString();
+    return slugify(this.title || this.fanfictionId.toString(), { lower: true, locale: "fr", strict: true });
   }
 }
 
@@ -143,7 +144,7 @@ export class TableOfContent extends BasicClass<TableOfContent> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.fanfictionId.toString();
+    return slugify(this.title || this.fanfictionId.toString(), { lower: true, locale: "fr", strict: true });
   }
 }
 
@@ -235,7 +236,7 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title?.toLowerCase().replace(/ /g, "-") ?? this.chapterId.toString();
+    return slugify(this.title || this.chapterId.toString(), { lower: true, locale: "fr", strict: true });
   }
 }
 

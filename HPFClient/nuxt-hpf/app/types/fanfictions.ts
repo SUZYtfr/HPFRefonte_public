@@ -1,5 +1,6 @@
 import { Transform, Exclude } from "class-transformer";
 import { BasicClass } from "./basics";
+import slugify from "slugify";
 
 // #region Fanfiction
 export enum FanfictionStatus {
@@ -67,7 +68,7 @@ export class FanfictionData extends BasicClass<FanfictionData> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title.toLowerCase().replace(/ /g, "-");
+    return slugify(this.title, { lower: true, locale: "fr", strict: true });
   }
 
   constructor(init?: Partial<FanfictionData>) {
@@ -175,7 +176,7 @@ export class ChapterData extends BasicClass<ChapterData> {
 
   @Exclude()
   public get titleAsSlug(): string {
-    return this.title.toLowerCase().replace(/ /g, "-");
+    return slugify(this.title, { lower: true, locale: "fr", strict: true });
   }
 }
 

@@ -205,7 +205,7 @@
                     :post-review="postChapterReview"
                     :capture-editor-target="'#sidebar-editor'"
                     :capture-editor="reviewEditorVisible"
-                    @page-change="handlePageChange"
+                    @pagination-change="(pagination: OffsetPaginationInput) => (reviewPagination = pagination)"
                   />
                 </div>
               </div>
@@ -301,13 +301,10 @@ const { data: chapter, status: chapterStatus } = await useAsyncGql(
 
 const chapterLoading = computed(() => chapterStatus.value === "pending");
 
-const reviewPagination = reactive<OffsetPaginationInput>({
+const reviewPagination = ref<OffsetPaginationInput>({
   limit: 10,
   offset: 0,
 });
-function handlePageChange(page: number): void {
-  reviewPagination.offset = (page - 1) * reviewPagination.limit!;
-}
 
 // FIXME - les reviews avec de l'html ne passent pas l'hydration !
 const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
@@ -323,6 +320,7 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
     pagination: reviewPagination,
   },
   {
+    lazy: true,
     transform: (input: { chapterReviews: ChapterReviewTypeOffsetPaginated }) => {
       return {
         ...input.chapterReviews,
@@ -417,9 +415,3 @@ function displayFontSize(): void {
   }, 3000);
 }
 </script>
-
-<style lang="scss" scoped>
-* {
-  // border: 1px solid green;
-}
-</style>

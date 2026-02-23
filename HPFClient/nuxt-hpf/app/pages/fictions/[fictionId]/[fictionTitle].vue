@@ -52,23 +52,22 @@
         <template #trigger="{ active }">
           <BButton label="Sommaire" type="is-primary" :icon-right="active ? 'angle-up' : 'angle-down'" />
         </template>
-        <BDropdownItem aria-role="listitem">
-          <BIcon icon="book-open" />
+        <BDropdownItem aria-role="listitem" has-link>
           <NuxtLink
             no-prefetch
-            class="has-text-weight-normal"
+            class="has-text-weight-normal dropdown-item"
             :to="{
               name: 'fictions-fictionId-fictionTitle-sommaire',
               params: { fictionId: tableOfContent.fanfictionId.toString(), fictionTitle: tableOfContent.titleAsSlug },
             }"
           >
-            {{ tableOfContent.title }}
+            <BIcon icon="book-open" /> {{ tableOfContent.title }}
           </NuxtLink>
         </BDropdownItem>
-        <BDropdownItem v-for="(chapter, index) in tableOfContent.chapters" :key="index" aria-role="listitem">
+        <BDropdownItem v-for="(chapter, index) in tableOfContent.chapters" :key="index" aria-role="listitem" has-link>
           <NuxtLink
             no-prefetch
-            class="has-text-weight-normal"
+            class="has-text-weight-normal dropdown-item"
             :to="{
               name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
               params: {
@@ -165,19 +164,10 @@ const nextChapter = computed<ChapterModelLight | undefined>(() => {
     return tableOfContent.value.chapters![0]!;
   }
 });
-
-//   // #region Watchers
-//   @Watch("$route.query", { deep: true })
-//   private onRouteChanged(): void {
-//     this.$fetch();
-//   }
 </script>
 
 <style lang="scss" scoped>
 @use "@/assets/scss/custom_bulma_core.scss";
-* {
-  // border: 1px solid green;
-}
 #main-container {
   background-color: var(--hpf-primary-lighter);
 }
