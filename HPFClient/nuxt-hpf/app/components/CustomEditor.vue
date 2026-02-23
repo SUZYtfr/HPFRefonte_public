@@ -785,7 +785,6 @@ import type { TipTapEditorConfig } from "@/types/other";
 
 interface Props {
   config?: TipTapEditorConfig;
-  sharedStateName?: string;
 }
 
 const {
@@ -802,20 +801,9 @@ const {
     placeholder: "Écrire ici",
     quoteLimit: 100,
   },
-  sharedStateName,
 } = defineProps<Props>();
 
 const emit = defineEmits(["quote"]);
-
-const instanceId = ref(Math.random());
-
-const editorContentState = useState(sharedStateName || instanceId.value.toString(), () => {
-  return {
-    content: "",
-    wordCount: 0,
-    modifier: instanceId.value,
-  };
-});
 
 // TODO finir d'installer et remettre les extensions en place
 // TODO trouver l'équivalent de ceci
@@ -920,23 +908,9 @@ const editor = useEditor({
     }),
   ],
   editable: !config.readOnly,
-  onUpdate: ({ editor }) => {
-    editorContentState.value.content = editor.getHTML();
-    editorContentState.value.wordCount = editor.extensionStorage.characterCount.words();
-    // content_images: editor.extensionStorage.hpfImage.images
-    editorContentState.value.modifier = instanceId.value;
-  },
 });
 
-// Met à jour le contenu de l'éditeur si celui-ci n'est pas à l'origine du changement
-watch(
-  () => editorContentState.value.content,
-  (content) => {
-    if (editorContentState.value.modifier !== instanceId.value) {
-      editor.value?.commands.setContent(content);
-    }
-  },
-);
+defineExpose({ editor: editor });
 
 onBeforeUnmount(() => {
   unref(editor)?.destroy();
@@ -1186,9 +1160,8 @@ function emitQuote(): void {
   const maxSelectionLength = config.quoteLimit;
   if (to - from > maxSelectionLength) newTo = from + maxSelectionLength;
   const quoteText = state.doc.textBetween(from, newTo, "");
-  const formattedQuote = "<blockquote>" + quoteText + "</blockquote>"; // TODO un peu naïf, trouver un meilleur moyen
   // Emet l'évènement quote
-  emit("quote", formattedQuote);
+  emit("quote", quoteText);
   editor.value!.commands.setTextSelection(to);
   window.getSelection()?.empty();
 }

@@ -7,7 +7,7 @@
         trouver un meilleur moyen de rendre l'éditeur responsif -->
         <ClientOnly>
           <Teleport :to="captureEditorTarget" :disabled="!captureEditor" defer>
-            <CustomEditor ref="review-editor" :config="tiptapConfig" :shared-state-name="'reviewState'" />
+            <CustomEditor ref="review-editor" :config="tiptapConfig" />
             <div :class="[captureEditor ? 'mt-1' : 'm-2', 'is-flex', 'is-flex-direction-row', 'is-flex-wrap-wrap']">
               <BCheckbox v-model="reviewState.canGrade"> Ajouter une note </BCheckbox>
               <BRate
@@ -93,6 +93,7 @@ import type { ChapterReviewTypeOffsetPaginated, OffsetPaginationInput, ReviewInp
 import type { ReviewItemTypeEnum } from "@/types/fanfictions";
 import type { TipTapEditorConfig, ReviewState } from "@/types/other";
 import type { ReviewModel } from "@/models";
+import type { TiptapEditor } from "#imports";
 
 interface Props {
   isLoading: boolean;
@@ -106,10 +107,17 @@ interface Props {
 
 const { isLoading, reviewPagination } = defineProps<Props>();
 
-// Cet état permet de partager en temps réel le contenu des deux éditeurs Tiptap de review
-// (en bas et sur le côté) entre eux ainsi qu'avec les composants qui en dépendent, en y
+// On fait passer l'éditeur à un potentiel parent qui en voudrait
+// Un peu hacky mais ça fonctionne bien
+const editorComponent = useTemplateRef("review-editor");
+const editor = computed<TiptapEditor | undefined>(() => editorComponent.value?.editor);
+defineExpose({ editor: editor });
+
+// Cet état permet de partager en temps réel le contenu de l'éditeur de review
+// (en bas et sur le côté) avec les composants qui en dépendent, en y
 // ajoutant les informations de notation également
-// FIXME - le bouton pour poster ne passe pas l'hydration, pourquoi ?
+// FIXME - l'état persiste à la navigation entre les éditeurs de review de fiction / chapitres
+// trouver comment 1) alerter de la perte du contenu, 2) remettre l'état à zéro
 const reviewState = useState<ReviewState>("reviewState", () => {
   return {
     content: "",
@@ -121,6 +129,13 @@ const reviewState = useState<ReviewState>("reviewState", () => {
 watch(
   () => reviewState.value.canGrade,
   () => (reviewState.value.grading = reviewState.value.canGrade ? 10 : undefined),
+);
+watch(
+  () => editor.value?.getHTML(),
+  () => {
+    reviewState.value.content = editor.value?.getHTML() || "";
+    reviewState.value.wordCount = editor.value?.extensionStorage.characterCount.words() || 0;
+  },
 );
 
 // const { isAuthenticated } = useCustomAuth();
@@ -147,7 +162,7 @@ const tiptapConfig = reactive<TipTapEditorConfig>({
   readOnly: false,
   fixedHeight: true,
   height: 250,
-  defaultValue: reviewState.value.content,
+  defaultValue: "",
   canQuote: false,
   quoteLimit: 0,
   fontSize: 100,
@@ -156,12 +171,4 @@ const tiptapConfig = reactive<TipTapEditorConfig>({
 });
 
 const listLoading = computed(() => isLoading);
-
-//   // Quoter dans l'éditeur
-//   public setQuote(quote: string): void {
-//     if (process.client) {
-//       (this.$refs.reviewEditor as TipTapEditor)?.setQuote(quote);
-//     }
-//   }
-//   // #endregion
 </script>

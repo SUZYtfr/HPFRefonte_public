@@ -127,7 +127,7 @@
         <div class="card-content pb-0">
           <div class="content p-2">
             <ReviewsList
-              ref="reviewList"
+              ref="review-list"
               :review-list-type="ReviewItemTypeEnum.Fanfiction"
               :paginated-reviews
               :review-pagination
@@ -156,14 +156,7 @@ const { tableOfContent } = defineProps<{
 
 const route = useRoute();
 
-const reviewState = useState<ReviewState>("reviewState", () => {
-  return {
-    content: "",
-    wordCount: 0,
-    canGrade: false,
-    grading: undefined,
-  };
-});
+const reviewState = useState<ReviewState>("reviewState");
 
 const { data: fiction } = await useAsyncGql(
   "getFictionDetail",

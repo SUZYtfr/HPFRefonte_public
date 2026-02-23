@@ -136,9 +136,9 @@
                 <!-- FIN: Sticky FontSize -->
                 <div class="content p-2" style="display: block; overflow: auto; margin-top: -55px">
                   <CustomEditor
-                    ref="chapter-content-editor"
+                    ref="chapter-reader"
                     :config="tiptapReadOnlyConfig"
-                    @quote="(quote: string) => (reviewState.content = reviewState.content.concat(quote))"
+                    @quote="(quote: string) => setQuote(quote)"
                   />
                 </div>
               </div>
@@ -274,14 +274,7 @@ const reviewPaneExpanded = ref<boolean>(false);
 const reviewEditorVisible = ref<boolean>(false);
 const reviewHeaderMessageVisible = ref<boolean>(true);
 const fontSizeVisible = ref<boolean>(false);
-const reviewState = useState<ReviewState>("reviewState", () => {
-  return {
-    content: "",
-    wordCount: 0,
-    canGrade: false,
-    grading: undefined,
-  };
-});
+const reviewState = useState<ReviewState>("reviewState");
 
 const { data: chapter, status: chapterStatus } = await useAsyncGql(
   "getChapterDetail",
@@ -352,6 +345,21 @@ async function postChapterReview(): Promise<void> {
       grading: reviewState.value.grading,
     },
   });
+}
+
+const reviewList = useTemplateRef("review-list");
+
+// TODO - insérer à la dernière position du curseur
+function setQuote(quote: string): void {
+  reviewList.value?.editor
+    ?.chain()
+    .focus("end", { scrollIntoView: true })
+    .enter()  // FIXME - seulement si un contenu existe préalablement
+    .insertContent(quote)
+    .setBlockquote()
+    .enter()
+    .unsetBlockquote()
+    .run();
 }
 
 //   @Watch("$auth.loggedIn", { immediate: true })
