@@ -1,14 +1,12 @@
-query getChapterDetail($filters: ChapterFilters) {
-  chapters(filters: $filters, pagination: { limit: 1 }) {
-    results {
-      id
-      title
-      order
-      text
-      startNote
-      endNote
-      reviewCount
-    }
+query getChapterDetail($chapterId: ID) {
+  chapter(pk: $chapterId) {
+    id
+    title
+    order
+    text
+    startNote
+    endNote
+    reviewCount
   }
 }
 

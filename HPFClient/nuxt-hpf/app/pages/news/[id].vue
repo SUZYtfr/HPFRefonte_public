@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 //#region Imports
-import type { NewsArticleTypeOffsetPaginated } from "#gql";
+import type { NewsArticleType } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { NewsModel } from "~/models";
 //#endregion
@@ -24,22 +24,15 @@ definePageMeta({
 const route = useRoute();
 //#endregion
 
-//#region Datas
-// On peut aussi faire une route dédiée pour chercher un élément sur le serveur
-// TODO - regarder s'il existe une directive / override pour utiliser getNews (liste) pour un seul élément
 // TODO - erreur si l'élément n'est pas récupéré
 const { data: news } = await useAsyncGql(
   "getNewsDetails",
   {
-    filters: {
-      id: {
-        exact: route.params.id as string,
-      },
-    },
+    newsId: route.params.id as string,
   },
   {
-    transform: (data: { news: NewsArticleTypeOffsetPaginated }) => {
-      return plainToInstance(NewsModel, data.news.results[0]);
+    transform: (input: { newsArticle: NewsArticleType }) => {
+      return plainToInstance(NewsModel, input.newsArticle);
     },
   },
 );

@@ -50,13 +50,11 @@ const route = useRoute();
 const { data: fandom } = await useAsyncGql(
   "getFandomDetails",
   {
-    filters: {
-      slug: { exact: route.params.fandomSlug as string },
-    },
+    fandomSlug: route.params.fandomSlug as string,
   },
   {
-    transform: (input: { fandoms: FandomData[] }) => {
-      return input.fandoms[0];
+    transform: (input: { fandom: FandomData }) => {
+      return input.fandom;
     },
   },
 );
@@ -88,14 +86,14 @@ const { data: recentFanfictions, status: recentFanfictionsStatus } = await useAs
 );
 
 const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql(
-  "getIndexNews",
+  "getFandomNews",
   {},
   {
     lazy: true,
-    transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+    transform: (input: { newsArticles: NewsArticleTypeOffsetPaginated }) => {
       return {
-        ...input.news,
-        results: plainToInstance(NewsModel, input.news.results),
+        ...input.newsArticles,
+        results: plainToInstance(NewsModel, input.newsArticles.results),
       };
     },
   },

@@ -1,26 +1,24 @@
-query getFictionDetail($filters: FictionFilters) {
-  fictions(filters: $filters, pagination: { limit: 1 }) {
-    results {
+query getFictionDetail($fictionId: ID) {
+  fiction(pk: $fictionId) {
+    id
+    title
+    summary
+    storynote
+    authors {
       id
-      title
-      summary
-      storynote
-      authors {
-        id
-        username
-      }
-      fandoms {
-        id
-        name
-        slug
-      }
-      lastUpdateDate
-      creationDate
-      wordCount
-      readCount
-      reviewCount
-      chapterCount
+      username
     }
+    fandoms {
+      id
+      name
+      slug
+    }
+    lastUpdateDate
+    creationDate
+    wordCount
+    readCount
+    reviewCount
+    chapterCount
   }
 }
 

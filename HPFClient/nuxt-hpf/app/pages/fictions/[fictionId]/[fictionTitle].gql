@@ -1,0 +1,17 @@
+query getTableOfContents($fictionId: ID) {
+  fiction(pk: $fictionId) {
+    id
+    title
+    storynote
+    chapters {
+      results {
+        id
+        title
+        order
+        triggerWarnings {
+          id
+        }
+      }
+    }
+  }
+}

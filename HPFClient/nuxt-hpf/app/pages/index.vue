@@ -65,10 +65,10 @@ const { data: paginatedRecentNews, status: newsStatus } = await useAsyncGql(
   {},
   {
     lazy: true,
-    transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+    transform: (input: { newsArticles: NewsArticleTypeOffsetPaginated }) => {
       return {
-        ...input.news,
-        results: plainToInstance(NewsModel, input.news.results),
+        ...input.newsArticles,
+        results: plainToInstance(NewsModel, input.newsArticles.results),
       };
     },
   },

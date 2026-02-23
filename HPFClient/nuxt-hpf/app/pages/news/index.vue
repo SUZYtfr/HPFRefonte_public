@@ -2,7 +2,12 @@
   <div class="container px-5">
     <!-- Modal filtres -->
     <BModal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
-      <NewsFilters :news-filters :is-loading="newsStatus == 'pending'" :execute @filters-change="(filters: NewsArticleFilters) => newsFilters = filters" />
+      <NewsFilters
+        :news-filters
+        :is-loading="newsStatus == 'pending'"
+        :execute
+        @filters-change="(filters: NewsArticleFilters) => (newsFilters = filters)"
+      />
     </BModal>
     <br />
     <div class="columns is-desktop">
@@ -12,7 +17,7 @@
           :news-filters
           :is-loading="newsStatus == 'pending'"
           :execute
-          @filters-change="(filters: NewsArticleFilters) => newsFilters = filters"
+          @filters-change="(filters: NewsArticleFilters) => (newsFilters = filters)"
         />
       </div>
       <!-- Liste des news -->
@@ -24,8 +29,8 @@
           :news-order
           :is-loading="newsStatus == 'pending'"
           :execute
-          @pagination-change="(pagination: OffsetPaginationInput) => newsPagination = pagination"
-          @order-change="(order: NewsArticleOrder) => newsOrder = order"
+          @pagination-change="(pagination: OffsetPaginationInput) => (newsPagination = pagination)"
+          @order-change="(order: NewsArticleOrder) => (newsOrder = order)"
         />
       </div>
     </div>
@@ -67,7 +72,7 @@ const {
   status: newsStatus,
   execute,
 } = await useAsyncGql(
-  "getNews",
+  "getSearchNews",
   {
     pagination: newsPagination,
     order: newsOrder,
@@ -75,10 +80,10 @@ const {
   },
   {
     lazy: true,
-    transform: (input: { news: NewsArticleTypeOffsetPaginated }) => {
+    transform: (input: { newsArticles: NewsArticleTypeOffsetPaginated }) => {
       return {
-        ...input.news,
-        results: plainToInstance(NewsModel, input.news.results),
+        ...input.newsArticles,
+        results: plainToInstance(NewsModel, input.newsArticles.results),
       };
     },
   },

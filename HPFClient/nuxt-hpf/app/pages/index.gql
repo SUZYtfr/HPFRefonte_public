@@ -1,5 +1,5 @@
 query getIndexNews {
-  news(pagination: { limit: 10 }, order: { postDate: DESC }) {
+  newsArticles(pagination: { limit: 10 }, order: { postDate: DESC }) {
     totalCount
     pageInfo {
       limit

@@ -1,5 +1,5 @@
 query getSearchNews($pagination: OffsetPaginationInput, $order: NewsArticleOrder, $filters: NewsArticleFilters) {
-  news(pagination: $pagination, order: $order, filters: $filters) {
+  newsArticles(pagination: $pagination, order: $order, filters: $filters) {
     totalCount
     pageInfo {
       limit

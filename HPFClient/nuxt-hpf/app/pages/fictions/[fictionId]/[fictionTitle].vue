@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FictionTypeOffsetPaginated } from "#gql";
+import type { FictionType } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { TableOfContent, type ChapterModelLight } from "@/models";
 
@@ -121,12 +121,10 @@ const { data: tableOfContent, status } = await useAsyncGql(
     fictionId: route.params.fictionId as string,
   },
   {
-    transform: (data: { fictions: FictionTypeOffsetPaginated }) => {
-      // Pas très beau tout ça, mais ça fonctionne
-      const tableOfContent = data.fictions.results[0];
+    transform: (input: { fiction: FictionType }) => {
       // @ts-ignore
-      tableOfContent.chapters = tableOfContent?.chapters.results;
-      return plainToInstance(TableOfContent, data.fictions.results[0]);
+      input.fiction.chapters = input.fiction.chapters.results;
+      return plainToInstance(TableOfContent, input.fiction);
     },
   },
 );
@@ -176,7 +174,7 @@ const nextChapter = computed<ChapterModelLight | undefined>(() => {
 </script>
 
 <style lang="scss" scoped>
-@use "~/assets/scss/custom_bulma_core.scss";
+@use "@/assets/scss/custom_bulma_core.scss";
 * {
   // border: 1px solid green;
 }

@@ -144,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FictionReviewTypeOffsetPaginated, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { FictionReviewTypeOffsetPaginated, FictionType, OffsetPaginationInput } from "#gql";
 import { FanfictionModel, ReviewModel, type ChapterModelLight, type TableOfContent } from "@/models";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
 import type { ReviewState } from "@/types/other";
@@ -168,16 +168,12 @@ const reviewState = useState<ReviewState>("reviewState", () => {
 const { data: fiction } = await useAsyncGql(
   "getFictionDetail",
   {
-    filters: {
-      id: {
-        exact: route.params.fictionId as string,
-      },
-    },
+    fictionId: route.params.fictionId as string,
     // withAuthors: true,
   },
   {
-    transform: (data: { fictions: FictionTypeOffsetPaginated }) => {
-      return plainToInstance(FanfictionModel, data.fictions.results[0]);
+    transform: (input: { fiction: FictionType }) => {
+      return plainToInstance(FanfictionModel, input.fiction);
     },
   },
 );

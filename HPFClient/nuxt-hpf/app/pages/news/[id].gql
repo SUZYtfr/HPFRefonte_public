@@ -1,26 +1,24 @@
-query getNewsDetails($filters: NewsArticleFilters) {
-  news(pagination: { limit: 1 }, filters: $filters) {
-    results {
+query getNewsDetails($newsId: ID) {
+  newsArticle(pk: $newsId) {
+    id
+    title
+    postDate
+    content
+    contentImages {
       id
-      title
-      postDate
-      content
-      contentImages {
-        id
-        src
-      }
-      commentCount
-      authors {
+      src
+    }
+    commentCount
+    authors {
+      ...BaseUserInfo
+    }
+    comments {
+      id
+      author {
         ...BaseUserInfo
       }
-      comments {
-        id
-        author {
-          ...BaseUserInfo
-        }
-        content
-        postDate
-      }
+      content
+      postDate
     }
   }
 }

@@ -58,7 +58,7 @@
         aria-previous-label="Page précedente"
         aria-page-label="Page"
         aria-current-label="Page actuelle"
-        @change="(page: number) => pageFictionPagination.page = page"
+        @change="(page: number) => (pageFictionPagination.page = page)"
       />
     </footer>
   </div>

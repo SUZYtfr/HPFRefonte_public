@@ -10,7 +10,7 @@
         :execute="execute"
         :is-fixed-height-card="true"
         :tooltip-position="'is-top'"
-        @filters-change="(filters: FictionFilters) => fanfictionFilters = filters"
+        @filters-change="(filters: FictionFilters) => (fanfictionFilters = filters)"
       />
     </BModal>
     <br />
@@ -23,7 +23,7 @@
           :fanfiction-filters
           :is-loading="status === 'pending'"
           :execute="execute"
-          @filters-change="(filters: FictionFilters) => fanfictionFilters = filters"
+          @filters-change="(filters: FictionFilters) => (fanfictionFilters = filters)"
         />
       </div>
       <!-- Liste des fictions -->
@@ -34,8 +34,8 @@
           :fiction-pagination
           :is-loading="status === 'pending'"
           :execute="execute"
-          @pagination-change="(pagination: OffsetPaginationInput) => fictionPagination = pagination"
-          @order-change="(order: FictionOrder) => fictionOrder = order"
+          @pagination-change="(pagination: OffsetPaginationInput) => (fictionPagination = pagination)"
+          @order-change="(order: FictionOrder) => (fictionOrder = order)"
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->

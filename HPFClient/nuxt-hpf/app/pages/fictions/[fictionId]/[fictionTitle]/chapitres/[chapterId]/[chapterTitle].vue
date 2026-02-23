@@ -252,7 +252,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ChapterReviewTypeOffsetPaginated, ChapterTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { ChapterModel, ReviewModel, type TableOfContent } from "@/models";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
@@ -286,19 +286,15 @@ const reviewState = useState<ReviewState>("reviewState", () => {
 const { data: chapter, status: chapterStatus } = await useAsyncGql(
   "getChapterDetail",
   {
-    filters: {
-      id: {
-        // TODO s'assurer que chapterId ET fictionID sont corrects
-        // et que le chapitre appartient bien à la fiction
-        // Je ne sais pas quelles répercussions aurait une erreur ou un acte volontaire
-        // mais autant éviter de se retrouver dans cette situation
-        exact: route.params.chapterId as string,
-      },
-    },
+    // TODO s'assurer que chapterId ET fictionID sont corrects
+    // et que le chapitre appartient bien à la fiction
+    // Je ne sais pas quelles répercussions aurait une erreur ou un acte volontaire
+    // mais autant éviter de se retrouver dans cette situation
+    chapterId: route.params.chapterId as string,
   },
   {
-    transform: (data: { chapters: ChapterTypeOffsetPaginated }) => {
-      return plainToInstance(ChapterModel, data.chapters.results[0]);
+    transform: (input: { chapter: ChapterType }) => {
+      return plainToInstance(ChapterModel, input.chapter);
     },
   },
 );

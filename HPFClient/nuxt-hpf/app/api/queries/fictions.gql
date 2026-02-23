@@ -51,26 +51,6 @@ query getFictions(
   }
 }
 
-query getTableOfContents($fictionId: ID) {
-  fictions(filters: { id: { exact: $fictionId } }) {
-    results {
-      id
-      title
-      storynote
-      chapters {
-        results {
-          id
-          title
-          order
-          triggerWarnings {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-
 query getChapters(
   $pagination: OffsetPaginationInput
   $order: ChapterOrder

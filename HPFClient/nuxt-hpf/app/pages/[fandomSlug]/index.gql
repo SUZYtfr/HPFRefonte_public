@@ -1,13 +1,13 @@
-query getFandomDetails($filters: FandomFilters) {
-  fandoms(filters: $filters) {
+query getFandomDetails($fandomSlug: String!) {
+  fandom: fandomBySlug(slug: $fandomSlug) {
     id
     name
     slug
   }
 }
 
-query getIndexNews {
-  news(pagination: { limit: 10 }, order: { postDate: DESC }) {
+query getFandomNews {
+  newsArticles(pagination: { limit: 10 }, order: { postDate: DESC }) {
     totalCount
     pageInfo {
       limit
