@@ -11,7 +11,7 @@
       v-if="version.invalidationReasonIds?.length ?? 0 > 0"
       class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-start is-align-items-center"
     >
-      <b-icon icon="warning" size="is-small" type="is-danger" />
+      <BIcon icon="warning" size="is-small" type="is-danger" />
 
       <span class="has-text-danger is-size-7 has-text-weight-semibold">
         {{
@@ -27,9 +27,9 @@
         <div class="mr-3 white-space-nowrap">
           <template v-for="(author, index) in version.authors" :key="'author_' + author.userId.toString()">
             <template v-if="index > 0"> , </template>
-            <b-tooltip v-if="author.watched" label="Auteur à surveiller" :append-to-body="true" position="is-left">
-              <b-icon icon="warning" size="is-small" type="is-danger" />
-            </b-tooltip>
+            <BTooltip v-if="author.watched" label="Auteur à surveiller" :append-to-body="true" position="is-left">
+              <BIcon icon="warning" size="is-small" type="is-danger" />
+            </BTooltip>
             <!-- TODO span à reconvertir en NuxtLink -->
             <span class="is-size-7 has-text-weight-bold" :to="{ name: 'auteurs-id', params: { id: author.userId } }">
               {{ author.username }}

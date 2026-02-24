@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- Navbar -->
-    <b-navbar active :fixed-top="true">
+    <BNavbar active :fixed-top="true">
       <template #brand>
-        <b-navbar-item>
+        <BNavbarItem>
           <img src="~/assets/img/logo_hpfanfic_court_300.png" width="56" height="36" alt="Logo forum HPF" />
-        </b-navbar-item>
+        </BNavbarItem>
         <div class="is-hidden-desktop" style="margin-left: auto">
-          <b-navbar-item v-if="isAuthenticated" tag="div">
-            <b-dropdown aria-role="list">
+          <BNavbarItem v-if="isAuthenticated" tag="div">
+            <BDropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
                   <span class="icon is-small" style="margin-right: -8px">
@@ -32,11 +32,11 @@
                   <span><span class="badge">8</span></span>
                 </button>
               </template>
-            </b-dropdown>
-            <b-dropdown aria-role="list">
+            </BDropdown>
+            <BDropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
-                  <b-image
+                  <BImage
                     :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
@@ -44,60 +44,60 @@
                     :responsive="true"
                   />
                   <span class="username-visibility" style="margin-left: 5px">{{ data?.username }}</span>
-                  <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
+                  <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem"> Mon compte </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem" @click="logout"> Se déconnecter </b-dropdown-item>
-            </b-dropdown>
-          </b-navbar-item>
-          <b-navbar-item v-else tag="div">
+              <BDropdownItem aria-role="listitem"> Mon compte </BDropdownItem>
+              <BDropdownItem aria-role="listitem" @click="logout"> Se déconnecter </BDropdownItem>
+            </BDropdown>
+          </BNavbarItem>
+          <BNavbarItem v-else tag="div">
             <div class="buttons">
               <a class="button is-light" @click="modalsStateStore.setLoginModalActive(true)"> Se connecter </a>
               <a class="button" @click="modalsStateStore.setRegisterModalActive(true)"> S'inscrire </a>
             </div>
-          </b-navbar-item>
+          </BNavbarItem>
         </div>
       </template>
       <template #start>
-        <b-navbar-item active tag="router-link" to="/"> Accueil </b-navbar-item>
-        <b-navbar-dropdown :collapsible="true" label="Association HPF">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-dropdown :collapsible="true" label="Lecture">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-dropdown :collapsible="true" label="Ecriture">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-dropdown :collapsible="true" label="Top fanfictions">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-dropdown :collapsible="true" label="Nos sites">
-          <b-navbar-item href="#"> L'appli HPF </b-navbar-item>
-          <b-navbar-item href="#"> Le Héron </b-navbar-item>
-          <b-navbar-item href="#"> Les éditions HPF </b-navbar-item>
-          <b-navbar-item href="#"> L'association </b-navbar-item>
-          <b-navbar-item href="#"> Le blog HPF </b-navbar-item>
-          <b-navbar-item href="#"> Le forum </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-dropdown :collapsible="true" label="Boutique">
-          <b-navbar-item href="#"> Link 1 </b-navbar-item>
-          <b-navbar-item href="#"> Link 2 </b-navbar-item>
-        </b-navbar-dropdown>
-        <b-navbar-item active href="#"> Partenaires </b-navbar-item>
-        <b-navbar-item active href="#" @click="modalsStateStore.setContactModalActive(true)"> Contact </b-navbar-item>
-        <b-navbar-item v-if="isStaff" active tag="router-link" to="/settings"> Administration </b-navbar-item>
+        <BNavbarItem active tag="router-link" to="/"> Accueil </BNavbarItem>
+        <BNavbarDropdown :collapsible="true" label="Association HPF">
+          <BNavbarItem href="#"> Link 1 </BNavbarItem>
+          <BNavbarItem href="#"> Link 2 </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarDropdown :collapsible="true" label="Lecture">
+          <BNavbarItem href="#"> Link 1 </BNavbarItem>
+          <BNavbarItem href="#"> Link 2 </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarDropdown :collapsible="true" label="Ecriture">
+          <BNavbarItem href="#"> Link 1 </BNavbarItem>
+          <BNavbarItem href="#"> Link 2 </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarDropdown :collapsible="true" label="Top fanfictions">
+          <BNavbarItem href="#"> Link 1 </BNavbarItem>
+          <BNavbarItem href="#"> Link 2 </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarDropdown :collapsible="true" label="Nos sites">
+          <BNavbarItem href="#"> L'appli HPF </BNavbarItem>
+          <BNavbarItem href="#"> Le Héron </BNavbarItem>
+          <BNavbarItem href="#"> Les éditions HPF </BNavbarItem>
+          <BNavbarItem href="#"> L'association </BNavbarItem>
+          <BNavbarItem href="#"> Le blog HPF </BNavbarItem>
+          <BNavbarItem href="#"> Le forum </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarDropdown :collapsible="true" label="Boutique">
+          <BNavbarItem href="#"> Link 1 </BNavbarItem>
+          <BNavbarItem href="#"> Link 2 </BNavbarItem>
+        </BNavbarDropdown>
+        <BNavbarItem active href="#"> Partenaires </BNavbarItem>
+        <BNavbarItem active href="#" @click="modalsStateStore.setContactModalActive(true)"> Contact </BNavbarItem>
+        <BNavbarItem v-if="isStaff" active tag="router-link" to="/settings"> Administration </BNavbarItem>
       </template>
 
       <template #end>
         <div class="is-hidden-touch">
-          <b-navbar-item v-if="isAuthenticated" tag="div">
-            <b-dropdown aria-role="list">
+          <BNavbarItem v-if="isAuthenticated" tag="div">
+            <BDropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light">
                   <span class="icon is-small" style="margin-right: -8px">
@@ -121,11 +121,11 @@
                   <span><span class="badge">8</span></span>
                 </button>
               </template>
-            </b-dropdown>
-            <b-dropdown aria-role="list">
+            </BDropdown>
+            <BDropdown aria-role="list">
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
-                  <b-image
+                  <BImage
                     :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
@@ -133,22 +133,22 @@
                     :responsive="true"
                   />
                   <span style="margin-left: 5px">{{ data?.username }}</span>
-                  <b-icon :icon="active ? 'angle-up' : 'angle-down'" />
+                  <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <b-dropdown-item aria-role="listitem"> Mon compte </b-dropdown-item>
-              <b-dropdown-item aria-role="listitem" @click="logout"> Se déconnecter </b-dropdown-item>
-            </b-dropdown>
-          </b-navbar-item>
-          <b-navbar-item v-else tag="div">
+              <BDropdownItem aria-role="listitem"> Mon compte </BDropdownItem>
+              <BDropdownItem aria-role="listitem" @click="logout"> Se déconnecter </BDropdownItem>
+            </BDropdown>
+          </BNavbarItem>
+          <BNavbarItem v-else tag="div">
             <div class="buttons">
               <a class="button is-light" @click="modalsStateStore.setLoginModalActive(true)"> Se connecter </a>
               <a class="button" @click="modalsStateStore.setRegisterModalActive(true)"> S'inscrire </a>
             </div>
-          </b-navbar-item>
+          </BNavbarItem>
         </div>
       </template>
-    </b-navbar>
+    </BNavbar>
     <!-- Modal de contact -->
     <!-- <Contact /> -->
     <!-- Modal de connexion -->

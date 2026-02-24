@@ -121,8 +121,6 @@ const { data: tableOfContent, status } = await useAsyncGql(
   },
   {
     transform: (input: { fiction: FictionType }) => {
-      // @ts-ignore
-      input.fiction.chapters = input.fiction.chapters.results;
       return plainToInstance(TableOfContent, input.fiction);
     },
   },

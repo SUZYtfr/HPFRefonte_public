@@ -1,15 +1,15 @@
 <template>
   <section>
-    <b-sidebar v-model="open" type="is-light" :fullheight="true" :overlay="true" :right="true">
+    <BSidebar v-model="open" type="is-light" :fullheight="true" :overlay="true" :right="true">
       <div class="p-1">
-        <b-menu>
-          <b-menu-list>
-            <b-switch v-model="connectedValue" @input="connectedChanged()"> Connecté </b-switch>
-          </b-menu-list>
-        </b-menu>
+        <BMenu>
+          <BMenuList>
+            <BSwitch v-model="connectedValue" @input="connectedChanged()"> Connecté </BSwitch>
+          </BMenuList>
+        </BMenu>
       </div>
-    </b-sidebar>
-    <b-button @click="open = true"> Debug panel </b-button>
+    </BSidebar>
+    <BButton @click="open = true"> Debug panel </BButton>
   </section>
 </template>
 

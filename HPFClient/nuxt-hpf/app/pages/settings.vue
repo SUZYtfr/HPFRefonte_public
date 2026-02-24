@@ -7,9 +7,9 @@
             <p class="card-header-title is-centered">Réglages</p>
           </header>
           <div class="card-content px-0 py-3">
-            <b-input placeholder="Filtrer" type="search" icon="search" class="mx-2 mb-2" @input="filterChanged" />
-            <b-menu>
-              <b-menu-list>
+            <BInput placeholder="Filtrer" type="search" icon="search" class="mx-2 mb-2" @input="filterChanged" />
+            <BMenu>
+              <BMenuList>
                 <!-- Override la template défault pour fix le bug des nuxt-link plus reconnu -->
                 <template #default>
                   <li v-for="(item, index) in filteredMenuItems" :key="index" @click="() => handleMenuItemClick(item)">
@@ -18,12 +18,12 @@
                       prefetch-on="interaction"
                       :to="item.to"
                     >
-                      <b-icon pack="fas" :icon="item.icon" size="is-small" /><span>{{ item.label }}</span>
+                      <BIcon pack="fas" :icon="item.icon" size="is-small" /><span>{{ item.label }}</span>
                     </NuxtLink>
                   </li>
                 </template>
-              </b-menu-list>
-            </b-menu>
+              </BMenuList>
+            </BMenu>
           </div>
         </div>
       </div>

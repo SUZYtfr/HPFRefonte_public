@@ -141,7 +141,7 @@ watch(
 // const { isAuthenticated } = useCustomAuth();
 const isAuthenticated = true;
 
-const emit = defineEmits(["pagination-change"]);
+const emit = defineEmits(["paginationChange"]);
 
 // Transforme le système offset / limit en page / pageSize
 const pageReviewPagination = reactive({
@@ -153,7 +153,7 @@ watch(pageReviewPagination, () => {
     limit: pageReviewPagination.pageSize,
     offset: (pageReviewPagination.page - 1) * pageReviewPagination.pageSize,
   };
-  emit("pagination-change", pagination);
+  emit("paginationChange", pagination);
 });
 
 const tiptapConfig = reactive<TipTapEditorConfig>({

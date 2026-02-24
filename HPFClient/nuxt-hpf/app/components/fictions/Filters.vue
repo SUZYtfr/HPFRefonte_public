@@ -178,9 +178,9 @@ const {
 } = defineProps<Props>();
 
 const filters = ref<FictionFilters>(Object.assign({}, fanfictionFilters));
-const emit = defineEmits(["filters-change"]);
+const emit = defineEmits(["filtersChange"]);
 
-watch(filters, () => emit("filters-change", filters.value), { deep: true });
+watch(filters, () => emit("filtersChange", filters.value), { deep: true });
 
 const listLoading = computed<boolean>(() => isLoading);
 

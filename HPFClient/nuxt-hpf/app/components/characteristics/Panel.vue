@@ -18,7 +18,7 @@
       <BIcon class="is-clickable" :icon="expanded ? 'caret-up' : 'caret-down'" />
     </div>
     <div v-if="expanded">
-      <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
+      <Simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
         <div class="is-flex is-flex-direction-column">
           <CharacteristicsThreeStateCheckbox
             v-for="(charac, index) in characteristics"
@@ -29,7 +29,7 @@
             @change="(internalState: boolean | null) => threeStateChanged(charac.characteristicId, internalState)"
           />
         </div>
-      </simplebar>
+      </Simplebar>
     </div>
   </div>
 </template>

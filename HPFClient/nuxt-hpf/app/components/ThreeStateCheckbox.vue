@@ -1,5 +1,5 @@
 <template>
-  <b-checkbox
+  <BCheckbox
     v-model="checkboxStatus"
     :indeterminate="externalState === false"
     :type="externalState === false ? 'is-danger' : ''"
@@ -7,7 +7,7 @@
     @click.prevent="checkBoxClicked"
   >
     <span>{{ title }}</span>
-  </b-checkbox>
+  </BCheckbox>
 </template>
 
 <script setup lang="ts">

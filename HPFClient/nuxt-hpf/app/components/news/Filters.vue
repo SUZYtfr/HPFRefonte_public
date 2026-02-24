@@ -63,9 +63,9 @@ const { newsFilters, execute, isLoading } = defineProps<{
 }>();
 
 const filters = ref<NewsArticleFilters>(Object.assign({}, newsFilters));
-const emit = defineEmits(["filters-change"]);
+const emit = defineEmits(["filtersChange"]);
 
-watch(filters, () => emit("filters-change", filters.value), { deep: true });
+watch(filters, () => emit("filtersChange", filters.value), { deep: true });
 
 const listLoading = computed<boolean>(() => isLoading);
 </script>

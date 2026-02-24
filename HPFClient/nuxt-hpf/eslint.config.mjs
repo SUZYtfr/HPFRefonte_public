@@ -27,7 +27,7 @@ export default withNuxt({
         allowExpressions: true,
       },
     ],
-    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/ban-ts-comment": ["warn"],
 
     "lines-between-class-members": [
       "error",
@@ -45,6 +45,10 @@ export default withNuxt({
     "object-shorthand": "off",
     "no-useless-escape": "off",
     "import/no-mutable-exports": "off",
+
+    "vue/component-name-in-template-casing": ["warn", "PascalCase", { registeredComponentsOnly: false }],
+    "vue/prop-name-casing": ["warn", "camelCase"],
+    "vue/custom-event-name-casing": ["warn", "camelCase"],
 
     "vue/html-self-closing": [
       "error",

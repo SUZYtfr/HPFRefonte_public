@@ -55,9 +55,9 @@
               tags: characteristic.characteristicId,
             },
           }"
-          ><b-tag :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']" type="is-info">{{
+          ><BTag :class="[getClassType(characteristic), 'my-0 mr-1 is-size-8']" type="is-info">{{
             characteristic.name
-          }}</b-tag></NuxtLink
+          }}</BTag></NuxtLink
         >
       </div>
     </div>
@@ -78,7 +78,7 @@ const { fanfiction } = defineProps<{
 
 // https://vuejs.org/guide/reusability/custom-directives.html#when-to-use
 const vPlaintext = {
-  //@ts-ignore
+  // @ts-expect-error el implicitely any - à adapter à vue 3
   mounted: (el) => (el.innerHTML = el.innerText.trimStart()),
 };
 

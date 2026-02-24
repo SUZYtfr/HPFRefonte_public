@@ -79,7 +79,7 @@
                 <div class="card-header" role="button" aria-controls="chapterStartNote" :aria-expanded="props.open">
                   <p class="card-header-title is-unselectable">Notes de chapitre</p>
                   <a class="card-header-icon">
-                    <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
+                    <BIcon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
                   </a>
                 </div>
               </template>

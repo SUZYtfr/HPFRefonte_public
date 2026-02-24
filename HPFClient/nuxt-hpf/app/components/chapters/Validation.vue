@@ -6,24 +6,24 @@
           {{ chapter.title }}
         </h3>
       </div>
-      <b-tooltip
+      <BTooltip
         v-if="chapter.validationStatus == ChapterValidationStatusEnum.AwaitingDiscussion"
         label="à discuter"
         :append-to-body="true"
         position="is-right"
       >
-        <b-icon icon="comment-alt" size="is-small" />
-      </b-tooltip>
+        <BIcon icon="comment-alt" size="is-small" />
+      </BTooltip>
     </div>
     <div class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-start is-align-items-center">
-      <b-tooltip
+      <BTooltip
         v-if="chapter.fictionMetadata?.watched"
         label="Fiction à surveiller"
         :append-to-body="true"
         position="is-left"
       >
-        <b-icon icon="warning" size="is-small" type="is-danger" />
-      </b-tooltip>
+        <BIcon icon="warning" size="is-small" type="is-danger" />
+      </BTooltip>
       <span class="is-size-7 has-text-italic">{{ chapter.fictionMetadata?.title }}</span>
     </div>
     <div class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-start is-align-items-center">
@@ -31,9 +31,9 @@
         <div class="mr-3 white-space-nowrap">
           <template v-for="(author, index) in chapter.authors" :key="'author_' + author.userId.toString()">
             <template v-if="index > 0"> , </template>
-            <b-tooltip v-if="author.watched" label="Auteur à surveiller" :append-to-body="true" position="is-left">
-              <b-icon icon="warning" size="is-small" type="is-danger" />
-            </b-tooltip>
+            <BTooltip v-if="author.watched" label="Auteur à surveiller" :append-to-body="true" position="is-left">
+              <BIcon icon="warning" size="is-small" type="is-danger" />
+            </BTooltip>
             <!-- TODO span à reconvertir en NuxtLink -->
             <span class="is-size-6 has-text-weight-normal" :to="{ name: 'auteurs-id', params: { id: author.userId } }">
               {{ author.username }}

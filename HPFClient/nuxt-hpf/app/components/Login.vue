@@ -1,5 +1,5 @@
 <template>
-  <b-modal v-model="modalsStateStore.loginModalActive" width="300px" scroll="keep" @after-enter="modalEntered">
+  <BModal v-model="modalsStateStore.loginModalActive" width="300px" scroll="keep" @after-enter="modalEntered">
     <form>
       <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
@@ -7,11 +7,11 @@
           <button type="button" class="delete" @click="modalsStateStore.setLoginModalActive(false)"></button>
         </header>
         <section class="modal-card-body">
-          <b-field label="Identifiant">
-            <b-input ref="txtUsername" v-model="loginForm.username" type="text" placeholder="Votre pseudo" required />
-          </b-field>
-          <b-field label="Mot de passe">
-            <b-input
+          <BField label="Identifiant">
+            <BInput ref="txtUsername" v-model="loginForm.username" type="text" placeholder="Votre pseudo" required />
+          </BField>
+          <BField label="Mot de passe">
+            <BInput
               v-model="loginForm.password"
               type="password"
               password-reveal
@@ -19,11 +19,11 @@
               required
               @keydown.enter="login()"
             />
-          </b-field>
-          <b-checkbox>Se souvenir de moi</b-checkbox>
+          </BField>
+          <BCheckbox>Se souvenir de moi</BCheckbox>
         </section>
         <footer class="modal-card-foot">
-          <b-button
+          <BButton
             :disabled="!formIsValid"
             :expanded="true"
             label="Se connecter"
@@ -34,7 +34,7 @@
         </footer>
       </div>
     </form>
-  </b-modal>
+  </BModal>
 </template>
 
 <script setup lang="ts">

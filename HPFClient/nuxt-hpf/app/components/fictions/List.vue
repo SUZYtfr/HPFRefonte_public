@@ -89,7 +89,7 @@ const {
   paginatedFanfictions,
 } = defineProps<Props>();
 
-const emit = defineEmits(["pagination-change", "order-change"]);
+const emit = defineEmits(["paginationChange", "orderChange"]);
 
 // Transforme le système offset / limit en page / pageSize
 const pageFictionPagination = reactive({
@@ -101,7 +101,7 @@ watch(pageFictionPagination, () => {
     limit: pageFictionPagination.pageSize,
     offset: (pageFictionPagination.page - 1) * pageFictionPagination.pageSize,
   };
-  emit("pagination-change", pagination);
+  emit("paginationChange", pagination);
 });
 
 // TODO très moche
@@ -126,7 +126,7 @@ const fictionsOrderChoice = computed<string>({
     } else if (value === "alpha") {
       order.title = Ordering.ASC;
     }
-    emit("order-change", order);
+    emit("orderChange", order);
   },
 });
 

@@ -140,6 +140,7 @@ export class TableOfContent extends BasicClass<TableOfContent> {
   public storynote: string | null = null;
 
   @Type(() => ChapterModelLight)
+  @Transform(({ value }) => plainToInstance(ChapterModelLight, value?.results || value), { toClassOnly: true })
   public chapters: ChapterModelLight[] | null = null;
 
   @Exclude()
@@ -212,7 +213,7 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   public title: string | null = null;
   public order: number = 0;
 
-  //@ts-ignore
+  //@ts-expect-error t implicitely any - TODO trouver un autre moyen de gérer l'hydration
   @Transform(({ value }) => value.map((t) => t.characteristicId || t), { toClassOnly: true })
   public triggerWarnings: number[] = [];
 

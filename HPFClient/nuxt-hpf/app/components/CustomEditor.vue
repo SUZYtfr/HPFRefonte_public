@@ -201,7 +201,7 @@
               </template>
               <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
                 <div class="media" @click="toggleStyle(menu.action)">
-                  <b-icon class="media-left" :icon="menu.icon" />
+                  <BIcon class="media-left" :icon="menu.icon" />
                   <div class="media-content">
                     <h3>{{ menu.text }}</h3>
                   </div>
@@ -486,7 +486,7 @@
           </template>
           <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
             <div class="media" @click="toggleStyle(menu.action)">
-              <b-icon class="media-left" :icon="menu.icon" />
+              <BIcon class="media-left" :icon="menu.icon" />
               <div class="media-content">
                 <h3>{{ menu.text }}</h3>
               </div>
@@ -1092,7 +1092,6 @@ const editorFunctionsCharacterStatuses = ref<Record<string, number>>({
 
 //     // Configuration par défaut
 //     this.editor?.chain().focus().setParagraph().setFontFamily("Arial").run();
-
 
 const currentStyle = (): { icon: string; text: string; action: string } => {
   if (editorFunctionsActiveStatuses.value.h1) return { icon: "heading", text: "Titre 1", action: "h1" };

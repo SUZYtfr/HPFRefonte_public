@@ -1,7 +1,7 @@
 <template>
   <div class="container is-fluid">
-    <b-tabs v-model="activeTab" type="is-toggle" :animated="false" expanded>
-      <b-tab-item v-for="tab in tabs" :key="tab.status" :label="tab.label" :value="tab.status.toString()">
+    <BTabs v-model="activeTab" type="is-toggle" :animated="false" expanded>
+      <BTabItem v-for="tab in tabs" :key="tab.status" :label="tab.label" :value="tab.status.toString()">
         <div class="columns">
           <div class="column is-narrow">
             <div class="card">
@@ -13,7 +13,7 @@
                     <span class="mr-1">{{ headerFilterLabel }}</span>
                     <b v-if="(chapters?.length ?? 0) > 0">{{ " (" + chapters?.length.toString() + ")" }}</b>
                   </div>
-                  <b-input
+                  <BInput
                     v-model="chapterFilters.searchTerm"
                     placeholder="Rechercher"
                     type="search"
@@ -22,19 +22,19 @@
                   />
                   <!-- Filtres des chapitres à valider -->
                   <div v-if="selectedTab?.status == ChapterValidationStatusEnum.AwaitingValidation">
-                    <b-field>
-                      <b-checkbox v-model="chapterFilters.awaitingDiscussionOnly" size="is-small">
+                    <BField>
+                      <BCheckbox v-model="chapterFilters.awaitingDiscussionOnly" size="is-small">
                         Chapitres "à discuter" uniquement
-                      </b-checkbox>
-                    </b-field>
+                      </BCheckbox>
+                    </BField>
                   </div>
-                  <b-field>
-                    <b-checkbox v-model="chapterFilters.watchedAuthors" size="is-small">
+                  <BField>
+                    <BCheckbox v-model="chapterFilters.watchedAuthors" size="is-small">
                       Marqués en "à surveiller"
-                    </b-checkbox>
-                  </b-field>
+                    </BCheckbox>
+                  </BField>
                 </div>
-                <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
+                <Simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
                   <!-- <b-loading v-model="chaptersStatus" :is-full-page="false" /> -->
                   <ChaptersValidation
                     v-for="(chapter, index) in chapters"
@@ -44,7 +44,7 @@
                     :is-selected="(selectedChapter?.chapterId ?? 0) == chapter.chapterId"
                     @click="() => onChapterSelected(chapter)"
                   />
-                </simplebar>
+                </Simplebar>
               </div>
             </div>
           </div>
@@ -63,14 +63,14 @@
                       :key="'author_' + author.userId.toString()"
                     >
                       <template v-if="index > 0"> , </template>
-                      <b-tooltip
+                      <BTooltip
                         v-if="author.watched"
                         label="Auteur à surveiller"
                         :append-to-body="true"
                         position="is-top"
                       >
-                        <b-icon icon="warning" type="is-danger" />
-                      </b-tooltip>
+                        <BIcon icon="warning" type="is-danger" />
+                      </BTooltip>
                       <!-- TODO span à reconvertir en NuxtLink -->
                       <span
                         class="is-size-6 has-text-weight-normal"
@@ -84,32 +84,32 @@
                 <div class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center">
                   <!-- Titre de la fiction -->
                   <div>
-                    <b-tooltip
+                    <BTooltip
                       v-if="selectedChapter.fictionMetadata?.watched"
                       label="Fiction à surveiller"
                       :append-to-body="true"
                       position="is-top"
                     >
-                      <b-icon icon="warning" type="is-danger" />
-                    </b-tooltip>
+                      <BIcon icon="warning" type="is-danger" />
+                    </BTooltip>
                     <span class="is-italic is-size-6">{{ selectedChapter.fictionMetadata?.title }}</span>
                   </div>
                   <!-- Caétgorie -->
-                  <b-taglist class="mb-0">
+                  <BTaglist class="mb-0">
                     <a
                       v-for="characteristic in selectedChapter.fictionMetadata?.characteristics"
                       :key="'tag_' + characteristic.characteristicId.toString()"
                       :href="'auteurs/' + characteristic.characteristicId"
-                      ><b-tag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
+                      ><BTag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
                         characteristic.name
-                      }}</b-tag></a
+                      }}</BTag></a
                     >
-                  </b-taglist>
+                  </BTaglist>
                 </div>
                 <!-- Raisons et auteur de la dernière invalidation -->
                 <article v-if="selectedVersion?.invalidationReasonIds?.length ?? 0 > 0" class="message is-danger">
                   <div class="message-body px-2 py-2">
-                    <b-collapse :open="false" aria-id="invalidationMessageDetails" animation="slide">
+                    <BCollapse :open="false" aria-id="invalidationMessageDetails" animation="slide">
                       <template #trigger="props">
                         <div class="is-flex is-flex-direction-row is-justify-content-space-between">
                           <p aria-controls="invalidationMessageDetails" :aria-expanded="props.open">
@@ -128,7 +128,7 @@
                               }}</strong>
                             </span>
                           </p>
-                          <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
+                          <BIcon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
                         </div>
                       </template>
                       <p v-if="(selectedVersion?.publicComment?.length ?? 0) > 0">
@@ -141,7 +141,7 @@
                         <br />
                         <span class="is-size-7">{{ selectedVersion?.privateComment }}</span>
                       </p>
-                    </b-collapse>
+                    </BCollapse>
                   </div>
                 </article>
                 <!-- Sur les chapitres marqués en à discuter -> affichage de l'éventuel message de la modé -->
@@ -150,11 +150,11 @@
                   class="message is-warning"
                 >
                   <div class="message-body px-2 py-2">
-                    <b-collapse :open="false" aria-id="invalidationMessageDetails" animation="slide">
+                    <BCollapse :open="false" aria-id="invalidationMessageDetails" animation="slide">
                       <template #trigger="props">
                         <div class="is-flex is-flex-direction-row is-justify-content-space-between">
                           <p aria-controls="invalidationMessageDetails" :aria-expanded="props.open">A discuter</p>
-                          <b-icon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
+                          <BIcon class="is-clickable" :icon="props.open ? 'caret-up' : 'caret-down'" />
                         </div>
                       </template>
                       <p v-if="(selectedVersion?.privateComment?.length ?? 0) > 0">
@@ -162,7 +162,7 @@
                         <br />
                         <span class="is-size-7">{{ selectedVersion?.privateComment }}</span>
                       </p>
-                    </b-collapse>
+                    </BCollapse>
                   </div>
                 </article>
                 <div class="columns">
@@ -190,7 +190,7 @@
                             }}</b>
                           </div>
                         </div>
-                        <simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
+                        <Simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
                           <!-- <b-loading v-model="chaptersStatus" :is-full-page="false" /> -->
                           <ChaptersVersionItem
                             v-for="(version, index) in availableVersions"
@@ -205,7 +205,7 @@
                             :is-selected="(selectedVersion?.versionId ?? 0) == version.versionId"
                             @click="() => onVersionSelected(version)"
                           />
-                        </simplebar>
+                        </Simplebar>
                       </div>
                     </div>
                   </div>
@@ -215,7 +215,7 @@
               <footer
                 class="modal-card-foot p-3 is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
               >
-                <b-button
+                <BButton
                   v-show="
                     selectedTab?.status == ChapterValidationStatusEnum.AwaitingDiscussion ||
                     selectedTab?.status == ChapterValidationStatusEnum.AwaitingValidation ||
@@ -231,7 +231,7 @@
                     }
                   "
                 />
-                <b-button
+                <BButton
                   v-show="
                     selectedTab?.status == ChapterValidationStatusEnum.AwaitingValidation &&
                     selectedChapter.validationStatus == ChapterValidationStatusEnum.AwaitingValidation
@@ -246,7 +246,7 @@
                     }
                   "
                 />
-                <b-button
+                <BButton
                   v-show="selectedTab?.status == ChapterValidationStatusEnum.AwaitingModification"
                   label="Renvoyer une notification"
                   type="is-warning"
@@ -257,7 +257,7 @@
                     }
                   "
                 />
-                <b-button
+                <BButton
                   v-show="
                     selectedTab?.status == ChapterValidationStatusEnum.AwaitingDiscussion ||
                     selectedTab?.status == ChapterValidationStatusEnum.AwaitingModification ||
@@ -277,10 +277,10 @@
             </div>
           </div>
         </div>
-      </b-tab-item>
-    </b-tabs>
+      </BTabItem>
+    </BTabs>
     <!-- Modal de validation -->
-    <b-modal v-model="batchModalActive" scroll="keep" :has-modal-card="true" @after-enter="modalEntered">
+    <BModal v-model="batchModalActive" scroll="keep" :has-modal-card="true" @after-enter="modalEntered">
       <form>
         <div class="modal-card">
           <header class="modal-card-head">
@@ -288,7 +288,7 @@
             <button type="button" class="delete" @click="() => (batchModalActive = false)"></button>
           </header>
           <section class="modal-card-body pb-1">
-            <b-field
+            <BField
               v-if="currentValidationOption == ModalActionEnum.Unvalidate"
               class="mb-4 input-border"
               label="Motif(s) d'invalidation"
@@ -296,7 +296,7 @@
               custom-class="has-text-primary"
             >
               <div class="pt-3 px-2">
-                <b-checkbox
+                <BCheckbox
                   v-for="reason in configStore.invalidationReasons"
                   :key="reason.invalidationReasonId"
                   v-model="chapterValidationForm.invalidationReasonIds"
@@ -304,10 +304,10 @@
                   :required="currentValidationOption == ModalActionEnum.Unvalidate"
                 >
                   {{ reason.reason }}
-                </b-checkbox>
+                </BCheckbox>
               </div>
-            </b-field>
-            <b-field
+            </BField>
+            <BField
               v-if="
                 currentValidationOption == ModalActionEnum.Unvalidate ||
                 currentValidationOption == ModalActionEnum.Validate
@@ -316,7 +316,7 @@
               label-position="on-border"
               custom-class="has-text-primary"
             >
-              <b-input
+              <BInput
                 v-model="chapterValidationForm.publicComment"
                 maxlength="500"
                 type="textarea"
@@ -324,23 +324,23 @@
                 custom-class="pb-0"
                 :required="currentValidationOption == ModalActionEnum.Unvalidate"
               />
-            </b-field>
-            <b-field
+            </BField>
+            <BField
               label="Commentaire de la modération (non visible par l'auteur)"
               label-position="on-border"
               custom-class="has-text-primary"
             >
-              <b-input
+              <BInput
                 v-model="chapterValidationForm.privateComment"
                 maxlength="200"
                 type="textarea"
                 placeholder="Ce message ne sera pas visible par l'auteur"
                 custom-class="pb-0"
               />
-            </b-field>
+            </BField>
           </section>
           <footer class="modal-card-foot">
-            <b-button
+            <BButton
               :expanded="true"
               :disabled="modalValidateFormIsValid == false"
               :label="modalValidateButton"
@@ -351,7 +351,7 @@
           </footer>
         </div>
       </form>
-    </b-modal>
+    </BModal>
   </div>
 </template>
 

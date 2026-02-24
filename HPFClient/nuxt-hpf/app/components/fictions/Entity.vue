@@ -66,7 +66,7 @@
             fanfiction?.reviewCount != null
               ? fanfiction?.reviewCount + " review" + (fanfiction?.reviewCount > 1 ? "s" : "")
               : "aucune review"
-          }}<font-awesome-icon class="ml-1" icon="comments" />
+          }}<FontAwesomeIcon class="ml-1" icon="comments" />
         </a>
       </div>
     </div>
@@ -100,9 +100,9 @@
       <span
         v-for="characteristic in fanfiction?.characteristics"
         :key="'tag_' + characteristic.characteristicId.toString()"
-        ><b-tag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
+        ><BTag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
           characteristic.name
-        }}</b-tag></span
+        }}</BTag></span
       >
     </BTaglist>
     <div class="columns mb-0 mx-0 mt-0">

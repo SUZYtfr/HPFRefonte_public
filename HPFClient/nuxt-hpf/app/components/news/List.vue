@@ -95,7 +95,7 @@ const {
 
 const listLoading = computed<boolean>(() => isLoading);
 
-const emit = defineEmits(["pagination-change", "order-change"]);
+const emit = defineEmits(["paginationChange", "orderChange"]);
 
 const newsResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
@@ -115,7 +115,7 @@ watch(pageNewsPagination, () => {
     limit: pageNewsPagination.pageSize,
     offset: (pageNewsPagination.page - 1) * pageNewsPagination.pageSize,
   };
-  emit("pagination-change", pagination);
+  emit("paginationChange", pagination);
 });
 
 // TODO très moche
@@ -134,7 +134,7 @@ const newsOrderChoice = computed<string>({
     } else {
       order.postDate = Ordering.ASC;
     }
-    emit("order-change", order);
+    emit("orderChange", order);
   },
 });
 </script>
