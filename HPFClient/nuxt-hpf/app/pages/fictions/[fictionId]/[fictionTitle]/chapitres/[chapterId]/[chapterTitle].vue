@@ -349,17 +349,8 @@ async function postChapterReview(): Promise<void> {
 
 const reviewList = useTemplateRef("review-list");
 
-// TODO - insérer à la dernière position du curseur
 function setQuote(quote: string): void {
-  reviewList.value?.editor
-    ?.chain()
-    .focus("end", { scrollIntoView: true })
-    .enter()  // FIXME - seulement si un contenu existe préalablement
-    .insertContent(quote)
-    .setBlockquote()
-    .enter()
-    .unsetBlockquote()
-    .run();
+  reviewList.value?.editor?.chain().insertQuote(quote).run();
 }
 
 //   @Watch("$auth.loggedIn", { immediate: true })

@@ -20,3 +20,5 @@ export {
 } from "@tiptap/extension-table";
 
 export { LimitedSelection as TiptapLimitedSelection } from "./limited-selection";
+export { Quote as TiptapQuote } from "./quote";
+export { Indent as TiptapIndent } from "./indent";
