@@ -2,35 +2,23 @@
   <div class="container px-5">
     <!-- Modal filtres -->
     <BModal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
-      <NewsFilters
-        :news-filters
-        :is-loading="newsStatus == 'pending'"
-        :execute
-        @filters-change="(filters: NewsArticleFilters) => (newsFilters = filters)"
-      />
+      <NewsFilters :filters="newsFilters" :is-loading="newsStatus == 'pending'" :search-news />
     </BModal>
     <br />
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch">
-        <NewsFilters
-          :news-filters
-          :is-loading="newsStatus == 'pending'"
-          :execute
-          @filters-change="(filters: NewsArticleFilters) => (newsFilters = filters)"
-        />
+        <NewsFilters :filters="newsFilters" :is-loading="newsStatus == 'pending'" :search-news />
       </div>
       <!-- Liste des news -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <NewsList
           v-if="paginatedNews"
           :paginated-news
-          :news-pagination
-          :news-order
+          :pagination="newsPagination"
+          :order="newsOrder"
           :is-loading="newsStatus == 'pending'"
-          :execute
-          @pagination-change="(pagination: OffsetPaginationInput) => (newsPagination = pagination)"
-          @order-change="(order: NewsArticleOrder) => (newsOrder = order)"
+          :search-news
         />
       </div>
     </div>
@@ -70,7 +58,7 @@ const newsPagination = ref<OffsetPaginationInput>({
 const {
   data: paginatedNews,
   status: newsStatus,
-  execute,
+  execute: searchNews,
 } = await useAsyncGql(
   "getSearchNews",
   {

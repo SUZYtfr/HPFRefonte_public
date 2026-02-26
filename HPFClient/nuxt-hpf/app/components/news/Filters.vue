@@ -1,6 +1,6 @@
 <template>
   <div class="card is-relative">
-    <BLoading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="isLoading" :is-full-page="false" />
     <header class="card-header sub-title">
       <p class="card-header-title is-centered">Filtres</p>
     </header>
@@ -46,7 +46,7 @@
     <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
-          <a @click.prevent.stop="execute">Rechercher</a>
+          <a @click.prevent.stop="searchNews">Rechercher</a>
         </span>
       </p>
     </footer>
@@ -56,22 +56,18 @@
 <script setup lang="ts">
 import type { NewsArticleFilters } from "#gql";
 
-const { newsFilters, execute, isLoading } = defineProps<{
-  newsFilters: NewsArticleFilters;
-  isLoading: boolean;
-  execute: () => void;
-}>();
+interface Props {
+  searchNews: () => void;
+}
 
-const filters = ref<NewsArticleFilters>(Object.assign({}, newsFilters));
-const emit = defineEmits(["filtersChange"]);
+defineProps<Props>();
 
-watch(filters, () => emit("filtersChange", filters.value), { deep: true });
-
-const listLoading = computed<boolean>(() => isLoading);
+const filters = defineModel<NewsArticleFilters>("filters", { required: true });
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 </script>
 
 <style lang="scss" scoped>
-@use "~/assets/scss/custom.scss";
+@use "@/assets/scss/custom.scss";
 
 .card {
   overflow: hidden;

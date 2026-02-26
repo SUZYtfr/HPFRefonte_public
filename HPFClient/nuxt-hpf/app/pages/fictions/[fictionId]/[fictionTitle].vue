@@ -4,7 +4,7 @@
     class="container pt-3 is-flex is-flex-direction-column is-flex-grow-5"
     style="/*background-color: red; */"
   >
-    <BLoading v-if="status === 'pending'" :is-full-page="false" />
+    <BLoading v-model="isLoading" :is-full-page="false" />
     <div class="is-flex-grow-5">
       <!-- Sous page fiction / chapitre -->
       <NuxtPage :table-of-content="tableOfContent" class="px-3" />
@@ -125,6 +125,7 @@ const { data: tableOfContent, status } = await useAsyncGql(
     },
   },
 );
+const isLoading = computed<boolean>(() => status.value === "pending");
 
 const currentChapter = computed<ChapterModelLight | null>(() => {
   return route.params.chapterId

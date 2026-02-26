@@ -1,6 +1,6 @@
 <template>
   <div class="card is-relative">
-    <BLoading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="isLoading" :is-full-page="false" />
     <header class="card-header sub-title">
       <p class="card-header-title is-centered">Filtres</p>
     </header>
@@ -65,8 +65,8 @@
             return { name: f.name, value: f.id };
           }) || []
         "
-        :initial-included-values="fanfictionFilters.fandoms?.allIdsInList || []"
-        :initial-excluded-values="fanfictionFilters.fandoms?.NOT?.id?.inList || []"
+        :initial-included-values="filters.fandoms?.allIdsInList || []"
+        :initial-excluded-values="filters.fandoms?.NOT?.id?.inList || []"
         @change="fandomsChanged"
       />
       <CharacteristicsPanel
@@ -148,7 +148,7 @@
     <footer class="card-footer">
       <p class="card-footer-item py-2">
         <span>
-          <a @click.prevent.stop="execute">Rechercher</a>
+          <a @click.prevent.stop="searchFictions">Rechercher</a>
         </span>
       </p>
     </footer>
@@ -161,28 +161,17 @@ import type { FictionFilters } from "#gql";
 import type { CharacteristicModel } from "@/models";
 
 interface Props {
-  fanfictionFilters: FictionFilters;
   initialIncludedIds: number[];
   initialExcludedIds: number[];
-  isLoading?: boolean;
   isFixedHeightCard?: boolean;
   tooltipPosition?: string;
-  execute: () => void;
+  searchFictions: () => Promise<void>;
 }
 
-const {
-  fanfictionFilters,
-  isLoading = false,
-  isFixedHeightCard = false,
-  tooltipPosition = "is-right",
-} = defineProps<Props>();
+const { isFixedHeightCard = false, tooltipPosition = "is-right" } = defineProps<Props>();
 
-const filters = ref<FictionFilters>(Object.assign({}, fanfictionFilters));
-const emit = defineEmits(["filtersChange"]);
-
-watch(filters, () => emit("filtersChange", filters.value), { deep: true });
-
-const listLoading = computed<boolean>(() => isLoading);
+const filters = defineModel<FictionFilters>("filters", { required: true });
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 
 const sliderTicks = [
   { sliderValue: 1, realValue: 500, displayValue: "<500" },
@@ -294,7 +283,7 @@ function characteristicsChanged(characteristicId: number, action: boolean | null
 </script>
 
 <style lang="scss" scoped>
-@use "~/assets/scss/custom.scss";
+@use "@/assets/scss/custom.scss";
 
 .card {
   overflow: hidden;

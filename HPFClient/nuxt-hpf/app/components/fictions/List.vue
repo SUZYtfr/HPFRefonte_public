@@ -1,9 +1,9 @@
 <template>
   <div :class="[{ card: isCard }, 'is-flex', 'is-flex-direction-column', 'is-relative', 'fullheight']">
-    <BLoading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="isLoading" :is-full-page="false" />
     <header :class="[{ 'card-header': isCard }, 'p-2', 'is-flex', 'is-flex-direction-row', 'is-align-items-center']">
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
-        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
+        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="searchFictions">
           <span class="is-italic">
             {{ fanfictionResultLabel }}
           </span>
@@ -66,67 +66,56 @@
 
 <script setup lang="ts">
 import type { FanfictionModel } from "@/models";
-import type { FictionFilters, FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 
 interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
-  isLoading?: boolean;
   paginatedFanfictions: Omit<FictionTypeOffsetPaginated, "results"> & { results: FanfictionModel[] };
-  fictionPagination: OffsetPaginationInput;
-  fictionOrder: FictionOrder;
-  fanfictionFilters?: FictionFilters;
-  execute: () => Promise<void>;
+  searchFictions: () => Promise<void>;
 }
 
-const {
-  isCard = true,
-  showRefreshButton = true,
-  isLoading = false,
-  fictionPagination,
-  fictionOrder,
-  paginatedFanfictions,
-} = defineProps<Props>();
+const { isCard = true, showRefreshButton = true, paginatedFanfictions } = defineProps<Props>();
 
-const emit = defineEmits(["paginationChange", "orderChange"]);
+const pagination = defineModel<OffsetPaginationInput>("pagination", { required: true });
+const order = defineModel<FictionOrder>("order", { required: true });
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 
 // Transforme le système offset / limit en page / pageSize
 const pageFictionPagination = reactive({
-  pageSize: fictionPagination.limit!,
-  page: fictionPagination.offset! / fictionPagination.limit! + 1,
+  pageSize: pagination.value.limit!,
+  page: pagination.value.offset! / pagination.value.limit! + 1,
 });
 watch(pageFictionPagination, () => {
-  const pagination: OffsetPaginationInput = {
-    limit: pageFictionPagination.pageSize,
-    offset: (pageFictionPagination.page - 1) * pageFictionPagination.pageSize,
-  };
-  emit("paginationChange", pagination);
+  pagination.value.limit = pageFictionPagination.pageSize;
+  pagination.value.offset = (pageFictionPagination.page - 1) * pageFictionPagination.pageSize;
 });
 
-// TODO très moche
+// TODO marche mais très moche, à la rigueur tenter un truc avec watch ?
 const fictionsOrderChoice = computed<string>({
   get() {
-    if (fictionOrder.lastUpdateDate === Ordering.DESC) {
+    if (order.value.lastUpdateDate === Ordering.DESC) {
       return "most_recent";
-    } else if (fictionOrder.lastUpdateDate === Ordering.ASC) {
+    } else if (order.value.lastUpdateDate === Ordering.ASC) {
       return "less_recent";
-    } else if (fictionOrder.title === Ordering.DESC) {
+    } else if (order.value.title === Ordering.DESC) {
       return "alpha";
     } else {
       return "";
     }
   },
   set(value: string) {
-    const order: FictionOrder = {};
     if (value === "most_recent") {
-      order.lastUpdateDate = Ordering.DESC;
+      order.value.lastUpdateDate = Ordering.DESC;
+      order.value.title = undefined;
     } else if (value === "less_recent") {
-      order.lastUpdateDate = Ordering.ASC;
+      order.value.lastUpdateDate = Ordering.ASC;
+      order.value.title = undefined;
     } else if (value === "alpha") {
-      order.title = Ordering.ASC;
+      order.value.title = Ordering.ASC;
+      order.value.lastUpdateDate = undefined;
     }
-    emit("orderChange", order);
   },
 });
 
@@ -137,8 +126,6 @@ const fanfictionResultLabel = computed<string>(() => {
   result += paginatedFanfictions.totalCount > 1 ? "s" : "";
   return result;
 });
-
-const listLoading = computed<boolean>(() => isLoading);
 
 /*
 let timerId: number = 0;

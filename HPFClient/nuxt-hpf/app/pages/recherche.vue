@@ -3,14 +3,13 @@
     <!-- Modal filtres -->
     <BModal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
       <FictionsFilters
-        :fanfiction-filters
+        :filters="fanfictionFilters"
         :initial-included-ids="initialIncludedTagIds"
         :initial-excluded-ids="initialExcludedTagIds"
         :is-loading="status === 'pending'"
-        :execute="execute"
+        :search-fictions
         :is-fixed-height-card="true"
         :tooltip-position="'is-top'"
-        @filters-change="(filters: FictionFilters) => (fanfictionFilters = filters)"
       />
     </BModal>
     <br />
@@ -18,24 +17,21 @@
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch">
         <FictionsFilters
+          :filters="fanfictionFilters"
           :initial-included-ids="initialIncludedTagIds"
           :initial-excluded-ids="initialExcludedTagIds"
-          :fanfiction-filters
           :is-loading="status === 'pending'"
-          :execute="execute"
-          @filters-change="(filters: FictionFilters) => (fanfictionFilters = filters)"
+          :search-fictions
         />
       </div>
       <!-- Liste des fictions -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
         <FictionsList
+          :pagination="fictionPagination"
+          :order="fictionOrder"
           :paginated-fanfictions
-          :fiction-order
-          :fiction-pagination
           :is-loading="status === 'pending'"
-          :execute="execute"
-          @pagination-change="(pagination: OffsetPaginationInput) => (fictionPagination = pagination)"
-          @order-change="(order: FictionOrder) => (fictionOrder = order)"
+          :search-fictions
         />
       </div>
       <!-- Bouton filtres (seulement en tablet et inférieur) -->
@@ -132,7 +128,7 @@ watch(fanfictionFilters.value, () => {
 const {
   data: paginatedFanfictions,
   status,
-  execute,
+  execute: searchFictions,
 } = await useAsyncGql(
   "searchFictions",
   {
@@ -156,7 +152,7 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-@use "~/assets/scss/custom.scss";
+@use "@/assets/scss/custom.scss";
 
 .btn-filters {
   left: 50%;

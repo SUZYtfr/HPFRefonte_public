@@ -22,11 +22,7 @@
       </div>
       <div class="column is-5-tablet is-4-desktop is-3-widescreen">
         <!-- News -->
-        <NewsThumbnailList
-          v-if="paginatedRecentNews"
-          :is-loading="newsStatus === 'pending'"
-          :news="paginatedRecentNews"
-        />
+        <NewsThumbnailList :is-loading="newsStatus === 'pending'" :news="paginatedRecentNews" />
       </div>
     </div>
     <br />

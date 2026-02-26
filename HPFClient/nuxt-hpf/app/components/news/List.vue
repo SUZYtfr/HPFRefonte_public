@@ -1,6 +1,6 @@
 <template>
   <div :class="[{ card: isCard }, 'is-flex', 'is-flex-direction-column', 'is-relative', 'fullheight']">
-    <BLoading v-model="listLoading" :is-full-page="false" />
+    <BLoading v-model="isLoading" :is-full-page="false" />
     <header
       :class="[
         { 'card-header': isCard },
@@ -12,7 +12,7 @@
       ]"
     >
       <div class="is-flex-grow-5 p-0 m-0 mr-2">
-        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="execute">
+        <BButton v-if="showRefreshButton" type="is-primary" icon-left="redo-alt" @click="searchNews">
           <span class="is-italic">
             {{ newsResultLabel }}
           </span>
@@ -75,27 +75,18 @@ import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPagination
 import { Ordering } from "#gql/default";
 import type { NewsModel } from "@/models";
 
-const {
-  isCard = true,
-  paginatedNews,
-  showRefreshButton = true,
-  isLoading = false,
-  newsPagination,
-  newsOrder,
-  execute,
-} = defineProps<{
+interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
-  isLoading?: boolean;
   paginatedNews: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
-  newsPagination: OffsetPaginationInput;
-  newsOrder: NewsArticleOrder;
-  execute: () => Promise<void>;
-}>();
+  searchNews: () => Promise<void>;
+}
 
-const listLoading = computed<boolean>(() => isLoading);
+const { isCard = true, paginatedNews, showRefreshButton = true, searchNews } = defineProps<Props>();
 
-const emit = defineEmits(["paginationChange", "orderChange"]);
+const pagination = defineModel<OffsetPaginationInput>("pagination", { required: true });
+const order = defineModel<NewsArticleOrder>("order", { required: true });
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 
 const newsResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
@@ -107,34 +98,29 @@ const newsResultLabel = computed<string>(() => {
 
 // Transforme le système offset / limit en page / pageSize
 const pageNewsPagination = reactive({
-  pageSize: newsPagination.limit!,
-  page: newsPagination.offset! / newsPagination.limit! + 1,
+  pageSize: pagination.value.limit!,
+  page: pagination.value.offset! / pagination.value.limit! + 1,
 });
 watch(pageNewsPagination, () => {
-  const pagination: OffsetPaginationInput = {
-    limit: pageNewsPagination.pageSize,
-    offset: (pageNewsPagination.page - 1) * pageNewsPagination.pageSize,
-  };
-  emit("paginationChange", pagination);
+  pagination.value.limit = pageNewsPagination.pageSize;
+  pagination.value.offset = (pageNewsPagination.page - 1) * pageNewsPagination.pageSize;
 });
 
 // TODO très moche
 const newsOrderChoice = computed<string>({
   get() {
-    if (newsOrder.postDate === Ordering.DESC) {
+    if (order.value.postDate === Ordering.DESC) {
       return "most_recent";
     } else {
       return "less_recent";
     }
   },
   set(value: string) {
-    const order: NewsArticleOrder = {};
     if (value === "most_recent") {
-      order.postDate = Ordering.DESC;
+      order.value.postDate = Ordering.DESC;
     } else {
-      order.postDate = Ordering.ASC;
+      order.value.postDate = Ordering.ASC;
     }
-    emit("orderChange", order);
   },
 });
 </script>

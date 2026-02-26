@@ -4,7 +4,7 @@
       <p class="card-header-title is-centered">Actualités</p>
     </header>
     <div class="card-content is-relative p-2">
-      <BLoading :active="isLoading" :is-full-page="false" />
+      <BLoading :v-model="isLoading" :is-full-page="false" />
       <div v-if="(news?.totalCount ?? 0) > 0">
         <NewsEntity
           v-for="(item, innerindex) of news?.results"
@@ -40,10 +40,12 @@ type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "res
   results: NewsModel[];
 };
 
-const { isLoading = false } = defineProps<{
+interface Props {
   news: NewsArticleModelOffsetPaginated;
-  isLoading?: boolean;
-}>();
+}
+
+defineProps<Props>();
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 </script>
 
 <style lang="scss" scoped></style>

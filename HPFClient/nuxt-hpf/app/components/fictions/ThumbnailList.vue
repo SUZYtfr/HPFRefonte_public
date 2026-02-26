@@ -7,7 +7,7 @@
         </p>
       </header>
       <div class="card-content is-relative p-2">
-        <BLoading v-if="isLoading" :is-full-page="false" />
+        <BLoading v-model="isLoading" :is-full-page="false" />
         <div
           v-if="fanfictions?.totalCount || 0 > 0"
           class="columns is-variable is-1-mobile is-2-tablet is-3-desktop is-3-widescreen is-2-fullhd is-multiline"
@@ -82,12 +82,13 @@ type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, "results
 };
 
 defineProps<{
-  isLoading: boolean;
   title?: string;
   fandom?: FandomData;
   fanfictions?: FictionTypeModelOffsetPaginated;
   listType: FanfictionListType;
 }>();
+
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 </script>
 
 <style lang="scss" scoped></style>
