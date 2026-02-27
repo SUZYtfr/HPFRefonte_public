@@ -202,7 +202,7 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
 
 async function postReview(): Promise<void> {
   await GqlCreateFictionReview({
-    fictionId: Number(route.params.fictionId as string),
+    fictionId: route.params.fictionId as string,
     fictionReviewData: {
       text: reviewState.value.content,
       grading: reviewState.value.grading,

@@ -29,7 +29,7 @@ query getChapterReviews($filters: ChapterReviewFilters, $pagination: OffsetPagin
   }
 }
 
-mutation createChapterReview($chapterId: Int!, $chapterReviewData: ReviewInput!) {
+mutation createChapterReview($chapterId: ID!, $chapterReviewData: ReviewInput!) {
   createChapterReview(chapterId: $chapterId, reviewData: $chapterReviewData) {
     id
   }

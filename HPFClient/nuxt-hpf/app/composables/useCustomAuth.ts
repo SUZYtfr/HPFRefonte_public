@@ -13,14 +13,17 @@ Autre option, se passer entièrement de sidebase/nuxt-auth pour écrire ses prop
 composables et middlewares avec nuxt-graphql-client.
 */
 
-const token = ref<string>("");
+// const token = ref<string>("");
 const refresh = ref<string>("");
-const isAuthenticated = computed<boolean>(() => token.value.length > 0);
+// const isAuthenticated = computed<boolean>(() => token.value.length > 0);
 const loading = ref<boolean>(false);
 const data = ref<UserType | null>(null); // TODO
 const isStaff = computed<boolean>(() => data.value?.isStaff || false); // TODO token claims ou accountData.isStaff?
 
 export function useCustomAuth() {
+  const token = useCookie("gql:default");
+  const isAuthenticated = computed(() => token.value?.length > 0);
+
   async function signIn(credentials: { username: string; password: string }) {
     useGqlToken(null);
     token.value = "";

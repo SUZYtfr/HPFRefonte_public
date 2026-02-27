@@ -1,4 +1,4 @@
-mutation postComment($newsArticleId: Int!, $commentData: NewsCommentInput!) {
+mutation postComment($newsArticleId: ID!, $commentData: NewsCommentInput!) {
   postComment(newsArticleId: $newsArticleId, commentData: $commentData) {
     id
   }

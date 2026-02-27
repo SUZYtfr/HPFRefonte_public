@@ -1,8 +1,10 @@
 from django.db.models import QuerySet
 import strawberry
 import strawberry_django
+from strawberry import Info
 from strawberry_django.pagination import OffsetPaginated
-from strawberry_django.permissions import IsStaff
+from strawberry_django.permissions import IsStaff, IsAuthenticated
+from strawberry_django.auth.utils import get_current_user
 from fictions.models import Fiction, Chapter, ChapterVersion, Fandom
 from news.models import NewsArticle, NewsStatus
 from reviews.models import ChapterReview, FictionReview
@@ -21,6 +23,8 @@ from app.graphql_api.types import (
     FictionReviewType,
 )
 
+
+# PUBLIQUE
 
 def resolve_fandom_by_slug(slug: str) -> Fandom:
     return Fandom.objects.get(slug=slug)
@@ -57,6 +61,27 @@ def resolve_public_news(pk: strawberry.ID | None = None) -> QuerySet[NewsArticle
     else:
         return queryset
 
+# PRIVÉ
+
+def resolve_private_fictions(info: Info, pk: strawberry.ID | None = None) -> QuerySet[Fiction] | Fiction:
+    current_user = get_current_user(info)
+    queryset = current_user.created_fictions.all()
+    if pk:
+        return queryset.get(pk=pk)
+    else:
+        return queryset
+
+
+def resolve_private_chapters(info: Info, pk: strawberry.ID | None = None) -> QuerySet[Chapter] | Chapter:
+    current_user = get_current_user(info)
+    queryset = current_user.created_chapters.all()
+    if pk:
+        return queryset.get(pk=pk)
+    else:
+        return queryset
+
+
+# ADMIN
 
 def resolve_admin_chapter_versions() -> QuerySet[ChapterVersion]:
     return ChapterVersion.objects.exclude(submission_date__isnull=True)
@@ -84,16 +109,33 @@ class Query:
 
     # privé
     account: UserType = strawberry_django.auth.current_user()  # a son propre check d'auth
+
+    private_fiction: FictionType = strawberry_django.field(
+        resolver=resolve_private_fictions,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    private_fictions: OffsetPaginated[FictionType] = strawberry_django.offset_paginated(
+        resolver=resolve_private_fictions,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    private_chapter: ChapterType = strawberry_django.field(
+        resolver=resolve_private_chapters,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    private_chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(
+        resolver=resolve_private_chapters,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
     # TODO private_fictions, etc? ou accès par account > created_fictions?
 
     # admin
     admin_fictions: OffsetPaginated[FictionType] = strawberry_django.offset_paginated(
-        extensions=[IsStaff(fail_silently=False)],
+        extensions=[IsStaff(fail_silently=False), IsAuthenticated(fail_silently=False)],
     )
     admin_chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(
-        extensions=[IsStaff(fail_silently=False)],
+        extensions=[IsStaff(fail_silently=False), IsAuthenticated(fail_silently=False)],
     )
     admin_chapter_versions: OffsetPaginated[ChapterVersionType] = strawberry_django.offset_paginated(
         resolver=resolve_admin_chapter_versions,
-        extensions=[IsStaff(fail_silently=False)],
+        extensions=[IsStaff(fail_silently=False), IsAuthenticated(fail_silently=False)],
     )

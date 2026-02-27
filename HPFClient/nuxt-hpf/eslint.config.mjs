@@ -49,6 +49,13 @@ export default withNuxt({
     "vue/component-name-in-template-casing": ["warn", "PascalCase", { registeredComponentsOnly: false }],
     "vue/prop-name-casing": ["warn", "camelCase"],
     "vue/custom-event-name-casing": ["warn", "camelCase"],
+    "vue/first-attribute-linebreak": [
+      "warn",
+      {
+        singleline: "ignore",
+        multiline: "below",
+      },
+    ],
 
     "vue/html-self-closing": [
       "error",

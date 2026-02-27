@@ -88,13 +88,9 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     title = models.CharField(
         verbose_name="titre",
         max_length=200,
-        blank=False,
     )
     summary = models.TextField(
         verbose_name="résumé",
-        null=False,
-        blank=True,
-        default="",
     )
     storynote = models.TextField(
         verbose_name="note de fiction",

@@ -339,7 +339,7 @@ const tiptapReadOnlyConfig = reactive<TipTapEditorConfig>({
 
 async function postChapterReview(): Promise<void> {
   await GqlCreateChapterReview({
-    chapterId: Number(route.params.chapterId as string),
+    chapterId: route.params.chapterId as string,
     chapterReviewData: {
       text: reviewState.value.content,
       grading: reviewState.value.grading,

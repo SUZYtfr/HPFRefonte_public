@@ -25,10 +25,14 @@ from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion
 from reviews.models import ChapterReview, FictionReview
-
+from core.text_functions import count_words
 
 ### NEWS
-def post_comment(news_article_id: int, comment_data: NewsCommentInput, info: Info) -> NewsCommentType:
+def post_comment(
+    info: Info,
+    news_article_id: strawberry.ID,
+    comment_data: NewsCommentInput,
+) -> NewsCommentType:
     # récupération
     current_user = get_current_user(info)
 
@@ -44,9 +48,9 @@ def post_comment(news_article_id: int, comment_data: NewsCommentInput, info: Inf
 
 ### FICTIONS
 def create_fiction(
+    info: Info,
     fiction_data: FictionInput,
     first_chapter_data: ChapterInput,
-    info: Info,
 ) -> FictionType:
     # récupération
     current_user = get_current_user(info)
@@ -56,28 +60,35 @@ def create_fiction(
         fiction = Fiction.objects.create(
             creation_user=current_user,
             modification_user=current_user,
-            title=fiction_data.title,
+            **vars(fiction_data),
         )
-        first_chapter = Chapter.objects.create(
+        chapter = Chapter.objects.create(
             fiction=fiction,
             creation_user=current_user,
             modification_user=current_user,
         )
-        ChapterVersion.objects.create(
-            chapter=first_chapter,
+        chapter_version = ChapterVersion.objects.create(
+            chapter=chapter,
             creation_user=current_user,
             title=first_chapter_data.title,
             text=first_chapter_data.text,
-            word_count=20,
+            start_note=first_chapter_data.start_note,
+            end_note=first_chapter_data.end_note,
+            word_count=count_words(first_chapter_data.text),
+            submission_date=timezone.now() if not first_chapter_data.is_draft else None,
         )
+        if not first_chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+            chapter.published_version = chapter_version
+            chapter.save()
+
 
     return cast(FictionType, fiction)
 
 
 def update_fiction(
-    fiction_id: int,
-    fiction_data: FictionInput,
     info: Info,
+    fiction_id: strawberry.ID,
+    fiction_data: FictionInput,
 ) -> FictionType:
     # récupération
     current_user = get_current_user(info)
@@ -96,7 +107,7 @@ def update_fiction(
     return cast(FictionType, fiction)
 
 
-def delete_fiction(fiction_id: int, info: Info) -> None:
+def delete_fiction(info: Info, fiction_id: strawberry.ID) -> None:
     # récupération
     current_user = get_current_user(info)
     fiction = Fiction.objects.get(pk=fiction_id)
@@ -112,9 +123,9 @@ def delete_fiction(fiction_id: int, info: Info) -> None:
 
 # Chapitres
 def create_chapter(
-    fiction_id: int,
-    chapter_data: ChapterInput,
     info: Info,
+    fiction_id: strawberry.ID,
+    chapter_data: ChapterInput,
 ) -> ChapterType:
     # récupération
     current_user = get_current_user(info)
@@ -132,21 +143,27 @@ def create_chapter(
             creation_user=current_user,
             modification_user=current_user,
         )
-        ChapterVersion.objects.create(
+        chapter_version = ChapterVersion.objects.create(
             chapter=chapter,
             creation_user=current_user,
             title=chapter_data.title,
             text=chapter_data.text,
-            word_count=20,
+            start_note=chapter_data.start_note,
+            end_note=chapter_data.end_note,
+            word_count=count_words(chapter_data.text),
+            submission_date=timezone.now() if not chapter_data.is_draft else None,
         )
+        if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+            chapter.published_version = chapter_version
+            chapter.save()
 
     return cast(ChapterType, chapter)
 
 
 def update_chapter(
-    chapter_id: int,
-    chapter_data: ChapterInput,
     info: Info,
+    chapter_id: strawberry.ID,
+    chapter_data: ChapterInput,
 ) -> ChapterType:
     # récupération
     current_user = get_current_user(info)
@@ -160,21 +177,27 @@ def update_chapter(
     with django.db.transaction.atomic():
         # TODO peut-être des champs à Chapter ici ?
         # TODO est-ce qu'on update update.modification_user ?
-        ChapterVersion.objects.create(
+        chapter_version = ChapterVersion.objects.create(
             chapter=chapter,
             creation_user=current_user,
             title=chapter_data.title,
             text=chapter_data.text,
-            word_count=20,
+            word_count=count_words(chapter_data.text),
+            start_note=chapter_data.start_note,
+            end_note=chapter_data.end_note,
         )
+        if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+            chapter.published_version = chapter_version
+            chapter.save()
 
     # TODO faut-il rafraîchir chapter ?
+    chapter.refresh_from_db()
     return cast(ChapterType, chapter)
 
 
 def delete_chapter(
-    chapter_id: int,
     info: Info,
+    chapter_id: strawberry.ID,
 ) -> None:
     # récupération
     current_user = get_current_user(info)
@@ -198,9 +221,9 @@ def delete_chapter(
 ### REVIEWS
 
 def create_fiction_review(
-    fiction_id: int,
-    review_data: ReviewInput,
     info: Info,
+    fiction_id: strawberry.ID,
+    review_data: ReviewInput,
 ) -> FictionReviewType:
     current_user = get_current_user(info)
     fiction = Fiction.objects.get(pk=fiction_id)
@@ -218,9 +241,9 @@ def create_fiction_review(
 
 
 def create_chapter_review(
-    chapter_id: int,
-    review_data: ReviewInput,
     info: Info,
+    chapter_id: strawberry.ID,
+    review_data: ReviewInput,
 ) -> ChapterReviewType:
     current_user = get_current_user(info)
     chapter = Chapter.objects.get(pk=chapter_id)
@@ -241,9 +264,9 @@ def create_chapter_review(
 
 ### Fictions
 def invalidate_chapter_version(
-    chapter_version_id: int,
-    invalidation_data: InvalidationInput,
     info: Info,
+    chapter_version_id: strawberry.ID,
+    invalidation_data: InvalidationInput,
 ) -> ChapterVersionType:
     # récupération
     current_user = get_current_user(info)

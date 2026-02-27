@@ -786,6 +786,8 @@ const {
 
 const emit = defineEmits(["quote"]);
 
+const text = defineModel<string | null>("text", { required: false, default: "" });
+
 // TODO finir d'installer et remettre les extensions en place
 // et de ceci:
 // handleDOMEvents: {
@@ -889,10 +891,11 @@ const editor = useEditor({
       spellcheck: "true",
     },
   },
-  onUpdate: () => {
+  onUpdate: ({ editor }) => {
     // Déclenche l'actualisation du cache via un timer
     clearTimeout(timerThrottleId.value);
     timerThrottleId.value = window.setTimeout(calcEditorButtonsActiveStatuses, 100);
+    text.value = editor.getHTML();
   },
 });
 

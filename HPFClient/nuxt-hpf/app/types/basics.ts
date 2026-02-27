@@ -7,6 +7,7 @@ export enum SortByEnum {
 }
 
 export enum RecordStatusEnum {
+  New = 0,
   Unchanged = 1,
   Added = 2,
   Updated = 3,

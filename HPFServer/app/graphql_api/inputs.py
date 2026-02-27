@@ -16,12 +16,17 @@ class NewsCommentInput:
 @strawberry_django.input(model=Fiction)
 class FictionInput:
     title: auto
+    summary: auto
+    storynote: auto
 
 
 @strawberry_django.input(model=Chapter)
 class ChapterInput:
     title: str
     text: str
+    start_note: str
+    end_note: str
+    is_draft: bool | None
 
 
 ### REVIEWS

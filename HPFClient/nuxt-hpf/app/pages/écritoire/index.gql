@@ -1,0 +1,55 @@
+query getPrivateFiction($fictionId: ID) {
+  fiction: privateFiction(pk: $fictionId) {
+    id
+    title
+    summary
+    storynote
+    chapters {
+      results {
+        id
+      }
+    }
+  }
+}
+
+query getPrivateChapter($chapterId: ID) {
+  chapter: privateChapter(pk: $chapterId) {
+    id
+    title
+    startNote
+    endNote
+    text
+  }
+}
+
+mutation createFiction($fictionData: FictionInput!, $firstChapterData: ChapterInput!) {
+  createFiction(fictionData: $fictionData, firstChapterData: $firstChapterData) {
+    id
+    title
+    summary
+    storynote
+    chapters {
+      results {
+        id
+      }
+    }
+  }
+}
+
+mutation updateFiction($fictionId: ID!, $fictionData: FictionInput!) {
+  updateFiction(fictionId: $fictionId, fictionData: $fictionData) {
+    id
+  }
+}
+
+mutation createChapter($fictionId: ID!, $chapterData: ChapterInput!) {
+  createChapter(fictionId: $fictionId, chapterData: $chapterData) {
+    id
+  }
+}
+
+mutation updateChapter($chapterId: ID!, $chapterData: ChapterInput!) {
+  updateChapter(chapterId: $chapterId, chapterData: $chapterData) {
+    id
+  }
+}

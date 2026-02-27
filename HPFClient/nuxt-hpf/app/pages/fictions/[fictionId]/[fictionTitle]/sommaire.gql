@@ -41,7 +41,7 @@ query getFictionReviews($filters: FictionReviewFilters, $pagination: OffsetPagin
   }
 }
 
-mutation createFictionReview($fictionId: Int!, $fictionReviewData: ReviewInput!) {
+mutation createFictionReview($fictionId: ID!, $fictionReviewData: ReviewInput!) {
   createFictionReview(fictionId: $fictionId, reviewData: $fictionReviewData) {
     id
   }

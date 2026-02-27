@@ -22,10 +22,12 @@ setuptools = "^78.1.0"
 strawberry-graphql-django = "0.75.1"
 strawberry-django-extras = "0.2.6"
 django-polymorphic = "4.1.0"
+python-slugify = "^8.0.4"
 
 [tool.poetry.group.dev.dependencies]
 faker = "*"
 ruff = "^0.15.1"
+ipython = "^9.10.0"
 
 [tool.ruff.lint]
 exclude = ["**/tests/**"]
