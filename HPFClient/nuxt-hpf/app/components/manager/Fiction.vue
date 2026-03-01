@@ -1,149 +1,151 @@
 <template>
-  <BField label="Titre">
-    <BInput
-      v-model="fiction.title"
-      type="text"
-      placeholder="Titre de la fiction"
-      required
-      @update:model-value="() => $emit('unsavedChanges')"
-    />
-  </BField>
-  <BField label="Statut">
-    <BSelect v-model="fiction.status" required @update:model-value="() => $emit('unsavedChanges')">
-      <option v-for="[key, value] in Object.entries(FanfictionStatus)" :key="key" :value="key">
-        {{ value }}
-      </option>
-    </BSelect>
-  </BField>
-  <BField label="Résumé">
-    <CustomEditor
-      v-model:text="fiction.summary"
-      :config="{
-        defaultValue: fiction.summary || '',
-        showFooter: false,
-        placeholder: '',
-        fixedHeight: true,
-        height: 200,
-        canQuote: false,
-        readOnly: false,
-        quoteLimit: 0,
-        fontSize: 100,
-        oneLineToolbar: true,
-        canUseImage: false,
-      }"
-      @update:text="() => $emit('unsavedChanges')"
-    />
-  </BField>
+  <div class="card">
+    <div class="card-content">
+      <BField label="Titre">
+        <BInput
+          v-model="fiction.title"
+          type="text"
+          placeholder="Titre de la fiction"
+          required
+          @update:model-value="() => (unsavedChanges = true)"
+        />
+      </BField>
+      <BField label="Statut">
+        <BSelect v-model="fiction.status" required @update:model-value="() => (unsavedChanges = true)">
+          <option v-for="[key, value] in Object.entries(FanfictionStatus)" :key="key" :value="key">
+            {{ value }}
+          </option>
+        </BSelect>
+      </BField>
+      <BField label="Résumé">
+        <CustomEditor
+          v-model:text="fiction.summary"
+          :config="{
+            defaultValue: fiction.summary || '',
+            showFooter: false,
+            placeholder: '',
+            fixedHeight: true,
+            height: 200,
+            canQuote: false,
+            readOnly: false,
+            quoteLimit: 0,
+            fontSize: 100,
+            oneLineToolbar: true,
+            canUseImage: false,
+          }"
+          @update:text="() => (unsavedChanges = true)"
+        />
+      </BField>
 
-  <BField label="Fandoms">
-    <BTaginput
-      v-model="selectedFandoms"
-      field="name"
-      ellipsis
-      :allow-new="false"
-      autocomplete
-      :required="!selectedFandoms.length"
-      keep-first
-      placeholder="Ajouter au moins un fandom"
-      :data="filteredFandoms"
-      @typing="getFilteredFandoms"
-    >
-      <template #default="{ option }: { option: FandomData }">
-        <strong>{{ option.id }}</strong
-        >: {{ option.name }}
-      </template>
-    </BTaginput>
-  </BField>
+      <BField label="Fandoms">
+        <BTaginput
+          v-model="selectedFandoms"
+          field="name"
+          ellipsis
+          :allow-new="false"
+          autocomplete
+          :required="!selectedFandoms.length"
+          keep-first
+          placeholder="Ajouter au moins un fandom"
+          :data="filteredFandoms"
+          @typing="getFilteredFandoms"
+        >
+          <template #default="{ option }: { option: FandomData }">
+            <strong>{{ option.id }}</strong
+            >: {{ option.name }}
+          </template>
+        </BTaginput>
+      </BField>
 
-  <BField label="Genres">
-    <BTaginput
-      v-model="selectedGenres"
-      field="name"
-      ellipsis
-      :allow-new="false"
-      autocomplete
-      :required="!selectedGenres.length"
-      keep-first
-      placeholder="Ajouter au moins un genre"
-      :data="filteredGenres"
-      @typing="getFilteredGenres"
-    />
-  </BField>
+      <BField label="Genres">
+        <BTaginput
+          v-model="selectedGenres"
+          field="name"
+          ellipsis
+          :allow-new="false"
+          autocomplete
+          :required="!selectedGenres.length"
+          keep-first
+          placeholder="Ajouter au moins un genre"
+          :data="filteredGenres"
+          @typing="getFilteredGenres"
+        />
+      </BField>
 
-  <BField label="Rating">
-    <BSelect v-model="selectedRating" label="Rating" placeholder="Sélectionner un rating" required>
-      <option v-for="rating in ratings" :key="rating.characteristicId" :value="rating">
-        {{ rating.name }}
-      </option>
-    </BSelect>
-  </BField>
+      <BField label="Rating">
+        <BSelect v-model="selectedRating" label="Rating" placeholder="Sélectionner un rating" required>
+          <option v-for="rating in ratings" :key="rating.characteristicId" :value="rating">
+            {{ rating.name }}
+          </option>
+        </BSelect>
+      </BField>
 
-  <BField label="Caractéristiques">
-    <BTaginput
-      v-model="selectedCharacteristics"
-      field="name"
-      ellipsis
-      :allow-new="false"
-      autocomplete
-      keep-first
-      placeholder="Ajouter des caractéristiques"
-      :data="filteredCharacteristics"
-      @typing="getFilteredCharacteristics"
-    >
-      <template #default="{ option }: { option: CharacteristicModel }">
-        <strong>{{
-          characteristicTypes!.find(
-            (ct) => ct.characteristicTypeId.toString() === option.characteristicTypeId.toString(),
-          )!.name
-        }}</strong
-        >: {{ option.name }}
-      </template>
-      <template #tag="{ tag }: { tag: CharacteristicModel }">
-        <span :class="[getCaracteristicTypeColor(Number(tag.characteristicTypeId))]">{{ tag.name }}</span>
-      </template>
-    </BTaginput>
-  </BField>
+      <BField label="Caractéristiques">
+        <BTaginput
+          v-model="selectedCharacteristics"
+          field="name"
+          ellipsis
+          :allow-new="false"
+          autocomplete
+          keep-first
+          placeholder="Ajouter des caractéristiques"
+          :data="filteredCharacteristics"
+          @typing="getFilteredCharacteristics"
+        >
+          <template #default="{ option }: { option: CharacteristicModel }">
+            <strong>{{
+              characteristicTypes!.find(
+                (ct) => ct.characteristicTypeId.toString() === option.characteristicTypeId.toString(),
+              )!.name
+            }}</strong
+            >: {{ option.name }}
+          </template>
+          <template #tag="{ tag }: { tag: CharacteristicModel }">
+            <span :class="[getCaracteristicTypeColor(Number(tag.characteristicTypeId))]">{{ tag.name }}</span>
+          </template>
+        </BTaginput>
+      </BField>
 
-  <BField label="Tags">
-    <BTaginput
-      v-model="selectedTags"
-      field="name"
-      ellipsis
-      :allow-new="false"
-      autocomplete
-      keep-first
-      placeholder="Ajouter des tags"
-      :data="filteredTags"
-      @typing="getFilteredTags"
-    >
-      <template #default="{ option }: { option: Tag }">
-        <strong>{{ option.tagType }}</strong
-        >: {{ option.name }}
-      </template>
-    </BTaginput>
-  </BField>
+      <BField label="Tags">
+        <BTaginput
+          v-model="selectedTags"
+          field="name"
+          ellipsis
+          :allow-new="false"
+          autocomplete
+          keep-first
+          placeholder="Ajouter des tags"
+          :data="filteredTags"
+          @typing="getFilteredTags"
+        >
+          <template #default="{ option }: { option: Tag }">
+            <strong>{{ option.tagType }}</strong
+            >: {{ option.name }}
+          </template>
+        </BTaginput>
+      </BField>
 
-  <!-- TODO collapse -->
-  <BField label="Notes de fictions">
-    <CustomEditor
-      v-model:text="fiction.storynote"
-      :config="{
-        defaultValue: fiction.storynote || '',
-        showFooter: false,
-        placeholder: '',
-        fixedHeight: true,
-        height: 200,
-        canQuote: false,
-        readOnly: false,
-        quoteLimit: 0,
-        fontSize: 100,
-        oneLineToolbar: true,
-        canUseImage: false,
-      }"
-      @update:text="() => $emit('unsavedChanges')"
-    />
-  </BField>
-
+      <BField label="Notes de fictions">
+        <CustomEditor
+          v-model:text="fiction.storynote"
+          :config="{
+            defaultValue: fiction.storynote || '',
+            showFooter: false,
+            placeholder: '',
+            fixedHeight: false,
+            height: 200,
+            canQuote: false,
+            readOnly: false,
+            quoteLimit: 0,
+            fontSize: 100,
+            oneLineToolbar: true,
+            canUseImage: false,
+          }"
+          @update:text="() => (unsavedChanges = true)"
+        />
+      </BField>
+    </div>
+  </div>
   <!-- Barre de navigation -->
   <slot></slot>
 </template>
@@ -155,11 +157,10 @@ import type { FandomData } from "@/types/fanfictions";
 import { FanfictionStatus } from "@/models";
 import { getCaracteristicTypeColor } from "#imports";
 
-const fiction = defineModel<FanfictionModel>("fiction", { required: true });
-
 // NOTE J'aurais préféré watch(fiction, () => {}, { deep: true }) mais fiction est ref et pas reactive
 // Quand la fiction vide par défaut est remplacée par la fiction chargée, on perd l'unité et donc la réactivité
-defineEmits(["unsavedChanges"]);
+const unsavedChanges = defineModel<boolean>("unsavedChanges", { required: true });
+const fiction = defineModel<FanfictionModel>("fiction", { required: true });
 
 const { characteristicTypes } = useConfigStore();
 const { characteristics } = useConfigStore();

@@ -14,8 +14,8 @@
         <LazyManagerRules v-if="currentStep === 'rules'" v-model:rules-accepted="rulesAccepted">
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
             <div></div>
-            <BButton v-if="isEditing" type="is-danger">Annuler</BButton>
-            <BButton :disabled="!rulesAccepted" @click.prevent="() => steps?.next()">{{
+            <BButton type="is-danger">Annuler</BButton>
+            <BButton type="is-primary" :disabled="!rulesAccepted" @click.prevent="() => steps?.next()">{{
               isEditing ? "Modifier la fiction" : "Créer une fiction"
             }}</BButton>
           </div>
@@ -32,7 +32,7 @@
         <LazyManagerFiction
           v-if="currentStep === 'fiction'"
           v-model:fiction="fiction"
-          @unsaved-changes="unsavedChanges = true"
+          v-model:unsaved-changes="unsavedChanges"
         >
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
             <BButton @click.prevent="() => steps?.prev()">Relire le réglement</BButton>
@@ -49,6 +49,7 @@
               >Annuler les modifications</BButton
             >
             <BButton
+              type="is-primary"
               :disabled="!(rulesAccepted && fictionComplete)"
               @click.prevent="
                 () => {
@@ -75,8 +76,8 @@
           v-if="currentStep === 'chapter'"
           v-model:chapter="chapter"
           v-model:active-tab="activeTab"
+          v-model:unsaved-changes="unsavedChanges"
           :chapter-ids="fiction.chapters?.map((c) => c.chapterId.toString()) || []"
-          @unsaved-changes="unsavedChanges = true"
         >
           <!-- @tab-change="handleTabChange" -->
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
@@ -98,7 +99,15 @@
               :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
               @click.prevent="
                 () => {
-                  isEditing ? updateChapter(false) : postFiction(false);
+                  if (isEditing) {
+                    if (activeTab === '') {
+                      createChapter(false);
+                    } else {
+                      updateChapter(false);
+                    }
+                  } else {
+                    postFiction(false);
+                  }
                   unsavedChanges = false;
                 }
               "
@@ -193,14 +202,54 @@ const chapterComplete = computed<boolean>(() => {
 });
 const rulesAccepted = ref<boolean>(isEditing.value);
 
-// const formIsValid = computed<boolean>(() => {
-//   return rulesAccepted.value && fictionComplete.value && chapterComplete.value;
-// });
-
-async function updateChapter(isDraft: boolean): Promise<void> {
+async function postFiction(isDraft: boolean): Promise<void> {
   pending.value = true;
-  await GqlUpdateChapter({
-    chapterId: chapter.value.chapterId.toString(),
+  await GqlCreateFiction({
+    fictionData: {
+      title: fiction.value.title,
+      summary: fiction.value.summary || "",
+      storynote: fiction.value.storynote || "",
+    },
+    firstChapterData: {
+      title: chapter.value.title,
+      text: chapter.value.text || "",
+      startNote: chapter.value.startNote || "",
+      endNote: chapter.value.endNote || "",
+      isDraft: isDraft,
+    },
+  })
+    .then((value) => {
+      fictionLookup.fictionId = value.createFiction.id;
+      activeTab.value = value.createFiction.chapters.results![0]!.id;
+      isEditing.value = true;
+      snackbar.open({
+        duration: 5000,
+        message: autoPublish ? "La fiction a été publiée" : "La fiction est en attente de validation",
+        type: "is-danger",
+        position: "is-bottom-right",
+        actionText: undefined,
+        pauseOnHover: true,
+        queue: true,
+      });
+    })
+    .catch(() =>
+      snackbar.open({
+        duration: 5000,
+        message: "Une erreur s'est produite lors de la création de la fiction",
+        type: "is-danger",
+        position: "is-bottom-right",
+        actionText: undefined,
+        pauseOnHover: true,
+        queue: true,
+      }),
+    )
+    .finally(() => (pending.value = false));
+}
+
+async function createChapter(isDraft: boolean): Promise<void> {
+  pending.value = true;
+  await GqlCreateChapter({
+    fictionId: fiction.value.fanfictionId.toString(),
     chapterData: {
       title: chapter.value.title,
       text: chapter.value.text || "",
@@ -209,23 +258,23 @@ async function updateChapter(isDraft: boolean): Promise<void> {
       isDraft: isDraft,
     },
   })
-    .then(() =>
+    .then(async (value) => {
+      await fetchFiction(); // màj de la liste des chapitres
+      activeTab.value = value.createChapter.id;
       snackbar.open({
         duration: 5000,
-        message: autoPublish
-          ? "La nouvelle version du chapitre a été publiée"
-          : "La nouvelle version du chapitre été envoyée à la modération",
+        message: autoPublish ? "Le chapitre a été publié" : "Le chapitre été envoyé à la modération",
         type: "is-success",
         position: "is-bottom-right",
         actionText: undefined,
         pauseOnHover: true,
         queue: true,
-      }),
-    )
+      });
+    })
     .catch(() =>
       snackbar.open({
         duration: 5000,
-        message: "Une erreur s'est produite lors de la modification du chapitre",
+        message: "Une erreur s'est produite lors de l'envoi du chapitre",
         type: "is-danger",
         position: "is-bottom-right",
         actionText: undefined,
@@ -271,15 +320,11 @@ async function updateFiction(): Promise<void> {
     .finally(() => (pending.value = false));
 }
 
-async function postFiction(isDraft: boolean): Promise<void> {
+async function updateChapter(isDraft: boolean): Promise<void> {
   pending.value = true;
-  await GqlCreateFiction({
-    fictionData: {
-      title: fiction.value.title,
-      summary: fiction.value.summary || "",
-      storynote: fiction.value.storynote || "",
-    },
-    firstChapterData: {
+  await GqlUpdateChapter({
+    chapterId: chapter.value.chapterId.toString(),
+    chapterData: {
       title: chapter.value.title,
       text: chapter.value.text || "",
       startNote: chapter.value.startNote || "",
@@ -287,24 +332,23 @@ async function postFiction(isDraft: boolean): Promise<void> {
       isDraft: isDraft,
     },
   })
-    .then((value) => {
-      fictionLookup.fictionId = value.createFiction.id;
-      activeTab.value = value.createFiction.chapters.results![0]!.id;
-      isEditing.value = true;
+    .then(() =>
       snackbar.open({
         duration: 5000,
-        message: autoPublish ? "La fiction a été publiée" : "La fiction est en attente de validation",
-        type: "is-danger",
+        message: autoPublish
+          ? "La nouvelle version du chapitre a été publiée"
+          : "La nouvelle version du chapitre été envoyée à la modération",
+        type: "is-success",
         position: "is-bottom-right",
         actionText: undefined,
         pauseOnHover: true,
         queue: true,
-      });
-    })
+      }),
+    )
     .catch(() =>
       snackbar.open({
         duration: 5000,
-        message: "Une erreur s'est produite lors de la création de la fiction",
+        message: "Une erreur s'est produite lors de la modification du chapitre",
         type: "is-danger",
         position: "is-bottom-right",
         actionText: undefined,
