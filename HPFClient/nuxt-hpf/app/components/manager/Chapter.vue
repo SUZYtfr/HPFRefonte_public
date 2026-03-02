@@ -88,13 +88,22 @@
               <BTaginput
                 v-model="selectedTriggerWarnings"
                 field="name"
+                type="is-danger"
                 ellipsis
                 :allow-new="false"
                 autocomplete
                 keep-first
+                keep-open
+                open-on-focus
                 placeholder="Ajouter des avertissements de contenu"
                 :data="filteredTriggerWarnings"
                 @typing="getFilteredTriggerWarnings"
+                @update:model-value="
+                  (value: TriggerWarningData[]) => {
+                    chapter.triggerWarnings = value;
+                    unsavedChanges = true;
+                  }
+                "
               />
             </BField>
           </template>
@@ -108,7 +117,8 @@
 
 <script setup lang="ts">
 import { BTabs, BTabItem, BField, BInput, BTaginput } from "buefy";
-import type { ChapterModel, CharacteristicModel } from "@/models";
+import type { ChapterModel } from "@/models";
+import type { TriggerWarningData } from "@/types/characteristics";
 
 interface Props {
   isEditing: boolean;
@@ -136,9 +146,13 @@ watch(
 );
 
 // Avertissements
-const triggerWarnings = useConfigStore().characteristics!.filter((c) => c.characteristicTypeId.toString() === "4");
-const filteredTriggerWarnings = ref<CharacteristicModel[]>([]);
-const selectedTriggerWarnings = ref<CharacteristicModel[]>([]);
+const { triggerWarnings } = useConfigStore();
+const selectedTriggerWarnings = ref<TriggerWarningData[]>(
+  triggerWarnings!.filter((tw) =>
+    chapter.value.triggerWarnings!.map((tw) => tw.id.toString()).includes(tw.id.toString()),
+  ),
+);
+const filteredTriggerWarnings = ref<TriggerWarningData[]>(triggerWarnings!);
 function getFilteredTriggerWarnings(text: number | string | undefined): string[] | undefined {
   if (text == null) {
     return;

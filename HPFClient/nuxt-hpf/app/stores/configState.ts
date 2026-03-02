@@ -2,12 +2,14 @@ import { CharacteristicModel, CharacteristicTypeModel, ThemeModel } from "~/mode
 import type { FandomData } from "~/types/fanfictions";
 import { InvalidationReasonData } from "~/types/config";
 import { plainToInstance } from "class-transformer";
-import type { CharacteristicType, CharacteristicTypeType, ThemeType } from "#gql";
+import type { CharacteristicType, CharacteristicTypeType, ThemeType, TriggerWarningType } from "#gql";
+import { TriggerWarningData } from "~/types/characteristics";
 
 export const useConfigStore = defineStore("config", () => {
   //#region State
   const characteristics = ref<CharacteristicModel[]>();
   const characteristicTypes = ref<CharacteristicTypeModel[]>();
+  const triggerWarnings = ref<TriggerWarningData[]>();
   const themes = ref<ThemeModel[]>();
   const fandoms = ref<FandomData[]>();
   // TODO appel à l'api, pour l'instant en dur.
@@ -66,6 +68,9 @@ export const useConfigStore = defineStore("config", () => {
   function setCharacteristicTypes(charTypes: CharacteristicTypeModel[]): void {
     characteristicTypes.value = charTypes;
   }
+  function setTriggerWarnings(tws: TriggerWarningData[]): void {
+    triggerWarnings.value = tws;
+  }
   function setThemes(thms: ThemeModel[]): void {
     themes.value = thms;
   }
@@ -86,8 +91,8 @@ export const useConfigStore = defineStore("config", () => {
       "getCharacteristics",
       {},
       {
-        transform: (data: { characteristics: CharacteristicType[] }) => {
-          return plainToInstance(CharacteristicModel, data.characteristics);
+        transform: (input: { characteristics: CharacteristicType[] }) => {
+          return plainToInstance(CharacteristicModel, input.characteristics);
         },
       },
     );
@@ -100,12 +105,26 @@ export const useConfigStore = defineStore("config", () => {
       "getCharacteristicTypes",
       {},
       {
-        transform: (data: { characteristicTypes: CharacteristicTypeType[] }) => {
-          return plainToInstance(CharacteristicTypeModel, data.characteristicTypes);
+        transform: (input: { characteristicTypes: CharacteristicTypeType[] }) => {
+          return plainToInstance(CharacteristicTypeModel, input.characteristicTypes);
         },
       },
     );
     setCharacteristicTypes(characteristicTypesTemp.value ?? []);
+    return true;
+  }
+
+  async function fetchTriggerWarnings(): Promise<true> {
+    const { data: triggerWarningTypesTemp } = await useAsyncGql(
+      "getTriggerWarnings",
+      {},
+      {
+        transform: (input: { triggerWarnings: TriggerWarningType[] }) => {
+          return plainToInstance(TriggerWarningData, input.triggerWarnings);
+        },
+      },
+    );
+    setTriggerWarnings(triggerWarningTypesTemp.value ?? []);
     return true;
   }
 
@@ -114,8 +133,8 @@ export const useConfigStore = defineStore("config", () => {
       "getThemes",
       {},
       {
-        transform: (data: { themes: ThemeType[] }) => {
-          return plainToInstance(ThemeModel, data.themes);
+        transform: (input: { themes: ThemeType[] }) => {
+          return plainToInstance(ThemeModel, input.themes);
         },
       },
     );
@@ -128,8 +147,8 @@ export const useConfigStore = defineStore("config", () => {
       "getFandoms",
       {},
       {
-        transform: (data: { fandoms: FandomData[] }) => {
-          return data.fandoms;
+        transform: (input: { fandoms: FandomData[] }) => {
+          return input.fandoms;
         },
       },
     );
@@ -140,6 +159,7 @@ export const useConfigStore = defineStore("config", () => {
   return {
     characteristics,
     characteristicTypes,
+    triggerWarnings,
     themes,
     currentTheme,
     fandoms,
@@ -148,6 +168,7 @@ export const useConfigStore = defineStore("config", () => {
     // setCharacteristicTypes,
     fetchCharacteristicTypes,
     fetchCharacteristics,
+    fetchTriggerWarnings,
     fetchThemes,
     fetchFandoms,
   };

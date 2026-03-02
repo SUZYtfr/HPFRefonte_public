@@ -6,3 +6,4 @@ export * from "./fanfictions";
 export * from "./themes";
 export * from "./news";
 export * from "~/types/config";
+export * from "~/types/characteristics";

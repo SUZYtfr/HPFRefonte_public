@@ -12,7 +12,9 @@ from fictions.enums import (
     FictionStatus,
     ChapterValidationStage,
     CollectionAccess,
+    Rating,
 )
+from characteristics.models import TriggerWarning
 from images.models import ContentImage
 
 from typing import TYPE_CHECKING
@@ -132,6 +134,10 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         to="fictions.Fandom",
         related_name="fictions",
     )
+    rating = models.PositiveSmallIntegerField(
+        verbose_name="audience",
+        choices=Rating.choices,
+    )
 
     def __str__(self) -> str:
         return self.title
@@ -234,6 +240,10 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def series(self) -> list:
         return self.collections.all()
 
+    @property
+    def trigger_warnings(self) -> models.QuerySet["TriggerWarning"]:
+        return TriggerWarning.objects.filter(chapter__fiction=self)
+
 
 class ChapterQuerySet(models.QuerySet):
     def with_word_counts(self) -> "ChapterQuerySet":
@@ -293,11 +303,9 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     #     choices=ChapterValidationStage.choices,
     #     default=ChapterValidationStage.DRAFT,
     # )
-    # TODO faire des trigger warnings une table à part
     trigger_warnings = models.ManyToManyField(
         verbose_name="avertissements",
-        to="characteristics.Characteristic",
-        limit_choices_to={"characteristic_type": settings.TW_CHARTYPE_ID},
+        to="characteristics.TriggerWarning",
         blank=True,
     )
 

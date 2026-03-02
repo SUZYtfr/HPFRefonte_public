@@ -43,15 +43,15 @@
     </section>
 
     <!-- Trigger warning -->
-    <article v-if="fictionTriggerWarnings().length > 0" class="message is-danger">
+    <article v-if="fiction.triggerWarnings?.length ?? 0 > 0" class="message is-danger">
       <div class="message-body py-1 px-2">
         <div class="is-flex is-flex-direction-row">
           <BIcon icon="exclamation-triangle" /><span><strong> TW / CW </strong></span>
         </div>
         <p>
-          <template v-for="(tw, index) in fictionTriggerWarnings()" :key="index">
+          <template v-for="(tw, index) in fiction.triggerWarnings" :key="index">
             <ul>
-              <li>{{ tw.caption }}</li>
+              <li>{{ tw.name }}</li>
             </ul>
           </template>
         </p>
@@ -92,15 +92,13 @@
               >
                 {{ chapter.title }}
               </NuxtLink>
-              <div
-                v-if="(chapter.triggerWarningsLoaded?.length ?? 0) > 0"
-                class="is-danger ml-2 is-flex is-flex-direction-row is-align-items-baseline"
-              >
-                <BIcon icon="exclamation-triangle" size="is-small" type="is-danger" class="mr-1" />
-                <div v-for="(triggerWarning, twIndex) in chapter.triggerWarningsLoaded" :key="twIndex">
-                  <span v-if="twIndex > 0"> , </span>
-                  <span class="has-text-danger">{{ triggerWarning.caption }}</span>
-                </div>
+              <div v-if="chapter.triggerWarnings?.length || 0 > 0" class="b-tooltips ml-2">
+                <BTooltip type="is-danger" position="is-right">
+                  <BIcon icon="exclamation-triangle" size="is-small" type="is-danger" class="mr-1" />
+                  <template #content>
+                    {{ chapter.triggerWarnings?.map((tw) => tw.name).join(", ") }}
+                  </template>
+                </BTooltip>
               </div>
               <br />
             </div>
@@ -145,7 +143,7 @@
 
 <script setup lang="ts">
 import type { FictionReviewTypeOffsetPaginated, FictionType, OffsetPaginationInput } from "#gql";
-import { FanfictionModel, ReviewModel, type ChapterModelLight, type TableOfContent } from "@/models";
+import { FanfictionModel, ReviewModel, type TableOfContent } from "@/models";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
 import type { ReviewState } from "@/types/other";
 import { plainToInstance } from "class-transformer";
@@ -208,17 +206,6 @@ async function postReview(): Promise<void> {
       grading: reviewState.value.grading,
     },
   });
-}
-
-function fictionTriggerWarnings(): { id: number; caption: string }[] {
-  let triggerWarningsGrouped: { id: number; caption: string }[] = [];
-  tableOfContent.chapters
-    ?.filter((t: ChapterModelLight) => (t.triggerWarnings.length ?? 0) > 0)
-    .forEach((t: ChapterModelLight) => triggerWarningsGrouped.push(...t.triggerWarningsLoaded));
-  triggerWarningsGrouped = triggerWarningsGrouped.filter(
-    (value, index, self) => index === self.findIndex((t) => t.id === value.id),
-  );
-  return triggerWarningsGrouped;
 }
 
 useHead({

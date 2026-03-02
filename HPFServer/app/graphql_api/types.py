@@ -32,7 +32,11 @@ from fictions.models import (
     ChapterValidationStage,
 )
 from reviews.models import ChapterReview, FictionReview
-from characteristics.models import Characteristic, CharacteristicType as CharType
+from characteristics.models import (
+    Characteristic,
+    CharacteristicType as CharType,
+    TriggerWarning,
+)
 from users.models import User, UserPreferences, UserProfile, Theme
 from news.models import NewsArticle, NewsComment
 from images.models import ContentImage
@@ -91,6 +95,12 @@ class CharacteristicTypeType:
     modification_user: "UserType"
 
 
+@strawberry_django.type(model=TriggerWarning, fields="__all__")
+class TriggerWarningType:
+    creation_user: "UserType"
+    modification_user: "UserType"
+
+
 ### FICTIONS
 
 @strawberry_django.type(model=Chapter, fields="__all__", filters=ChapterFilters, order=ChapterOrder)
@@ -109,7 +119,7 @@ class ChapterType:
     review_count: auto
     _order: int
     order: int = strawberry_django.field(field_name="_order")
-    trigger_warnings: list["CharacteristicType"]
+    trigger_warnings: list["TriggerWarningType"]
     versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(
         extensions=[IsStaffOrOwner(owner_field="creation_user")],
     )
@@ -139,6 +149,7 @@ class FictionType:
     chapter_count: auto
     author: "UserType" = strawberry_django.field(field_name="creation_user")
     fandoms: list["FandomType"]
+    trigger_warnings: list["TriggerWarningType"] = strawberry_django.field(prefetch_related="chapters__trigger_warnings")
 
 
 @strawberry_django.type(model=Collection, fields="__all__")
@@ -243,21 +254,3 @@ class ContentImageType:
     src: str
     creation_user: "UserType"
     modification_user: "UserType"
-
-
-__all__ = [
-    "UserPreferencesType",
-    "UserProfileType",
-    "UserType",
-    "ThemeType",
-    "CharacteristicType",
-    "CharacteristicTypeType",
-    "ChapterType",
-    "ChapterVersionType",
-    "FictionType",
-    "CollectionType",
-    "CollectionItemType",
-    "NewsCommentType",
-    "NewsArticleType",
-    "ContentImageType",
-]

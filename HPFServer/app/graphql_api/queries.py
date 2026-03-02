@@ -19,6 +19,7 @@ from app.graphql_api.types import (
     ThemeType,
     CharacteristicType,
     CharacteristicTypeType,
+    TriggerWarningType,
     ChapterReviewType,
     FictionReviewType,
 )
@@ -105,6 +106,7 @@ class Query:
     themes: list[ThemeType] = strawberry_django.field()
     characteristic_types: list[CharacteristicTypeType] = strawberry_django.field()
     characteristics: list[CharacteristicType] = strawberry_django.field()
+    trigger_warnings: list[TriggerWarningType] = strawberry_django.field()
     # TODO renommer en public_fictions, etc?
 
     # privé

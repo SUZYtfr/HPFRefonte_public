@@ -17,3 +17,10 @@ query getCharacteristics {
     characteristicTypeId
   }
 }
+
+query getTriggerWarnings {
+  triggerWarnings {
+    id
+    name
+  }
+}

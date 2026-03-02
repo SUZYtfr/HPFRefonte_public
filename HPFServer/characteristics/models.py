@@ -174,3 +174,18 @@ class Characteristic(DatedModel, CreatedModel):
                 raise RecursionError(msg)
             self.characteristic_type = self.parent.characteristic_type  # Impose que la catégorie de l'enfant soit celle du parent
         super().save(*args, **kwargs)
+
+
+class TriggerWarning(DatedModel, CreatedModel):
+    """Modèle d'avertissement"""
+
+    class Meta:
+        verbose_name = "avertissement"
+
+    name = models.CharField(
+        verbose_name="nom",
+        max_length=50,
+    )
+
+    def __str__(self) -> str:
+        return self.name

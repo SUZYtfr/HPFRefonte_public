@@ -63,12 +63,12 @@
     </section>
 
     <!-- Trigger warning -->
-    <article v-if="(chapter?.triggerWarningsLoaded?.length ?? 0) > 0" class="message is-danger">
+    <article v-if="(chapter?.triggerWarnings?.length ?? 0) > 0" class="message is-danger">
       <div class="message-body py-3 px-2 is-flex is-flex-direction-row">
         <BIcon icon="exclamation-triangle" /><span><strong class="mr-1"> TW / CW </strong></span>
-        <div v-for="(trigger_warning, index) in chapter?.triggerWarningsLoaded" :key="index">
+        <div v-for="(triggerWarning, index) in chapter?.triggerWarnings" :key="index">
           <span v-if="index > 0"> , </span>
-          <span class="has-text-danger">{{ trigger_warning.caption }}</span>
+          <span class="has-text-danger">{{ triggerWarning.name }}</span>
         </div>
       </div>
     </article>

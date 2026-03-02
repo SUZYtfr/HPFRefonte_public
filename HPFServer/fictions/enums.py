@@ -10,6 +10,15 @@ class FictionStatus(IntegerChoices):
     COMPLETED = (4, "Terminée")
 
 
+class Rating(IntegerChoices):
+    """Audience d'une fiction"""
+
+    ALL = (1, "Tout public")
+    P12 = (2, "Déconseillé aux moins de 12 ans")
+    P16 = (3, "Déconseillé aux moins de 16 ans")
+    P18 = (4, "Déconseillé aux moins de 18 ans")
+
+
 class ChapterValidationStage(IntegerChoices):
     """Étapes de validation des chapitres"""
 

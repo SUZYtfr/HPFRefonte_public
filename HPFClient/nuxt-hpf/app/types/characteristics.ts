@@ -33,3 +33,12 @@ export class CharacteristicTypeData extends BasicClass<CharacteristicTypeData> {
   public visible: boolean = true;
   public enabled: boolean = true;
 }
+
+export class TriggerWarningData extends BasicClass<TriggerWarningData> {
+  @Exclude()
+  public get triggerWarningId(): number {
+    return Number(this.id);
+  }
+
+  public name: string = "";
+}

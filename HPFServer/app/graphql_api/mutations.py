@@ -60,8 +60,33 @@ def create_fiction(
         fiction = Fiction.objects.create(
             creation_user=current_user,
             modification_user=current_user,
-            **vars(fiction_data),
+            title=fiction_data.title,
+            summary=fiction_data.summary,
+            storynote=fiction_data.storynote,
+            status=fiction_data.status,
+            rating=fiction_data.rating,
         )
+
+        if fiction_data.fandoms:
+            if fiction_data.fandoms.add:
+                fiction.fandoms.add(*fiction_data.fandoms.add)
+            if fiction_data.fandoms.remove:
+                fiction.fandoms.remove(*fiction_data.fandoms.remove)
+            if fiction_data.fandoms.set == []:
+                fiction.fandoms.clear()
+            if fiction_data.fandoms.set:
+                fiction.fandoms.set(fiction_data.fandoms.set)
+
+        if fiction_data.characteristics:
+            if fiction_data.characteristics.add:
+                fiction.characteristics.add(*fiction_data.characteristics.add)
+            if fiction_data.characteristics.remove:
+                fiction.characteristics.remove(*fiction_data.characteristics.remove)
+            if fiction_data.characteristics.set == []:
+                fiction.characteristics.clear()
+            if fiction_data.characteristics.set:
+                fiction.characteristics.set(fiction_data.characteristics.set)
+
         chapter = Chapter.objects.create(
             fiction=fiction,
             creation_user=current_user,
@@ -77,11 +102,22 @@ def create_fiction(
             word_count=count_words(first_chapter_data.text),
             submission_date=timezone.now() if not first_chapter_data.is_draft else None,
         )
+
+        if first_chapter_data.trigger_warnings:
+            if first_chapter_data.trigger_warnings.add:
+                chapter.trigger_warnings.add(*first_chapter_data.trigger_warnings.add)
+            if first_chapter_data.trigger_warnings.remove:
+                chapter.trigger_warnings.remove(*first_chapter_data.trigger_warnings.remove)
+            if first_chapter_data.trigger_warnings.set == []:
+                chapter.trigger_warnings.clear()
+            if first_chapter_data.trigger_warnings.set:
+                chapter.trigger_warnings.set(first_chapter_data.trigger_warnings.set)
+
         if not first_chapter_data.is_draft:  # TODO - and user.has_auto_publish:
             chapter.published_version = chapter_version
             chapter.save()
 
-
+    fiction.refresh_from_db()
     return cast(FictionType, fiction)
 
 
@@ -99,11 +135,34 @@ def update_fiction(
         raise NotOwnerOrStaffError
 
     # mutation
-    for field, value in vars(fiction_data).items():  # TODO moche
-        setattr(fiction, field, value)
-        fiction.modification_user = current_user
+    fiction.modification_user=current_user
+    fiction.title=fiction_data.title
+    fiction.summary=fiction_data.summary
+    fiction.storynote=fiction_data.storynote
+    fiction.status=fiction_data.status
+    fiction.rating=fiction_data.rating
     fiction.save()
-    # TODO m2m
+
+    if fiction_data.fandoms:
+        if fiction_data.fandoms.add:
+            fiction.fandoms.add(*fiction_data.fandoms.add)
+        if fiction_data.fandoms.remove:
+            fiction.fandoms.remove(*fiction_data.fandoms.remove)
+        if fiction_data.fandoms.set == []:
+            fiction.fandoms.clear()
+        if fiction_data.fandoms.set:
+            fiction.fandoms.set(fiction_data.fandoms.set)
+
+    if fiction_data.characteristics:
+        if fiction_data.characteristics.add:
+            fiction.characteristics.add(*fiction_data.characteristics.add)
+        if fiction_data.characteristics.remove:
+            fiction.characteristics.remove(*fiction_data.characteristics.remove)
+        if fiction_data.characteristics.set == []:
+            fiction.characteristics.clear()
+        if fiction_data.characteristics.set:
+            fiction.characteristics.set(fiction_data.characteristics.set)
+
     return cast(FictionType, fiction)
 
 
@@ -153,6 +212,17 @@ def create_chapter(
             word_count=count_words(chapter_data.text),
             submission_date=timezone.now() if not chapter_data.is_draft else None,
         )
+
+        if chapter_data.trigger_warnings:
+            if chapter_data.trigger_warnings.add:
+                chapter.trigger_warnings.add(*chapter_data.trigger_warnings.add)
+            if chapter_data.trigger_warnings.remove:
+                chapter.trigger_warnings.remove(*chapter_data.trigger_warnings.remove)
+            if chapter_data.trigger_warnings.set == []:
+                chapter.trigger_warnings.clear()
+            if chapter_data.trigger_warnings.set:
+                chapter.trigger_warnings.set(chapter_data.trigger_warnings.set)
+
         if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
             chapter.published_version = chapter_version
             chapter.save()
@@ -186,6 +256,17 @@ def update_chapter(
             start_note=chapter_data.start_note,
             end_note=chapter_data.end_note,
         )
+
+        if chapter_data.trigger_warnings:
+            if chapter_data.trigger_warnings.add:
+                chapter.trigger_warnings.add(*chapter_data.trigger_warnings.add)
+            if chapter_data.trigger_warnings.remove:
+                chapter.trigger_warnings.remove(*chapter_data.trigger_warnings.remove)
+            if chapter_data.trigger_warnings.set == []:
+                chapter.trigger_warnings.clear()
+            if chapter_data.trigger_warnings.set:
+                chapter.trigger_warnings.set(chapter_data.trigger_warnings.set)
+
         if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
             chapter.published_version = chapter_version
             chapter.save()

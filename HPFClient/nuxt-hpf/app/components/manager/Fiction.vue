@@ -28,9 +28,14 @@
           </BSelect>
         </BField>
         <BField label="Rating" expanded>
-          <BSelect v-model="selectedRating" label="Rating" placeholder="Sélectionner un rating" required>
-            <option v-for="rating in ratings" :key="rating.characteristicId" :value="rating">
-              {{ rating.name }}
+          <BSelect
+            v-model="fiction.rating"
+            placeholder="Sélectionner un rating"
+            required
+            @update:model-value="() => (unsavedChanges = true)"
+          >
+            <option v-for="[key, value] in Object.entries(FanfictionRating)" :key="key" :value="key">
+              {{ value }}
             </option>
           </BSelect>
         </BField>
@@ -68,12 +73,13 @@
             placeholder="Ajouter au moins un fandom"
             :data="filteredFandoms"
             @typing="getFilteredFandoms"
-          >
-            <template #default="{ option }: { option: FandomData }">
-              <strong>{{ option.id }}</strong
-              >: {{ option.name }}
-            </template>
-          </BTaginput>
+            @update:model-value="
+              (value: FandomData[]) => {
+                fiction.fandoms = value;
+                unsavedChanges = true;
+              }
+            "
+          />
         </BField>
         <BField label="Genres" expanded>
           <BTaginput
@@ -84,9 +90,17 @@
             autocomplete
             :required="!selectedGenres.length"
             keep-first
+            keep-open
+            open-on-focus
             placeholder="Ajouter au moins un genre"
             :data="filteredGenres"
             @typing="getFilteredGenres"
+            @add="(value: CharacteristicModel) => (fiction.characteristics = fiction.characteristics!.concat(value))"
+            @remove="
+              (value: CharacteristicModel) =>
+                (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
+            "
+            @update:model-value="() => (unsavedChanges = true)"
           />
         </BField>
       </BField>
@@ -112,7 +126,9 @@
           keep-open
           open-on-focus
           :placeholder="
-            'Ajouter des caractéristiques parmi ' +
+            'Ajouter des ' +
+            selectedCharacteristicType.name.toLowerCase() +
+            's parmi ' +
             characteristics
               ?.filter(
                 (c) => c.characteristicTypeId.toString() === selectedCharacteristicType.characteristicTypeId.toString(),
@@ -122,6 +138,12 @@
           "
           :data="filteredCharacteristics"
           @typing="getFilteredCharacteristics"
+          @add="(value: CharacteristicModel) => (fiction.characteristics = fiction.characteristics!.concat(value))"
+          @remove="
+            (value: CharacteristicModel) =>
+              (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
+          "
+          @update:model-value="() => (unsavedChanges = true)"
         />
       </BField>
 
@@ -154,7 +176,7 @@
 import { BField, BInput, BTaginput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
 import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "@/models";
 import type { FandomData } from "@/types/fanfictions";
-import { FanfictionStatus } from "@/models";
+import { FanfictionStatus, FanfictionRating } from "@/models";
 
 interface Props {
   isEditing: boolean;
@@ -166,15 +188,22 @@ defineProps<Props>();
 const unsavedChanges = defineModel<boolean>("unsavedChanges", { required: true });
 const fiction = defineModel<FanfictionModel>("fiction", { required: true });
 
+const { fandoms } = useConfigStore();
 const { characteristicTypes } = useConfigStore();
 const { characteristics } = useConfigStore();
-const { fandoms } = useConfigStore();
+
+// les fandoms et caractéristiques de la fiction sont "remplacés"
+// par les fandoms stockés, pour garder une identité des objets
+// BTagInput utilise l'identité des objets (===) et pas la similitude (==)
+// pour comparer les tags entrés, ce qui potentiellement permet de choisir
+// deux fois le même tag (un préselectionné, un sélectionné)
+// TODO - effectuer ce "remplacement" en amont dans FictionModel?
 
 // FANDOM
-const lastUsedFandom: FandomData = fandoms!.find((f) => f.name === "Harry Potter")!;
-const selectedFandoms = ref<FandomData[]>([lastUsedFandom]);
+const selectedFandoms = ref<FandomData[]>(
+  fandoms!.filter((f) => fiction.value.fandoms!.map((ff) => ff.id.toString()).includes(f.id.toString())),
+);
 const filteredFandoms = ref<FandomData[]>(fandoms!);
-
 function getFilteredFandoms(text: number | string | undefined): string[] | undefined {
   if (text == null) {
     return;
@@ -185,9 +214,13 @@ function getFilteredFandoms(text: number | string | undefined): string[] | undef
 }
 
 // GENRE
-const genres = useConfigStore().characteristics!.filter((c) => c.characteristicTypeId.toString() === "2");
-const filteredGenres = ref<CharacteristicModel[]>([]);
-const selectedGenres = ref<CharacteristicModel[]>([]);
+const genres = characteristics!.filter((c) => c.characteristicTypeId.toString() === "2");
+const selectedGenres = ref<CharacteristicModel[]>(
+  genres!.filter((ct) =>
+    fiction.value.characteristics!.map((c) => c.characteristicId.toString()).includes(ct.characteristicId.toString()),
+  ),
+);
+const filteredGenres = ref<CharacteristicModel[]>(genres);
 function getFilteredGenres(text: number | string | undefined): string[] | undefined {
   if (text == null) {
     return;
@@ -197,22 +230,26 @@ function getFilteredGenres(text: number | string | undefined): string[] | undefi
   });
 }
 
-// RATINGS
-const ratings = useConfigStore().characteristics!.filter((c) => c.characteristicTypeId.toString() === "5");
-const selectedRating = ref<CharacteristicModel>();
-
 // AUTRES CARACTÉRISTIQUES
-const otherCharacteristicTypes = characteristicTypes!.filter(
-  (ct) => !["2", "4", "5"].includes(ct.characteristicTypeId.toString()),
-);
+const otherCharacteristicTypes = characteristicTypes!.filter((ct) => ct.characteristicTypeId.toString() !== "2");
 const selectedCharacteristicType = ref<CharacteristicTypeModel>(otherCharacteristicTypes[0]!);
-const filteredCharacteristics = ref<CharacteristicModel[]>([]);
-const selectedCharacteristics = ref<CharacteristicModel[]>([]);
+const otherCharacteristics = characteristics!.filter((c) => c.characteristicTypeId.toString() !== "2");
+const selectedCharacteristics = ref<CharacteristicModel[]>(
+  otherCharacteristics!.filter((ct) =>
+    fiction.value.characteristics!.map((c) => c.characteristicId.toString()).includes(ct.characteristicId.toString()),
+  ),
+);
+const filteredCharacteristics = ref<CharacteristicModel[]>(
+  otherCharacteristics!.filter(
+    (option) =>
+      option.characteristicTypeId.toString() === selectedCharacteristicType.value.characteristicTypeId.toString(),
+  ),
+);
 function getFilteredCharacteristics(text: number | string | undefined): string[] | undefined {
   if (text == null) {
     return;
   }
-  filteredCharacteristics.value = characteristics!
+  filteredCharacteristics.value = otherCharacteristics!
     .filter(
       (option) =>
         option.characteristicTypeId.toString() === selectedCharacteristicType.value.characteristicTypeId.toString(),
@@ -221,4 +258,5 @@ function getFilteredCharacteristics(text: number | string | undefined): string[]
       return option.name.toString().toLowerCase().indexOf(text.toString().toLowerCase()) >= 0;
     });
 }
+watch(selectedCharacteristicType, () => getFilteredCharacteristics(""));
 </script>

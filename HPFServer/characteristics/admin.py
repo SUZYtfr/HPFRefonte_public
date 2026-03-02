@@ -1,7 +1,7 @@
 from django.contrib import admin
 from core.admin import BaseAdminPage
 
-from .models import CharacteristicType, Characteristic
+from characteristics.models import CharacteristicType, Characteristic, TriggerWarning
 
 
 @admin.register(CharacteristicType)
@@ -44,3 +44,9 @@ class CharacteristicAdminPage(BaseAdminPage):
         }),
     ]
     autocomplete_fields = ["parent", "replace_with"]
+
+
+@admin.register(TriggerWarning)
+class TriggerWarningAdminPage(BaseAdminPage):
+    """Page d'administration des avertissements"""
+    pass

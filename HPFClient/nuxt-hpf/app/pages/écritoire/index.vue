@@ -181,7 +181,7 @@ const {
     return plainToInstance(FanfictionModel, input.fiction);
   },
   // @ts-expect-error Faudrait typer useAsyncGql mais la flemme
-  default: () => ref(new FanfictionModel({ recordStatus: RecordStatusEnum.New })),
+  default: () => ref(new FanfictionModel({ recordStatus: RecordStatusEnum.New, fandoms: [], characteristics: [] })),
   immediate: false,
 });
 
@@ -195,7 +195,7 @@ const {
     return plainToInstance(ChapterModel, input.chapter);
   },
   // @ts-expect-error Faudrait typer useAsyncGql mais la flemme
-  default: () => ref(new ChapterModel({ recordStatus: RecordStatusEnum.New })),
+  default: () => ref(new ChapterModel({ recordStatus: RecordStatusEnum.New, triggerWarnings: [] })),
   immediate: false,
 });
 
@@ -235,12 +235,23 @@ async function postFiction(isDraft: boolean): Promise<void> {
       title: fiction.value.title,
       summary: fiction.value.summary || "",
       storynote: fiction.value.storynote || "",
+      status: Number(fiction.value.status),
+      rating: Number(fiction.value.rating!),
+      fandoms: {
+        set: fiction.value.fandoms!.map((f) => f.id),
+      },
+      characteristics: {
+        set: fiction.value.characteristics!.map((c) => c.characteristicId.toString()),
+      },
     },
     firstChapterData: {
       title: chapter.value.title,
       text: chapter.value.text || "",
       startNote: chapter.value.startNote || "",
       endNote: chapter.value.endNote || "",
+      triggerWarnings: {
+        set: chapter.value.triggerWarnings!.map((tw) => tw.triggerWarningId.toString()),
+      },
       isDraft: isDraft,
     },
   })
@@ -281,6 +292,9 @@ async function createChapter(isDraft: boolean): Promise<void> {
       text: chapter.value.text || "",
       startNote: chapter.value.startNote || "",
       endNote: chapter.value.endNote || "",
+      triggerWarnings: {
+        set: chapter.value.triggerWarnings!.map((tw) => tw.triggerWarningId.toString()),
+      },
       isDraft: isDraft,
     },
   })
@@ -319,6 +333,14 @@ async function updateFiction(): Promise<void> {
       title: fiction.value.title,
       summary: fiction.value.summary || "",
       storynote: fiction.value.storynote,
+      status: Number(fiction.value.status),
+      rating: Number(fiction.value.rating!),
+      fandoms: {
+        set: fiction.value.fandoms!.map((f) => f.id),
+      },
+      characteristics: {
+        set: fiction.value.characteristics!.map((c) => c.characteristicId.toString()),
+      },
     },
   })
     .then(() =>
@@ -355,6 +377,9 @@ async function updateChapter(isDraft: boolean): Promise<void> {
       text: chapter.value.text || "",
       startNote: chapter.value.startNote || "",
       endNote: chapter.value.endNote || "",
+      triggerWarnings: {
+        set: chapter.value.triggerWarnings!.map((tw) => tw.triggerWarningId.toString()),
+      },
       isDraft: isDraft,
     },
   })

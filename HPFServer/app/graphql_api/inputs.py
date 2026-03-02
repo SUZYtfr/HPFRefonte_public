@@ -1,5 +1,6 @@
 import strawberry_django
-from strawberry import auto
+from strawberry import auto, ID
+from strawberry_django import ListInput
 
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion
@@ -18,6 +19,10 @@ class FictionInput:
     title: auto
     summary: auto
     storynote: auto
+    status: auto
+    rating: auto
+    fandoms: ListInput[ID] | None
+    characteristics: ListInput[ID] | None
 
 
 @strawberry_django.input(model=Chapter)
@@ -27,6 +32,7 @@ class ChapterInput:
     start_note: str
     end_note: str
     is_draft: bool | None
+    trigger_warnings: ListInput[ID] | None
 
 
 ### REVIEWS

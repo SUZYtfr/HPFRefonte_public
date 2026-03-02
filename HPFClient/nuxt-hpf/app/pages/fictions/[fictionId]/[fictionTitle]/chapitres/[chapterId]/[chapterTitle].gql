@@ -7,6 +7,10 @@ query getChapterDetail($chapterId: ID) {
     startNote
     endNote
     reviewCount
+    triggerWarnings {
+      id
+      name
+    }
   }
 }
 

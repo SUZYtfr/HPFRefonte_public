@@ -3,7 +3,7 @@ import { BasicClass } from "~/types/basics";
 import { SerieData, ChapterData, ReviewData, VersionData, type FandomData } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
-import { CharacteristicData } from "~/types/characteristics";
+import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
 import slugify from "slugify";
 
 export enum FanfictionStatus {
@@ -11,6 +11,13 @@ export enum FanfictionStatus {
   Paused = 2,
   Abandoned = 3,
   Finished = 4,
+}
+
+export enum FanfictionRating {
+  ALL = 1,
+  P12 = 2,
+  P16 = 3,
+  P18 = 4,
 }
 
 export enum ValidationStatus {
@@ -60,6 +67,7 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   public reviewCount: number | null = null;
   public collectionCount: number | null = null;
   public status: FanfictionStatus = FanfictionStatus.OnGoing;
+  public rating: FanfictionRating | null = null;
   public featured: boolean = false;
   public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
   public watched: boolean = false;
@@ -85,6 +93,26 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   }
 
   @Exclude()
+  public get ratingAsText(): string {
+    let result: string = "";
+    switch (this.rating) {
+      case 1:
+        result = "Tout public";
+        break;
+      case 2:
+        result = "Déconseillé aux moins de 12 ans";
+        break;
+      case 3:
+        result = "Déconseillé aux moins de 16 ans";
+        break;
+      case 4:
+        result = "Déconseillé aux moins de 18 ans";
+        break;
+    }
+    return result;
+  }
+
+  @Exclude()
   public get titleAsSlug(): string {
     return slugify(this.title, { lower: true, locale: "fr", strict: true });
   }
@@ -97,6 +125,9 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
 
   @Type(() => CharacteristicData)
   public characteristics: CharacteristicData[] | null = null;
+
+  @Type(() => TriggerWarningData)
+  public triggerWarnings: TriggerWarningData[] | null = null;
 
   @Type(() => SerieModel)
   public series: SerieModel[] | null = null;
@@ -171,7 +202,8 @@ export class ChapterModel extends ChapterData {
   @Type(() => ImageHPFData)
   public textImages: ImageHPFData[] | null = null;
 
-  public triggerWarnings: number[] = [];
+  @Type(() => TriggerWarningData)
+  public triggerWarnings: TriggerWarningData[] | null = null;
 
   // TODO à transformer en type un peu plus light quand on saura exactement de quoi on a besoin
   @Type(() => FanfictionModel)
@@ -179,24 +211,6 @@ export class ChapterModel extends ChapterData {
 
   @Type(() => VersionModel)
   public currentVersion: VersionModel | null = null;
-
-  @Exclude()
-  public _triggerWarningsLoaded: { id: number; caption: string }[] | null = null;
-
-  @Exclude()
-  public get triggerWarningsLoaded(): { id: number; caption: string }[] | null {
-    if (this._triggerWarningsLoaded == null && import.meta.client === true) {
-      return (
-        useConfigStore()
-          .characteristics?.filter(
-            (t: CharacteristicData) =>
-              t.characteristicTypeId === 4 && this.triggerWarnings.includes(t.characteristicId),
-          )
-          .map((x: CharacteristicData) => ({ id: x.characteristicId, caption: x.name })) ?? []
-      );
-    }
-    return this._triggerWarningsLoaded;
-  }
 
   constructor(init?: Partial<ChapterModel>) {
     super();
@@ -213,27 +227,8 @@ export class ChapterModelLight extends BasicClass<ChapterModelLight> {
   public title: string | null = null;
   public order: number = 0;
 
-  //@ts-expect-error t implicitely any - TODO trouver un autre moyen de gérer l'hydration
-  @Transform(({ value }) => value.map((t) => t.characteristicId || t), { toClassOnly: true })
-  public triggerWarnings: number[] = [];
-
-  @Exclude()
-  public _triggerWarningsLoaded: { id: number; caption: string }[] | null = null;
-
-  @Exclude()
-  public get triggerWarningsLoaded(): { id: number; caption: string }[] {
-    if (this._triggerWarningsLoaded == null && import.meta.client === true) {
-      return (
-        useConfigStore()
-          .characteristics?.filter(
-            (t: CharacteristicData) =>
-              t.characteristicTypeId === 4 && this.triggerWarnings.includes(t.characteristicId),
-          )
-          .map((x: CharacteristicData) => ({ id: x.characteristicId, caption: x.name })) ?? []
-      );
-    }
-    return this._triggerWarningsLoaded != null ? this._triggerWarningsLoaded : [];
-  }
+  @Type(() => TriggerWarningData)
+  public triggerWarnings: TriggerWarningData[] | null = null;
 
   @Exclude()
   public get titleAsSlug(): string {

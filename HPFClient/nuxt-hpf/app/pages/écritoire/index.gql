@@ -2,8 +2,16 @@ query getPrivateFiction($fictionId: ID) {
   fiction: privateFiction(pk: $fictionId) {
     id
     title
+    status
+    rating
     summary
     storynote
+    fandoms {
+      id
+    }
+    characteristics {
+      id
+    }
     chapters {
       results {
         id
@@ -19,6 +27,10 @@ query getPrivateChapter($chapterId: ID) {
     startNote
     endNote
     text
+    triggerWarnings {
+      id
+      name
+    }
   }
 }
 

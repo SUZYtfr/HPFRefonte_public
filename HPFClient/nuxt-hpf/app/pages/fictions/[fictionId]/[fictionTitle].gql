@@ -10,6 +10,7 @@ query getTableOfContents($fictionId: ID) {
         order
         triggerWarnings {
           id
+          name
         }
       }
     }

@@ -94,7 +94,7 @@ class FictionAdminPage(BaseAdminPage):
         # })
     ]
     # autocomplete_fields = ["coauthors", "characteristics"]
-    autocomplete_fields = ["characteristics"]
+    autocomplete_fields = ["characteristics", "fandoms"]
     readonly_fields = ["read_count", "last_update_date", "published", "average", "word_count", "chapter_count"]
 
     @admin.display(description="publiée", boolean=True)
@@ -255,6 +255,7 @@ class InvalidationReasonAdmin(admin.ModelAdmin):
 @admin.register(Fandom)
 class FandomAdmin(admin.ModelAdmin):
     list_display = ["name", "slug", "display_fiction_count"]
+    search_fields = ["name"]
 
     @admin.display(description="fictions")
     def display_fiction_count(self, fandom: "Fandom") -> int:
