@@ -10,13 +10,22 @@
             </span>
           </template>
           <template v-if="value === (chapter.chapterId || '').toString()">
-            <BField label="Titre">
+            <BField label="Titre" grouped>
               <BInput
                 v-model="chapter.title"
                 type="text"
                 required
+                expanded
                 @update:model-value="() => (unsavedChanges = true)"
               />
+              <BDropdown aria-role="list" :disabled="!isEditing || activeTab === ''">
+                <template #trigger="{ active }">
+                  <BButton label="Plus d'actions" type="is-warning" :icon-right="active ? 'caret-up' : 'caret-down'" />
+                </template>
+                <BDropdownItem aria-role="listitem">Voir les statistiques</BDropdownItem>
+                <BDropdownItem aria-role="listitem">Ajouter à une série</BDropdownItem>
+                <BDropdownItem aria-role="listitem">Supprimer le chapitre</BDropdownItem>
+              </BDropdown>
             </BField>
             <BField label="Note de début">
               <CustomEditor
@@ -102,6 +111,7 @@ import { BTabs, BTabItem, BField, BInput, BTaginput } from "buefy";
 import type { ChapterModel, CharacteristicModel } from "@/models";
 
 interface Props {
+  isEditing: boolean;
   chapterIds: string[];
 }
 

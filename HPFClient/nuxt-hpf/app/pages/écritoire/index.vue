@@ -33,6 +33,7 @@
           v-if="currentStep === 'fiction'"
           v-model:fiction="fiction"
           v-model:unsaved-changes="unsavedChanges"
+          :is-editing
         >
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
             <BButton @click.prevent="() => steps?.prev()">Relire le réglement</BButton>
@@ -77,9 +78,9 @@
           v-model:chapter="chapter"
           v-model:active-tab="activeTab"
           v-model:unsaved-changes="unsavedChanges"
+          :is-editing
           :chapter-ids="fiction.chapters?.map((c) => c.chapterId.toString()) || []"
         >
-          <!-- @tab-change="handleTabChange" -->
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
             <BButton @click.prevent="async () => steps?.prev()">Revenir à la fiction</BButton>
             <BButton
@@ -94,26 +95,51 @@
               "
               >Annuler les modifications</BButton
             >
-            <BButton
-              type="is-success"
-              :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
-              @click.prevent="
-                () => {
-                  if (isEditing) {
-                    if (activeTab === '') {
-                      createChapter(false);
-                    } else {
-                      updateChapter(false);
+            <BField>
+              <p class="control">
+                <BButton
+                  type="is-warning"
+                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
+                  @click.prevent="
+                    () => {
+                      if (isEditing) {
+                        if (activeTab === '') {
+                          createChapter(true);
+                        } else {
+                          updateChapter(true);
+                        }
+                      } else {
+                        postFiction(true);
+                      }
+                      unsavedChanges = false;
                     }
-                  } else {
-                    postFiction(false);
-                  }
-                  unsavedChanges = false;
-                }
-              "
-            >
-              {{ autoPublish ? "Publier" : "Envoyer à la modération" }}</BButton
-            >
+                  "
+                  >Brouillon</BButton
+                >
+              </p>
+              <p class="control">
+                <BButton
+                  type="is-success"
+                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
+                  @click.prevent="
+                    () => {
+                      if (isEditing) {
+                        if (activeTab === '') {
+                          createChapter(false);
+                        } else {
+                          updateChapter(false);
+                        }
+                      } else {
+                        postFiction(false);
+                      }
+                      unsavedChanges = false;
+                    }
+                  "
+                >
+                  {{ autoPublish ? "Publier" : "Envoyer à la modération" }}</BButton
+                >
+              </p>
+            </BField>
           </div>
         </LazyManagerChapter>
       </BStepItem>
@@ -122,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { BButton, BSteps, BStepItem, BLoading } from "buefy";
+import { BButton, BSteps, BStepItem, BLoading, BField } from "buefy";
 import { RecordStatusEnum } from "@/types/basics";
 import { ChapterModel, FanfictionModel } from "@/models";
 import type { FictionType, ChapterType } from "#gql";
@@ -227,7 +253,8 @@ async function postFiction(isDraft: boolean): Promise<void> {
         message: autoPublish ? "La fiction a été publiée" : "La fiction est en attente de validation",
         type: "is-danger",
         position: "is-bottom-right",
-        actionText: undefined,
+        // actionText: "Revenir aux fictions",
+        // onAction: () => navigateTo("/"),
         pauseOnHover: true,
         queue: true,
       });
@@ -238,7 +265,6 @@ async function postFiction(isDraft: boolean): Promise<void> {
         message: "Une erreur s'est produite lors de la création de la fiction",
         type: "is-danger",
         position: "is-bottom-right",
-        actionText: undefined,
         pauseOnHover: true,
         queue: true,
       }),
@@ -266,7 +292,8 @@ async function createChapter(isDraft: boolean): Promise<void> {
         message: autoPublish ? "Le chapitre a été publié" : "Le chapitre été envoyé à la modération",
         type: "is-success",
         position: "is-bottom-right",
-        actionText: undefined,
+        // actionText: "Revenir aux fictions",
+        // onAction: () => navigateTo("/"),
         pauseOnHover: true,
         queue: true,
       });
@@ -277,7 +304,6 @@ async function createChapter(isDraft: boolean): Promise<void> {
         message: "Une erreur s'est produite lors de l'envoi du chapitre",
         type: "is-danger",
         position: "is-bottom-right",
-        actionText: undefined,
         pauseOnHover: true,
         queue: true,
       }),
@@ -301,7 +327,8 @@ async function updateFiction(): Promise<void> {
         message: "Les changements ont été enregistrés",
         type: "is-success",
         position: "is-bottom-right",
-        actionText: undefined,
+        // actionText: "Revenir aux fictions",
+        // onAction: () => navigateTo("/"),
         pauseOnHover: true,
         queue: true,
       }),
@@ -312,7 +339,6 @@ async function updateFiction(): Promise<void> {
         message: "Une erreur s'est produite lors de la modification de la fiction",
         type: "is-danger",
         position: "is-bottom-right",
-        actionText: undefined,
         pauseOnHover: true,
         queue: true,
       }),
@@ -340,7 +366,8 @@ async function updateChapter(isDraft: boolean): Promise<void> {
           : "La nouvelle version du chapitre été envoyée à la modération",
         type: "is-success",
         position: "is-bottom-right",
-        actionText: undefined,
+        // actionText: "Revenir aux fictions",
+        // onAction: () => navigateTo("/"),
         pauseOnHover: true,
         queue: true,
       }),
@@ -351,7 +378,6 @@ async function updateChapter(isDraft: boolean): Promise<void> {
         message: "Une erreur s'est produite lors de la modification du chapitre",
         type: "is-danger",
         position: "is-bottom-right",
-        actionText: undefined,
         pauseOnHover: true,
         queue: true,
       }),
