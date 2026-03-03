@@ -31,7 +31,7 @@ query getFandomNews {
 }
 
 query getFandomFictions($filters: FictionFilters) {
-  fictions(pagination: { limit: 10 }, filters: $filters) {
+  fictions(pagination: { limit: 10 }, filters: $filters, order: { lastUpdateDate: DESC }) {
     totalCount
     results {
       id

@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Prefetch
 import strawberry
 import strawberry_django
 from strawberry import Info
@@ -32,7 +32,9 @@ def resolve_fandom_by_slug(slug: str) -> Fandom:
 
 
 def resolve_public_fictions(pk: strawberry.ID | None = None) -> QuerySet[Fiction] | Fiction:
-    queryset = Fiction.objects.published().with_word_counts()
+    queryset = Fiction.objects.published().prefetch_related(
+        Prefetch("chapters", Chapter.objects.published()),
+    ).with_word_counts()
     if pk:
         return queryset.get(pk=pk)
     else:

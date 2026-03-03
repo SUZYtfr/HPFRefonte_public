@@ -1,7 +1,7 @@
 import strawberry_django
 from strawberry import auto, Info, ID
 
-from django.db.models import QuerySet, Q, F, Count
+from django.db.models import QuerySet, Q, Count
 
 from users.models import User
 from news.models import NewsArticle
@@ -42,27 +42,6 @@ class FictionFilters:
 class ChapterFilters:
     id: auto
     creation_user: Optional["UserFilters"]
-
-    # La documentation officielle inclut le préfixe avant: {prefix}_title
-    # Cependant dans mon cas ça semble fonctionner en le plaçant après: _title__{prefix}
-    # Est-ce une erreur dans la documentation ? TODO vérifier
-    @strawberry_django.filter_field(name="title")
-    def title_lookups(
-        self,
-        info: Info,
-        queryset: QuerySet[Chapter],
-        # FIXME - remplacer par strawberry_django.FilterLookup[str] quand ce bug connu sera corrigé :
-        # https://github.com/strawberry-graphql/strawberry-django/issues/845
-        value: strawberry_django.fields.filter_types.StrFilterLookup[str],
-        prefix: str,
-    ) -> tuple[QuerySet[Chapter], Q]:
-        queryset = queryset.alias(_title=F("published_version__title"))
-        return strawberry_django.process_filters(
-            filters=value,
-            queryset=queryset,
-            info=info,
-            prefix=f"_title__{prefix}",
-        )
 
 
 @strawberry_django.filter_type(model=ChapterReview, lookups=True)

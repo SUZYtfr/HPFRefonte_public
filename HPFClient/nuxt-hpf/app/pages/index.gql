@@ -23,7 +23,7 @@ query getIndexNews {
 }
 
 query getIndexFictions {
-  fictions(pagination: { limit: 10 }) {
+  fictions(pagination: { limit: 10 }, order: { lastUpdateDate: DESC }) {
     totalCount
     results {
       id

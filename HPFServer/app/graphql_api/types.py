@@ -108,13 +108,6 @@ class ChapterType:
     def resolve_validation_status(self: Chapter) -> ChapterValidationStage:
         return self.last_version.validation_status
 
-    is_published: auto = strawberry_django.field(select_related="published_version")
-    title: auto = strawberry_django.field(select_related="published_version")
-    text: auto = strawberry_django.field(select_related="published_version")
-    text_images: list["ContentImageType"] | None = strawberry_django.field(select_related="published_version")
-    start_note: auto = strawberry_django.field(select_related="published_version")
-    end_note: auto = strawberry_django.field(select_related="published_version")
-    word_count: auto = strawberry_django.field(select_related="published_version")
     average: auto
     review_count: auto
     _order: int
@@ -127,12 +120,6 @@ class ChapterType:
     creation_user: "UserType"
     modification_user: "UserType"
     fiction: "FictionType"
-    published_version: "ChapterVersionType"
-
-    submitted_version: Optional["ChapterVersionType"] = strawberry_django.field(
-        extensions=[IsStaffOrOwner(owner_field="creation_user")],
-        prefetch_related="versions",
-    )
 
 
 @strawberry_django.type(model=Fiction, fields="__all__", filters=FictionFilters, order=FictionOrder)

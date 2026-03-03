@@ -56,6 +56,12 @@ def create_fiction(
     current_user = get_current_user(info)
 
     # mutation
+    word_count = count_words(first_chapter_data.text)
+    if not first_chapter_data.is_draft:   # TODO - and user.has_auto_publish
+        publication_date = timezone.now()
+    else:
+        publication_date = None
+
     with django.db.transaction.atomic():
         fiction = Fiction.objects.create(
             creation_user=current_user,
@@ -65,6 +71,7 @@ def create_fiction(
             storynote=fiction_data.storynote,
             status=fiction_data.status,
             rating=fiction_data.rating,
+            last_update_date=publication_date,
         )
 
         if fiction_data.fandoms:
@@ -91,16 +98,12 @@ def create_fiction(
             fiction=fiction,
             creation_user=current_user,
             modification_user=current_user,
-        )
-        chapter_version = ChapterVersion.objects.create(
-            chapter=chapter,
-            creation_user=current_user,
             title=first_chapter_data.title,
             text=first_chapter_data.text,
             start_note=first_chapter_data.start_note,
             end_note=first_chapter_data.end_note,
-            word_count=count_words(first_chapter_data.text),
-            submission_date=timezone.now() if not first_chapter_data.is_draft else None,
+            word_count=word_count,
+            publication_date=publication_date,
         )
 
         if first_chapter_data.trigger_warnings:
@@ -113,7 +116,17 @@ def create_fiction(
             if first_chapter_data.trigger_warnings.set:
                 chapter.trigger_warnings.set(first_chapter_data.trigger_warnings.set)
 
-        if not first_chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+        if not first_chapter_data.is_draft:
+            chapter_version = ChapterVersion.objects.create(
+                chapter=chapter,
+                creation_user=current_user,
+                title=first_chapter_data.title,
+                text=first_chapter_data.text,
+                start_note=first_chapter_data.start_note,
+                end_note=first_chapter_data.end_note,
+                word_count=word_count,
+                submission_date=publication_date,
+            )
             chapter.published_version = chapter_version
             chapter.save()
 
@@ -195,22 +208,23 @@ def create_chapter(
         raise NotOwnerError
 
     # mutation
-    # TODO est-ce qu'on update modification_user sur fiction?
+    word_count = count_words(chapter_data.text)
+    if not chapter_data.is_draft:   # TODO - and user.has_auto_publish
+        publication_date = timezone.now()
+    else:
+        publication_date = None
+
     with django.db.transaction.atomic():
         chapter = Chapter.objects.create(
             fiction_id=fiction_id,
             creation_user=current_user,
             modification_user=current_user,
-        )
-        chapter_version = ChapterVersion.objects.create(
-            chapter=chapter,
-            creation_user=current_user,
             title=chapter_data.title,
             text=chapter_data.text,
             start_note=chapter_data.start_note,
             end_note=chapter_data.end_note,
-            word_count=count_words(chapter_data.text),
-            submission_date=timezone.now() if not chapter_data.is_draft else None,
+            word_count=word_count,
+            publication_date=publication_date,
         )
 
         if chapter_data.trigger_warnings:
@@ -224,8 +238,21 @@ def create_chapter(
                 chapter.trigger_warnings.set(chapter_data.trigger_warnings.set)
 
         if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+            chapter_version = ChapterVersion.objects.create(
+                chapter=chapter,
+                creation_user=current_user,
+                title=chapter_data.title,
+                text=chapter_data.text,
+                start_note=chapter_data.start_note,
+                end_note=chapter_data.end_note,
+                word_count=word_count,
+                submission_date=publication_date,
+            )
             chapter.published_version = chapter_version
             chapter.save()
+
+            chapter.fiction.last_update_date = publication_date
+            chapter.fiction.save()
 
     return cast(ChapterType, chapter)
 
@@ -243,19 +270,27 @@ def update_chapter(
     if chapter.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
 
+    if chapter.is_published() and chapter_data.is_draft:
+        msg = "Le chapitre et publié et ne peut être passé en brouillon"
+        raise ValueError(msg)
+
     # mutation
+    is_publishing = not chapter.is_published() and not chapter_data.is_draft
+
+    if not chapter_data.is_draft:   # TODO - and user.has_auto_publish
+        publication_date = timezone.now()
+    else:
+        publication_date = chapter.publication_date
+    word_count = count_words(chapter_data.text)
+
     with django.db.transaction.atomic():
-        # TODO peut-être des champs à Chapter ici ?
-        # TODO est-ce qu'on update update.modification_user ?
-        chapter_version = ChapterVersion.objects.create(
-            chapter=chapter,
-            creation_user=current_user,
-            title=chapter_data.title,
-            text=chapter_data.text,
-            word_count=count_words(chapter_data.text),
-            start_note=chapter_data.start_note,
-            end_note=chapter_data.end_note,
-        )
+        chapter.modification_user = current_user
+        chapter.title = chapter_data.title
+        chapter.text = chapter_data.text
+        chapter.start_note = chapter_data.start_note
+        chapter.end_note = chapter_data.end_note
+        chapter.word_count = word_count
+        chapter.publication_date = publication_date
 
         if chapter_data.trigger_warnings:
             if chapter_data.trigger_warnings.add:
@@ -268,10 +303,22 @@ def update_chapter(
                 chapter.trigger_warnings.set(chapter_data.trigger_warnings.set)
 
         if not chapter_data.is_draft:  # TODO - and user.has_auto_publish:
+            chapter_version = ChapterVersion.objects.create(
+                chapter=chapter,
+                creation_user=current_user,
+                title=chapter_data.title,
+                text=chapter_data.text,
+                word_count=word_count,
+                start_note=chapter_data.start_note,
+                end_note=chapter_data.end_note,
+            )
             chapter.published_version = chapter_version
             chapter.save()
 
-    # TODO faut-il rafraîchir chapter ?
+        if is_publishing:
+            chapter.fiction.last_update_date = publication_date
+            chapter.fiction.save()
+
     chapter.refresh_from_db()
     return cast(ChapterType, chapter)
 

@@ -99,7 +99,7 @@
               <p class="control">
                 <BButton
                   type="is-warning"
-                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
+                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges && !isEditing)"
                   @click.prevent="
                     () => {
                       if (isEditing) {
@@ -170,7 +170,7 @@ const currentStep = ref<"fiction" | "chapter" | "rules">(isEditing.value ? "fict
 const activeTab = ref<string>("");
 const fictionLookup = reactive({ fictionId: route.query["fiction"] as string }); // "" = nouvelle fiction
 const chapterLookup = reactive({ chapterId: activeTab.value }); // "" = nouveau chapitre
-const autoPublish = false;
+const autoPublish = true;
 
 const {
   data: fiction,
@@ -261,7 +261,11 @@ async function postFiction(isDraft: boolean): Promise<void> {
       isEditing.value = true;
       snackbar.open({
         duration: 5000,
-        message: autoPublish ? "La fiction a été publiée" : "La fiction est en attente de validation",
+        message: isDraft
+          ? "Le brouillon de la fiction a été enregistré"
+          : autoPublish
+            ? "La fiction a été publiée"
+            : "La fiction est en attente de validation",
         type: "is-danger",
         position: "is-bottom-right",
         // actionText: "Revenir aux fictions",
@@ -303,7 +307,11 @@ async function createChapter(isDraft: boolean): Promise<void> {
       activeTab.value = value.createChapter.id;
       snackbar.open({
         duration: 5000,
-        message: autoPublish ? "Le chapitre a été publié" : "Le chapitre été envoyé à la modération",
+        message: isDraft
+          ? "Le brouillon du chapitre a été enregistré"
+          : autoPublish
+            ? "Le chapitre a été publié"
+            : "Le chapitre été envoyé à la modération",
         type: "is-success",
         position: "is-bottom-right",
         // actionText: "Revenir aux fictions",
@@ -386,9 +394,11 @@ async function updateChapter(isDraft: boolean): Promise<void> {
     .then(() =>
       snackbar.open({
         duration: 5000,
-        message: autoPublish
-          ? "La nouvelle version du chapitre a été publiée"
-          : "La nouvelle version du chapitre été envoyée à la modération",
+        message: isDraft
+          ? "La nouvelle version du brouillon a été enregistrée"
+          : autoPublish
+            ? "La nouvelle version du chapitre a été publiée"
+            : "La nouvelle version du chapitre été envoyée à la modération",
         type: "is-success",
         position: "is-bottom-right",
         // actionText: "Revenir aux fictions",

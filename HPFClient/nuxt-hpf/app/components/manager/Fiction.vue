@@ -70,6 +70,8 @@
             autocomplete
             :required="!selectedFandoms.length"
             keep-first
+            keep-open
+            open-on-focus
             placeholder="Ajouter au moins un fandom"
             :data="filteredFandoms"
             @typing="getFilteredFandoms"

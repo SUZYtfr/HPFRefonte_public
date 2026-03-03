@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from ordered_model import models as ordered_models
-from django.db.models import Manager
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -15,7 +14,7 @@ from fictions.enums import (
     Rating,
 )
 from characteristics.models import TriggerWarning
-from images.models import ContentImage
+# from images.models import ContentImage
 
 from typing import TYPE_CHECKING
 
@@ -27,7 +26,7 @@ class FictionQuerySet(models.QuerySet):
     def published(self) -> models.QuerySet["Fiction"]:
         """Retourne les fictions publiées, dont au moins un des chapitres est publié"""
 
-        return self.filter(chapters__published_version__isnull=False).distinct()
+        return self.filter(chapters__publication_date__isnull=False).distinct()
 
     def with_averages(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des moyennes des reviews publiées"""
@@ -43,26 +42,18 @@ class FictionQuerySet(models.QuerySet):
 
         read_count = models.Sum(
             "chapters__read_count",
-            filter=models.Q(chapters__validation_status=ChapterValidationStage.PUBLISHED),
+            filter=models.Q(chapters__publication_date__isnull=False),
         )
         return self.annotate(_read_count=read_count)
 
     def with_word_counts(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des comptes de mots des chapitres publiés"""
 
-        grouped_published_chapters = Chapter.objects.published().with_word_counts().filter(
-            fiction_id=models.OuterRef("id"),
-        ).values("fiction_id")
-
-        summed_up_word_counts = grouped_published_chapters.annotate(
-            word_count=models.Sum("_word_count"),
-        ).values("word_count")
-
-        fictions_with_word_counts = self.annotate(
-            _word_count=models.Subquery(summed_up_word_counts),
+        word_count = models.Sum(
+            "chapters__word_count",
+            filter=models.Q(chapters__publication_date__isnull=False),
         )
-
-        return fictions_with_word_counts
+        return self.annotate(_word_count=word_count)
 
     def with_review_counts(self) -> models.QuerySet["Fiction"]:
         """Ajoute le total des reviews publiées"""
@@ -85,7 +76,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
     class Meta:
         verbose_name = "fiction"
-        ordering = ["-creation_date"]
+        ordering = ["-last_update_date"]
 
     title = models.CharField(
         verbose_name="titre",
@@ -145,7 +136,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def published_chapters(self) -> models.QuerySet["Chapter"]:
         """Renvoie les chapitres publiés"""
-        return self.chapters.filter(published_version__isnull=False)
+        return self.chapters.filter(publication_date__isnull=False)
     published_chapters.fget.short_description = "chapitres publiés"
 
     @property
@@ -173,11 +164,11 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     def word_count(self) -> int:
         """Renvoie le compte de mots des chapitres publiés"""
 
-        return getattr(self, "_word_count", None) or (
+        return getattr(self, "_word_count", None) or sum(
             self.published_chapters
-            .with_word_counts()
-            .aggregate(word_count=models.Sum("_word_count"))
-        )["word_count"]
+            .filter(word_count__isnull=False)
+            .values_list("word_count", flat=True),
+        )
     word_count.fget.short_description = "compte de mots"
 
     @property
@@ -246,28 +237,12 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
 
 
 class ChapterQuerySet(models.QuerySet):
-    def with_word_counts(self) -> "ChapterQuerySet":
-        """Ajoute le total des comptes de mots"""
-
-        last_version_word_count = (
-            ChapterVersion.objects
-            .filter(chapter_id=models.OuterRef("id"))
-            .order_by("-id")
-            .values("word_count")
-        )[:1]
-
-        chapters_with_word_counts = self.annotate(
-            _word_count=models.Subquery(last_version_word_count),
-        )
-
-        return chapters_with_word_counts
-
     def with_averages(self) -> "ChapterQuerySet":
         average = models.Sum("reviews__grading") / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
     def published(self) -> "ChapterQuerySet":
-        return self.filter(published_version__isnull=False)
+        return self.filter(publication_date__isnull=False)
 
 
 class Chapter(DatedModel, CreatedModel, TextDependentModel):
@@ -285,7 +260,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         related_name="chapters",
         on_delete=models.CASCADE,
     )
-    published_version = models.ForeignKey(
+    published_version = models.OneToOneField(
         verbose_name="version publiée",
         to="fictions.ChapterVersion",
         on_delete=models.SET_NULL,
@@ -293,76 +268,59 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
         blank=True,
         related_name="+",
     )
-    read_count = models.PositiveIntegerField(
-        verbose_name="compte de lectures",
-        default=0,
+    title = models.CharField(
+        verbose_name="titre",
+        max_length=250,
+        blank=False,
+    )
+    start_note = models.TextField(
+        verbose_name="note de début",
+        null=False,
+        blank=True,
+        default="",
+    )
+    end_note = models.TextField(
+        verbose_name="note de fin",
+        null=False,
+        blank=True,
+        default="",
+    )
+    text = models.TextField(
+        verbose_name="texte",
         editable=True,
     )
-    # validation_status = models.SmallIntegerField(
-    #     verbose_name="étape de validation",
-    #     choices=ChapterValidationStage.choices,
-    #     default=ChapterValidationStage.DRAFT,
-    # )
+    text_images = models.ManyToManyField(
+        to="images.ContentImage",
+        related_name="chapter_text_images",
+    )
+    word_count = models.PositiveIntegerField(
+        editable=True,
+        verbose_name="compte de mots",
+    )
     trigger_warnings = models.ManyToManyField(
         verbose_name="avertissements",
         to="characteristics.TriggerWarning",
         blank=True,
     )
+    read_count = models.PositiveIntegerField(
+        verbose_name="compte de lectures",
+        default=0,
+        editable=True,
+    )
+    publication_date = models.DateTimeField(
+        verbose_name="Horodatage de publication",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self) -> str:
-        if title := self.title:
-            return title
-        elif last_version_title := getattr(self.last_version, "title", None):
-            return f"{last_version_title} (non publié)"
-        else:
-            return "Sans titre"  # ne devrait jamais arriver
+        return self.title
+
+    def is_published(self) -> bool:
+        return bool(self.publication_date)
 
     def order(self) -> int:
         return self._order + 1
-
-    @property
-    def is_published(self) -> bool:
-        return bool(self.published_version)
-    is_published.fget.short_description = "est publié"
-
-    @property
-    def title(self) -> str | None:
-        return self.published_version.title if self.published_version else None
-    title.fget.short_description = "titre"
-
-    @property
-    def text(self) -> str | None:
-        return self.published_version.text if self.published_version else None
-    text.fget.short_description = "texte"
-
-    @property
-    def start_note(self) -> str | None:
-        return self.published_version.start_note if self.published_version else None
-    start_note.fget.short_description = "note de début"
-
-    @property
-    def end_note(self) -> str | None:
-        return self.published_version.end_note if self.published_version else None
-    end_note.fget.short_description = "note de fin"
-
-    @property
-    def word_count(self) -> int | None:
-        return self.published_version.word_count if self.published_version else None
-    end_note.fget.word_count = "compte de mots"
-
-    @property
-    def text_images(self) -> Manager[ContentImage] | None:
-        return self.published_version.text_images.all() if self.published_version else None
-    text_images.fget.short_description = "images incluses"
-
-    @property
-    def last_version(self) -> "ChapterVersion":
-        return self.versions.last()  # TODO latest
-
-    # TODO - en faire carrément un FK à la manière de published_version ?
-    @property
-    def submitted_version(self) -> "ChapterVersion":
-        return self.versions.order_by("creation_date").exclude(submission_date__isnull=True).last()
 
     # TODO - sera remplacé par un M2M pour le co-autorat
     @property
@@ -397,11 +355,11 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
 
 
 class ChapterVersion(models.Model):
-    """Modèle de contenu de chapitre"""
+    """Modèle de contenu de chapitre soumis"""
 
     class Meta:
-        verbose_name = "version de contenu de chapitre"
-        verbose_name_plural = "versions de contenu de chapitre"
+        verbose_name = "version de chapitre"
+        verbose_name_plural = "versions de chapitre"
 
     chapter = models.ForeignKey(
         verbose_name="chapitre",
@@ -455,7 +413,7 @@ class ChapterVersion(models.Model):
 
     text_images = models.ManyToManyField(
         to="images.ContentImage",
-        related_name="chapter_text_images",
+        related_name="chapter_version_text_images",
     )
 
     # Invalidation
@@ -501,12 +459,10 @@ class ChapterVersion(models.Model):
 
     @property
     def validation_status(self) -> ChapterValidationStage:
-        if not self.submission_date:
-            return ChapterValidationStage.DRAFT
-        elif self.is_published:
+        if self.is_published:
             return ChapterValidationStage.PUBLISHED
         elif self.to_be_discussed:
-            return ChapterValidationStage.DISCUTED
+            return ChapterValidationStage.DISCUSSED
         elif self.is_invalidated:
             return ChapterValidationStage.EDIT_REQUIRED
         else:
