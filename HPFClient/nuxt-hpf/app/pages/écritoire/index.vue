@@ -159,6 +159,7 @@ definePageMeta({
 });
 
 const route = useRoute();
+const { fandoms } = useConfigStore();
 
 // Si la fiction est indiquée en paramètre, on est en contexte de modification initialement
 // Le règlement est considéré comme lu et l'étape est passée
@@ -181,7 +182,14 @@ const {
     return plainToInstance(FanfictionModel, input.fiction);
   },
   // @ts-expect-error Faudrait typer useAsyncGql mais la flemme
-  default: () => ref(new FanfictionModel({ recordStatus: RecordStatusEnum.New, fandoms: [], characteristics: [] })),
+  default: () =>
+    ref(
+      new FanfictionModel({
+        recordStatus: RecordStatusEnum.New,
+        fandoms: fandoms!.filter((f) => f.id === route.query["fandom"]),
+        characteristics: [],
+      }),
+    ),
   immediate: false,
 });
 

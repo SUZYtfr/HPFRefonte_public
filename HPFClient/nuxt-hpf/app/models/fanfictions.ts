@@ -53,14 +53,14 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   public average: number | null = null;
   public storynote: string | null = null;
 
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(({ value }) => (value ? new Date(value) : value), { toClassOnly: true })
   @Transform(
     ({ value }) => {
       return value instanceof Date ? value.toISOString() : value;
     },
     { toPlainOnly: true },
   )
-  public lastUpdateDate: Date = new Date();
+  public lastUpdateDate: Date | null = null;
 
   public readCount: number | null = null;
   public wordCount: number | null = null;

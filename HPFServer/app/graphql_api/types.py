@@ -134,6 +134,8 @@ class FictionType:
     word_count: auto
     read_count: auto
     chapter_count: auto
+    average: auto
+    is_published: auto
     author: "UserType" = strawberry_django.field(field_name="creation_user")
     fandoms: list["FandomType"]
     trigger_warnings: list["TriggerWarningType"] = strawberry_django.field(prefetch_related="chapters__trigger_warnings")

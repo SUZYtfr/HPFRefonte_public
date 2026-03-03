@@ -1,0 +1,22 @@
+query getPrivateFictions($filters: FictionFilters, $pagination: OffsetPaginationInput, $order: FictionOrder) {
+  privateFictions(filters: $filters, pagination: $pagination, order: $order) {
+    totalCount
+    results {
+      id
+      title
+      status
+      rating
+      lastUpdateDate
+      average
+      chapterCount
+      readCount
+      reviewCount
+      fandoms {
+        name
+      }
+      characteristics {
+        name
+      }
+    }
+  }
+}
