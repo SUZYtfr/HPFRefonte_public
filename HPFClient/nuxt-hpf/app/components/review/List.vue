@@ -7,7 +7,7 @@
         trouver un meilleur moyen de rendre l'éditeur responsif -->
         <ClientOnly>
           <Teleport :to="captureEditorTarget" :disabled="!captureEditor" defer>
-            <CustomEditor ref="review-editor" :config="tiptapConfig" />
+            <RichtextEditor ref="review-editor" :config="tiptapConfig" />
             <div :class="[captureEditor ? 'mt-1' : 'm-2', 'is-flex', 'is-flex-direction-row', 'is-flex-wrap-wrap']">
               <BCheckbox v-model="reviewState.canGrade"> Ajouter une note </BCheckbox>
               <BRate
@@ -55,7 +55,7 @@
             <span class="is-italic mt-3">Aucune review, soyez le premier !</span>
           </div>
           <div v-else>
-            <ReviewsEntity
+            <ReviewEntity
               v-for="(review, innerindex) of paginatedReviews?.results"
               :key="'rv_' + review.reviewId.toString()"
               class="my-2"

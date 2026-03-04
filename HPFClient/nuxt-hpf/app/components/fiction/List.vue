@@ -34,7 +34,7 @@
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
-        <FictionsEntity
+        <FictionEntity
           v-for="(fanfiction, innerindex) of paginatedFanfictions.results"
           :key="'ff_' + fanfiction.fanfictionId.toString()"
           class="my-2"

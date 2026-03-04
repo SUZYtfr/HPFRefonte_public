@@ -65,7 +65,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="tableOfContent.storynote"></p>
+                  <RichtextReader :text="tableOfContent.storynote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -86,7 +86,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="chapter.startNote"></p>
+                  <RichtextReader :text="chapter.startNote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -135,7 +135,7 @@
                 </div>
                 <!-- FIN: Sticky FontSize -->
                 <div class="content p-2" style="display: block; overflow: auto; margin-top: -55px">
-                  <CustomEditor
+                  <RichtextEditor
                     ref="chapter-reader"
                     :config="tiptapReadOnlyConfig"
                     @quote="(quote: string) => setQuote(quote)"
@@ -165,7 +165,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="chapter.endNote"></p>
+                  <RichtextReader :text="chapter.endNote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -196,7 +196,7 @@
 
               <div class="card-content pb-0">
                 <div class="content p-2">
-                  <ReviewsList
+                  <ReviewList
                     ref="review-list"
                     :review-list-type="ReviewItemTypeEnum.Chapter"
                     :paginated-reviews

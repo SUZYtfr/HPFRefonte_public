@@ -20,7 +20,7 @@
           }}</small>
         </div>
         <p>
-          <span v-html="comment.content"></span>
+          <RichtextReader :text="comment.content" />
         </p>
       </div>
     </div>

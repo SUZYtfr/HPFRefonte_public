@@ -4,7 +4,7 @@
     <div class="columns is-reversed-mobile">
       <div class="column is-7-tablet is-8-desktop is-9-widescreen">
         <!-- Nouveautés fanfictions -->
-        <FictionsThumbnailList
+        <FictionThumbnailList
           :title="'Nouveautés ' + fandom?.name"
           :fandom
           :is-loading="recentFanfictionsStatus == 'pending'"
@@ -13,7 +13,7 @@
         />
         <br />
         <!-- Sélections fanfictions -->
-        <FictionsThumbnailList
+        <FictionThumbnailList
           :title="'Sélections ' + fandom?.name"
           :fandom
           :is-loading="recentFanfictionsStatus == 'pending'"

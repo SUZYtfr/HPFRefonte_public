@@ -22,7 +22,7 @@
             "
             class="column is-half py-2"
           >
-            <FictionsThumbnail :key="fanfiction.fanfictionId" :fanfiction="fanfiction" :index="innerindex" :fandom />
+            <FictionThumbnail :key="fanfiction.fanfictionId" :fanfiction="fanfiction" :index="innerindex" :fandom />
           </div>
         </div>
         <p v-else class="has-text-centered my-2">Aucune fanfiction trouvée</p>

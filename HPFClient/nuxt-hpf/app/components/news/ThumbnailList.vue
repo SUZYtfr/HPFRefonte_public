@@ -41,7 +41,7 @@ type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "res
 };
 
 interface Props {
-  news: NewsArticleModelOffsetPaginated;
+  news?: NewsArticleModelOffsetPaginated;
 }
 
 defineProps<Props>();

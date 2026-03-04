@@ -9,7 +9,7 @@
           </p>
         </header>
         <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px">
-          <FictionsEntity
+          <FictionEntity
             :key="'ff_' + fiction.fanfictionId.toString()"
             class="my-2"
             :fanfiction="fiction"
@@ -124,7 +124,7 @@
 
         <div class="card-content pb-0">
           <div class="content p-2">
-            <ReviewsList
+            <ReviewList
               ref="review-list"
               :review-list-type="ReviewItemTypeEnum.Fanfiction"
               :paginated-reviews

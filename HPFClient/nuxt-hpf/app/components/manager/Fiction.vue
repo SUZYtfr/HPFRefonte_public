@@ -41,7 +41,7 @@
         </BField>
       </BField>
       <BField label="Résumé">
-        <CustomEditor
+        <RichtextEditor
           v-model:text="fiction.summary"
           :config="{
             defaultValue: fiction.summary || '',
@@ -150,7 +150,7 @@
       </BField>
 
       <BField label="Notes de fictions">
-        <CustomEditor
+        <RichtextEditor
           v-model:text="fiction.storynote"
           :config="{
             defaultValue: fiction.storynote || '',

@@ -28,7 +28,7 @@
               </BDropdown>
             </BField>
             <BField label="Note de début">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.startNote"
                 :config="{
                   defaultValue: chapter.startNote || '',
@@ -47,7 +47,7 @@
               />
             </BField>
             <BField label="Texte">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.text"
                 :config="{
                   defaultValue: chapter.text || '',
@@ -66,7 +66,7 @@
               />
             </BField>
             <BField label="Notes de fin">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.endNote"
                 :config="{
                   defaultValue: chapter.endNote || '',

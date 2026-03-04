@@ -118,10 +118,10 @@ export default defineNuxtConfig({
 
   css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss", "animate.css"],
 
-  debug: false,
+  debug: process.env.DEBUG === "true",
 
   devtools: {
-    enabled: true,
+    enabled: process.env.DEVTOOLS === "true",
     // vueDevTools: true,
     timeline: {
       enabled: true,
@@ -163,7 +163,7 @@ export default defineNuxtConfig({
     // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
     clients: {
       default: {
-        host: "http://127.0.0.1:8000/graphql/",
+        host: process.env.DJANGO_GRAPHQL_ENDPOINT!,
         token: {
           type: "JWT",
         },
@@ -175,10 +175,10 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     // The private keys which are only available within server-side
-    baseApi: "http://127.0.0.1:8000/graphql/",
+    baseApi: process.env.DJANGO_GRAPHQL_ENDPOINT,
     // Keys within public, will be also exposed to the client-side
     public: {
-      baseApi: "http://127.0.0.1:8000/graphql/",
+      baseApi: process.env.DJANGO_GRAPHQL_ENDPOINT,
     },
   },
 

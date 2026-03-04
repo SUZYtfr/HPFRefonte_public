@@ -69,7 +69,7 @@
         :initial-excluded-values="filters.fandoms?.NOT?.id?.inList || []"
         @change="fandomsChanged"
       />
-      <CharacteristicsPanel
+      <CharacteristicPanel
         v-for="(type, index) in ConfigModule.characteristicTypes"
         :key="'tag_' + index.toString()"
         :initial-included-ids
@@ -160,11 +160,14 @@ import { groupBy } from "@/utils/es6-utils";
 import type { FictionFilters } from "#gql";
 import type { CharacteristicModel } from "@/models";
 
+// NOTE - C'est quand même fou qu'on puisse pas extraire le type de prop d'un composant Buefy...
+type TooltipPosition = "is-left" | "is-right" | "is-top" | "is-bottom" | "is-auto" | undefined;
+
 interface Props {
   initialIncludedIds: number[];
   initialExcludedIds: number[];
   isFixedHeightCard?: boolean;
-  tooltipPosition?: string;
+  tooltipPosition?: TooltipPosition;
   searchFictions: () => Promise<void>;
 }
 

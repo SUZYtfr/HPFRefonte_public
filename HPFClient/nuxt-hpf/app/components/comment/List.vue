@@ -6,7 +6,7 @@
     <div class="card-content">
       <div class="content">
         <div v-if="(comments?.length ?? 0) > 0">
-          <CommentsEntity
+          <CommentEntity
             v-for="(item, innerindex) of comments"
             :key="'comment_' + item.commentId.toString()"
             :index="innerindex"

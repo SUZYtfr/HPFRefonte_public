@@ -168,7 +168,7 @@
                 <div class="columns">
                   <!-- Contenu du chapitre -->
                   <div class="column is-10">
-                    <ChaptersBody
+                    <ChapterBody
                       :chapter="selectedChapter"
                       :summary="selectedChapter.fictionMetadata?.summary"
                       :storynotes="selectedChapter.fictionMetadata?.storynote"

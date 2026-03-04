@@ -3,7 +3,7 @@
     <NewsEntity v-if="news" class="mt-2 is-color-odd" :news="news" />
     <br />
     <div>
-      <CommentsList v-if="news" :news-id="news.newsId" :comments="news.comments" />
+      <CommentList v-if="news" :news-id="news.newsId" :comments="news.comments" />
     </div>
     <br />
   </div>

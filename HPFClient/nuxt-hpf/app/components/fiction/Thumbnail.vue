@@ -61,13 +61,14 @@
         >
       </div>
     </div>
-    <p v-plaintext class="text-ellipsis-three-line" v-html="fanfiction.summary"></p>
+    <p class="text-ellipsis-three-line">{{ convertToPlainText(fanfiction.summary || "") }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { FanfictionModel } from "~/models";
 import { getClassTypeColor } from "~/utils/characteristics";
+import { convertToPlainText } from "~/utils/text";
 import type { CharacteristicData } from "~/types/characteristics";
 import type { FandomData } from "~/types/fanfictions";
 
@@ -75,12 +76,6 @@ const { fanfiction } = defineProps<{
   fanfiction: FanfictionModel;
   fandom?: FandomData;
 }>();
-
-// https://vuejs.org/guide/reusability/custom-directives.html#when-to-use
-const vPlaintext = {
-  // @ts-expect-error el implicitely any - à adapter à vue 3
-  mounted: (el) => (el.innerHTML = el.innerText.trimStart()),
-};
 
 const hover = ref<boolean>(false);
 

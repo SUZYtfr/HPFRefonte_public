@@ -18,7 +18,7 @@
                       prefetch-on="interaction"
                       :to="item.to"
                     >
-                      <BIcon pack="fas" :icon="item.icon" size="is-small" /><span>{{ item.label }}</span>
+                      <BIcon pack="fas" :icon="item.icon!" size="is-small" /><span>{{ item.label }}</span>
                     </NuxtLink>
                   </li>
                 </template>
