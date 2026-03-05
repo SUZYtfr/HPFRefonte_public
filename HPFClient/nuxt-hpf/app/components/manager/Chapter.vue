@@ -31,9 +31,8 @@
               <RichtextEditor
                 v-model:text="chapter.startNote"
                 :config="{
-                  defaultValue: chapter.startNote || '',
                   showFooter: false,
-                  placeholder: '',
+                  placeholder: 'Notes de début de fiction',
                   fixedHeight: false,
                   height: 200,
                   oneLineToolbar: true,
@@ -46,9 +45,8 @@
               <RichtextEditor
                 v-model:text="chapter.text"
                 :config="{
-                  defaultValue: chapter.text || '',
                   showFooter: true,
-                  placeholder: '',
+                  placeholder: 'Texte du chapitre',
                   fixedHeight: true,
                   height: 600,
                   oneLineToolbar: true,
@@ -61,9 +59,8 @@
               <RichtextEditor
                 v-model:text="chapter.endNote"
                 :config="{
-                  defaultValue: chapter.endNote || '',
                   showFooter: false,
-                  placeholder: '',
+                  placeholder: 'Notes de fin de fiction',
                   fixedHeight: false,
                   height: 200,
                   oneLineToolbar: true,

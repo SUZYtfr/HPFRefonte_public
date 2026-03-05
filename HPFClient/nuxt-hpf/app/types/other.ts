@@ -25,7 +25,6 @@ export interface TipTapEditorConfig {
   placeholder: string;
   fixedHeight: boolean;
   height: number;
-  defaultValue: string;
   oneLineToolbar: boolean;
   canUseImage: boolean;
 }

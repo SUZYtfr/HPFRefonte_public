@@ -1,5 +1,0 @@
-mutation postComment($newsArticleId: ID!, $commentData: NewsCommentInput!) {
-  postComment(newsArticleId: $newsArticleId, commentData: $commentData) {
-    id
-  }
-}

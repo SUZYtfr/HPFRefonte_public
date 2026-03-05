@@ -44,9 +44,8 @@
         <RichtextEditor
           v-model:text="fiction.summary"
           :config="{
-            defaultValue: fiction.summary || '',
             showFooter: false,
-            placeholder: '',
+            placeholder: 'Résumé de la fiction',
             fixedHeight: true,
             height: 200,
             oneLineToolbar: true,
@@ -149,9 +148,8 @@
         <RichtextEditor
           v-model:text="fiction.storynote"
           :config="{
-            defaultValue: fiction.storynote || '',
             showFooter: false,
-            placeholder: '',
+            placeholder: 'Notes de la fiction',
             fixedHeight: false,
             height: 200,
             oneLineToolbar: true,

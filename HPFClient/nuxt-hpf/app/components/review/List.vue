@@ -157,10 +157,9 @@ watch(pageReviewPagination, () => {
 
 const tiptapConfig = reactive<TipTapEditorConfig>({
   showFooter: false,
-  placeholder: "Votre review ici",
+  placeholder: "Écrivez votre review ici",
   fixedHeight: true,
   height: 250,
-  defaultValue: "",
   oneLineToolbar: true,
   canUseImage: false,
 });

@@ -1,5 +1,5 @@
 <template>
-  <div :class="[(config?.fixedHeight ?? true) ? 'editor-height' : '']">
+  <div :class="[config.fixedHeight ? 'editor-height' : '']">
     <!-- Editor -->
     <div
       v-if="editor"
@@ -7,591 +7,599 @@
       :class="['is-flex', 'is-flex-direction-column', 'is-justify-content-flex-start', 'editor-borders']"
     >
       <!-- Toolbar -->
-      <div
-        id="editor-header"
-        :class="[
-          'is-flex',
-          'is-flex-direction-row',
-          'is-justify-content-flex-start',
-          'is-flex-wrap-wrap',
-          { 'editor-disabled': linkEditorModalActive },
-          { 'one-line-toolbar': config?.oneLineToolbar ?? false },
-        ]"
-      >
-        <!-- Menu burger regroupant toutes les fonctionnalités masqués dans le tooltip -->
-        <BTooltip
-          v-if="(config?.oneLineToolbar ?? false) == true"
-          type="is-light"
-          :triggers="['click']"
-          :auto-close="['outside', 'escape']"
-          position="is-left"
-          style="position: absolute; left: 21px"
+      <Transition>
+        <div
+          v-if="config.fixedHeight || text || editorIsFocused"
+          id="editor-header"
+          :class="[
+            'is-flex',
+            'is-flex-direction-row',
+            'is-justify-content-flex-start',
+            'is-flex-wrap-wrap',
+            { 'editor-disabled': linkEditorModalActive },
+            { 'one-line-toolbar': config.oneLineToolbar },
+          ]"
         >
-          <template #content>
+          <!-- Menu burger regroupant toutes les fonctionnalités masqués dans le tooltip -->
+          <BTooltip
+            v-if="config.oneLineToolbar"
+            type="is-light"
+            :triggers="['click']"
+            :auto-close="['outside', 'escape']"
+            position="is-left"
+            style="position: absolute; left: 21px"
+          >
+            <template #content>
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Bold"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="bold"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
+                @click="editor.chain().focus().toggleBold().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Bold"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="italic"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
+                @click="editor.chain().focus().toggleItalic().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Underline"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="underline"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
+                @click="editor.chain().focus().toggleUnderline().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Strikethrough"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="strikethrough"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
+                @click="editor.chain().focus().toggleStrike().run()"
+              />
+              <div v-if="toolBarButtonsTooltipVisibility.Strikethrough" class="py-1">
+                <div class="vertical-line"></div>
+              </div>
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.AlignLeft"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="align-left"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
+                @click="editor.chain().focus().setTextAlign('left').run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.AlignCenter"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="align-center"
+                :class="{
+                  'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
+                }"
+                @click="editor.chain().focus().setTextAlign('center').run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.AlignRight"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="align-right"
+                :class="{
+                  'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
+                }"
+                @click="editor.chain().focus().setTextAlign('right').run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.AlignJustify"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="align-justify"
+                :class="{
+                  'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
+                }"
+                @click="editor.chain().focus().setTextAlign('justify').run()"
+              />
+              <div v-if="toolBarButtonsTooltipVisibility.AlignJustify" class="py-1">
+                <div class="vertical-line"></div>
+              </div>
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Indent"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="indent"
+                @click="editor.chain().focus().indent().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Outdent"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="outdent"
+                @click="editor.chain().focus().outdent().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.ListUl"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="list-ul"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
+                @click="editor.chain().focus().toggleBulletList().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.ListOl"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="list-ol"
+                :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
+                @click="editor.chain().focus().toggleOrderedList().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Undo"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="undo"
+                :disabled="!editorFunctionsActiveStatuses.undo"
+                @click="editor.chain().focus().undo().run()"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Redo"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="redo"
+                :disabled="!editorFunctionsActiveStatuses.redo"
+                @click="editor.chain().focus().redo().run()"
+              />
+              <div v-if="toolBarButtonsTooltipVisibility.Redo" class="py-1">
+                <div class="vertical-line"></div>
+              </div>
+              <BDropdown v-if="toolBarButtonsTooltipVisibility.TextStyle" aria-role="list" :mobile-modal="false">
+                <template #trigger="{ active }">
+                  <BButton
+                    type="is-primary"
+                    outlined
+                    size="is-small"
+                    icon-pack="fas"
+                    :icon-left="currentStyle().icon"
+                    :label="currentStyle().text"
+                    :icon-right="active ? 'angle-up' : 'angle-down'"
+                  />
+                </template>
+                <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
+                  <div class="media" @click="toggleStyle(menu.action)">
+                    <BIcon class="media-left" :icon="menu.icon" />
+                    <div class="media-content">
+                      <h3>{{ menu.text }}</h3>
+                    </div>
+                  </div>
+                </BDropdownItem>
+              </BDropdown>
+              <BDropdown v-if="toolBarButtonsTooltipVisibility.TextHeight" aria-role="list" :mobile-modal="false">
+                <template #trigger="{ active }">
+                  <BButton
+                    type="is-primary"
+                    outlined
+                    size="is-small"
+                    icon-pack="fas"
+                    icon-left="text-height"
+                    :label="editorFunctionsTextStyleStatuses.fontSize"
+                    :icon-right="active ? 'angle-up' : 'angle-down'"
+                  />
+                </template>
+                <BDropdownItem
+                  v-for="(fontSize, index) in menusFontSize"
+                  :key="index"
+                  :value="fontSize"
+                  aria-role="listitem"
+                >
+                  <div class="media" @click="changeFontSize(fontSize)">
+                    <div class="media-content">
+                      <h3
+                        :style="{
+                          fontSize: fontSize + 'px',
+                        }"
+                      >
+                        {{ fontSize + " px" }}
+                      </h3>
+                    </div>
+                  </div>
+                </BDropdownItem>
+              </BDropdown>
+              <BDropdown v-if="toolBarButtonsTooltipVisibility.Font" aria-role="list" :mobile-modal="false">
+                <template #trigger="{ active }">
+                  <BButton
+                    type="is-primary"
+                    outlined
+                    size="is-small"
+                    icon-pack="fas"
+                    icon-left="font"
+                    :label="editorFunctionsTextStyleStatuses.fontFamily"
+                    :icon-right="active ? 'angle-up' : 'angle-down'"
+                  />
+                </template>
+                <BDropdownItem
+                  v-for="(fontFamily, index) in menusFontFamily"
+                  :key="index"
+                  :value="fontFamily"
+                  aria-role="listitem"
+                >
+                  <div class="media" @click="changeFontFamily(fontFamily)">
+                    <div class="media-content">
+                      <h3
+                        :style="{
+                          fontFamily: fontFamily,
+                        }"
+                      >
+                        {{ fontFamily }}
+                      </h3>
+                    </div>
+                  </div>
+                </BDropdownItem>
+              </BDropdown>
+              <div v-if="toolBarButtonsTooltipVisibility.Font" class="py-1">
+                <div class="vertical-line"></div>
+              </div>
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Image && config.canUseImage"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="image"
+                @click="addHPFImage(null, null, null, null)"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.Link"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="link"
+                @click="linkEditorModalActive = true"
+              />
+              <BButton
+                v-if="toolBarButtonsTooltipVisibility.GripLines"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="grip-lines"
+                @click="editor.chain().focus().setHorizontalRule().run()"
+              />
+            </template>
             <BButton
-              v-if="toolBarButtonsTooltipVisibility.Bold"
               type="is-primary"
               outlined
               size="is-small"
               icon-pack="fas"
-              icon-left="bold"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
-              @click="editor.chain().focus().toggleBold().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Bold"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="italic"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
-              @click="editor.chain().focus().toggleItalic().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Underline"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="underline"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
-              @click="editor.chain().focus().toggleUnderline().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Strikethrough"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="strikethrough"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
-              @click="editor.chain().focus().toggleStrike().run()"
-            />
-            <div v-if="toolBarButtonsTooltipVisibility.Strikethrough" class="py-1">
-              <div class="vertical-line"></div>
-            </div>
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.AlignLeft"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="align-left"
+              icon-left="bars"
               :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
               @click="editor.chain().focus().setTextAlign('left').run()"
             />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.AlignCenter"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="align-center"
-              :class="{
-                'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
-              }"
-              @click="editor.chain().focus().setTextAlign('center').run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.AlignRight"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="align-right"
-              :class="{
-                'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
-              }"
-              @click="editor.chain().focus().setTextAlign('right').run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.AlignJustify"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="align-justify"
-              :class="{
-                'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
-              }"
-              @click="editor.chain().focus().setTextAlign('justify').run()"
-            />
-            <div v-if="toolBarButtonsTooltipVisibility.AlignJustify" class="py-1">
-              <div class="vertical-line"></div>
-            </div>
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Indent"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="indent"
-              @click="editor.chain().focus().indent().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Outdent"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="outdent"
-              @click="editor.chain().focus().outdent().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.ListUl"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="list-ul"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
-              @click="editor.chain().focus().toggleBulletList().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.ListOl"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="list-ol"
-              :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
-              @click="editor.chain().focus().toggleOrderedList().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Undo"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="undo"
-              :disabled="!editorFunctionsActiveStatuses.undo"
-              @click="editor.chain().focus().undo().run()"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Redo"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="redo"
-              :disabled="!editorFunctionsActiveStatuses.redo"
-              @click="editor.chain().focus().redo().run()"
-            />
-            <div v-if="toolBarButtonsTooltipVisibility.Redo" class="py-1">
-              <div class="vertical-line"></div>
-            </div>
-            <BDropdown v-if="toolBarButtonsTooltipVisibility.TextStyle" aria-role="list" :mobile-modal="false">
-              <template #trigger="{ active }">
-                <BButton
-                  type="is-primary"
-                  outlined
-                  size="is-small"
-                  icon-pack="fas"
-                  :icon-left="currentStyle().icon"
-                  :label="currentStyle().text"
-                  :icon-right="active ? 'angle-up' : 'angle-down'"
-                />
-              </template>
-              <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
-                <div class="media" @click="toggleStyle(menu.action)">
-                  <BIcon class="media-left" :icon="menu.icon" />
-                  <div class="media-content">
-                    <h3>{{ menu.text }}</h3>
-                  </div>
+          </BTooltip>
+          <!-- Toolbar, sur une ou plusieurs lignes selon la largeur -->
+          <BButton
+            ref="btn-bold"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="bold"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
+            @click="editor.chain().focus().toggleBold().run()"
+          />
+          <BButton
+            ref="btn-italic"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="italic"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
+            @click="editor.chain().focus().toggleItalic().run()"
+          />
+          <BButton
+            ref="btn-underline"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="underline"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
+            @click="editor.chain().focus().toggleUnderline().run()"
+          />
+          <BButton
+            ref="btn-strikethrough"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="strikethrough"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
+            @click="editor.chain().focus().toggleStrike().run()"
+          />
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BButton
+            ref="btn-align-left"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="align-left"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
+            @click="editor.chain().focus().setTextAlign('left').run()"
+          />
+          <BButton
+            ref="btn-align-center"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="align-center"
+            :class="{
+              'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
+            }"
+            @click="editor.chain().focus().setTextAlign('center').run()"
+          />
+          <BButton
+            ref="btn-align-right"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="align-right"
+            :class="{
+              'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
+            }"
+            @click="editor.chain().focus().setTextAlign('right').run()"
+          />
+          <BButton
+            ref="btn-align-justify"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="align-justify"
+            :class="{
+              'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
+            }"
+            @click="editor.chain().focus().setTextAlign('justify').run()"
+          />
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BButton
+            ref="btn-indent"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="indent"
+            @click="editor.chain().focus().indent().run()"
+          />
+          <BButton
+            ref="btn-outdent"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="outdent"
+            @click="editor.chain().focus().outdent().run()"
+          />
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BButton
+            ref="btn-list-ul"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="list-ul"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
+            @click="editor.chain().focus().toggleBulletList().run()"
+          />
+          <BButton
+            ref="btn-list-ol"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="list-ol"
+            :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
+            @click="editor.chain().focus().toggleOrderedList().run()"
+          />
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BButton
+            ref="btn-undo"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="undo"
+            :disabled="!editorFunctionsActiveStatuses.undo"
+            @click="editor.chain().focus().undo().run()"
+          />
+          <BButton
+            ref="btn-redo"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="redo"
+            :disabled="!editorFunctionsActiveStatuses.redo"
+            @click="editor.chain().focus().redo().run()"
+          />
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BDropdown aria-role="list" :mobile-modal="false">
+            <template #trigger="{ active }">
+              <BButton
+                ref="btn-textstyle"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                :icon-left="currentStyle().icon"
+                :label="currentStyle().text"
+                :icon-right="active ? 'angle-up' : 'angle-down'"
+              />
+            </template>
+            <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
+              <div class="media" @click="toggleStyle(menu.action)">
+                <BIcon class="media-left" :icon="menu.icon" />
+                <div class="media-content">
+                  <h3>{{ menu.text }}</h3>
                 </div>
-              </BDropdownItem>
-            </BDropdown>
-            <BDropdown v-if="toolBarButtonsTooltipVisibility.TextHeight" aria-role="list" :mobile-modal="false">
-              <template #trigger="{ active }">
-                <BButton
-                  type="is-primary"
-                  outlined
-                  size="is-small"
-                  icon-pack="fas"
-                  icon-left="text-height"
-                  :label="editorFunctionsTextStyleStatuses.fontSize"
-                  :icon-right="active ? 'angle-up' : 'angle-down'"
-                />
-              </template>
-              <BDropdownItem
-                v-for="(fontSize, index) in menusFontSize"
-                :key="index"
-                :value="fontSize"
-                aria-role="listitem"
-              >
-                <div class="media" @click="changeFontSize(fontSize)">
-                  <div class="media-content">
-                    <h3
-                      :style="{
-                        fontSize: fontSize + 'px',
-                      }"
-                    >
-                      {{ fontSize + " px" }}
-                    </h3>
-                  </div>
+              </div>
+            </BDropdownItem>
+          </BDropdown>
+          <BDropdown aria-role="list" :mobile-modal="false">
+            <template #trigger="{ active }">
+              <BButton
+                ref="btn-textheight"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="text-height"
+                :label="editorFunctionsTextStyleStatuses.fontSize"
+                :icon-right="active ? 'angle-up' : 'angle-down'"
+              />
+            </template>
+            <BDropdownItem
+              v-for="(fontSize, index) in menusFontSize"
+              :key="index"
+              :value="fontSize"
+              aria-role="listitem"
+            >
+              <div class="media" @click="changeFontSize(fontSize)">
+                <div class="media-content">
+                  <h3
+                    :style="{
+                      fontSize: fontSize + 'px',
+                    }"
+                  >
+                    {{ fontSize + " px" }}
+                  </h3>
                 </div>
-              </BDropdownItem>
-            </BDropdown>
-            <BDropdown v-if="toolBarButtonsTooltipVisibility.Font" aria-role="list" :mobile-modal="false">
-              <template #trigger="{ active }">
-                <BButton
-                  type="is-primary"
-                  outlined
-                  size="is-small"
-                  icon-pack="fas"
-                  icon-left="font"
-                  :label="editorFunctionsTextStyleStatuses.fontFamily"
-                  :icon-right="active ? 'angle-up' : 'angle-down'"
-                />
-              </template>
-              <BDropdownItem
-                v-for="(fontFamily, index) in menusFontFamily"
-                :key="index"
-                :value="fontFamily"
-                aria-role="listitem"
-              >
-                <div class="media" @click="changeFontFamily(fontFamily)">
-                  <div class="media-content">
-                    <h3
-                      :style="{
-                        fontFamily: fontFamily,
-                      }"
-                    >
-                      {{ fontFamily }}
-                    </h3>
-                  </div>
+              </div>
+            </BDropdownItem>
+          </BDropdown>
+          <BDropdown aria-role="list" :mobile-modal="false">
+            <template #trigger="{ active }">
+              <BButton
+                ref="btn-font"
+                type="is-primary"
+                outlined
+                size="is-small"
+                icon-pack="fas"
+                icon-left="font"
+                :label="editorFunctionsTextStyleStatuses.fontFamily"
+                :icon-right="active ? 'angle-up' : 'angle-down'"
+              />
+            </template>
+            <BDropdownItem
+              v-for="(fontFamily, index) in menusFontFamily"
+              :key="index"
+              :value="fontFamily"
+              aria-role="listitem"
+            >
+              <div class="media" @click="changeFontFamily(fontFamily)">
+                <div class="media-content">
+                  <h3
+                    :style="{
+                      fontFamily: fontFamily,
+                    }"
+                  >
+                    {{ fontFamily }}
+                  </h3>
                 </div>
-              </BDropdownItem>
-            </BDropdown>
-            <div v-if="toolBarButtonsTooltipVisibility.Font" class="py-1">
-              <div class="vertical-line"></div>
-            </div>
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Image && (config?.canUseImage ?? false)"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="image"
-              @click="addHPFImage(null, null, null, null)"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.Link"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="link"
-              @click="linkEditorModalActive = true"
-            />
-            <BButton
-              v-if="toolBarButtonsTooltipVisibility.GripLines"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="grip-lines"
-              @click="editor.chain().focus().setHorizontalRule().run()"
-            />
-          </template>
+              </div>
+            </BDropdownItem>
+          </BDropdown>
+          <div class="py-1">
+            <div class="vertical-line"></div>
+          </div>
+          <BButton
+            v-if="config.canUseImage"
+            ref="btn-image"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="image"
+            @click="addHPFImage(null, null, null, null)"
+          />
+          <BButton
+            ref="btn-link"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="link"
+            @click="linkEditorModalActive = true"
+          />
+          <BButton
+            ref="btn-grip-lines"
+            type="is-primary"
+            outlined
+            size="is-small"
+            icon-pack="fas"
+            icon-left="grip-lines"
+            @click="editor.chain().focus().setHorizontalRule().run()"
+          />
+          <!-- <div class="py-1">
+            <div class="vertical-line" />
+          </div>
+          <div class="py-1">
+            <div class="vertical-line" />
+          </div>
           <BButton
             type="is-primary"
             outlined
             size="is-small"
             icon-pack="fas"
-            icon-left="bars"
-            :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
-            @click="editor.chain().focus().setTextAlign('left').run()"
-          />
-        </BTooltip>
-        <!-- Toolbar, sur une ou plusieurs lignes selon la largeur -->
-        <BButton
-          ref="btn-bold"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="bold"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.bold }"
-          @click="editor.chain().focus().toggleBold().run()"
-        />
-        <BButton
-          ref="btn-italic"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="italic"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.italic }"
-          @click="editor.chain().focus().toggleItalic().run()"
-        />
-        <BButton
-          ref="btn-underline"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="underline"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.underline }"
-          @click="editor.chain().focus().toggleUnderline().run()"
-        />
-        <BButton
-          ref="btn-strikethrough"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="strikethrough"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.strike }"
-          @click="editor.chain().focus().toggleStrike().run()"
-        />
-        <div class="py-1">
-          <div class="vertical-line"></div>
+            icon-left="code"
+            @click="test()"
+          ></BButton> -->
         </div>
-        <BButton
-          ref="btn-align-left"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="align-left"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.textAlignLeft }"
-          @click="editor.chain().focus().setTextAlign('left').run()"
-        />
-        <BButton
-          ref="btn-align-center"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="align-center"
-          :class="{
-            'is-hovered': editorFunctionsActiveStatuses.textAlignCenter,
-          }"
-          @click="editor.chain().focus().setTextAlign('center').run()"
-        />
-        <BButton
-          ref="btn-align-right"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="align-right"
-          :class="{
-            'is-hovered': editorFunctionsActiveStatuses.textAlignRight,
-          }"
-          @click="editor.chain().focus().setTextAlign('right').run()"
-        />
-        <BButton
-          ref="btn-align-justify"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="align-justify"
-          :class="{
-            'is-hovered': editorFunctionsActiveStatuses.textAlignJustified,
-          }"
-          @click="editor.chain().focus().setTextAlign('justify').run()"
-        />
-        <div class="py-1">
-          <div class="vertical-line"></div>
-        </div>
-        <BButton
-          ref="btn-indent"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="indent"
-          @click="editor.chain().focus().indent().run()"
-        />
-        <BButton
-          ref="btn-outdent"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="outdent"
-          @click="editor.chain().focus().outdent().run()"
-        />
-        <div class="py-1">
-          <div class="vertical-line"></div>
-        </div>
-        <BButton
-          ref="btn-list-ul"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="list-ul"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.bulletList }"
-          @click="editor.chain().focus().toggleBulletList().run()"
-        />
-        <BButton
-          ref="btn-list-ol"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="list-ol"
-          :class="{ 'is-hovered': editorFunctionsActiveStatuses.orderedList }"
-          @click="editor.chain().focus().toggleOrderedList().run()"
-        />
-        <div class="py-1">
-          <div class="vertical-line"></div>
-        </div>
-        <BButton
-          ref="btn-undo"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="undo"
-          :disabled="!editorFunctionsActiveStatuses.undo"
-          @click="editor.chain().focus().undo().run()"
-        />
-        <BButton
-          ref="btn-redo"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="redo"
-          :disabled="!editorFunctionsActiveStatuses.redo"
-          @click="editor.chain().focus().redo().run()"
-        />
-        <div class="py-1">
-          <div class="vertical-line"></div>
-        </div>
-        <BDropdown aria-role="list" :mobile-modal="false">
-          <template #trigger="{ active }">
-            <BButton
-              ref="btn-textstyle"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              :icon-left="currentStyle().icon"
-              :label="currentStyle().text"
-              :icon-right="active ? 'angle-up' : 'angle-down'"
-            />
-          </template>
-          <BDropdownItem v-for="(menu, index) in menusStyle" :key="index" :value="menu" aria-role="listitem">
-            <div class="media" @click="toggleStyle(menu.action)">
-              <BIcon class="media-left" :icon="menu.icon" />
-              <div class="media-content">
-                <h3>{{ menu.text }}</h3>
-              </div>
-            </div>
-          </BDropdownItem>
-        </BDropdown>
-        <BDropdown aria-role="list" :mobile-modal="false">
-          <template #trigger="{ active }">
-            <BButton
-              ref="btn-textheight"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="text-height"
-              :label="editorFunctionsTextStyleStatuses.fontSize"
-              :icon-right="active ? 'angle-up' : 'angle-down'"
-            />
-          </template>
-          <BDropdownItem v-for="(fontSize, index) in menusFontSize" :key="index" :value="fontSize" aria-role="listitem">
-            <div class="media" @click="changeFontSize(fontSize)">
-              <div class="media-content">
-                <h3
-                  :style="{
-                    fontSize: fontSize + 'px',
-                  }"
-                >
-                  {{ fontSize + " px" }}
-                </h3>
-              </div>
-            </div>
-          </BDropdownItem>
-        </BDropdown>
-        <BDropdown aria-role="list" :mobile-modal="false">
-          <template #trigger="{ active }">
-            <BButton
-              ref="btn-font"
-              type="is-primary"
-              outlined
-              size="is-small"
-              icon-pack="fas"
-              icon-left="font"
-              :label="editorFunctionsTextStyleStatuses.fontFamily"
-              :icon-right="active ? 'angle-up' : 'angle-down'"
-            />
-          </template>
-          <BDropdownItem
-            v-for="(fontFamily, index) in menusFontFamily"
-            :key="index"
-            :value="fontFamily"
-            aria-role="listitem"
-          >
-            <div class="media" @click="changeFontFamily(fontFamily)">
-              <div class="media-content">
-                <h3
-                  :style="{
-                    fontFamily: fontFamily,
-                  }"
-                >
-                  {{ fontFamily }}
-                </h3>
-              </div>
-            </div>
-          </BDropdownItem>
-        </BDropdown>
-        <div class="py-1">
-          <div class="vertical-line"></div>
-        </div>
-        <BButton
-          v-if="config?.canUseImage ?? false"
-          ref="btn-image"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="image"
-          @click="addHPFImage(null, null, null, null)"
-        />
-        <BButton
-          ref="btn-link"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="link"
-          @click="linkEditorModalActive = true"
-        />
-        <BButton
-          ref="btn-grip-lines"
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="grip-lines"
-          @click="editor.chain().focus().setHorizontalRule().run()"
-        />
-        <!-- <div class="py-1">
-          <div class="vertical-line" />
-        </div>
-        <div class="py-1">
-          <div class="vertical-line" />
-        </div>
-        <BButton
-          type="is-primary"
-          outlined
-          size="is-small"
-          icon-pack="fas"
-          icon-left="code"
-          @click="test()"
-        ></BButton> -->
-      </div>
+      </Transition>
       <!-- END: ToolBar -->
       <div id="editor-content" class="is-flex-grow-5 is-flex is-flex-direction-row is-justify-content-flex-start">
         <div class="is-flex-grow-5 is-flex is-flex-direction-column is-justify-content-flex-start is-relative">
@@ -688,17 +696,17 @@
             :class="[
               'is-flex-grow-5',
               { 'editor-disabled': linkEditorModalActive },
-              (config?.fixedHeight ?? true) ? 'editor-content-main-pane-height' : '',
+              config.fixedHeight ? 'editor-content-main-pane-height' : '',
             ]"
             :style="{
-              height: (config?.fixedHeight ?? true) ? (config?.height ?? 125).toString() + 'px' : '',
+              height: config.fixedHeight ? config.height.toString() + 'px' : '',
             }"
           />
           <!-- END: Editor -->
 
           <!-- Footer -->
           <div
-            v-if="config?.showFooter"
+            v-if="config.showFooter"
             id="editor-content-footer-pane"
             :class="[
               'is-flex',
@@ -752,20 +760,21 @@ interface Props {
 
 const {
   config = {
-    defaultValue: undefined,
     showFooter: false,
     fixedHeight: true,
     oneLineToolbar: false,
     canUseImage: false,
     height: 200,
-    fontSize: 10,
+    fontSize: 100,
     placeholder: "Écrire ici",
   },
 } = defineProps<Props>();
 
-// const emit = defineEmits(["quote"]);
-
 const text = defineModel<string | null>("text", { required: false, default: "" });
+
+// NOTE editor.isFocused n'est pas réactif
+// https://github.com/ueberdosis/tiptap/discussions/4971
+const editorIsFocused = ref<boolean>(false);
 
 // TODO finir d'installer et remettre les extensions en place
 // et de ceci:
@@ -832,7 +841,7 @@ const text = defineModel<string | null>("text", { required: false, default: "" }
 //     return false; // not handled as wasn't dragging a file so use default behaviour
 // },
 const editor = useEditor({
-  content: config.defaultValue,
+  content: text.value,
   extensions: [
     TiptapStarterKit.configure({
       link: {
@@ -871,6 +880,8 @@ const editor = useEditor({
     timerThrottleId.value = window.setTimeout(calcEditorButtonsActiveStatuses, 100);
     text.value = editor.getHTML();
   },
+  onFocus: () => (editorIsFocused.value = true),
+  onBlur: () => (editorIsFocused.value = false),
 });
 
 defineExpose({ editor: editor });
@@ -1396,13 +1407,13 @@ const bubbleMenuShouldShow = (): boolean => {
         p {
           margin-bottom: 0px !important;
         }
-      }
-      .ProseMirror p.is-editor-empty:first-child::before {
-        content: attr(data-placeholder);
-        float: left;
-        color: #adb5bd;
-        pointer-events: none;
-        height: 0;
+        p.is-editor-empty:first-child::before {
+          content: attr(data-placeholder);
+          float: left;
+          color: #adb5bd;
+          pointer-events: none;
+          height: 0;
+        }
       }
     }
     #editor-content-footer-pane {
@@ -1457,5 +1468,15 @@ const bubbleMenuShouldShow = (): boolean => {
     border-bottom-left-radius: 0.6rem !important;
     border-bottom-right-radius: 0.6rem !important;
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

@@ -15,75 +15,71 @@
         </div>
         <p v-else class="has-text-centered">Aucun commentaire</p>
       </div>
-      <!-- <div v-if="$auth.loggedIn">
-        <client-only>
-          <TipTapEditor ref="commentEditor" :config="tiptapConfig" @change="(value) => (editorContent = value)" />
-        </client-only>
+      <div v-if="isAuthenticated">
+        <RichtextEditor ref="comment-editor" :config="tiptapConfig" />
         <div class="buttons mt-1">
-          <b-button
-            :disabled="(editorContent?.wordcount ?? 0) < 3"
+          <BButton
+            :disabled="commentState.wordCount < 3"
             :expanded="false"
             label="Poster un commentaire"
             type="is-primary"
-            @click="PostComment"
+            @click="postComment"
           />
         </div>
       </div>
       <div v-else class="buttons mt-1 is-centered">
-        <b-button
+        <BButton
           :disabled="false"
           :expanded="false"
           label="Se connecter pour laisser un commentaire"
           type="is-primary"
-          @click="ModalsStatesModule.setLoginModalActive(true)"
+          @click="() => setLoginModalActive(true)"
         />
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { CommentModel } from "~/models";
+import type { TipTapEditorConfig, ReviewState } from "~/types/other";
+import type { TiptapEditor } from "#imports";
 
 const { comments } = defineProps<{
   comments: CommentModel[] | null;
-  newsId: number;
+  postComment: () => Promise<void>;
 }>();
 
-/* const editorContent = ref<TipTapEditorContent | null>(null);
+const { isAuthenticated } = useCustomAuth();
+const { setLoginModalActive } = useModalsStateStore();
 
 const tiptapConfig: TipTapEditorConfig = {
-showFooter: false,
-placeholder: "Ecrire un commentaire",
-readOnly: false,
-fixedHeight: true,
-defaultValue: "",
-canQuote: false,
-quoteLimit: 0,
-fontSize: 100,
-height: 150,
-oneLineToolbar: false,
-canUseImage: false
+  showFooter: false,
+  placeholder: "Laissez un commentaire",
+  fixedHeight: true,
+  height: 150,
+  oneLineToolbar: false,
+  canUseImage: false,
 };
-*/
 
-// const ModalStatesModule = useModalsStateStore();
+const editorComponent = useTemplateRef("comment-editor");
+const editor = computed<TiptapEditor | undefined>(() => editorComponent.value?.editor);
 
-// #region Methods
-/*   public async PostComment(): Promise<void> {
-if (this.news_id === null) return;
-if ((this.editorContent?.wordcount ?? 0) < 3) return;
-if (this.editorContent?.content == null) return;
-try {
-    let comment: CommentModel = new CommentModel();
-    comment.content = this.editorContent?.content;
-    comment.contentImages = this.editorContent?.content_images;
-    comment = (await postComment((this.news_id as number), comment)).items;
-    if (comment != null) this.comments?.push(comment);
-} catch (error) {
-    console.log(error);
-}
-} */
+const commentState = useState<ReviewState>("commentState", () => {
+  return {
+    content: "",
+    wordCount: 0,
+    canGrade: false,
+    grading: undefined,
+  };
+});
+watch(
+  () => editor.value?.getHTML(),
+  () => {
+    commentState.value.content = editor.value?.getHTML() || "";
+    commentState.value.wordCount = editor.value?.extensionStorage.characterCount.words() || 0;
+  },
+);
 </script>
 
 <style lang="scss" scoped>
