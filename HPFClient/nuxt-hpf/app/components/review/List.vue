@@ -138,8 +138,7 @@ watch(
   },
 );
 
-// const { isAuthenticated } = useCustomAuth();
-const isAuthenticated = true;
+const { isAuthenticated } = useCustomAuth();
 
 const emit = defineEmits(["paginationChange"]);
 
@@ -159,13 +158,9 @@ watch(pageReviewPagination, () => {
 const tiptapConfig = reactive<TipTapEditorConfig>({
   showFooter: false,
   placeholder: "Votre review ici",
-  readOnly: false,
   fixedHeight: true,
   height: 250,
   defaultValue: "",
-  canQuote: false,
-  quoteLimit: 0,
-  fontSize: 100,
   oneLineToolbar: true,
   canUseImage: false,
 });

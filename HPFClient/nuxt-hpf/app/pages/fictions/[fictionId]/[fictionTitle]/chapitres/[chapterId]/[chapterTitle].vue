@@ -130,14 +130,14 @@
                     class="mr-2 p-1 is-primary is-size-7 has-text-weight-semibold"
                     style="background-color: whitesmoke; opacity: 1; border: solid; border-radius: 0.5rem"
                   >
-                    {{ tiptapReadOnlyConfig.fontSize + "%" }}
+                    {{ chapterReaderConfig.fontSize + "%" }}
                   </span>
                 </div>
                 <!-- FIN: Sticky FontSize -->
                 <div class="content p-2" style="display: block; overflow: auto; margin-top: -55px">
-                  <RichtextEditor
-                    ref="chapter-reader"
-                    :config="tiptapReadOnlyConfig"
+                  <RichtextReader
+                    :text="chapter.text || ''"
+                    :config="chapterReaderConfig"
                     @quote="(quote: string) => setQuote(quote)"
                   />
                 </div>
@@ -256,7 +256,7 @@ import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInp
 import { plainToInstance } from "class-transformer";
 import { ChapterModel, ReviewModel, type TableOfContent } from "@/models";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapEditorConfig, ReviewState } from "@/types/other";
+import type { TipTapReaderConfig, ReviewState } from "@/types/other";
 
 interface Props {
   tableOfContent: TableOfContent;
@@ -265,8 +265,7 @@ interface Props {
 defineProps<Props>();
 
 const route = useRoute();
-// const { isAuthenticated } = useCustomAuth();
-const isAuthenticated = true;
+const { isAuthenticated } = useCustomAuth();
 
 const modalsStateStore = useModalsStateStore();
 
@@ -323,18 +322,10 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
   },
 );
 
-const tiptapReadOnlyConfig = reactive<TipTapEditorConfig>({
-  showFooter: false,
-  placeholder: "",
-  readOnly: true,
-  fixedHeight: false,
-  height: 125,
-  defaultValue: chapter.value.text || "",
-  canQuote: true,
-  quoteLimit: 250,
+const chapterReaderConfig = reactive<TipTapReaderConfig>({
+  canSelect: true,
+  quoteCharacterLimit: 250,
   fontSize: 100,
-  oneLineToolbar: false,
-  canUseImage: true,
 });
 
 async function postChapterReview(): Promise<void> {
@@ -384,7 +375,7 @@ const timerThrottleFontsize = ref<number>(0);
 // Augmenter la taille du texte
 function upSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize += 10;
+    chapterReaderConfig.fontSize += 10;
     displayFontSize();
   }
 }
@@ -392,7 +383,7 @@ function upSizeFont(): void {
 // Restaurer la taille du texte
 function defaultSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize = 100;
+    chapterReaderConfig.fontSize = 100;
     displayFontSize();
   }
 }
@@ -400,7 +391,7 @@ function defaultSizeFont(): void {
 // Réduire la taille du texte
 function downSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize -= 10;
+    chapterReaderConfig.fontSize -= 10;
     displayFontSize();
   }
 }

@@ -4,16 +4,10 @@
     <div
       v-if="editor"
       id="editor"
-      :class="[
-        'is-flex',
-        'is-flex-direction-column',
-        'is-justify-content-flex-start',
-        config?.readOnly == false ? 'editor-borders' : '',
-      ]"
+      :class="['is-flex', 'is-flex-direction-column', 'is-justify-content-flex-start', 'editor-borders']"
     >
       <!-- Toolbar -->
       <div
-        v-if="(config?.readOnly ?? false) == false"
         id="editor-header"
         :class="[
           'is-flex',
@@ -608,7 +602,7 @@
             :tippy-options="{ duration: 100, placement: 'bottom' }"
             :should-show="bubbleMenuShouldShow"
           >
-            <div v-if="!config.readOnly">
+            <div>
               <BButton
                 type="is-primary"
                 outlined
@@ -643,16 +637,6 @@
                 icon-pack="fas"
                 icon-left="link"
                 @click="linkEditorModalActive = true"
-              />
-            </div>
-            <div v-else-if="config.canQuote">
-              <BButton
-                type="is-primary"
-                outlined
-                size="is-small"
-                icon-pack="fas"
-                icon-left="quote-right"
-                @click="emitQuote()"
               />
             </div>
           </TiptapBubbleMenu>
@@ -705,11 +689,9 @@
               'is-flex-grow-5',
               { 'editor-disabled': linkEditorModalActive },
               (config?.fixedHeight ?? true) ? 'editor-content-main-pane-height' : '',
-              { 'disable-text-selection': (config?.readOnly ?? false) == true && (config.canQuote ?? false) == false },
             ]"
             :style="{
               height: (config?.fixedHeight ?? true) ? (config?.height ?? 125).toString() + 'px' : '',
-              fontSize: (config?.fontSize ?? 100) + '%',
             }"
           />
           <!-- END: Editor -->
@@ -771,20 +753,17 @@ interface Props {
 const {
   config = {
     defaultValue: undefined,
-    readOnly: true,
     showFooter: false,
-    canQuote: false,
     fixedHeight: true,
     oneLineToolbar: false,
     canUseImage: false,
     height: 200,
     fontSize: 10,
     placeholder: "Écrire ici",
-    quoteLimit: 100,
   },
 } = defineProps<Props>();
 
-const emit = defineEmits(["quote"]);
+// const emit = defineEmits(["quote"]);
 
 const text = defineModel<string | null>("text", { required: false, default: "" });
 
@@ -879,13 +858,8 @@ const editor = useEditor({
     TiptapPlaceholder.configure({
       placeholder: config.placeholder,
     }),
-    TiptapLimitedSelection.configure({
-      maxSelection: config.quoteLimit,
-      isActive: config.canQuote,
-    }),
     TiptapQuote,
   ],
-  editable: !config.readOnly,
   editorProps: {
     attributes: {
       spellcheck: "true",
@@ -1129,21 +1103,6 @@ watch(linkEditorModalActive, () => {
 // // this.editor?.extensionStorage.hpfImage.images = tiptapContent.content_images;
 // }
 
-// TODO depuis le storage
-function emitQuote(): void {
-  const { view, state } = editor.value!;
-  const { from, to } = view.state.selection;
-  // On check la longueur max émise
-  let newTo = to;
-  const maxSelectionLength = config.quoteLimit;
-  if (to - from > maxSelectionLength) newTo = from + maxSelectionLength;
-  const quoteText = state.doc.textBetween(from, newTo, "");
-  // Emet l'évènement quote
-  emit("quote", quoteText);
-  editor.value!.commands.setTextSelection(to);
-  window.getSelection()?.empty();
-}
-
 // // #region Private Methods
 // // Toggle Alert Drop interdit
 // private toggleForbiddenDropAlert(): void {
@@ -1281,16 +1240,10 @@ function deleteLinkEdit(): void {
   editor?.value?.chain().focus().extendMarkRange("link").unsetLink().run();
 }
 
-// TODO créer deux bubble menu : un pour quote, l'autre pour édition
 // Où doit apparaitre le Bubble Menu
 const bubbleMenuShouldShow = (): boolean => {
-  if (config.readOnly && !config.canQuote) return false;
-
-  const { from, to } = editor.value!.view.state.selection;
-  const text = editor.value!.state.doc.textBetween(from, to, "");
   return (
     !linkEditorModalActive.value &&
-    text.length > 0 &&
     (editorFunctionsActiveStatuses.value.h1 ||
       editorFunctionsActiveStatuses.value.h2 ||
       editorFunctionsActiveStatuses.value.h3 ||
@@ -1299,7 +1252,6 @@ const bubbleMenuShouldShow = (): boolean => {
       editorFunctionsActiveStatuses.value.h6 ||
       editorFunctionsActiveStatuses.value.paragraph ||
       editorFunctionsActiveStatuses.value.link ||
-      config.canQuote ||
       false)
   );
 };
@@ -1441,9 +1393,6 @@ const bubbleMenuShouldShow = (): boolean => {
           padding-left: 1rem;
           border-left: 3px solid rgba(#0d0d0d, 0.1);
         }
-        limitedselection {
-          background-color: #ef476f;
-        }
         p {
           margin-bottom: 0px !important;
         }
@@ -1455,10 +1404,6 @@ const bubbleMenuShouldShow = (): boolean => {
         pointer-events: none;
         height: 0;
       }
-    }
-    .disable-text-selection {
-      user-select: none; /* Désactiver la sélection de texte */
-      pointer-events: none; /* Désactiver les interactions de pointeur */
     }
     #editor-content-footer-pane {
       //border-top: 1px solid #dbdbdb !important;

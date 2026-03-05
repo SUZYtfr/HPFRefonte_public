@@ -36,10 +36,6 @@
                   placeholder: '',
                   fixedHeight: false,
                   height: 200,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
@@ -55,10 +51,6 @@
                   placeholder: '',
                   fixedHeight: true,
                   height: 600,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
@@ -74,10 +66,6 @@
                   placeholder: '',
                   fixedHeight: false,
                   height: 200,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
