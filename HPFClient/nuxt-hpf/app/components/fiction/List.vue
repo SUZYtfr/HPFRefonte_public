@@ -34,7 +34,7 @@
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
-        <FictionsEntity
+        <FictionEntity
           v-for="(fanfiction, innerindex) of paginatedFanfictions.results"
           :key="'ff_' + fanfiction.fanfictionId.toString()"
           class="my-2"
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FanfictionModel } from "@/models";
+import type { FanfictionModel } from "~/models";
 import type { FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 

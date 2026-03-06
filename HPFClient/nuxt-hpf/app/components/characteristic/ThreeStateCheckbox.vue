@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CharacteristicData } from "@/types/characteristics";
+import type { CharacteristicData } from "~/types/characteristics";
 
 interface Props {
   externalState?: boolean | null;

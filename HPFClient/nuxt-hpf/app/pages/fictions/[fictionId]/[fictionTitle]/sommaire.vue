@@ -9,7 +9,7 @@
           </p>
         </header>
         <div class="card-content" style="padding: 5px; padding-top: 2px; padding-bottom: 0px">
-          <FictionsEntity
+          <FictionEntity
             :key="'ff_' + fiction.fanfictionId.toString()"
             class="my-2"
             :fanfiction="fiction"
@@ -124,11 +124,11 @@
 
         <div class="card-content pb-0">
           <div class="content p-2">
-            <ReviewsList
+            <ReviewList
               ref="review-list"
               :review-list-type="ReviewItemTypeEnum.Fanfiction"
               :paginated-reviews
-              :review-pagination
+              :pagination="reviewPagination"
               :is-loading="reviewsStatus === 'pending'"
               :post-review
               @pagination-change="(pagination: OffsetPaginationInput) => (reviewPagination = pagination)"
@@ -142,10 +142,9 @@
 </template>
 
 <script setup lang="ts">
-import type { FictionReviewTypeOffsetPaginated, FictionType, OffsetPaginationInput } from "#gql";
-import { FanfictionModel, ReviewModel, type TableOfContent } from "@/models";
-import { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { ReviewState } from "@/types/other";
+import type { FictionReviewTypeOffsetPaginated, FictionType, OffsetPaginationInput, ReviewInput } from "#gql";
+import { FanfictionModel, ReviewModel, type TableOfContent } from "~/models";
+import { ReviewItemTypeEnum } from "~/types/fanfictions";
 import { plainToInstance } from "class-transformer";
 
 const { tableOfContent } = defineProps<{
@@ -153,8 +152,6 @@ const { tableOfContent } = defineProps<{
 }>();
 
 const route = useRoute();
-
-const reviewState = useState<ReviewState>("reviewState");
 
 const { data: fiction } = await useAsyncGql(
   "getFictionDetail",
@@ -198,12 +195,12 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
   },
 );
 
-async function postReview(): Promise<void> {
+async function postReview(reviewData: ReviewInput): Promise<void> {
   await GqlCreateFictionReview({
     fictionId: route.params.fictionId as string,
     fictionReviewData: {
-      text: reviewState.value.content,
-      grading: reviewState.value.grading,
+      text: reviewData.text,
+      grading: reviewData.grading,
     },
   });
 }

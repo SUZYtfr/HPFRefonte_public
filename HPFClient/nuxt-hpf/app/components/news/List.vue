@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
-import type { NewsModel } from "@/models";
+import type { NewsModel } from "~/models";
 
 interface Props {
   isCard?: boolean;

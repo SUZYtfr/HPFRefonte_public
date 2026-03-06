@@ -65,7 +65,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="tableOfContent.storynote"></p>
+                  <RichtextReader :text="tableOfContent.storynote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -86,7 +86,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="chapter.startNote"></p>
+                  <RichtextReader :text="chapter.startNote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -130,14 +130,14 @@
                     class="mr-2 p-1 is-primary is-size-7 has-text-weight-semibold"
                     style="background-color: whitesmoke; opacity: 1; border: solid; border-radius: 0.5rem"
                   >
-                    {{ tiptapReadOnlyConfig.fontSize + "%" }}
+                    {{ chapterReaderConfig.fontSize + "%" }}
                   </span>
                 </div>
                 <!-- FIN: Sticky FontSize -->
                 <div class="content p-2" style="display: block; overflow: auto; margin-top: -55px">
-                  <CustomEditor
-                    ref="chapter-reader"
-                    :config="tiptapReadOnlyConfig"
+                  <RichtextReader
+                    :text="chapter.text || ''"
+                    :config="chapterReaderConfig"
                     @quote="(quote: string) => setQuote(quote)"
                   />
                 </div>
@@ -165,7 +165,7 @@
 
               <div class="card-content p-0">
                 <div class="content p-2">
-                  <p v-html="chapter.endNote"></p>
+                  <RichtextReader :text="chapter.endNote || ''" />
                 </div>
               </div>
             </BCollapse>
@@ -196,11 +196,11 @@
 
               <div class="card-content pb-0">
                 <div class="content p-2">
-                  <ReviewsList
+                  <ReviewList
                     ref="review-list"
                     :review-list-type="ReviewItemTypeEnum.Chapter"
                     :paginated-reviews
-                    :review-pagination
+                    :pagination="reviewPagination"
                     :is-loading="reviewsStatus === 'pending'"
                     :post-review="postChapterReview"
                     :capture-editor-target="'#sidebar-editor'"
@@ -252,11 +252,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput } from "#gql";
+import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput, ReviewInput } from "#gql";
 import { plainToInstance } from "class-transformer";
-import { ChapterModel, ReviewModel, type TableOfContent } from "@/models";
-import { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapEditorConfig, ReviewState } from "@/types/other";
+import { ChapterModel, ReviewModel, type TableOfContent } from "~/models";
+import { ReviewItemTypeEnum } from "~/types/fanfictions";
+import type { TipTapReaderConfig } from "~/types/other";
 
 interface Props {
   tableOfContent: TableOfContent;
@@ -265,8 +265,7 @@ interface Props {
 defineProps<Props>();
 
 const route = useRoute();
-// const { isAuthenticated } = useCustomAuth();
-const isAuthenticated = true;
+const { isAuthenticated } = useCustomAuth();
 
 const modalsStateStore = useModalsStateStore();
 
@@ -274,7 +273,6 @@ const reviewPaneExpanded = ref<boolean>(false);
 const reviewEditorVisible = ref<boolean>(false);
 const reviewHeaderMessageVisible = ref<boolean>(true);
 const fontSizeVisible = ref<boolean>(false);
-const reviewState = useState<ReviewState>("reviewState");
 
 const { data: chapter, status: chapterStatus } = await useAsyncGql(
   "getChapterDetail",
@@ -299,7 +297,6 @@ const reviewPagination = ref<OffsetPaginationInput>({
   offset: 0,
 });
 
-// FIXME - les reviews avec de l'html ne passent pas l'hydration !
 const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
   "getChapterReviews",
   {
@@ -323,26 +320,18 @@ const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
   },
 );
 
-const tiptapReadOnlyConfig = reactive<TipTapEditorConfig>({
-  showFooter: false,
-  placeholder: "",
-  readOnly: true,
-  fixedHeight: false,
-  height: 125,
-  defaultValue: chapter.value.text || "",
-  canQuote: true,
-  quoteLimit: 250,
+const chapterReaderConfig = reactive<TipTapReaderConfig>({
+  canSelect: true,
+  quoteCharacterLimit: 250,
   fontSize: 100,
-  oneLineToolbar: false,
-  canUseImage: true,
 });
 
-async function postChapterReview(): Promise<void> {
+async function postChapterReview(reviewData: ReviewInput): Promise<void> {
   await GqlCreateChapterReview({
     chapterId: route.params.chapterId as string,
     chapterReviewData: {
-      text: reviewState.value.content,
-      grading: reviewState.value.grading,
+      text: reviewData.text,
+      grading: reviewData.grading,
     },
   });
 }
@@ -384,7 +373,7 @@ const timerThrottleFontsize = ref<number>(0);
 // Augmenter la taille du texte
 function upSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize += 10;
+    chapterReaderConfig.fontSize += 10;
     displayFontSize();
   }
 }
@@ -392,7 +381,7 @@ function upSizeFont(): void {
 // Restaurer la taille du texte
 function defaultSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize = 100;
+    chapterReaderConfig.fontSize = 100;
     displayFontSize();
   }
 }
@@ -400,7 +389,7 @@ function defaultSizeFont(): void {
 // Réduire la taille du texte
 function downSizeFont(): void {
   if (import.meta.client) {
-    tiptapReadOnlyConfig.fontSize -= 10;
+    chapterReaderConfig.fontSize -= 10;
     displayFontSize();
   }
 }

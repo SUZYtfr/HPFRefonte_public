@@ -32,7 +32,7 @@
           <small>{{ review.post_date != null ? (review.post_date.toLocaleDateString() + " à " + review.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
         </div> -->
         <p>
-          <span data-allow-mismatch="children" v-html="review.text"></span>
+          <RichtextReader :text="review.text" />
         </p>
       </div>
     </div>
@@ -40,14 +40,14 @@
 </template>
 
 <script setup lang="ts">
-import type { ReviewModel } from "@/models";
+import type { ReviewModel } from "~/models";
 interface Props {
   review: ReviewModel;
 }
 const { review } = defineProps<Props>();
-const reviewGrading = ref<number | null>((review.grading || 0) / 10);
+const reviewGrading = ref<number>((review.grading || 0) / 10);
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 </style>

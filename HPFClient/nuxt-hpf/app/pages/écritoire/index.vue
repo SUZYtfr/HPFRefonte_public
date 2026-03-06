@@ -149,8 +149,8 @@
 
 <script setup lang="ts">
 import { BButton, BSteps, BStepItem, BLoading, BField } from "buefy";
-import { RecordStatusEnum } from "@/types/basics";
-import { ChapterModel, FanfictionModel } from "@/models";
+import { RecordStatusEnum } from "~/types/basics";
+import { ChapterModel, FanfictionModel } from "~/models";
 import type { FictionType, ChapterType } from "#gql";
 import { plainToInstance } from "class-transformer";
 

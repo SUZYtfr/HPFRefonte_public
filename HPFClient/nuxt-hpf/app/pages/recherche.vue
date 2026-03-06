@@ -2,7 +2,7 @@
   <div class="container px-5">
     <!-- Modal filtres -->
     <BModal v-model="filtersOpened" scroll="clip" width="70vw" class="is-hidden-desktop" has-modal-card>
-      <FictionsFilters
+      <FictionFilters
         :filters="fanfictionFilters"
         :initial-included-ids="initialIncludedTagIds"
         :initial-excluded-ids="initialExcludedTagIds"
@@ -16,7 +16,7 @@
     <div class="columns is-desktop">
       <!-- Panel filtres (seulement en desktop et supérieur) -->
       <div class="column is-4-desktop is-3-widescreen is-3-fullhd is-hidden-touch">
-        <FictionsFilters
+        <FictionFilters
           :filters="fanfictionFilters"
           :initial-included-ids="initialIncludedTagIds"
           :initial-excluded-ids="initialExcludedTagIds"
@@ -26,7 +26,7 @@
       </div>
       <!-- Liste des fictions -->
       <div class="column is-12-tablet is-8-desktop is-9-widescreen is-9-fullhd">
-        <FictionsList
+        <FictionList
           :pagination="fictionPagination"
           :order="fictionOrder"
           :paginated-fanfictions
@@ -55,7 +55,7 @@
 import type { FictionFilters, FictionOrder, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 import { plainToInstance } from "class-transformer";
-import { FanfictionModel } from "@/models";
+import { FanfictionModel } from "~/models";
 
 const route = useRoute();
 
@@ -152,7 +152,7 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .btn-filters {
   left: 50%;

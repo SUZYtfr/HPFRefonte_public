@@ -22,7 +22,7 @@
             "
             class="column is-half py-2"
           >
-            <FictionsThumbnail :key="fanfiction.fanfictionId" :fanfiction="fanfiction" :index="innerindex" :fandom />
+            <FictionThumbnail :key="fanfiction.fanfictionId" :fanfiction="fanfiction" :index="innerindex" :fandom />
           </div>
         </div>
         <p v-else class="has-text-centered my-2">Aucune fanfiction trouvée</p>
@@ -71,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import type { FanfictionModel } from "@/models/fanfictions";
-import { FanfictionListType } from "@/types/other";
-import type { FandomData } from "@/types/fanfictions";
+import type { FanfictionModel } from "~/models/fanfictions";
+import { FanfictionListType } from "~/types/other";
+import type { FandomData } from "~/types/fanfictions";
 import type { FictionTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça

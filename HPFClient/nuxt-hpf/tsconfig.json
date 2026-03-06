@@ -9,21 +9,10 @@
     "lib": ["esnext", "esnext.asynciterable", "DOM"],
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    // Fait sauter la découverte de #gql? // TODO
-    // "paths": {
-    //   "~/*": [
-    //     "./*"
-    //   ],
-    //   "@/*": [
-    //     "./*"
-    //   ]
-    // },
     "sourceMap": true,
     "strict": true,
     "types": [
       "@types/node"
-      // "@nuxt/types",
-      // "buefy/types",
     ]
   },
   "watchOptions": {

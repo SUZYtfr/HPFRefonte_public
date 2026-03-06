@@ -41,18 +41,13 @@
         </BField>
       </BField>
       <BField label="Résumé">
-        <CustomEditor
+        <RichtextEditor
           v-model:text="fiction.summary"
           :config="{
-            defaultValue: fiction.summary || '',
             showFooter: false,
-            placeholder: '',
+            placeholder: 'Résumé de la fiction',
             fixedHeight: true,
             height: 200,
-            canQuote: false,
-            readOnly: false,
-            quoteLimit: 0,
-            fontSize: 100,
             oneLineToolbar: true,
             canUseImage: false,
           }"
@@ -150,18 +145,13 @@
       </BField>
 
       <BField label="Notes de fictions">
-        <CustomEditor
+        <RichtextEditor
           v-model:text="fiction.storynote"
           :config="{
-            defaultValue: fiction.storynote || '',
             showFooter: false,
-            placeholder: '',
+            placeholder: 'Notes de la fiction',
             fixedHeight: false,
             height: 200,
-            canQuote: false,
-            readOnly: false,
-            quoteLimit: 0,
-            fontSize: 100,
             oneLineToolbar: true,
             canUseImage: false,
           }"
@@ -176,9 +166,9 @@
 
 <script setup lang="ts">
 import { BField, BInput, BTaginput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
-import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "@/models";
-import type { FandomData } from "@/types/fanfictions";
-import { FanfictionStatus, FanfictionRating } from "@/models";
+import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "~/models";
+import type { FandomData } from "~/types/fanfictions";
+import { FanfictionStatus, FanfictionRating } from "~/models";
 
 interface Props {
   isEditing: boolean;

@@ -28,18 +28,13 @@
               </BDropdown>
             </BField>
             <BField label="Note de début">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.startNote"
                 :config="{
-                  defaultValue: chapter.startNote || '',
                   showFooter: false,
-                  placeholder: '',
+                  placeholder: 'Notes de début de fiction',
                   fixedHeight: false,
                   height: 200,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
@@ -47,18 +42,13 @@
               />
             </BField>
             <BField label="Texte">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.text"
                 :config="{
-                  defaultValue: chapter.text || '',
                   showFooter: true,
-                  placeholder: '',
+                  placeholder: 'Texte du chapitre',
                   fixedHeight: true,
                   height: 600,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
@@ -66,18 +56,13 @@
               />
             </BField>
             <BField label="Notes de fin">
-              <CustomEditor
+              <RichtextEditor
                 v-model:text="chapter.endNote"
                 :config="{
-                  defaultValue: chapter.endNote || '',
                   showFooter: false,
-                  placeholder: '',
+                  placeholder: 'Notes de fin de fiction',
                   fixedHeight: false,
                   height: 200,
-                  canQuote: false,
-                  readOnly: false,
-                  quoteLimit: 0,
-                  fontSize: 100,
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
@@ -117,8 +102,8 @@
 
 <script setup lang="ts">
 import { BTabs, BTabItem, BField, BInput, BTaginput } from "buefy";
-import type { ChapterModel } from "@/models";
-import type { TriggerWarningData } from "@/types/characteristics";
+import type { ChapterModel } from "~/models";
+import type { TriggerWarningData } from "~/types/characteristics";
 
 interface Props {
   isEditing: boolean;

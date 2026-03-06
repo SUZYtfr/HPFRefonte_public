@@ -25,7 +25,7 @@
     <!-- Content -->
     <div class="columns mb-0">
       <div id="content-container" class="column is-full py-0">
-        <span :id="'news-' + news.newsId" class="max-lines" v-html="news.content"></span>
+        <RichtextReader :text="news.content" />
       </div>
     </div>
     <!-- Footer -->
@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 //#region Imports
-import type { NewsModel } from "@/models";
+import type { NewsModel } from "~/models";
 //#endregion
 
 //#region Props

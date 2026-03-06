@@ -23,15 +23,16 @@ export interface MenuItem {
 export interface TipTapEditorConfig {
   showFooter: boolean;
   placeholder: string;
-  readOnly: boolean;
   fixedHeight: boolean;
   height: number;
-  defaultValue: string;
-  canQuote: boolean;
-  quoteLimit: number;
-  fontSize: number;
   oneLineToolbar: boolean;
   canUseImage: boolean;
+}
+
+export interface TipTapReaderConfig {
+  canSelect: boolean;
+  quoteCharacterLimit: number;
+  fontSize: number;
 }
 
 export interface TiptapEditorContent {

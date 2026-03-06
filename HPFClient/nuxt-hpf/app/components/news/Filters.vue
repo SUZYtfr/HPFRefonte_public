@@ -67,7 +67,7 @@ const isLoading = defineModel<boolean>("isLoading", { required: false, default: 
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .card {
   overflow: hidden;

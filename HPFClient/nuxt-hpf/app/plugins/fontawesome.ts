@@ -13,5 +13,5 @@ library.add(fab);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default defineNuxtPlugin((nuxtApp: any) => {
-  nuxtApp.vueApp.component("font-awesome-icon", FontAwesomeIcon, {});
+  nuxtApp.vueApp.component("FontAwesomeIcon", FontAwesomeIcon, {});
 });

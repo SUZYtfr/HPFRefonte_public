@@ -7,18 +7,23 @@
         trouver un meilleur moyen de rendre l'éditeur responsif -->
         <ClientOnly>
           <Teleport :to="captureEditorTarget" :disabled="!captureEditor" defer>
-            <CustomEditor ref="review-editor" :config="tiptapConfig" />
+            <RichtextEditor
+              ref="review-editor"
+              v-model:text="reviewText"
+              v-model:word-count="wordCount"
+              :config="tiptapConfig"
+            />
             <div :class="[captureEditor ? 'mt-1' : 'm-2', 'is-flex', 'is-flex-direction-row', 'is-flex-wrap-wrap']">
-              <BCheckbox v-model="reviewState.canGrade"> Ajouter une note </BCheckbox>
+              <BCheckbox v-model="canGrade"> Ajouter une note </BCheckbox>
               <BRate
-                v-model="reviewState.grading"
+                v-model="grading"
                 icon-pack="fas"
                 :max="10"
                 :size="captureEditor ? 'default' : 'is-medium'"
-                :show-score="reviewState.canGrade"
+                :show-score="canGrade"
                 :rtl="false"
                 :spaced="true"
-                :disabled="!reviewState.canGrade"
+                :disabled="!canGrade"
               />
             </div>
             <component
@@ -26,12 +31,12 @@
               :class="[captureEditor ? 'card-footer py-2' : 'buttons mt-1']"
             >
               <BButton
-                :disabled="reviewState.wordCount < 3"
+                :disabled="wordCount < 3"
                 :expanded="false"
                 label="Poster une review"
                 type="is-primary"
                 class="mx-auto"
-                @click="postReview"
+                @click="() => postReview({ text: reviewText, grading: grading })"
               />
             </component>
           </Teleport>
@@ -55,7 +60,7 @@
             <span class="is-italic mt-3">Aucune review, soyez le premier !</span>
           </div>
           <div v-else>
-            <ReviewsEntity
+            <ReviewEntity
               v-for="(review, innerindex) of paginatedReviews?.results"
               :key="'rv_' + review.reviewId.toString()"
               class="my-2"
@@ -90,22 +95,23 @@
 <script setup lang="ts" generic="ReviewTypeOffsetPaginated extends ChapterReviewTypeOffsetPaginated">
 // le schéma GQL ne contient pas de ReviewTypeOffsetPaginated générique par défaut, mais il est peut-être possible de le faire tout de même
 import type { ChapterReviewTypeOffsetPaginated, OffsetPaginationInput, ReviewInput } from "#gql";
-import type { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapEditorConfig, ReviewState } from "@/types/other";
-import type { ReviewModel } from "@/models";
+import type { ReviewItemTypeEnum } from "~/types/fanfictions";
+import type { TipTapEditorConfig } from "~/types/other";
+import type { ReviewModel } from "~/models";
 import type { TiptapEditor } from "#imports";
 
 interface Props {
-  isLoading: boolean;
   reviewListType: ReviewItemTypeEnum;
   paginatedReviews?: Omit<ReviewTypeOffsetPaginated, "results"> & { results: ReviewModel[] };
-  reviewPagination: OffsetPaginationInput;
   postReview: (reviewData: ReviewInput) => Promise<void>;
   captureEditorTarget?: string;
   captureEditor?: boolean;
 }
 
-const { isLoading, reviewPagination } = defineProps<Props>();
+defineProps<Props>();
+
+const pagination = defineModel<OffsetPaginationInput>("pagination", { required: true });
+const isLoading = defineModel<boolean>("isLoading", { required: false, default: false });
 
 // On fait passer l'éditeur à un potentiel parent qui en voudrait
 // Un peu hacky mais ça fonctionne bien
@@ -113,62 +119,32 @@ const editorComponent = useTemplateRef("review-editor");
 const editor = computed<TiptapEditor | undefined>(() => editorComponent.value?.editor);
 defineExpose({ editor: editor });
 
-// Cet état permet de partager en temps réel le contenu de l'éditeur de review
-// (en bas et sur le côté) avec les composants qui en dépendent, en y
-// ajoutant les informations de notation également
-// FIXME - l'état persiste à la navigation entre les éditeurs de review de fiction / chapitres
-// trouver comment 1) alerter de la perte du contenu, 2) remettre l'état à zéro
-const reviewState = useState<ReviewState>("reviewState", () => {
-  return {
-    content: "",
-    wordCount: 0,
-    canGrade: false,
-    grading: undefined,
-  };
-});
-watch(
-  () => reviewState.value.canGrade,
-  () => (reviewState.value.grading = reviewState.value.canGrade ? 10 : undefined),
-);
-watch(
-  () => editor.value?.getHTML(),
-  () => {
-    reviewState.value.content = editor.value?.getHTML() || "";
-    reviewState.value.wordCount = editor.value?.extensionStorage.characterCount.words() || 0;
-  },
-);
+const reviewText = ref<string>("");
+const wordCount = ref<number>(0);
+const canGrade = ref<boolean>(false);
+const grading = ref<number>();
+watch(canGrade, (newValue) => (grading.value = newValue ? 10 : undefined));
 
-// const { isAuthenticated } = useCustomAuth();
-const isAuthenticated = true;
-
-const emit = defineEmits(["paginationChange"]);
+const { isAuthenticated } = useCustomAuth();
 
 // Transforme le système offset / limit en page / pageSize
 const pageReviewPagination = reactive({
-  pageSize: reviewPagination.limit!,
-  page: reviewPagination.offset! / reviewPagination.limit! + 1,
+  pageSize: pagination.value.limit!,
+  page: pagination.value.offset! / pagination.value.limit! + 1,
 });
 watch(pageReviewPagination, () => {
-  const pagination: OffsetPaginationInput = {
-    limit: pageReviewPagination.pageSize,
-    offset: (pageReviewPagination.page - 1) * pageReviewPagination.pageSize,
-  };
-  emit("paginationChange", pagination);
+  pagination.value.limit = pageReviewPagination.pageSize;
+  pagination.value.offset = (pageReviewPagination.page - 1) * pageReviewPagination.pageSize;
 });
 
 const tiptapConfig = reactive<TipTapEditorConfig>({
   showFooter: false,
-  placeholder: "Votre review ici",
-  readOnly: false,
+  placeholder: "Écrivez votre review ici",
   fixedHeight: true,
   height: 250,
-  defaultValue: "",
-  canQuote: false,
-  quoteLimit: 0,
-  fontSize: 100,
   oneLineToolbar: true,
   canUseImage: false,
 });
 
-const listLoading = computed(() => isLoading);
+const listLoading = computed(() => isLoading.value);
 </script>

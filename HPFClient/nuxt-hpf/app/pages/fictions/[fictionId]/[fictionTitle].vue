@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import type { FictionType } from "#gql";
 import { plainToInstance } from "class-transformer";
-import { TableOfContent, type ChapterModelLight } from "@/models";
+import { TableOfContent, type ChapterModelLight } from "~/models";
 
 const route = useRoute();
 
@@ -166,7 +166,7 @@ const nextChapter = computed<ChapterModelLight | undefined>(() => {
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom_bulma_core.scss";
+@use "~/assets/scss/custom_bulma_core.scss";
 #main-container {
   background-color: var(--hpf-primary-lighter);
 }

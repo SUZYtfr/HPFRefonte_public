@@ -20,7 +20,7 @@
     <div v-if="expanded">
       <Simplebar class="custom-scrollbar-bio" data-simplebar-auto-hide="false">
         <div class="is-flex is-flex-direction-column">
-          <CharacteristicsThreeStateCheckbox
+          <CharacteristicThreeStateCheckbox
             v-for="(charac, index) in characteristics"
             :key="index"
             class="py-1 pl-1"
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { getCaracteristicTypeColor } from "@/utils/characteristics";
+import { getCaracteristicTypeColor } from "~/utils/characteristics";
 import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 
 interface Props {

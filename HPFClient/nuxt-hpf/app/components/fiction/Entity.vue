@@ -107,7 +107,7 @@
     </BTaglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
-        <p v-html="fanfiction?.summary"></p>
+        <RichtextReader :text="fanfiction?.summary || ''" />
       </div>
     </div>
     <div class="is-flex is-flex-direction-row is-justify-content-space-evenly">
