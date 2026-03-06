@@ -744,8 +744,8 @@
 
 <script setup lang="ts">
 import type { TiptapEditor } from "#imports";
-import type { ImageHPFData } from "@/types/images";
-import type { TipTapEditorConfig } from "@/types/other";
+import type { ImageHPFData } from "~/types/images";
+import type { TipTapEditorConfig } from "~/types/other";
 
 // import ImageSmallEditor from "~/components/hpf_image/ImageSmallEditor.vue";
 // import TipTapImageEditor from "~/utils/tiptap_extensions/tiptap_node_image_hpf";
@@ -1267,7 +1267,7 @@ const bubbleMenuShouldShow = (): boolean => {
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom_bulma_core.scss";
+@use "~/assets/scss/custom_bulma_core.scss";
 
 /* Basic editor styles */
 .editor-height {

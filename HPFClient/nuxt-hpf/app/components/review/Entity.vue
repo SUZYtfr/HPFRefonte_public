@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ReviewModel } from "@/models";
+import type { ReviewModel } from "~/models";
 interface Props {
   review: ReviewModel;
 }
@@ -49,5 +49,5 @@ const reviewGrading = ref<number>((review.grading || 0) / 10);
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 </style>

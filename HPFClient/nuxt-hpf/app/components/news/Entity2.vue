@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsModel } from "@/models";
+import type { NewsModel } from "~/models";
 
 defineProps<{
   news: NewsModel;

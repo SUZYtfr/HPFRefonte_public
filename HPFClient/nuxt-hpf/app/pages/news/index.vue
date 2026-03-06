@@ -42,7 +42,7 @@
 import type { NewsArticleFilters, NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 import { plainToInstance } from "class-transformer";
-import { NewsModel } from "@/models";
+import { NewsModel } from "~/models";
 
 const filtersOpened = ref<boolean>(false);
 

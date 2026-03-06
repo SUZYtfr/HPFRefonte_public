@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { getCaracteristicTypeColor } from "@/utils/characteristics";
+import { getCaracteristicTypeColor } from "~/utils/characteristics";
 import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/characteristics";
 
 interface Props {

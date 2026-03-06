@@ -254,9 +254,9 @@
 <script setup lang="ts">
 import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput, ReviewInput } from "#gql";
 import { plainToInstance } from "class-transformer";
-import { ChapterModel, ReviewModel, type TableOfContent } from "@/models";
-import { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapReaderConfig } from "@/types/other";
+import { ChapterModel, ReviewModel, type TableOfContent } from "~/models";
+import { ReviewItemTypeEnum } from "~/types/fanfictions";
+import type { TipTapReaderConfig } from "~/types/other";
 
 interface Props {
   tableOfContent: TableOfContent;

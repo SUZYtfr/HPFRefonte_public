@@ -143,8 +143,8 @@
 
 <script setup lang="ts">
 import type { FictionReviewTypeOffsetPaginated, FictionType, OffsetPaginationInput, ReviewInput } from "#gql";
-import { FanfictionModel, ReviewModel, type TableOfContent } from "@/models";
-import { ReviewItemTypeEnum } from "@/types/fanfictions";
+import { FanfictionModel, ReviewModel, type TableOfContent } from "~/models";
+import { ReviewItemTypeEnum } from "~/types/fanfictions";
 import { plainToInstance } from "class-transformer";
 
 const { tableOfContent } = defineProps<{

@@ -55,7 +55,7 @@
 import type { FictionFilters, FictionOrder, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 import { plainToInstance } from "class-transformer";
-import { FanfictionModel } from "@/models";
+import { FanfictionModel } from "~/models";
 
 const route = useRoute();
 
@@ -152,7 +152,7 @@ useHead({
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/custom.scss";
+@use "~/assets/scss/custom.scss";
 
 .btn-filters {
   left: 50%;

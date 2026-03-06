@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsModel } from "@/models";
+import type { NewsModel } from "~/models";
 import type { NewsArticleTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça

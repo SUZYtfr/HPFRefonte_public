@@ -102,8 +102,8 @@
 
 <script setup lang="ts">
 import { BTabs, BTabItem, BField, BInput, BTaginput } from "buefy";
-import type { ChapterModel } from "@/models";
-import type { TriggerWarningData } from "@/types/characteristics";
+import type { ChapterModel } from "~/models";
+import type { TriggerWarningData } from "~/types/characteristics";
 
 interface Props {
   isEditing: boolean;

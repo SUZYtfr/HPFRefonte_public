@@ -95,9 +95,9 @@
 <script setup lang="ts" generic="ReviewTypeOffsetPaginated extends ChapterReviewTypeOffsetPaginated">
 // le schéma GQL ne contient pas de ReviewTypeOffsetPaginated générique par défaut, mais il est peut-être possible de le faire tout de même
 import type { ChapterReviewTypeOffsetPaginated, OffsetPaginationInput, ReviewInput } from "#gql";
-import type { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapEditorConfig } from "@/types/other";
-import type { ReviewModel } from "@/models";
+import type { ReviewItemTypeEnum } from "~/types/fanfictions";
+import type { TipTapEditorConfig } from "~/types/other";
+import type { ReviewModel } from "~/models";
 import type { TiptapEditor } from "#imports";
 
 interface Props {

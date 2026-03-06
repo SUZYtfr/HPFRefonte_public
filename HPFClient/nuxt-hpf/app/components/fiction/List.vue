@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FanfictionModel } from "@/models";
+import type { FanfictionModel } from "~/models";
 import type { FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 

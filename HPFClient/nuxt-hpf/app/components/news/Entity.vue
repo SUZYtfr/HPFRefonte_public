@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 //#region Imports
-import type { NewsModel } from "@/models";
+import type { NewsModel } from "~/models";
 //#endregion
 
 //#region Props

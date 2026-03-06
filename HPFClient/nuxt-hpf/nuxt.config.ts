@@ -116,7 +116,7 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: ["@fortawesome/fontawesome-svg-core/styles.css", "@/assets/scss/custom.scss", "animate.css"],
+  css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/scss/custom.scss", "animate.css"],
 
   debug: process.env.DEBUG === "true",
 

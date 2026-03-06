@@ -71,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import type { FanfictionModel } from "@/models/fanfictions";
-import { FanfictionListType } from "@/types/other";
-import type { FandomData } from "@/types/fanfictions";
+import type { FanfictionModel } from "~/models/fanfictions";
+import { FanfictionListType } from "~/types/other";
+import type { FandomData } from "~/types/fanfictions";
 import type { FictionTypeOffsetPaginated } from "#gql";
 
 // TODO probablement un meilleur moyen de faire ça
