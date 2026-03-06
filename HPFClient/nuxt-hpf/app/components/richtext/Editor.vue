@@ -715,11 +715,7 @@
               { 'editor-disabled': linkEditorModalActive },
             ]"
           >
-            <span class="ml-2"
-              >{{ editorFunctionsCharacterStatuses.wordCount }} mot{{
-                editorFunctionsCharacterStatuses?.wordCount || 0 > 1 ? "s" : ""
-              }}</span
-            >
+            <span class="ml-2">{{ wordCount }} mot{{ wordCount || 0 > 1 ? "s" : "" }}</span>
           </div>
           <!-- END: Footer -->
         </div>
@@ -770,7 +766,8 @@ const {
   },
 } = defineProps<Props>();
 
-const text = defineModel<string | null>("text", { required: false, default: "" });
+const text = defineModel<string | null>("text");
+const wordCount = defineModel<number>("wordCount", { default: 0 });
 
 // NOTE editor.isFocused n'est pas réactif
 // https://github.com/ueberdosis/tiptap/discussions/4971
@@ -879,6 +876,7 @@ const editor = useEditor({
     clearTimeout(timerThrottleId.value);
     timerThrottleId.value = window.setTimeout(calcEditorButtonsActiveStatuses, 100);
     text.value = editor.getHTML();
+    wordCount.value = editor.storage.characterCount.words();
   },
   onFocus: () => (editorIsFocused.value = true),
   onBlur: () => (editorIsFocused.value = false),

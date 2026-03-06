@@ -10,10 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleType } from "#gql";
+import type { NewsArticleType, NewsCommentInput } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { NewsModel } from "~/models";
-import type { ReviewState } from "~/types/other";
 
 definePageMeta({
   auth: false,
@@ -38,13 +37,11 @@ if (!news.value) {
   navigateTo("/");
 }
 
-const commentState = useState<ReviewState>("commentState");
-
-async function postComment(): Promise<void> {
+async function postComment(commentData: NewsCommentInput): Promise<void> {
   await GqlPostComment({
     newsArticleId: route.params.id as string,
     commentData: {
-      text: commentState.value.content,
+      text: commentData.text,
     },
   });
 }

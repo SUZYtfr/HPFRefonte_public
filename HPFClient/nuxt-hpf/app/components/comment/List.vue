@@ -16,14 +16,14 @@
         <p v-else class="has-text-centered">Aucun commentaire</p>
       </div>
       <div v-if="isAuthenticated">
-        <RichtextEditor ref="comment-editor" :config="tiptapConfig" />
+        <RichtextEditor v-model:text="commentText" v-model:word-count="wordCount" :config="tiptapConfig" />
         <div class="buttons mt-1">
           <BButton
-            :disabled="commentState.wordCount < 3"
+            :disabled="wordCount < 3"
             :expanded="false"
             label="Poster un commentaire"
             type="is-primary"
-            @click="postComment"
+            @click="() => postComment({ text: commentText })"
           />
         </div>
       </div>
@@ -41,13 +41,13 @@
 </template>
 
 <script setup lang="ts">
+import type { NewsCommentInput } from "#gql";
 import type { CommentModel } from "~/models";
-import type { TipTapEditorConfig, ReviewState } from "~/types/other";
-import type { TiptapEditor } from "#imports";
+import type { TipTapEditorConfig } from "~/types/other";
 
-const { comments } = defineProps<{
+const { comments, postComment } = defineProps<{
   comments: CommentModel[] | null;
-  postComment: () => Promise<void>;
+  postComment: (commentData: NewsCommentInput) => Promise<void>;
 }>();
 
 const { isAuthenticated } = useCustomAuth();
@@ -62,24 +62,8 @@ const tiptapConfig: TipTapEditorConfig = {
   canUseImage: false,
 };
 
-const editorComponent = useTemplateRef("comment-editor");
-const editor = computed<TiptapEditor | undefined>(() => editorComponent.value?.editor);
-
-const commentState = useState<ReviewState>("commentState", () => {
-  return {
-    content: "",
-    wordCount: 0,
-    canGrade: false,
-    grading: undefined,
-  };
-});
-watch(
-  () => editor.value?.getHTML(),
-  () => {
-    commentState.value.content = editor.value?.getHTML() || "";
-    commentState.value.wordCount = editor.value?.extensionStorage.characterCount.words() || 0;
-  },
-);
+const commentText = ref<string>("");
+const wordCount = ref<number>(0);
 </script>
 
 <style lang="scss" scoped>

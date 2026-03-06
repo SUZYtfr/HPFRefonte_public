@@ -200,7 +200,7 @@
                     ref="review-list"
                     :review-list-type="ReviewItemTypeEnum.Chapter"
                     :paginated-reviews
-                    :review-pagination
+                    :pagination="reviewPagination"
                     :is-loading="reviewsStatus === 'pending'"
                     :post-review="postChapterReview"
                     :capture-editor-target="'#sidebar-editor'"
@@ -252,11 +252,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput } from "#gql";
+import type { ChapterReviewTypeOffsetPaginated, ChapterType, OffsetPaginationInput, ReviewInput } from "#gql";
 import { plainToInstance } from "class-transformer";
 import { ChapterModel, ReviewModel, type TableOfContent } from "@/models";
 import { ReviewItemTypeEnum } from "@/types/fanfictions";
-import type { TipTapReaderConfig, ReviewState } from "@/types/other";
+import type { TipTapReaderConfig } from "@/types/other";
 
 interface Props {
   tableOfContent: TableOfContent;
@@ -273,7 +273,6 @@ const reviewPaneExpanded = ref<boolean>(false);
 const reviewEditorVisible = ref<boolean>(false);
 const reviewHeaderMessageVisible = ref<boolean>(true);
 const fontSizeVisible = ref<boolean>(false);
-const reviewState = useState<ReviewState>("reviewState");
 
 const { data: chapter, status: chapterStatus } = await useAsyncGql(
   "getChapterDetail",
@@ -298,7 +297,6 @@ const reviewPagination = ref<OffsetPaginationInput>({
   offset: 0,
 });
 
-// FIXME - les reviews avec de l'html ne passent pas l'hydration !
 const { data: paginatedReviews, status: reviewsStatus } = await useAsyncGql(
   "getChapterReviews",
   {
@@ -328,12 +326,12 @@ const chapterReaderConfig = reactive<TipTapReaderConfig>({
   fontSize: 100,
 });
 
-async function postChapterReview(): Promise<void> {
+async function postChapterReview(reviewData: ReviewInput): Promise<void> {
   await GqlCreateChapterReview({
     chapterId: route.params.chapterId as string,
     chapterReviewData: {
-      text: reviewState.value.content,
-      grading: reviewState.value.grading,
+      text: reviewData.text,
+      grading: reviewData.grading,
     },
   });
 }

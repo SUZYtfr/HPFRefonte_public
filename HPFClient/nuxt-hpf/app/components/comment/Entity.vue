@@ -19,9 +19,7 @@
               : ""
           }}</small>
         </div>
-        <p>
-          <RichtextReader :text="comment.content" />
-        </p>
+        <RichtextReader :text="comment.content" />
       </div>
     </div>
   </article>
