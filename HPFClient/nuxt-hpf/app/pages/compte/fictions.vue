@@ -122,11 +122,11 @@ definePageMeta({
   auth: true,
 });
 
+const { payloadData } = useCustomAuth();
+
 // TODO - en faire un paramètre de profileData
 const { fandoms } = useConfigStore();
-const preferredFandoms = fandoms!.filter((f) =>
-  ["Harry Potter", "One Piece", "Naruto", "Twilight", "Marvel"].includes(f.name),
-);
+const preferredFandoms = fandoms!.filter((f) => payloadData.value?.preferred5Fandoms?.includes(Number(f.id)));
 
 interface FandomTab {
   id: string;
@@ -149,7 +149,7 @@ const fictionFilters = reactive<FictionFilters>({
 });
 
 const pagination = reactive<OffsetPaginationInput>({
-  limit: 10,
+  limit: 20,
   offset: 0,
 });
 

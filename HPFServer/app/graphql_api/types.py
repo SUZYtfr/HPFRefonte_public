@@ -58,7 +58,7 @@ class UserProfileType:
     user: "UserType"
     modification_user: "UserType"
     bio_images: list["ContentImageType"]
-    profile_picture: "ContentImageType"
+    profile_picture: Optional["ContentImageType"]
 
 
 @strawberry_django.type(model=User, exclude=["password"], filters=UserFilters)

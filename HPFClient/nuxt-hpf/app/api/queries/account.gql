@@ -11,7 +11,9 @@ query getSession {
       bio
       # bioImages
       # externalProfiles
-      # profilePicture
+      profilePicture {
+        src
+      }
       ageConsent
     }
     preferences {

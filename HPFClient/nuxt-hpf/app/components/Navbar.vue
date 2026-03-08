@@ -9,7 +9,7 @@
         <div class="is-hidden-desktop" style="margin-left: auto">
           <BNavbarItem v-if="isAuthenticated" tag="div">
             <BDropdown aria-role="list">
-              <template #trigger="{ active }">
+              <template #trigger>
                 <button type="button" class="button is-light">
                   <span class="icon is-small" style="margin-right: -8px">
                     <svg
@@ -98,7 +98,7 @@
         <div class="is-hidden-touch">
           <BNavbarItem v-if="isAuthenticated" tag="div">
             <BDropdown aria-role="list">
-              <template #trigger="{ active }">
+              <template #trigger>
                 <button type="button" class="button is-light">
                   <span class="icon is-small" style="margin-right: -8px">
                     <svg

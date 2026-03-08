@@ -11,9 +11,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "strict": true,
-    "types": [
-      "@types/node"
-    ]
+    "types": ["@types/node"]
   },
   "watchOptions": {
     "excludeDirectories": ["**/node_modules/**", ".nuxt", ".output"]

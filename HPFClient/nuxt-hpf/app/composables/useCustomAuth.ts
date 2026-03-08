@@ -1,5 +1,6 @@
-// @ts-nocheck
-import type { UserType } from "#gql";
+import type { CookieRef } from "#app";
+import type { GqlSdkFuncs } from "#gql";
+import { jwtDecode, type JwtPayload } from "jwt-decode";
 
 /*
 La version 1.0.0 "stable" de @sidebase/nuxt-auth est sortie récemment.
@@ -13,26 +14,54 @@ Autre option, se passer entièrement de sidebase/nuxt-auth pour écrire ses prop
 composables et middlewares avec nuxt-graphql-client.
 */
 
-// const token = ref<string>("");
-const refresh = ref<string>("");
-// const isAuthenticated = computed<boolean>(() => token.value.length > 0);
+interface JWTExtraPayload {
+  username: string;
+  userId: number;
+  isStaff: boolean;
+  preferred5Fandoms: number[];
+}
+
+interface SignInCredentials {
+  username: string;
+  password: string;
+}
+
+type SessionData = Awaited<ReturnType<GqlSdkFuncs["getSession"]>>;
+
 const loading = ref<boolean>(false);
-const data = ref<UserType | null>(null); // TODO
-const isStaff = computed<boolean>(() => data.value?.isStaff || false); // TODO token claims ou accountData.isStaff?
+const accountData = ref<SessionData["account"] | null>(null);
 
-export function useCustomAuth() {
+interface UseCustomAuthReturn {
+  token: CookieRef<string | null | undefined>;
+  refresh: Ref<string | null>;
+  isAuthenticated: ComputedRef<boolean>;
+  isStaff: ComputedRef<boolean>;
+  loading: Ref<boolean>;
+  payloadData: ComputedRef<(JwtPayload & JWTExtraPayload) | null>;
+  accountData: Ref<SessionData["account"] | null>;
+  data: UseCustomAuthReturn["accountData"];
+  signIn: (credentials: SignInCredentials) => Promise<void>;
+  signOut: VoidFunction;
+}
+
+export function useCustomAuth(): UseCustomAuthReturn {
   const token = useCookie("gql:default");
-  const isAuthenticated = computed(() => token.value?.length > 0);
+  const refresh = ref<string | null>(null);
+  const payloadData = computed<(JwtPayload & JWTExtraPayload) | null>(() => {
+    if (token.value) {
+      return jwtDecode<JwtPayload & JWTExtraPayload>(token.value || "", { header: false });
+    } else return null;
+  });
+  const isAuthenticated = computed<boolean>(() => Boolean(token.value));
+  const isStaff = computed<boolean>(() => payloadData.value?.isStaff || false);
 
-  async function signIn(credentials: { username: string; password: string }) {
-    useGqlToken(null);
-    token.value = "";
-    data.value = null;
-
+  async function signIn(credentials: SignInCredentials): Promise<void> {
     loading.value = true;
+    accountData.value = null;
+    useGqlToken(null);
+
     const { requestToken } = await GqlRequestToken(credentials);
     // TODO gérer les erreurs
-    token.value = requestToken.token;
     useGqlToken({
       token: requestToken.token,
       config: {
@@ -42,33 +71,34 @@ export function useCustomAuth() {
     });
     await nextTick(getAccountData);
     loading.value = false;
-    // TODO return value?
+    return;
   }
 
-  async function getAccountData() {
-    if (!isAuthenticated) {
-      throw "Pas authentifié";
-    }
+  async function getAccountData(): Promise<void> {
+    if (!isAuthenticated) return;
     const { account } = await GqlGetSession();
-    data.value = account;
-    return account;
+    accountData.value = account;
+    return;
   }
 
-  async function signOut() {
+  async function signOut(): Promise<void> {
+    loading.value = true;
     useGqlToken(null);
-    token.value = "";
-    data.value = null;
+    accountData.value = null;
+    loading.value = false;
+    return;
   }
 
   return {
     token,
     refresh,
     isAuthenticated,
-    data,
     isStaff,
     loading,
+    payloadData,
+    accountData,
+    data: accountData,
     signIn,
     signOut,
-    getAccountData,
   };
 }

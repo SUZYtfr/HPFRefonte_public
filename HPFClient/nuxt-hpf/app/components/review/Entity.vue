@@ -31,9 +31,7 @@
           </NuxtLink>
           <small>{{ review.post_date != null ? (review.post_date.toLocaleDateString() + " à " + review.post_date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })) : "" }}</small>
         </div> -->
-        <p>
-          <RichtextReader :text="review.text" />
-        </p>
+        <RichtextReader :text="review.text" />
       </div>
     </div>
   </article>

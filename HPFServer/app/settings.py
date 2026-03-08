@@ -59,13 +59,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-'''
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
-    "ROTATE_REFRESH_TOKENS": True,
+GRAPHQL_JWT = {
+    "JWT_PAYLOAD_HANDLER": "app.graphql_api.utils.get_jwt_token_payload",
 }
-'''
 
 ROOT_URLCONF = "app.urls"
 

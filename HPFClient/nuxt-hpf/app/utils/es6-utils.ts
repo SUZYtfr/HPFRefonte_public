@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// TODO remplacer par lodash
+
 export function groupBy(list: any, keyGetter: any): Map<any, any> {
   const map = new Map();
   list.forEach((item: any) => {
