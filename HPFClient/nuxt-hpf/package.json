@@ -55,7 +55,7 @@
     "sass-embedded": "^1.85.1",
     "typescript": "^5.8.2",
     "vite": "^6.2.1",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^3.2.5"
   },
   "version": "4.5.0"
 }
