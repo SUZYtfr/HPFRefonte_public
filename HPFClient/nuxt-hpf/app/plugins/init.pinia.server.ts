@@ -1,7 +1,7 @@
 export default defineNuxtPlugin(async () => {
-  await useAsyncData("getCharacteristics", () => useConfigStore().fetchCharacteristics());
-  await useAsyncData("getCharacteristicTypes", () => useConfigStore().fetchCharacteristicTypes());
-  await useAsyncData("getTriggerWarnings", () => useConfigStore().fetchTriggerWarnings());
-  await useAsyncData("getThemes", () => useConfigStore().fetchThemes());
-  await useAsyncData("getFandoms", () => useConfigStore().fetchFandoms());
+  useConfigStore().fetchCharacteristics();
+  useConfigStore().fetchCharacteristicTypes();
+  useConfigStore().fetchTriggerWarnings();
+  useConfigStore().fetchThemes();
+  useConfigStore().fetchFandoms();
 });

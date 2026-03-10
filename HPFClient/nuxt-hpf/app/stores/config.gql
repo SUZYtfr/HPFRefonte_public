@@ -24,3 +24,22 @@ query getTriggerWarnings {
     name
   }
 }
+
+query getThemes {
+  themes {
+    name
+    default
+    enabled
+    useDefaultFrom
+    useDefaultTo
+    details
+  }
+}
+
+query getFandoms {
+  fandoms {
+    id
+    name
+    slug
+  }
+}

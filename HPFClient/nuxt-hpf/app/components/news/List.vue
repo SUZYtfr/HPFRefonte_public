@@ -71,14 +71,15 @@
 </template>
 
 <script setup lang="ts">
-import type { NewsArticleOrder, NewsArticleTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { NewsArticleOrder, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
 import type { NewsModel } from "~/models";
+import type { TransformedPaginated } from "~/types/other";
 
 interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
-  paginatedNews: Omit<NewsArticleTypeOffsetPaginated, "results"> & { results: NewsModel[] };
+  paginatedNews: TransformedPaginated<NewsModel>;
   searchNews: () => Promise<void>;
 }
 

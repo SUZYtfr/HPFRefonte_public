@@ -33,15 +33,10 @@
 
 <script setup lang="ts">
 import type { NewsModel } from "~/models";
-import type { NewsArticleTypeOffsetPaginated } from "#gql";
-
-// TODO probablement un meilleur moyen de faire ça
-type NewsArticleModelOffsetPaginated = Omit<NewsArticleTypeOffsetPaginated, "results"> & {
-  results: NewsModel[];
-};
+import type { TransformedPaginated } from "~/types/other";
 
 interface Props {
-  news?: NewsArticleModelOffsetPaginated;
+  news?: TransformedPaginated<NewsModel>;
 }
 
 defineProps<Props>();

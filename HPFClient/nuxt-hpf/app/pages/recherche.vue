@@ -137,6 +137,7 @@ const {
     pagination: fictionPagination,
   },
   {
+    lazy: true,
     transform: (input) => {
       return {
         ...input.fictions,

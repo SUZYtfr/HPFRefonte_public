@@ -74,17 +74,12 @@
 import type { FanfictionModel } from "~/models/fanfictions";
 import { FanfictionListType } from "~/types/other";
 import type { FandomData } from "~/types/fanfictions";
-import type { FictionTypeOffsetPaginated } from "#gql";
-
-// TODO probablement un meilleur moyen de faire ça
-type FictionTypeModelOffsetPaginated = Omit<FictionTypeOffsetPaginated, "results"> & {
-  results: FanfictionModel[];
-};
+import type { TransformedPaginated } from "~/types/other";
 
 defineProps<{
   title?: string;
   fandom?: FandomData;
-  fanfictions?: FictionTypeModelOffsetPaginated;
+  fanfictions?: TransformedPaginated<FanfictionModel>;
   listType: FanfictionListType;
 }>();
 

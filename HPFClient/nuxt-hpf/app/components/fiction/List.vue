@@ -30,12 +30,12 @@
       </div>
     </header>
     <div :class="[{ 'card-content': isCard }, 'px-2', 'py-3', 'is-flex-grow-5']">
-      <div v-if="!paginatedFanfictions.results.length" class="mx-auto my-auto has-text-centered">
+      <div v-if="!paginatedFanfictions?.results.length" class="mx-auto my-auto has-text-centered">
         <span class="is-italic mt-3">Aucun résultat, essayer d'ajuster les filtres de recherche.</span>
       </div>
       <div v-else>
         <FictionEntity
-          v-for="(fanfiction, innerindex) of paginatedFanfictions.results"
+          v-for="(fanfiction, innerindex) of paginatedFanfictions?.results"
           :key="'ff_' + fanfiction.fanfictionId.toString()"
           class="my-2"
           :fanfiction="fanfiction"
@@ -47,7 +47,7 @@
       <BPagination
         v-model="pageFictionPagination.page"
         :class="[{ 'card-footer-item': isCard }, 'py-2']"
-        :total="paginatedFanfictions.totalCount"
+        :total="paginatedFanfictions?.totalCount"
         :range-before="3"
         :range-after="1"
         :rounded="false"
@@ -66,13 +66,14 @@
 
 <script setup lang="ts">
 import type { FanfictionModel } from "~/models";
-import type { FictionOrder, FictionTypeOffsetPaginated, OffsetPaginationInput } from "#gql";
+import type { FictionOrder, OffsetPaginationInput } from "#gql";
 import { Ordering } from "#gql/default";
+import type { TransformedPaginated } from "~/types/other";
 
 interface Props {
   isCard?: boolean;
   showRefreshButton?: boolean;
-  paginatedFanfictions: Omit<FictionTypeOffsetPaginated, "results"> & { results: FanfictionModel[] };
+  paginatedFanfictions: TransformedPaginated<FanfictionModel>;
   searchFictions: () => Promise<void>;
 }
 
@@ -121,9 +122,9 @@ const fictionsOrderChoice = computed<string>({
 
 const fanfictionResultLabel = computed<string>(() => {
   let result = "Aucun résultat";
-  if (paginatedFanfictions.totalCount === 0) return result;
-  result = paginatedFanfictions.totalCount.toString() + " résultat";
-  result += paginatedFanfictions.totalCount > 1 ? "s" : "";
+  if (paginatedFanfictions?.totalCount === 0) return result;
+  result = paginatedFanfictions?.totalCount.toString() + " résultat";
+  result += paginatedFanfictions?.totalCount || 0 > 1 ? "s" : "";
   return result;
 });
 
