@@ -1,3 +1,5 @@
+import type { OffsetPaginationInfo, Scalars } from "#gql/default";
+
 export interface ContactFormData {
   email: string;
   subject_id: string;
@@ -40,7 +42,8 @@ export interface TiptapEditorContent {
   wordCount: number;
 }
 
-export interface ReviewState extends TiptapEditorContent {
-  canGrade: boolean;
-  grading?: number;
+export interface TransformedPaginated<T> {
+  pageInfo: OffsetPaginationInfo;
+  results: Array<T>;
+  totalCount: Scalars["Int"]["output"];
 }
