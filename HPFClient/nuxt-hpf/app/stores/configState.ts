@@ -7,11 +7,11 @@ import { TriggerWarningData } from "~/types/characteristics";
 
 export const useConfigStore = defineStore("config", () => {
   //#region State
-  const characteristics = ref<CharacteristicModel[]>();
-  const characteristicTypes = ref<CharacteristicTypeModel[]>();
-  const triggerWarnings = ref<TriggerWarningData[]>();
-  const themes = ref<ThemeModel[]>();
-  const fandoms = ref<FandomData[]>();
+  const characteristics = ref<CharacteristicModel[]>([]);
+  const characteristicTypes = ref<CharacteristicTypeModel[]>([]);
+  const triggerWarnings = ref<TriggerWarningData[]>([]);
+  const themes = ref<ThemeModel[]>([]);
+  const fandoms = ref<FandomData[]>([]);
   // TODO appel à l'api, pour l'instant en dur.
   const invalidationReasons = ref<InvalidationReasonData[]>([
     new InvalidationReasonData({ id: "1", reason: "Taille trop courte" }),
@@ -61,24 +61,6 @@ export const useConfigStore = defineStore("config", () => {
   });
   //#endregion
 
-  //#region Action
-  function setCharacteristics(chars: CharacteristicModel[]): void {
-    characteristics.value = chars;
-  }
-  function setCharacteristicTypes(charTypes: CharacteristicTypeModel[]): void {
-    characteristicTypes.value = charTypes;
-  }
-  function setTriggerWarnings(tws: TriggerWarningData[]): void {
-    triggerWarnings.value = tws;
-  }
-  function setThemes(thms: ThemeModel[]): void {
-    themes.value = thms;
-  }
-  function setFandoms(fdoms: FandomData[]): void {
-    fandoms.value = fdoms;
-  }
-  //#endregion
-
   // Bizarrement il faut séparer ces deux appels dans leur méthodes respectives
   // Sinon on a une erreur:
   // [nuxt] A composable that requires access to the Nuxt instance was called outside
@@ -87,7 +69,7 @@ export const useConfigStore = defineStore("config", () => {
   // (Mais je pense que c'est un Nuxt bug)
   // Il faut aussi rendre une valeur quelconque pour éviter que useAsyncData se plaigne.
   async function fetchCharacteristics(): Promise<true> {
-    const { data: characteristicTemp } = await useAsyncGql(
+    const { data } = await useAsyncGql(
       "getCharacteristics",
       {},
       {
@@ -96,12 +78,12 @@ export const useConfigStore = defineStore("config", () => {
         },
       },
     );
-    setCharacteristics(characteristicTemp.value ?? []);
+    characteristics.value = data.value;
     return true;
   }
 
   async function fetchCharacteristicTypes(): Promise<true> {
-    const { data: characteristicTypesTemp } = await useAsyncGql(
+    const { data } = await useAsyncGql(
       "getCharacteristicTypes",
       {},
       {
@@ -110,12 +92,12 @@ export const useConfigStore = defineStore("config", () => {
         },
       },
     );
-    setCharacteristicTypes(characteristicTypesTemp.value ?? []);
+    characteristicTypes.value = data.value;
     return true;
   }
 
   async function fetchTriggerWarnings(): Promise<true> {
-    const { data: triggerWarningTypesTemp } = await useAsyncGql(
+    const { data } = await useAsyncGql(
       "getTriggerWarnings",
       {},
       {
@@ -124,12 +106,12 @@ export const useConfigStore = defineStore("config", () => {
         },
       },
     );
-    setTriggerWarnings(triggerWarningTypesTemp.value ?? []);
+    triggerWarnings.value = data.value;
     return true;
   }
 
   async function fetchThemes(): Promise<true> {
-    const { data: themesTemp } = await useAsyncGql(
+    const { data } = await useAsyncGql(
       "getThemes",
       {},
       {
@@ -138,12 +120,12 @@ export const useConfigStore = defineStore("config", () => {
         },
       },
     );
-    setThemes(themesTemp.value ?? []);
+    themes.value = data.value;
     return true;
   }
 
   async function fetchFandoms(): Promise<true> {
-    const { data: fdoms } = await useAsyncGql(
+    const { data } = await useAsyncGql(
       "getFandoms",
       {},
       {
@@ -152,7 +134,7 @@ export const useConfigStore = defineStore("config", () => {
         },
       },
     );
-    setFandoms(fdoms.value ?? []);
+    fandoms.value = data.value;
     return true;
   }
 
@@ -164,8 +146,6 @@ export const useConfigStore = defineStore("config", () => {
     currentTheme,
     fandoms,
     invalidationReasons,
-    // setCharacteristics,
-    // setCharacteristicTypes,
     fetchCharacteristicTypes,
     fetchCharacteristics,
     fetchTriggerWarnings,
