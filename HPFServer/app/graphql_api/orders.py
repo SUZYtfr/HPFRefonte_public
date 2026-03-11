@@ -42,6 +42,18 @@ class FictionOrder:
         ordering = value.resolve(f"{prefix}_read_count")
         return queryset, [ordering]
 
+    @strawberry_django.order_field
+    def average(
+        self,
+        info: Info,
+        queryset: QuerySet[Fiction],
+        value: auto,
+        prefix: str,
+    ) -> tuple[QuerySet[Fiction] | list[str]]:
+        queryset = queryset.with_averages()
+        ordering = value.resolve(f"{prefix}_average")
+        return queryset, [ordering]
+
 
 @strawberry_django.order_type(model=Chapter)
 class ChapterOrder:

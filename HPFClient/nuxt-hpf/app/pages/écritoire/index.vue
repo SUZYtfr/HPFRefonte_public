@@ -158,8 +158,8 @@ definePageMeta({
 
 const router = useRouter();
 const route = useRoute();
-const initialFictionId = (route.query["fiction"] as string) || undefined;
-const initialChapterId = (route.query["chapitre"] as string) || undefined;
+const initialFictionId = route.query["fiction"] as string | undefined;
+const initialChapterId = route.query["chapitre"] as string | undefined; // chapitre= => "" => nouveau chapitre
 const { fandoms } = useConfigStore();
 
 // Si une fiction ou un chapitre est indiqué en paramètre, on est en contexte de modification initialement
@@ -168,7 +168,7 @@ const isEditing = ref<boolean>(Boolean(initialFictionId || initialChapterId));
 const unsavedChanges = ref<boolean>(false);
 const steps = useTemplateRef("steps");
 const currentStep = ref<"fiction" | "chapter" | "rules">(
-  initialFictionId ? "fiction" : initialChapterId ? "chapter" : "rules",
+  initialChapterId !== undefined ? "chapter" : initialFictionId ? "fiction" : "rules",
 );
 
 const activeTab = ref<string>(initialChapterId || ""); // "" = nouveau chapitre
@@ -209,14 +209,13 @@ async function fetchChapter(chapterId: string): Promise<ChapterModel> {
 // Fetch initial si le contexte initial est la modification
 if (initialFictionId) {
   await fetchFiction(initialFictionId);
-  activeTab.value = fiction.value.chapters![0]!.chapterId.toString();
-  await fetchChapter(activeTab.value);
-}
-else if (initialChapterId) {
-  activeTab.value = initialChapterId;
-  await fetchChapter(initialChapterId);
-  //@ts-expect-error TODO ChapterData.fiction est un number, mais ChapterType.fiction est un object
-  await fetchFiction(chapter.value.fiction!.id.toString());
+  if (initialChapterId === undefined) {
+    activeTab.value = fiction.value.chapters![fiction.value.chapters!.length - 1]!.chapterId.toString(); // dernier chapitre par défaut
+    await fetchChapter(activeTab.value);
+  } else if (initialChapterId !== "") {
+    activeTab.value = initialChapterId;
+    await fetchChapter(activeTab.value);
+  }
 }
 
 watch(activeTab, async (newValue) => {

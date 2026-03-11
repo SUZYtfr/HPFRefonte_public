@@ -30,11 +30,17 @@
             @page-change="(page: number | string) => (pagination.offset = (Number(page) - 1) * pagination.limit!)"
             @sort="
               (field: string | undefined, order: 'asc' | 'desc') => {
-                const ordering = (order.toUpperCase() + (includeUnpublished ? '_NULLS_FIRST' : '')) as Ordering;
+                const ordering = order.toUpperCase() as Ordering;
                 fictionOrder.title = field === 'title' ? ordering : undefined;
-                fictionOrder.lastUpdateDate = field === 'lastUpdateDate' ? ordering : undefined;
+                fictionOrder.lastUpdateDate =
+                  field === 'lastUpdateDate'
+                    ? includeUnpublished
+                      ? ((ordering + '_NULLS_FIRST') as Ordering)
+                      : ordering
+                    : undefined;
                 fictionOrder.reviewCount = field === 'reviewCount' ? ordering : undefined;
                 fictionOrder.readCount = field === 'readCount' ? ordering : undefined;
+                fictionOrder.average = field === 'average' ? ordering : undefined;
               }
             "
           >
@@ -44,15 +50,30 @@
             <BTableColumn
               v-slot="{ row: fiction }: { row: FanfictionModel }"
               field="lastUpdateDate"
-              label="Dernière mise-à-jour"
+              label="Dernière publication"
               sortable
             >
               {{ fiction.lastUpdateDate?.toLocaleDateString("fr-fr") || "Non publiée" }}
+              <BTag class="is-pulled-right">{{ fiction.statusAsText }}</BTag>
             </BTableColumn>
-            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="reviewCount" label="Reviews" sortable>
-              {{ fiction.reviewCount }}{{ fiction.average ? " (" + fiction.average?.toFixed(1).toString() + "/10)" : "" }}
+            <!-- TODO dont ràr -->
+            <BTableColumn
+              v-slot="{ row: fiction }: { row: FanfictionModel }"
+              field="reviewCount"
+              label="Reviews"
+              sortable
+            >
+              {{ fiction.reviewCount }}
             </BTableColumn>
-            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="readCount" label="Lectures" sortable>
+            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="average" label="Notation" sortable>
+              <BRate v-if="fiction.average" v-model="fiction.average" disabled :max="1" rtl show-score />
+            </BTableColumn>
+            <BTableColumn
+              v-slot="{ row: fiction }: { row: FanfictionModel }"
+              field="readCount"
+              label="Lectures"
+              sortable
+            >
               {{ fiction.readCount }}
             </BTableColumn>
             <BTableColumn>
@@ -87,10 +108,16 @@
               <tr v-for="chapter in fiction.chapters" :key="chapter.chapterId">
                 <td class="has-text-centered">{{ chapter.order }}</td>
                 <td>{{ chapter.title }}</td>
-                <td>{{ chapter.publicationDate?.toLocaleDateString("fr-fr") || "Brouillon" }}</td>
                 <td>
-                  {{ chapter.reviewCount
-                  }}{{ chapter.average ? " (" + chapter.average?.toFixed(1).toString() + "/10)" : "" }}
+                  {{ chapter.publicationDate?.toLocaleDateString("fr-fr") || "Brouillon" }}
+                  <!-- TODO statut de la dernière version (brouillon, publiée, non validée, etc.)-->
+                  <!-- <BTag class="is-pulled-right">{{ chapter.validationStatus }}</BTag> -->
+                </td>
+                <td>
+                  {{ chapter.reviewCount }}
+                </td>
+                <td>
+                  <BRate v-if="chapter.average" v-model="chapter.average" disabled :max="1" rtl show-score />
                 </td>
                 <td>{{ chapter.readCount }}</td>
                 <td>
@@ -98,12 +125,30 @@
                     :to="{
                       name: 'écritoire',
                       query: {
+                        fiction: fiction.fanfictionId,
                         chapitre: chapter.chapterId,
                       },
                     }"
                     no-prefetch
                     ><BButton size="is-small is-light">Modifier</BButton></NuxtLink
                   >
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td colspan="5" class="has-text-centered">
+                  <NuxtLink
+                    :to="{
+                      name: 'écritoire',
+                      query: {
+                        fiction: fiction.fanfictionId,
+                        chapitre: '',
+                      },
+                    }"
+                    no-prefetch
+                  >
+                    <BButton size="is-small" expanded>Nouveau chapitre</BButton>
+                  </NuxtLink>
                 </td>
               </tr>
             </template>
@@ -125,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { BTable, BTableColumn, BButton, BTabs, BTabItem, BSwitch } from "buefy";
+import { BTable, BTableColumn, BButton, BTabs, BTabItem, BSwitch, BRate, BTag } from "buefy";
 import { ChapterModel, FanfictionModel } from "@/models";
 import { plainToInstance } from "class-transformer";
 import { Ordering, type FictionOrder, type OffsetPaginationInput, type FictionFilters } from "#gql/default";
@@ -153,6 +198,7 @@ const fandomTabs: FandomTab[] = [
 ].concat(preferredFandoms);
 
 const activeTab = ref<string>(fandomTabs[0]!.id);
+// TODO filtres plus précis: fics à chapitres avec status nouvelle version
 const includeUnpublished = ref<boolean>(true);
 
 const fictionFilters = reactive<FictionFilters>({
@@ -165,12 +211,12 @@ const pagination = reactive<OffsetPaginationInput>({
   offset: 0,
 });
 
-// TODO option pour cacher les fictions non publiées ?
 const fictionOrder = reactive<FictionOrder>({
   lastUpdateDate: Ordering.DESC_NULLS_FIRST,
   title: undefined,
   reviewCount: undefined,
   readCount: undefined,
+  average: undefined,
 });
 
 const { data: fictions, status: fictionStatus } = await useAsyncGql(
