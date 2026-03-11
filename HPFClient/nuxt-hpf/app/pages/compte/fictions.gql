@@ -20,3 +20,18 @@ query getPrivateFictions($filters: FictionFilters, $pagination: OffsetPagination
     }
   }
 }
+
+query getPrivateChapters($filters: ChapterFilters) {
+  privateChapters(filters: $filters) {
+    results {
+      id
+      title
+      readCount
+      wordCount
+      reviewCount
+      average
+      publicationDate
+      order
+    }
+  }
+}

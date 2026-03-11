@@ -205,6 +205,15 @@ export class ChapterModel extends ChapterData {
   @Type(() => TriggerWarningData)
   public triggerWarnings: TriggerWarningData[] | null = null;
 
+  @Transform(({ value }) => (value ? new Date(value) : value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public publicationDate: Date | null = null;
+
   // TODO à transformer en type un peu plus light quand on saura exactement de quoi on a besoin
   @Type(() => FanfictionModel)
   public fictionMetadata: FanfictionModel | null = null;

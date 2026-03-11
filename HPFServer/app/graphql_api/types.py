@@ -77,9 +77,9 @@ class ThemeType:
 
 ### CHARACTERISTICS
 
-@strawberry_django.type(model=Characteristic, fields="__all__")
+@strawberry_django.type(model=Characteristic, exclude=["_order"])
 class CharacteristicType:
-    _order: int
+    order: auto
     creation_user: "UserType"
     modification_user: "UserType"
     characteristic_type: "CharacteristicTypeType"
@@ -103,15 +103,14 @@ class TriggerWarningType:
 
 ### FICTIONS
 
-@strawberry_django.type(model=Chapter, fields="__all__", filters=ChapterFilters, order=ChapterOrder)
+@strawberry_django.type(model=Chapter, exclude=["_order"], filters=ChapterFilters, order=ChapterOrder)
 class ChapterType:
     def resolve_validation_status(self: Chapter) -> ChapterValidationStage:
         return self.last_version.validation_status
 
     average: auto
     review_count: auto
-    _order: int
-    order: int = strawberry_django.field(field_name="_order")
+    order: auto
     trigger_warnings: list["TriggerWarningType"]
     versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(
         extensions=[IsStaffOrOwner(owner_field="creation_user")],
@@ -120,6 +119,8 @@ class ChapterType:
     creation_user: "UserType"
     modification_user: "UserType"
     fiction: "FictionType"
+    read_count: auto
+    word_count: auto
 
 
 @strawberry_django.type(model=Fiction, fields="__all__", filters=FictionFilters, order=FictionOrder)

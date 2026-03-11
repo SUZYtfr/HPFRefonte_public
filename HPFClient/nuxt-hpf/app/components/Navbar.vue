@@ -136,8 +136,14 @@
                   <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <BDropdownItem aria-role="listitem"> Mon compte </BDropdownItem>
-              <BDropdownItem aria-role="listitem" @click="logout"> Se déconnecter </BDropdownItem>
+              <BDropdownItem aria-role="listitem">Mon compte</BDropdownItem>
+              <BDropdownItem aria-role="listitem" has-link>
+                <NuxtLink class="dropdown-item" :to="{ name: 'compte-fictions' }" no-prefetch>Mes fictions</NuxtLink>
+              </BDropdownItem>
+              <BDropdownItem aria-role="listitem" has-link>
+                <NuxtLink class="dropdown-item" :to="{ name: 'écritoire' }" no-prefetch>Nouvelle fiction</NuxtLink>
+              </BDropdownItem>
+              <BDropdownItem aria-role="listitem" @click="logout">Se déconnecter</BDropdownItem>
             </BDropdown>
           </BNavbarItem>
           <BNavbarItem v-else tag="div">

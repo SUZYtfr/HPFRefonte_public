@@ -319,6 +319,7 @@ class Chapter(DatedModel, CreatedModel, TextDependentModel):
     def is_published(self) -> bool:
         return bool(self.publication_date)
 
+    @property
     def order(self) -> int:
         return self._order + 1
 

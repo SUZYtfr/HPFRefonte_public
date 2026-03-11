@@ -42,6 +42,7 @@ class FictionFilters:
 class ChapterFilters:
     id: auto
     creation_user: Optional["UserFilters"]
+    fiction: Optional["FictionFilters"]
 
 
 @strawberry_django.filter_type(model=ChapterReview, lookups=True)

@@ -136,6 +136,10 @@ class Characteristic(DatedModel, CreatedModel):
         return self.name
 
     @property
+    def order(self) -> int:
+        return self._order + 1
+
+    @property
     def fiction_count(self) -> int:
         """Compte de fictions publiées"""
 

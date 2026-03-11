@@ -14,15 +14,19 @@
             :loading="fictionStatus === 'pending'"
             :data="fictions.results"
             :backend-sorting="true"
-            default-sort="lastUpdateDate"
-            default-sort-direction="desc"
+            :default-sort="Object.keys(fictionOrder).find((fo) => fo)"
+            :default-sort-direction="Object.entries(fictionOrder).find((fo) => fo[1])![1]!"
             :backend-pagination="true"
             :paginated="true"
             :pagination-simple="true"
             :per-page="pagination.limit!"
             :total="fictions.totalCount"
+            custom-detail-row
             detailed
             detail-key="fanfictionId"
+            @details-open="
+              async (row: FanfictionModel) => (row.chapters = await getChapters(row.fanfictionId.toString()))
+            "
             @page-change="(page: number | string) => (pagination.offset = (Number(page) - 1) * pagination.limit!)"
             @sort="
               (field: string | undefined, order: 'asc' | 'desc') => {
@@ -34,30 +38,30 @@
               }
             "
           >
-            <BTableColumn v-slot="{ row }: { row: FanfictionModel }" field="title" label="Titre" sortable>
-              {{ row.title }}
+            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="title" label="Titre" sortable>
+              {{ fiction.title }}
             </BTableColumn>
             <BTableColumn
-              v-slot="{ row }: { row: FanfictionModel }"
+              v-slot="{ row: fiction }: { row: FanfictionModel }"
               field="lastUpdateDate"
               label="Dernière mise-à-jour"
               sortable
             >
-              {{ row.lastUpdateDate?.toLocaleDateString("fr-fr") || "Non publiée" }}
+              {{ fiction.lastUpdateDate?.toLocaleDateString("fr-fr") || "Non publiée" }}
             </BTableColumn>
-            <BTableColumn v-slot="{ row }: { row: FanfictionModel }" field="reviewCount" label="Reviews" sortable>
-              {{ row.reviewCount }}
+            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="reviewCount" label="Reviews" sortable>
+              {{ fiction.reviewCount }}{{ fiction.average ? " (" + fiction.average?.toFixed(1).toString() + "/10)" : "" }}
             </BTableColumn>
-            <BTableColumn v-slot="{ row }: { row: FanfictionModel }" field="readCount" label="Lectures" sortable>
-              {{ row.readCount }}
+            <BTableColumn v-slot="{ row: fiction }: { row: FanfictionModel }" field="readCount" label="Lectures" sortable>
+              {{ fiction.readCount }}
             </BTableColumn>
             <BTableColumn>
-              <template #default="{ row }: { row: FanfictionModel }">
+              <template #default="{ row: fiction }: { row: FanfictionModel }">
                 <NuxtLink
                   :to="{
                     name: 'écritoire',
                     query: {
-                      fiction: row.fanfictionId,
+                      fiction: fiction.fanfictionId,
                     },
                   }"
                   no-prefetch
@@ -79,21 +83,29 @@
                 >
               </template>
             </BTableColumn>
-            <template #detail="{ row }: { row: FanfictionModel }">
-              <article class="media">
-                <div class="media-content">
-                  <div class="content">
-                    <p>Fandoms : {{ row.fandoms!.map((f) => f.name).join(", ") }}</p>
-                    <p>Caractéristiques : {{ row.characteristics!.map((c) => c.name).join(", ") }}</p>
-                    <p>Chapitres : {{ row.chapterCount }}</p>
-                    <p>Notation : {{ row.average }}</p>
-                    <p>Statut : {{ row.status }}</p>
-                    <p>Rating : {{ row.rating }}</p>
-                    <p>Mis en favoris : #</p>
-                    <p>Dont reviews sans réponses : #</p>
-                  </div>
-                </div>
-              </article>
+            <template #detail="{ row: fiction }: { row: FanfictionModel }">
+              <tr v-for="chapter in fiction.chapters" :key="chapter.chapterId">
+                <td class="has-text-centered">{{ chapter.order }}</td>
+                <td>{{ chapter.title }}</td>
+                <td>{{ chapter.publicationDate?.toLocaleDateString("fr-fr") || "Brouillon" }}</td>
+                <td>
+                  {{ chapter.reviewCount
+                  }}{{ chapter.average ? " (" + chapter.average?.toFixed(1).toString() + "/10)" : "" }}
+                </td>
+                <td>{{ chapter.readCount }}</td>
+                <td>
+                  <NuxtLink
+                    :to="{
+                      name: 'écritoire',
+                      query: {
+                        chapitre: chapter.chapterId,
+                      },
+                    }"
+                    no-prefetch
+                    ><BButton size="is-small is-light">Modifier</BButton></NuxtLink
+                  >
+                </td>
+              </tr>
             </template>
             <template #bottom-left>
               <BSwitch
@@ -114,9 +126,9 @@
 
 <script setup lang="ts">
 import { BTable, BTableColumn, BButton, BTabs, BTabItem, BSwitch } from "buefy";
-import { FanfictionModel } from "@/models";
+import { ChapterModel, FanfictionModel } from "@/models";
 import { plainToInstance } from "class-transformer";
-import { type FictionOrder, Ordering, type OffsetPaginationInput, type FictionFilters } from "#gql/default";
+import { Ordering, type FictionOrder, type OffsetPaginationInput, type FictionFilters } from "#gql/default";
 
 definePageMeta({
   auth: true,
@@ -161,11 +173,7 @@ const fictionOrder = reactive<FictionOrder>({
   readCount: undefined,
 });
 
-const {
-  data: fictions,
-  status: fictionStatus,
-  error: fictionError,
-} = await useAsyncGql(
+const { data: fictions, status: fictionStatus } = await useAsyncGql(
   "getPrivateFictions",
   {
     filters: fictionFilters,
@@ -181,8 +189,15 @@ const {
     },
   },
 );
-watch(
-  () => fictionError.value,
-  (newValue) => console.log(newValue),
-);
+
+async function getChapters(fictionId: string): Promise<ChapterModel[]> {
+  const chapters = await GqlGetPrivateChapters({
+    filters: {
+      fiction: {
+        id: { exact: fictionId },
+      },
+    },
+  });
+  return plainToInstance(ChapterModel, chapters.privateChapters.results);
+}
 </script>

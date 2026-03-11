@@ -1,8 +1,7 @@
 <template>
   <div class="container px-5">
     <BSteps ref="steps" v-model="currentStep" :has-navigation="false">
-      <!-- FIXME erreur d'hydration en cas de contexte initial de modification, pourquoi ? -->
-      <BLoading v-model="loading" :is-full-page="false" />
+      <BLoading v-model="pending" :is-full-page="false" />
       <!-- Règlement -->
       <BStepItem
         label="Règlement"
@@ -14,7 +13,7 @@
         <LazyManagerRules v-if="currentStep === 'rules'" v-model:rules-accepted="rulesAccepted">
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
             <div></div>
-            <BButton type="is-danger">Annuler</BButton>
+            <BButton type="is-danger" @click.prevent="router.back">Annuler</BButton>
             <BButton type="is-primary" :disabled="!rulesAccepted" @click.prevent="() => steps?.next()">{{
               isEditing ? "Modifier la fiction" : "Créer une fiction"
             }}</BButton>
@@ -31,8 +30,8 @@
       >
         <LazyManagerFiction
           v-if="currentStep === 'fiction'"
-          v-model:fiction="fiction"
-          v-model:unsaved-changes="unsavedChanges"
+          :fiction="fiction"
+          :unsaved-changes="unsavedChanges"
           :is-editing
         >
           <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
@@ -43,7 +42,7 @@
               :disabled="!unsavedChanges"
               @click.prevent="
                 () => {
-                  fetchFiction();
+                  fetchFiction(fiction.fanfictionId.toString());
                   unsavedChanges = false;
                 }
               "
@@ -88,8 +87,8 @@
               type="is-danger"
               :disabled="!unsavedChanges"
               @click.prevent="
-                () => {
-                  fetchChapter();
+                async () => {
+                  await fetchChapter(activeTab); // FIXME pourquoi le chapitre ne se remet pas à zéro ?
                   unsavedChanges = false;
                 }
               "
@@ -151,85 +150,94 @@
 import { BButton, BSteps, BStepItem, BLoading, BField } from "buefy";
 import { RecordStatusEnum } from "~/types/basics";
 import { ChapterModel, FanfictionModel } from "~/models";
-import type { FictionType, ChapterType } from "#gql";
 import { plainToInstance } from "class-transformer";
 
 definePageMeta({
   auth: true,
 });
 
+const router = useRouter();
 const route = useRoute();
+const initialFictionId = (route.query["fiction"] as string) || undefined;
+const initialChapterId = (route.query["chapitre"] as string) || undefined;
 const { fandoms } = useConfigStore();
 
-// Si la fiction est indiquée en paramètre, on est en contexte de modification initialement
-// Le règlement est considéré comme lu et l'étape est passée
-const isEditing = ref<boolean>(Boolean(route.query["fiction"] as string));
+// Si une fiction ou un chapitre est indiqué en paramètre, on est en contexte de modification initialement
+// Le règlement est considéré comme lu et on arrive directement sur l'étape en question
+const isEditing = ref<boolean>(Boolean(initialFictionId || initialChapterId));
 const unsavedChanges = ref<boolean>(false);
 const steps = useTemplateRef("steps");
-const currentStep = ref<"fiction" | "chapter" | "rules">(isEditing.value ? "fiction" : "rules");
+const currentStep = ref<"fiction" | "chapter" | "rules">(
+  initialFictionId ? "fiction" : initialChapterId ? "chapter" : "rules",
+);
 
-const activeTab = ref<string>("");
-const fictionLookup = reactive({ fictionId: route.query["fiction"] as string }); // "" = nouvelle fiction
-const chapterLookup = reactive({ chapterId: activeTab.value }); // "" = nouveau chapitre
-const autoPublish = true;
+const activeTab = ref<string>(initialChapterId || ""); // "" = nouveau chapitre
+const autoPublish = true; // TODO depuis profileData ou payloadData
 
-const {
-  data: fiction,
-  status: fictionStatus,
-  execute: fetchFiction,
-} = await useAsyncGql("getPrivateFiction", fictionLookup, {
-  transform: (input: { fiction: FictionType }) => {
-    return plainToInstance(FanfictionModel, input.fiction);
-  },
-  // @ts-expect-error Faudrait typer useAsyncGql mais la flemme
-  default: () =>
-    ref(
-      new FanfictionModel({
-        recordStatus: RecordStatusEnum.New,
-        fandoms: fandoms!.filter((f) => f.id === route.query["fandom"]),
-        characteristics: [],
-      }),
-    ),
-  immediate: false,
-});
+const pending = ref<boolean>(false);
 
-const {
-  data: chapter,
-  status: chapterStatus,
-  execute: fetchChapter,
-  clear: getNewChapter,
-} = await useAsyncGql("getPrivateChapter", chapterLookup, {
-  transform: (input: { chapter: ChapterType }) => {
-    return plainToInstance(ChapterModel, input.chapter);
-  },
-  // @ts-expect-error Faudrait typer useAsyncGql mais la flemme
-  default: () => ref(new ChapterModel({ recordStatus: RecordStatusEnum.New, triggerWarnings: [] })),
-  immediate: false,
-});
-
-// Fetch initial si le contexte initial est la modification
-if (fictionLookup.fictionId) {
-  await fetchFiction();
-  chapterLookup.chapterId = fiction.value.chapters![0]!.chapterId.toString();
-  activeTab.value = fiction.value.chapters![0]!.chapterId.toString();
+const fiction = ref<FanfictionModel>(
+  new FanfictionModel({
+    recordStatus: RecordStatusEnum.New,
+    fandoms: fandoms!.filter((f) => f.id === route.query["fandom"]),
+    characteristics: [],
+  }),
+);
+async function fetchFiction(fictionId: string): Promise<FanfictionModel> {
+  pending.value = true;
+  try {
+    const data = await GqlGetPrivateFiction({ fictionId: fictionId });
+    fiction.value = plainToInstance(FanfictionModel, data.fiction);
+    return fiction.value;
+  } finally {
+    pending.value = false;
+  }
 }
 
-watch(activeTab, (newValue) => {
+const chapter = ref<ChapterModel>(new ChapterModel({ recordStatus: RecordStatusEnum.New, triggerWarnings: [] }));
+async function fetchChapter(chapterId: string): Promise<ChapterModel> {
+  pending.value = true;
+  try {
+    const data = await GqlGetPrivateChapter({ chapterId: chapterId });
+    chapter.value = plainToInstance(ChapterModel, data.chapter);
+    return chapter.value;
+  } finally {
+    pending.value = false;
+  }
+}
+
+// Fetch initial si le contexte initial est la modification
+if (initialFictionId) {
+  await fetchFiction(initialFictionId);
+  activeTab.value = fiction.value.chapters![0]!.chapterId.toString();
+  await fetchChapter(activeTab.value);
+}
+else if (initialChapterId) {
+  activeTab.value = initialChapterId;
+  await fetchChapter(initialChapterId);
+  //@ts-expect-error TODO ChapterData.fiction est un number, mais ChapterType.fiction est un object
+  await fetchFiction(chapter.value.fiction!.id.toString());
+}
+
+watch(activeTab, async (newValue) => {
   if (newValue) {
-    chapterLookup.chapterId = ""; // HACK màj forcée du lookup
-    chapterLookup.chapterId = newValue;
+    await fetchChapter(newValue);
   } else {
-    getNewChapter();
+    // si "", c'est l'onglet nouveau chapitre
+    chapter.value = new ChapterModel({ recordStatus: RecordStatusEnum.New, triggerWarnings: [] });
   }
 });
 
-const pending = ref<boolean>(false); // programmatique
-const loading = computed<boolean>(() => {
-  return fictionStatus.value === "pending" || chapterStatus.value === "pending" || pending.value;
-});
-
+// TODO méthode sur FanfictionModel, et/ou isComplete sur les composants / formulaires en question
 const fictionComplete = computed<boolean>(() => {
-  return Boolean(fiction.value.title && fiction.value.summary);
+  return [
+    fiction.value.title,
+    fiction.value.summary,
+    fiction.value.status,
+    fiction.value.rating,
+    fiction.value.fandoms?.length,
+    fiction.value.characteristics?.filter((c) => c.characteristicTypeId.toString() === "2").length,
+  ].every((field) => Boolean(field));
 });
 const chapterComplete = computed<boolean>(() => {
   return Boolean(chapter.value.title && chapter.value.text);
@@ -263,8 +271,9 @@ async function postFiction(isDraft: boolean): Promise<void> {
       isDraft: isDraft,
     },
   })
-    .then((value) => {
-      fictionLookup.fictionId = value.createFiction.id;
+    .then(async (value) => {
+      await fetchFiction(value.createFiction.id);
+      await fetchChapter(value.createFiction.chapters.results![0]!.id);
       activeTab.value = value.createFiction.chapters.results![0]!.id;
       isEditing.value = true;
       snackbar.open({
@@ -311,7 +320,8 @@ async function createChapter(isDraft: boolean): Promise<void> {
     },
   })
     .then(async (value) => {
-      await fetchFiction(); // màj de la liste des chapitres
+      await fetchFiction(fiction.value.fanfictionId.toString()); // màj de la liste des chapitres
+      await fetchChapter(value.createChapter.id);
       activeTab.value = value.createChapter.id;
       snackbar.open({
         duration: 5000,
