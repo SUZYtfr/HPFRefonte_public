@@ -2,13 +2,16 @@ from django.contrib import admin
 from django.http import HttpRequest
 from django.forms import ModelForm
 from django.db import transaction
-from ordered_model import admin as ordered_admin
+from polymorphic import admin as polymorphic_admin
 
 from core.admin import BaseAdminPage
 from core.text_functions import count_words
 from fictions.models import (
     Collection,
-    CollectionItem,
+    CollectionMember,
+    CollectionCollectionMember,
+    FictionCollectionMember,
+    ChapterCollectionMember,
     Fiction,
     Chapter,
     ChapterVersion,
@@ -19,26 +22,37 @@ from fictions.models import (
 from typing import Any
 
 
-class CollectionItemInline(ordered_admin.OrderedTabularInline):
-    verbose_name = "élément"
-    model = CollectionItem
-    fk_name = "parent"
-    extra = 0
-    min_num = 1
-    fields = [
-        "id",
-        "collection",
-        "fiction",
-        "chapter",
-        "move_up_down_links",
+class CollectionMemberInline(polymorphic_admin.StackedPolymorphicInline):
+    class CollectionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = CollectionCollectionMember
+        fields = ["collection"]
+        autocomplete_fields = ["collection"]
+
+    class FictionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = FictionCollectionMember
+        fields = ["fiction"]
+        autocomplete_fields = ["fiction"]
+
+    class ChapterCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = ChapterCollectionMember
+        fields = ["chapter"]
+        autocomplete_fields = ["chapter"]
+
+    model = CollectionMember
+    child_inlines = [
+        CollectionCollectionMemberInline,
+        FictionCollectionMemberInline,
+        ChapterCollectionMemberInline,
     ]
-    readonly_fields = ["move_up_down_links"]
-    ordering = ["order"]
-    autocomplete_fields = ["collection", "fiction", "chapter"]
+    extra = 0
+
+    # FIXME - trouver comment intégrer orderedmodeladmin
+    # fields = ["order", "move_up_down_links"]
+    # readonly_fields = ["order", "move_up_down_links"]
 
 
 @admin.register(Collection)
-class CollectionAdminPage(ordered_admin.OrderedInlineModelAdminMixin, BaseAdminPage):
+class CollectionAdminPage(polymorphic_admin.PolymorphicInlineSupportMixin, BaseAdminPage):
     """Accès d'administration des séries"""
 
     ordering = ["-id"]
@@ -60,7 +74,7 @@ class CollectionAdminPage(ordered_admin.OrderedInlineModelAdminMixin, BaseAdminP
             "classes": ["collapse"],
         }),
     ]
-    inlines = [CollectionItemInline]
+    inlines = [CollectionMemberInline]
     readonly_fields = ["average"]
     autocomplete_fields = ["characteristics"]
 

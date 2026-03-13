@@ -1,3 +1,6 @@
+# Fichiers statiques auto-générés
+/static/*
+
 # Les images restent locales
 /media/banners/*
 /media/profilepictures/*

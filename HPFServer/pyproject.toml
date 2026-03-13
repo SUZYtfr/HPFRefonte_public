@@ -19,9 +19,9 @@ psycopg = "^3.2.10"
 django-mptt = "^0.18.0"
 django-polymorphic-tree = "^2.1"
 setuptools = "^78.1.0"
-strawberry-graphql-django = "0.75.1"
+strawberry-graphql-django = "0.80.0"
 strawberry-django-extras = "0.2.6"
-django-polymorphic = "4.1.0"
+django-polymorphic = "4.11.2"
 python-slugify = "^8.0.4"
 
 [tool.poetry.group.dev.dependencies]
@@ -30,7 +30,7 @@ ruff = "^0.15.1"
 ipython = "^9.10.0"
 
 [tool.ruff.lint]
-exclude = ["**/tests/**"]
+exclude = ["**/tests/**", "**/migrations/**"]
 select = ["E4", "E7", "E9", "F", "ANN", "COM", "EM", "INP", "T20", "Q", "TC", "PTH", "W"]
 ignore = ["ANN002", "ANN003", "ANN401", "Q001"]
 

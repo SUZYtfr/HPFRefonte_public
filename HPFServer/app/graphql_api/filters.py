@@ -5,7 +5,7 @@ from django.db.models import QuerySet, Q, Count
 
 from users.models import User
 from news.models import NewsArticle
-from fictions.models import Fiction, Chapter, Fandom
+from fictions.models import Fiction, Chapter, Fandom, Collection
 from characteristics.models import Characteristic
 from reviews.models import ChapterReview, FictionReview
 
@@ -23,6 +23,13 @@ class NewsArticleFilters:
     id: auto
     title: auto
     post_date: auto
+    creation_user: Optional["UserFilters"]
+
+
+@strawberry_django.filter_type(model=Collection, lookups=True)
+class CollectionFilters:
+    id: auto
+    title: auto
     creation_user: Optional["UserFilters"]
 
 

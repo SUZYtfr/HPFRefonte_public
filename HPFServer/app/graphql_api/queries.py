@@ -5,7 +5,7 @@ from strawberry import Info
 from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff, IsAuthenticated
 from strawberry_django.auth.utils import get_current_user
-from fictions.models import Fiction, Chapter, ChapterVersion, Fandom
+from fictions.models import Fiction, Chapter, ChapterVersion, Fandom, Collection
 from news.models import NewsArticle, NewsStatus
 from reviews.models import ChapterReview, FictionReview
 from app.graphql_api.types import (
@@ -49,6 +49,14 @@ def resolve_public_chapters(pk: strawberry.ID | None = None) -> QuerySet[Chapter
         return queryset
 
 
+def resolve_public_collections(pk: strawberry.ID | None = None) -> QuerySet[Collection] | Collection:
+    queryset = Collection.objects.all()
+    if pk:
+        return queryset.get(pk=pk)
+    else:
+        return queryset
+
+
 def resolve_public_fiction_reviews() -> QuerySet[FictionReview]:
     return FictionReview.objects.reviews().published()
 
@@ -84,6 +92,15 @@ def resolve_private_chapters(info: Info, pk: strawberry.ID | None = None) -> Que
         return queryset
 
 
+def resolve_private_collections(info: Info, pk: strawberry.ID | None = None) -> QuerySet[Collection] | Collection:
+    current_user = get_current_user(info)
+    queryset = current_user.created_collections.all()
+    if pk:
+        return queryset.get(pk=pk)
+    else:
+        return queryset
+
+
 # ADMIN
 
 def resolve_admin_chapter_versions() -> QuerySet[ChapterVersion]:
@@ -99,7 +116,8 @@ class Query:
     fictions: OffsetPaginated[FictionType] = strawberry_django.offset_paginated(resolver=resolve_public_fictions)
     chapter: ChapterType = strawberry_django.field(resolver=resolve_public_chapters)
     chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(resolver=resolve_public_chapters)
-    collections: OffsetPaginated[CollectionType] = strawberry_django.offset_paginated()
+    collection: CollectionType = strawberry_django.field(resolver=resolve_public_collections)
+    collections: OffsetPaginated[CollectionType] = strawberry_django.offset_paginated(resolver=resolve_public_collections)
     fiction_reviews: OffsetPaginated[FictionReviewType] = strawberry_django.offset_paginated(resolver=resolve_public_fiction_reviews)
     chapter_reviews: OffsetPaginated[ChapterReviewType] = strawberry_django.offset_paginated(resolver=resolve_public_chapter_reviews)
     news_article: NewsArticleType = strawberry_django.field(resolver=resolve_public_news)
@@ -128,6 +146,14 @@ class Query:
     )
     private_chapters: OffsetPaginated[ChapterType] = strawberry_django.offset_paginated(
         resolver=resolve_private_chapters,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    private_collection: CollectionType = strawberry_django.field(
+        resolver=resolve_private_collections,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    private_collections: OffsetPaginated[CollectionType] = strawberry_django.offset_paginated(
+        resolver=resolve_private_collections,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
     # TODO private_fictions, etc? ou accès par account > created_fictions?

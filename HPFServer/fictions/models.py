@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from ordered_model import models as ordered_models
+from polymorphic import models as polymorphic_models, managers as polymorphic_managers
+
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -225,11 +227,6 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def authors(self) -> list:
         return [self.creation_user]
-
-    # TODO - renommer franchement "collections" en "series" ou l'inverse dans le frontend
-    @property
-    def series(self) -> list:
-        return self.collections.all()
 
     @property
     def trigger_warnings(self) -> models.QuerySet["TriggerWarning"]:
@@ -483,6 +480,30 @@ class InvalidationReason(models.Model):
         return self.reason
 
 
+class CollectionQuerySet(models.QuerySet):
+    def with_review_counts(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des reviews publiées"""
+
+        review_count = models.Count(
+            "reviews",
+            distinct=True,
+            filter=models.Q(reviews__is_draft=False),
+        )
+
+        return self.annotate(
+            _review_count=review_count,
+        )
+
+    def with_averages(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des moyennes des reviews publiées"""
+
+        average = models.Sum(
+            "reviews__grading",
+            filter=models.Q(reviews__is_draft=False),
+        ) / models.Count(models.Q(reviews__grading__isnull=False))
+        return self.annotate(_average=average)
+
+
 class Collection(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de série"""
 
@@ -506,6 +527,8 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         choices=CollectionAccess.choices,
         default=CollectionAccess.CLOSED,
     )
+
+    objects = CollectionQuerySet.as_manager()
 
     def __str__(self) -> str:
         return self.title
@@ -539,77 +562,66 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
     review_count.fget.short_description = "compte de reviews"
 
 
-class CollectionItem(ordered_models.OrderedModel):
-    """Modèle de série"""
+class CollectionMemberManager(ordered_models.OrderedModelManager, polymorphic_managers.PolymorphicManager):
+    class CollectionMemberQuerySet(ordered_models.OrderedModelQuerySet, polymorphic_managers.PolymorphicQuerySet):
+        pass
 
+    def get_queryset(self) -> CollectionMemberQuerySet:
+        return self.CollectionMemberQuerySet(self.model, using=self._db)
+
+
+class CollectionMember(ordered_models.OrderedModel, polymorphic_models.PolymorphicModel):
     class Meta(ordered_models.OrderedModel.Meta):
-        verbose_name = "série"
+        verbose_name = "membre de série"
+        verbose_name_plural = "membres de série"
         ordering = ["parent", "order"]
-        constraints = [
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_collection",
-                fields=["parent", "collection"],
-            ),
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_fiction",
-                fields=["parent", "fiction"],
-            ),
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_chapter",
-                fields=["parent", "chapter"],
-            ),
-            models.CheckConstraint(
-                name="CK_fictions_collectionitem_unique_item_type",
-                check=(
-                    models.Q(collection__isnull=False, fiction__isnull=True, chapter__isnull=True) |
-                    models.Q(collection__isnull=True, fiction__isnull=False, chapter__isnull=True) |
-                    models.Q(collection__isnull=True, fiction__isnull=True, chapter__isnull=False)
-                ),
-                violation_error_message="Un élément de série doit contenir un et seulement un élément",
-            ),
-        ]
 
     parent = models.ForeignKey(
         verbose_name="série parente",
-        to=Collection,
+        to="fictions.Collection",
         on_delete=models.CASCADE,
-        related_name="items",
+        related_name="members",
     )
+
+    objects = CollectionMemberManager()
+    order_class_path = "fictions.CollectionMember"
+    order_with_respect_to = "parent"
+
+
+class CollectionCollectionMember(CollectionMember):
+    class Meta:
+        verbose_name = "série de série"
+
     collection = models.ForeignKey(
         verbose_name="série",
-        to=Collection,
+        to="fictions.Collection",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="+",
     )
+
+
+class FictionCollectionMember(CollectionMember):
+    class Meta:
+        verbose_name = "fiction de série"
+
     fiction = models.ForeignKey(
-        to=Fiction,
+        verbose_name="fiction",
+        to="fictions.Fiction",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="+",
     )
+
+
+class ChapterCollectionMember(CollectionMember):
+    class Meta:
+        verbose_name = "chapitre de série"
+
     chapter = models.ForeignKey(
         verbose_name="chapitre",
-        to=Chapter,
+        to="fictions.Chapter",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="+",
     )
-
-    order_with_respect_to = "parent"  # NOTE - django-ordered-model nécessite que ce paramètre se trouve sur le modèle et non dans Meta
-
-    def __str__(self) -> str:
-        return f"Élément n°{self.position} de la série {str(self.parent)}"
-
-    @property
-    def position(self) -> int | None:
-        if self.order is not None:
-            return self.order + 1
-        else:
-            return None
 
 
 class Fandom(models.Model):

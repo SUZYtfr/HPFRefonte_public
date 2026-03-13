@@ -1,4 +1,4 @@
-from strawberry import auto, cast
+from strawberry import auto, cast, union
 import strawberry_django
 from strawberry_django.pagination import OffsetPaginated
 from strawberry_django.permissions import IsStaff
@@ -7,6 +7,7 @@ from app.graphql_api.permissions import IsStaffOrOwner
 from app.graphql_api.filters import (
     UserFilters,
     NewsArticleFilters,
+    CollectionFilters,
     FictionFilters,
     ChapterFilters,
     FandomFilters,
@@ -15,6 +16,7 @@ from app.graphql_api.filters import (
 )
 from app.graphql_api.orders import (
     NewsArticleOrder,
+    CollectionOrder,
     FictionOrder,
     ChapterOrder,
     ChapterReviewOrder,
@@ -28,7 +30,10 @@ from fictions.models import (
     ChapterVersion,
     InvalidationReason,
     Collection,
-    CollectionItem,
+    CollectionMember,
+    CollectionCollectionMember,
+    FictionCollectionMember,
+    ChapterCollectionMember,
     ChapterValidationStage,
 )
 from reviews.models import ChapterReview, FictionReview
@@ -41,7 +46,7 @@ from users.models import User, UserPreferences, UserProfile, Theme
 from news.models import NewsArticle, NewsComment
 from images.models import ContentImage
 
-from typing import Optional
+from typing import Optional, Annotated
 
 
 ### USERS & SITES
@@ -137,25 +142,51 @@ class FictionType:
     author: "UserType" = strawberry_django.field(field_name="creation_user")
     fandoms: list["FandomType"]
     trigger_warnings: list["TriggerWarningType"] = strawberry_django.field(prefetch_related="chapters__trigger_warnings")
+    average: auto
 
 
-@strawberry_django.type(model=Collection, fields="__all__")
+@strawberry_django.interface(model=CollectionMember)
+class CollectionMemberType:
+    parent: "CollectionType"
+    order: auto
+
+
+@strawberry_django.type(model=CollectionCollectionMember)
+class CollectionCollectionMemberType(CollectionMemberType):
+    collection: "CollectionType"
+
+
+@strawberry_django.type(model=FictionCollectionMember)
+class FictionCollectionMemberType(CollectionMemberType):
+    fiction: "FictionType"
+
+
+@strawberry_django.type(model=ChapterCollectionMember)
+class ChapterCollectionMemberType(CollectionMemberType):
+    chapter: "ChapterType"
+
+
+# FIXME Selon la doc, CollectionMemberType suffirait, cependant si les sous-classes ne sont pas
+# utilisées quelque part, le schéma ne les inclut pas et CollectionMemberType est incapable de
+# caster dans ces sous-classe.
+# MemberType est un workaround, on "mentionne" les sous-classes dans un alias de type, ce qui
+# les ajoute au schéma.
+MemberType = Annotated[CollectionCollectionMemberType | FictionCollectionMemberType | ChapterCollectionMemberType, union("MemberType")]
+
+
+@strawberry_django.type(model=Collection, filters=CollectionFilters, order=CollectionOrder)
 class CollectionType:
+    id: auto
+    title: auto
+    summary: auto
     characteristics: list["CharacteristicTypeType"]
     average: auto
     review_count: auto
-    collection_items: list["CollectionItemType"]
+    members: list[MemberType] = strawberry_django.field(disable_optimization=True)  # FIXME bug sur l'optimisateur de select_related
     creation_user: "UserType"
     modification_user: "UserType"
-
-
-@strawberry_django.type(model=CollectionItem, fields="__all__")
-class CollectionItemType:
-    position: auto
-    parent: "CollectionType"
-    chapter: Optional["ChapterType"]
-    fiction: Optional["FictionType"]
-    collection: Optional["CollectionType"]
+    authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
+    access: auto
 
 
 @strawberry_django.type(model=ChapterVersion, fields="__all__")

@@ -364,18 +364,19 @@ files = [
 
 [[package]]
 name = "django-polymorphic"
-version = "4.1.0"
-description = "Seamless polymorphic inheritance for Django models"
+version = "4.11.2"
+description = "Seamless polymorphic inheritance for Django models."
 optional = false
-python-versions = "*"
+python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "django_polymorphic-4.1.0-py3-none-any.whl", hash = "sha256:0ce3984999e103a0d1a434a5c5617f2c7f990dc3d5fb3585ce0fadadf9ff90ea"},
-    {file = "django_polymorphic-4.1.0.tar.gz", hash = "sha256:4438d95a0aef6c4307cd6c83ead387e1142ce80b65188a931ec2f0dbdd9bfc51"},
+    {file = "django_polymorphic-4.11.2-py3-none-any.whl", hash = "sha256:4bf61d6faec4870aee91b997292be45db3ebbd644dea072607efcee8ca27301a"},
+    {file = "django_polymorphic-4.11.2.tar.gz", hash = "sha256:0b16060f50f0f196a8c5141a2f8f7d7d5289e7c78cf81aef2d63ff55762011ca"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+django = ">=4.2"
+typing-extensions = ">=4.12.0"
 
 [[package]]
 name = "django-polymorphic-tree"
@@ -1205,14 +1206,14 @@ strawberry-graphql-django = ">=0.66.0"
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.292.0"
+version = "0.311.1"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "strawberry_graphql-0.292.0-py3-none-any.whl", hash = "sha256:887e2baf1f5343f24ed19a5fe8e2853c5da8d512fcaeccc018e082386a7c53a6"},
-    {file = "strawberry_graphql-0.292.0.tar.gz", hash = "sha256:329541bbc05a3fcde18949172db702f90f65b2261f9ba514dc33f107686b7bce"},
+    {file = "strawberry_graphql-0.311.1-py3-none-any.whl", hash = "sha256:03fedc54b3d9f9b4372d8cf6e1baa652296b776579c26fda477dad5f98430dec"},
+    {file = "strawberry_graphql-0.311.1.tar.gz", hash = "sha256:158032e99bb612c023fe0022574c1aa9d9e58df323368eaabd490aae2369a6ff"},
 ]
 
 [package.dependencies]
@@ -1229,7 +1230,6 @@ chalice = ["chalice (>=1.22)"]
 channels = ["asgiref (>=3.2)", "channels (>=3.0.5)"]
 cli = ["libcst", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<16)"]
 debug = ["libcst", "rich (>=12.0.0)"]
-debug-server = ["libcst", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<16)"]
 django = ["Django (>=3.2)", "asgiref (>=3.2)"]
 fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.7)"]
 flask = ["flask (>=1.1)"]
@@ -1242,20 +1242,20 @@ sanic = ["sanic (>=20.12.2)"]
 
 [[package]]
 name = "strawberry-graphql-django"
-version = "0.75.1"
+version = "0.80.0"
 description = "Strawberry GraphQL Django extension"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "strawberry_graphql_django-0.75.1-py3-none-any.whl", hash = "sha256:554f96206fbea67fd4cde0416ee9f1efa54b05347ef72bed60f0d449df65b60f"},
-    {file = "strawberry_graphql_django-0.75.1.tar.gz", hash = "sha256:5529b9de45dfd7008d7bc359998b83c4147d0daccdf24a2d7af554fc3b16b5a8"},
+    {file = "strawberry_graphql_django-0.80.0-py3-none-any.whl", hash = "sha256:4b027c0f6955d0b0b6b5aa9e06e0353e2582b72b05faf8d27b062c52de934892"},
+    {file = "strawberry_graphql_django-0.80.0.tar.gz", hash = "sha256:7b8ef0171b696a569c7e3917734b74d37b176acfa37d6409c3a50771af89c74a"},
 ]
 
 [package.dependencies]
 asgiref = ">=3.8"
 django = ">=4.2"
-strawberry-graphql = ">=0.288.0"
+strawberry-graphql = ">=0.310.1"
 
 [package.extras]
 debug-toolbar = ["django-debug-toolbar (>=6.0.0)"]
@@ -1364,4 +1364,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "b5d9851e6d80a45ad28a05f8d3dc3a355fc57260961f2235146750f4bb78c7ad"
+content-hash = "b04969c7911478b89f3ee2145433c48ef48b6724f0086f7ff070ae9d34d983c7"

@@ -1,6 +1,13 @@
 import { Type, Exclude, Transform, plainToInstance } from "class-transformer";
 import { BasicClass } from "~/types/basics";
-import { SerieData, ChapterData, ReviewData, VersionData, type FandomData } from "~/types/fanfictions";
+import {
+  CollectionData,
+  CollectionMemberData,
+  ChapterData,
+  ReviewData,
+  VersionData,
+  type FandomData,
+} from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
@@ -34,9 +41,12 @@ export class ReviewModel extends ReviewData {
 // #endregion
 
 // #region Serie
-export class SerieModel extends SerieData {
+export class CollectionModel extends CollectionData {
   @Type(() => AuthorData)
   public authors: AuthorData[] | null = null;
+
+  @Type(() => CollectionMemberData)
+  public members: CollectionMemberData[] | null = null;
 }
 // #endregion
 
@@ -129,8 +139,8 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   @Type(() => TriggerWarningData)
   public triggerWarnings: TriggerWarningData[] | null = null;
 
-  @Type(() => SerieModel)
-  public series: SerieModel[] | null = null;
+  @Type(() => CollectionModel)
+  public collections: CollectionModel[] | null = null;
 
   @Type(() => ChapterModel)
   @Transform(({ value }) => plainToInstance(ChapterModel, value?.results || value), { toClassOnly: true })
