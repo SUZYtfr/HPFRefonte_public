@@ -25,17 +25,17 @@ from typing import Any
 class CollectionMemberInline(polymorphic_admin.StackedPolymorphicInline):
     class CollectionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
         model = CollectionCollectionMember
-        fields = ["collection"]
+        fields = ["collection", "is_accepted"]
         autocomplete_fields = ["collection"]
 
     class FictionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
         model = FictionCollectionMember
-        fields = ["fiction"]
+        fields = ["fiction", "is_accepted"]
         autocomplete_fields = ["fiction"]
 
     class ChapterCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
         model = ChapterCollectionMember
-        fields = ["chapter"]
+        fields = ["chapter", "is_accepted"]
         autocomplete_fields = ["chapter"]
 
     model = CollectionMember

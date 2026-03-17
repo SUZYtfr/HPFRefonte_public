@@ -1,0 +1,116 @@
+fragment MemberTypeContextInfo on CollectionMemberType {
+  __typename
+  id
+  order
+  isAccepted
+  additionUser {
+    id
+    username
+  }
+  additionDate
+  ... on ChapterCollectionMemberType {
+    chapter {
+      id
+      title
+      order
+      fiction {
+        id
+        title
+      }
+      authors {
+        username
+      }
+    }
+  }
+  ... on FictionCollectionMemberType {
+    fiction {
+      id
+      title
+      chapterCount
+      authors {
+        username
+      }
+    }
+  }
+  ... on CollectionCollectionMemberType {
+    collection {
+      id
+      title
+      memberCount
+      authors {
+        username
+      }
+    }
+  }
+}
+
+query getPrivateCollection($collectionId: ID!) {
+  privateCollection(pk: $collectionId) {
+    id
+    title
+    summary
+    access
+    fandoms {
+      id
+      name
+    }
+    characteristics {
+      id
+      name
+    }
+    members {
+      ...MemberTypeContextInfo
+    }
+  }
+}
+
+mutation createCollection($collectionData: CollectionInput!) {
+  createCollection(collectionData: $collectionData) {
+    id
+  }
+}
+
+mutation updateCollection($collectionId: ID!, $collectionData: CollectionInput!) {
+  updateCollection(collectionId: $collectionId, collectionData: $collectionData) {
+    id
+  }
+}
+
+query searchUsers($filters: UserFilters) {
+  users(filters: $filters, pagination: { limit: 10 }) {
+    results {
+      id
+      username
+    }
+  }
+}
+
+query searchMembers($filters: SearchMemberTypeFilter!) {
+  membertypeSearch(filters: $filters) {
+    ...MemberTypeContextInfo
+  }
+}
+
+mutation createCollectionMember($collectionId: ID!, $collectionMemberData: CollectionMemberInput!) {
+  createCollectionMember(collectionId: $collectionId, collectionMemberData: $collectionMemberData) {
+    ...MemberTypeContextInfo
+  }
+}
+
+mutation acceptCollectionMember($collectionMemberId: ID!) {
+  acceptCollectionMember(collectionMemberId: $collectionMemberId) {
+    ...MemberTypeContextInfo
+  }
+}
+
+mutation moveCollectionMember($collectionMemberId: ID!, $position: Int!) {
+  moveCollectionMember(collectionMemberId: $collectionMemberId, newPosition: $position) {
+    ...MemberTypeContextInfo
+  }
+}
+
+mutation deleteCollectionMember($collectionMemberId: ID!) {
+  deleteCollectionMember(collectionMemberId: $collectionMemberId) {
+    ...MemberTypeContextInfo
+  }
+}

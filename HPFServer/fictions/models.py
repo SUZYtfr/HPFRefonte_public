@@ -503,6 +503,19 @@ class CollectionQuerySet(models.QuerySet):
         ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
+    def with_member_counts(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des éléments ajoutés"""
+
+        member_count = models.Count(
+            "members",
+            distinct=True,
+            filter=models.Q(members__is_accepted=True),
+        )
+
+        return self.annotate(
+            _member_count=member_count,
+        )
+
 
 class Collection(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de série"""
@@ -526,6 +539,10 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         verbose_name="état",
         choices=CollectionAccess.choices,
         default=CollectionAccess.CLOSED,
+    )
+    fandoms = models.ManyToManyField(
+        to="fictions.Fandom",
+        related_name="collections",
     )
 
     objects = CollectionQuerySet.as_manager()
@@ -561,6 +578,18 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
 
+    # TODO - sera remplacé par un M2M pour le co-autorat
+    @property
+    def authors(self) -> list:
+        return [self.creation_user]
+
+    @property
+    def member_count(self) -> int:
+        """Renvoie le compte d'éléments ajoutés"""
+
+        return getattr(self, "_member_count", None) or self.members.filter(is_accepted=True).count()
+    member_count.fget.short_description = "compte d'éléments"
+
 
 class CollectionMemberManager(ordered_models.OrderedModelManager, polymorphic_managers.PolymorphicManager):
     class CollectionMemberQuerySet(ordered_models.OrderedModelQuerySet, polymorphic_managers.PolymorphicQuerySet):
@@ -582,45 +611,63 @@ class CollectionMember(ordered_models.OrderedModel, polymorphic_models.Polymorph
         on_delete=models.CASCADE,
         related_name="members",
     )
+    is_accepted = models.BooleanField(
+        verbose_name="accepté",
+        default=False,
+    )
+    addition_user = models.ForeignKey(
+        verbose_name="ajouteur",
+        to="users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    addition_date = models.DateTimeField(
+        verbose_name="horodatage d'ajout",
+        auto_now_add=True,
+    )
 
     objects = CollectionMemberManager()
-    order_class_path = "fictions.CollectionMember"
+    order_class_path = "fictions.models.CollectionMember"
     order_with_respect_to = "parent"
 
 
 class CollectionCollectionMember(CollectionMember):
     class Meta:
         verbose_name = "série de série"
+        verbose_name_plural = "séries de série"
 
     collection = models.ForeignKey(
         verbose_name="série",
         to="fictions.Collection",
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="collections",
     )
 
 
 class FictionCollectionMember(CollectionMember):
     class Meta:
         verbose_name = "fiction de série"
+        verbose_name_plural = "fictions de série"
 
     fiction = models.ForeignKey(
         verbose_name="fiction",
         to="fictions.Fiction",
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="collections",
     )
 
 
 class ChapterCollectionMember(CollectionMember):
     class Meta:
         verbose_name = "chapitre de série"
+        verbose_name_plural = "chapitres de série"
 
     chapter = models.ForeignKey(
         verbose_name="chapitre",
         to="fictions.Chapter",
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="collections",
     )
 
 

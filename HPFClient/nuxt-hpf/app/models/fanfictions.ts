@@ -12,6 +12,7 @@ import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
 import slugify from "slugify";
+import { CharacteristicModel } from "~/models/characteristics";
 
 export enum FanfictionStatus {
   OnGoing = 1,
@@ -47,6 +48,18 @@ export class CollectionModel extends CollectionData {
 
   @Type(() => CollectionMemberData)
   public members: CollectionMemberData[] | null = null;
+
+  public memberCount: number | null = null;
+
+  public fandoms: FandomData[] | null = null;
+
+  @Type(() => CharacteristicModel)
+  public characteristics: CharacteristicModel[] | null = null;
+
+  constructor(init?: Partial<CollectionModel>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 // #endregion
 

@@ -1,4 +1,5 @@
 import strawberry_django
+import strawberry
 from strawberry import auto, Info, ID
 
 from django.db.models import QuerySet, Q, Count
@@ -115,3 +116,13 @@ class CharacteristicFilters:
         q = Q(number_of_matching_characteristics=len(value))
 
         return queryset, q
+
+
+# Autres
+
+@strawberry.input
+class SearchMemberTypeFilter:
+    collection_id: ID | None
+    creation_username: str
+    title: str | None
+    types: list[str] | None

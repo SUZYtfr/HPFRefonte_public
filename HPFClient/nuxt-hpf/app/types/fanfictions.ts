@@ -2,6 +2,7 @@ import { Transform, Exclude, Type } from "class-transformer";
 import { BasicClass } from "./basics";
 import slugify from "slugify";
 import { FanfictionModel, ChapterModel, CollectionModel } from "~/models";
+import { AuthorData } from "~/types/users";
 
 // #region Fanfiction
 export enum FanfictionStatus {
@@ -117,6 +118,13 @@ export enum Access {
   Moderated = 2,
   Opened = 3,
 }
+
+export enum MemberType {
+  Chapter = "chapitre",
+  Fiction = "fiction",
+  Collection = "série",
+}
+
 export class CollectionData extends BasicClass<CollectionData> {
   @Exclude()
   public get collectionId(): number {
@@ -152,14 +160,14 @@ export class CollectionMemberData extends BasicClass<CollectionMemberData> {
 
   // TODO construire différents types en utilisant __typename?
   public __typename: string | null = null;
-  public get memberType(): "série" | "fiction" | "chapitre" | null {
+  public get memberType(): MemberType | null {
     switch (this.__typename) {
       case "CollectionCollectionMemberType":
-        return "série";
+        return MemberType.Collection;
       case "FictionCollectionMemberType":
-        return "fiction";
+        return MemberType.Fiction;
       case "ChapterCollectionMemberType":
-        return "chapitre";
+        return MemberType.Chapter;
       default:
         return null;
     }
@@ -169,6 +177,20 @@ export class CollectionMemberData extends BasicClass<CollectionMemberData> {
   public get position(): number | null {
     return this.order !== null ? this.order + 1 : null;
   }
+
+  public isAccepted: boolean | null = null;
+
+  @Type(() => AuthorData)
+  public additionUser: AuthorData | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public additionDate: Date | null = null;
 
   @Type(() => FanfictionModel)
   public fiction: FanfictionModel | null = null;
@@ -210,7 +232,9 @@ export class ChapterData extends BasicClass<ChapterData> {
   }
 
   public title: string = "";
-  public fiction: number | null = null;
+
+  @Type(() => FanfictionModel)
+  public fiction: FanfictionModel | null = null;
 
   public creationUser: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })

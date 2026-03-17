@@ -145,23 +145,27 @@ class FictionType:
     average: auto
 
 
-@strawberry_django.interface(model=CollectionMember)
+@strawberry_django.interface(model=CollectionMember, disable_optimization=True)
 class CollectionMemberType:
+    id: auto
     parent: "CollectionType"
     order: auto
+    is_accepted: auto
+    addition_user: "UserType"
+    addition_date: auto
 
 
-@strawberry_django.type(model=CollectionCollectionMember)
+@strawberry_django.type(model=CollectionCollectionMember, disable_optimization=True)
 class CollectionCollectionMemberType(CollectionMemberType):
     collection: "CollectionType"
 
 
-@strawberry_django.type(model=FictionCollectionMember)
+@strawberry_django.type(model=FictionCollectionMember, disable_optimization=True)
 class FictionCollectionMemberType(CollectionMemberType):
     fiction: "FictionType"
 
 
-@strawberry_django.type(model=ChapterCollectionMember)
+@strawberry_django.type(model=ChapterCollectionMember, disable_optimization=True)
 class ChapterCollectionMemberType(CollectionMemberType):
     chapter: "ChapterType"
 
@@ -179,7 +183,7 @@ class CollectionType:
     id: auto
     title: auto
     summary: auto
-    characteristics: list["CharacteristicTypeType"]
+    characteristics: list["CharacteristicType"]
     average: auto
     review_count: auto
     members: list[MemberType] = strawberry_django.field(disable_optimization=True)  # FIXME bug sur l'optimisateur de select_related
@@ -187,6 +191,8 @@ class CollectionType:
     modification_user: "UserType"
     authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
     access: auto
+    member_count: auto
+    fandoms: list["FandomType"] = strawberry_django.field()
 
 
 @strawberry_django.type(model=ChapterVersion, fields="__all__")

@@ -42,34 +42,28 @@
           <BRate v-if="collection.average" v-model="collection.average" disabled :max="1" rtl show-score />
         </BTableColumn>
         <BTableColumn>
-          <!-- eslint-disable-next-line vue/no-unused-vars -->
           <template #default="{ row: collection }: { row: CollectionModel }">
-            <!-- <NuxtLink
+            <NuxtLink
               :to="{
-                    name: 'écritoire',
-                    query: {
-                      fiction: .fanfictionId,
-                    },
-                  }"
-              no-prefetch
-            > -->
-            <BButton size="is-small is-light">Modifier</BButton>
-            <!-- </NuxtLink> -->
-          </template>
-          <template #header>
-            <!-- <NuxtLink
-              :to="{
-                name: 'écritoire',
-                query: activeTab
-                  ? {
-                      fandom: activeTab,
-                    }
-                  : undefined,
+                name: 'compte-séries-écritoire',
+                query: {
+                  série: collection.collectionId,
+                },
               }"
               no-prefetch
-            > -->
-            <BButton size="is-small is-success">Ajouter</BButton>
-            <!-- </NuxtLink> -->
+            >
+              <BButton size="is-small is-light">Modifier</BButton>
+            </NuxtLink>
+          </template>
+          <template #header>
+            <NuxtLink
+              :to="{
+                name: 'compte-séries-écritoire',
+              }"
+              no-prefetch
+            >
+              <BButton size="is-small is-success">Ajouter</BButton>
+            </NuxtLink>
           </template>
         </BTableColumn>
         <template #detail="{ row: collection }: { row: CollectionModel }">
@@ -149,10 +143,9 @@ const { data: collections, status: collectionStatus } = await useAsyncGql(
 );
 
 async function getMembers(collectionId: string): Promise<CollectionMemberData[]> {
-  const collection = await GqlGetPrivateCollection({
+  const collection = await GqlGetPrivateCollectionMembers({
     collectionId: collectionId,
   });
-  console.log(collection);
   return plainToInstance(CollectionMemberData, collection.privateCollection.members);
 }
 </script>
