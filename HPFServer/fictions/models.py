@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from ordered_model import models as ordered_models
+from polymorphic import models as polymorphic_models, managers as polymorphic_managers
+
 from core.models import (
     DatedModel,
     CreatedModel,
@@ -225,11 +227,6 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
     @property
     def authors(self) -> list:
         return [self.creation_user]
-
-    # TODO - renommer franchement "collections" en "series" ou l'inverse dans le frontend
-    @property
-    def series(self) -> list:
-        return self.collections.all()
 
     @property
     def trigger_warnings(self) -> models.QuerySet["TriggerWarning"]:
@@ -484,6 +481,43 @@ class InvalidationReason(models.Model):
         return self.reason
 
 
+class CollectionQuerySet(models.QuerySet):
+    def with_review_counts(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des reviews publiées"""
+
+        review_count = models.Count(
+            "reviews",
+            distinct=True,
+            filter=models.Q(reviews__is_draft=False),
+        )
+
+        return self.annotate(
+            _review_count=review_count,
+        )
+
+    def with_averages(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des moyennes des reviews publiées"""
+
+        average = models.Sum(
+            "reviews__grading",
+            filter=models.Q(reviews__is_draft=False),
+        ) / models.Count(models.Q(reviews__grading__isnull=False))
+        return self.annotate(_average=average)
+
+    def with_item_counts(self) -> models.QuerySet["Collection"]:
+        """Ajoute le total des éléments ajoutés"""
+
+        item_count = models.Count(
+            "items",
+            distinct=True,
+            filter=models.Q(items__is_accepted=True),
+        )
+
+        return self.annotate(
+            _item_count=item_count,
+        )
+
+
 class Collection(DatedModel, CreatedModel, CharacteristicModel):
     """Modèle de série"""
 
@@ -507,6 +541,12 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         choices=CollectionAccess.choices,
         default=CollectionAccess.CLOSED,
     )
+    fandoms = models.ManyToManyField(
+        to="fictions.Fandom",
+        related_name="collections",
+    )
+
+    objects = CollectionQuerySet.as_manager()
 
     def __str__(self) -> str:
         return self.title
@@ -539,78 +579,99 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         return getattr(self, "_review_count", None) or self.published_reviews.count()
     review_count.fget.short_description = "compte de reviews"
 
+    # TODO - sera remplacé par un M2M pour le co-autorat
+    @property
+    def authors(self) -> list:
+        return [self.creation_user]
 
-class CollectionItem(ordered_models.OrderedModel):
-    """Modèle de série"""
+    @property
+    def item_count(self) -> int:
+        """Renvoie le compte d'éléments ajoutés"""
 
+        return getattr(self, "_item_count", None) or self.items.filter(is_accepted=True).count()
+    item_count.fget.short_description = "compte d'éléments"
+
+
+class CollectionItemManager(ordered_models.OrderedModelManager, polymorphic_managers.PolymorphicManager):
+    class CollectionItemQuerySet(ordered_models.OrderedModelQuerySet, polymorphic_managers.PolymorphicQuerySet):
+        pass
+
+    def get_queryset(self) -> CollectionItemQuerySet:
+        return self.CollectionItemQuerySet(self.model, using=self._db)
+
+
+class CollectionItem(ordered_models.OrderedModel, polymorphic_models.PolymorphicModel):
     class Meta(ordered_models.OrderedModel.Meta):
-        verbose_name = "série"
+        verbose_name = "élément de série"
+        verbose_name_plural = "élément de série"
         ordering = ["parent", "order"]
-        constraints = [
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_collection",
-                fields=["parent", "collection"],
-            ),
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_fiction",
-                fields=["parent", "fiction"],
-            ),
-            models.UniqueConstraint(
-                name="UQ_fictions_collectionitem_parent_chapter",
-                fields=["parent", "chapter"],
-            ),
-            models.CheckConstraint(
-                name="CK_fictions_collectionitem_unique_item_type",
-                check=(
-                    models.Q(collection__isnull=False, fiction__isnull=True, chapter__isnull=True) |
-                    models.Q(collection__isnull=True, fiction__isnull=False, chapter__isnull=True) |
-                    models.Q(collection__isnull=True, fiction__isnull=True, chapter__isnull=False)
-                ),
-                violation_error_message="Un élément de série doit contenir un et seulement un élément",
-            ),
-        ]
 
     parent = models.ForeignKey(
         verbose_name="série parente",
-        to=Collection,
+        to="fictions.Collection",
         on_delete=models.CASCADE,
         related_name="items",
     )
+    is_accepted = models.BooleanField(
+        verbose_name="accepté",
+        default=False,
+    )
+    addition_user = models.ForeignKey(
+        verbose_name="ajouteur",
+        to="users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    addition_date = models.DateTimeField(
+        verbose_name="horodatage d'ajout",
+        auto_now_add=True,
+    )
+
+    objects = CollectionItemManager()
+    order_class_path = "fictions.models.CollectionItem"
+    order_with_respect_to = "parent"
+
+
+class CollectionCollectionItem(CollectionItem):
+    class Meta:
+        verbose_name = "série de série"
+        verbose_name_plural = "séries de série"
+
     collection = models.ForeignKey(
         verbose_name="série",
-        to=Collection,
+        to="fictions.Collection",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="collections",
     )
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
+
+class FictionCollectionItem(CollectionItem):
+    class Meta:
+        verbose_name = "fiction de série"
+        verbose_name_plural = "fictions de série"
+
     fiction = models.ForeignKey(
-        to=Fiction,
+        verbose_name="fiction",
+        to="fictions.Fiction",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="collections",
     )
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
+
+
+class ChapterCollectionItem(CollectionItem):
+    class Meta:
+        verbose_name = "chapitre de série"
+        verbose_name_plural = "chapitres de série"
+
     chapter = models.ForeignKey(
         verbose_name="chapitre",
-        to=Chapter,
+        to="fictions.Chapter",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="collection_items",
+        related_name="collections",
     )
-
-    order_with_respect_to = "parent"  # NOTE - django-ordered-model nécessite que ce paramètre se trouve sur le modèle et non dans Meta
-
-    def __str__(self) -> str:
-        return f"Élément n°{self.position} de la série {str(self.parent)}"
-
-    @property
-    def position(self) -> int | None:
-        if self.order is not None:
-            return self.order + 1
-        else:
-            return None
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
 
 
 class Fandom(models.Model):

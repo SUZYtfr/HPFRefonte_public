@@ -90,9 +90,11 @@
         <span
           ><strong>{{ "Série" + ((fanfiction?.collectionCount ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
         >
-        <template v-for="(serie, index) in fanfiction?.series" :key="'serie_' + serie.serieId.toString()">
+        <template v-for="(collection, index) in fanfiction?.collections" :key="collection.collectionId.toString()">
           <template v-if="index > 0"> , </template>
-          <a class="is-size-6-5 has-text-weight-normal" :href="'series/' + serie.serieId">{{ serie.title }} </a>
+          <a class="is-size-6-5 has-text-weight-normal" :href="'series/' + collection.collectionId"
+            >{{ collection.title }}
+          </a>
         </template>
       </div>
     </div>

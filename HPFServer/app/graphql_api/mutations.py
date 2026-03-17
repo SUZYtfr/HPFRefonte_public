@@ -8,6 +8,8 @@ from strawberry_django.permissions import IsAuthenticated, IsStaff
 from strawberry_django_extras.jwt.mutations import JWTMutations
 from app.graphql_api.types import (
     NewsCommentType,
+    CollectionType,
+    CollectionItemType,
     FictionType,
     ChapterType,
     ChapterVersionType,
@@ -20,10 +22,21 @@ from app.graphql_api.inputs import (
     ChapterInput,
     InvalidationInput,
     ReviewInput,
+    CollectionInput,
+    CollectionItemInput,
 )
 from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
 from news.models import NewsComment
-from fictions.models import Fiction, Chapter, ChapterVersion
+from fictions.models import (
+    Fiction,
+    Chapter,
+    ChapterVersion,
+    Collection,
+    CollectionItem,
+    ChapterCollectionItem,
+    FictionCollectionItem,
+    CollectionCollectionItem,
+)
 from reviews.models import ChapterReview, FictionReview
 from core.text_functions import count_words
 
@@ -346,6 +359,202 @@ def delete_chapter(
     return None
 
 
+# Séries
+
+def create_collection(
+    info: Info,
+    collection_data: CollectionInput,
+) -> CollectionType:
+    # récupération
+    current_user = get_current_user(info)
+
+    # mutation
+    with django.db.transaction.atomic():
+        collection = Collection.objects.create(
+            creation_user=current_user,
+            modification_user=current_user,
+            title=collection_data.title,
+            summary=collection_data.summary,
+            access=collection_data.access,
+        )
+
+        if collection_data.fandoms:
+            if collection_data.fandoms.add:
+                collection.fandoms.add(*collection_data.fandoms.add)
+            if collection_data.fandoms.remove:
+                collection.fandoms.remove(*collection_data.fandoms.remove)
+            if collection_data.fandoms.set == []:
+                collection.fandoms.clear()
+            if collection_data.fandoms.set:
+                collection.fandoms.set(collection_data.fandoms.set)
+
+        if collection_data.characteristics:
+            if collection_data.characteristics.add:
+                collection.characteristics.add(*collection_data.characteristics.add)
+            if collection_data.characteristics.remove:
+                collection.characteristics.remove(*collection_data.characteristics.remove)
+            if collection_data.characteristics.set == []:
+                collection.characteristics.clear()
+            if collection_data.characteristics.set:
+                collection.characteristics.set(collection_data.characteristics.set)
+
+    return cast(CollectionType, collection)
+
+
+def update_collection(
+    info: Info,
+    collection_id: strawberry.ID,
+    collection_data: CollectionInput,
+) -> CollectionType:
+    # récupération
+    current_user = get_current_user(info)
+    collection = Collection.objects.get(pk=collection_id)
+
+    # vérification
+    if collection.creation_user != current_user and not current_user.is_staff:
+        raise NotOwnerOrStaffError
+
+    # mutation
+    with django.db.transaction.atomic():
+        collection.modification_user = current_user
+        collection.title = collection_data.title
+        collection.summary = collection_data.summary
+        collection.access = collection_data.access
+        collection.save()
+
+        if collection_data.fandoms:
+            if collection_data.fandoms.add:
+                collection.fandoms.add(*collection_data.fandoms.add)
+            if collection_data.fandoms.remove:
+                collection.fandoms.remove(*collection_data.fandoms.remove)
+            if collection_data.fandoms.set == []:
+                collection.fandoms.clear()
+            if collection_data.fandoms.set:
+                collection.fandoms.set(collection_data.fandoms.set)
+
+        if collection_data.characteristics:
+            if collection_data.characteristics.add:
+                collection.characteristics.add(*collection_data.characteristics.add)
+            if collection_data.characteristics.remove:
+                collection.characteristics.remove(*collection_data.characteristics.remove)
+            if collection_data.characteristics.set == []:
+                collection.characteristics.clear()
+            if collection_data.characteristics.set:
+                collection.characteristics.set(collection_data.characteristics.set)
+
+    return cast(CollectionType, collection)
+
+
+def create_collection_item(
+    info: Info,
+    collection_id: strawberry.ID,
+    collection_item_data: CollectionItemInput,
+) -> list[CollectionItemType]:
+    # récupération
+    current_user = get_current_user(info)
+    parent_collection: Collection = Collection.objects.get(pk=collection_id)
+
+    # vérification
+    if parent_collection.creation_user != current_user and not current_user.is_staff:
+        raise NotOwnerOrStaffError
+
+    # mutation
+    if chapter_id := getattr(collection_item_data, "chapter_id", None):
+        if ChapterCollectionItem.objects.filter(parent=parent_collection, chapter_id=chapter_id.value):
+            msg = "La série parente contient déjà le chapitre"
+            raise ValueError(msg)
+
+        ChapterCollectionItem.objects.create(
+            parent=parent_collection,
+            chapter_id=chapter_id.value,
+            is_accepted=True,
+            addition_user=current_user,
+        )
+    elif fiction_id := getattr(collection_item_data, "fiction_id", None):
+        if FictionCollectionItem.objects.filter(parent=parent_collection, fiction_id=fiction_id.value):
+            msg = "La série parente contient déjà la fiction"
+            raise ValueError(msg)
+
+        FictionCollectionItem.objects.create(
+            parent=parent_collection,
+            fiction_id=fiction_id.value,
+            is_accepted=True,
+            addition_user=current_user,
+        )
+    elif collection_id := getattr(collection_item_data, "collection_id", None):
+        if CollectionCollectionItem.objects.filter(parent=parent_collection, collection_id=collection_id.value):
+            msg = "La série parente contient déjà la série"
+            raise ValueError(msg)
+
+        CollectionCollectionItem.objects.create(
+            parent=parent_collection,
+            collection_id=collection_id.value,
+            is_accepted=True,
+            addition_user=current_user,
+        )
+
+    return cast(CollectionItemType, parent_collection.items.all())
+
+
+def accept_collection_item(
+    info: Info,
+    collection_item_id: strawberry.ID,
+) -> list[CollectionItemType]:
+    # récupération
+    current_user = get_current_user(info)
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
+
+    # vérification
+    if collection.creation_user != current_user and not current_user.is_staff:
+        raise NotOwnerOrStaffError
+
+    # mutation
+    collection_item.is_accepted = True
+    collection_item.save()
+
+    return cast(CollectionItemType, collection.items.all())
+
+
+def move_collection_item(
+    info: Info,
+    collection_item_id: strawberry.ID,
+    new_position: int,
+) -> list[CollectionItemType]:
+    # récupération
+    current_user = get_current_user(info)
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
+
+    # vérification
+    if collection.creation_user != current_user and not current_user.is_staff:
+        raise NotOwnerOrStaffError
+
+    # mutation
+    collection_item.to(new_position)
+
+    return cast(CollectionItemType, collection.items.all())
+
+
+def delete_collection_item(
+    info: Info,
+    collection_item_id: strawberry.ID,
+) -> list[CollectionItemType]:
+    # récupération
+    current_user = get_current_user(info)
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
+
+    # vérification
+    if collection.creation_user != current_user and not current_user.is_staff:
+        raise NotOwnerOrStaffError
+
+    # mutation
+    collection_item.delete()
+
+    return cast(CollectionItemType, collection.items.all())
+
+
 ### REVIEWS
 
 def create_fiction_review(
@@ -430,39 +639,65 @@ class Mutation:
     # privé
     post_comment = strawberry_django.mutation(
         resolver=post_comment,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     create_fiction = strawberry_django.mutation(
         resolver=create_fiction,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     update_fiction = strawberry_django.mutation(
         resolver=update_fiction,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     delete_fiction = strawberry_django.mutation(
         resolver=delete_fiction,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     create_chapter = strawberry_django.mutation(
         resolver=create_chapter,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     update_chapter = strawberry_django.mutation(
         resolver=update_chapter,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     delete_chapter = strawberry_django.mutation(
         resolver=delete_chapter,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     create_fiction_review = strawberry_django.mutation(
         resolver=create_fiction_review,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
     create_chapter_review = strawberry_django.mutation(
         resolver=create_chapter_review,
-        extensions=[IsAuthenticated()],
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+
+    # série
+    create_collection = strawberry.mutation(
+        resolver=create_collection,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    update_collection = strawberry.mutation(
+        resolver=update_collection,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    create_collection_item = strawberry.mutation(
+        resolver=create_collection_item,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    accept_collection_item = strawberry.mutation(
+        resolver=accept_collection_item,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    move_collection_item = strawberry.mutation(
+        resolver=move_collection_item,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    delete_collection_item = strawberry_django.mutation(
+        resolver=delete_collection_item,
+        extensions=[IsAuthenticated(fail_silently=False)],
     )
 
     # admin

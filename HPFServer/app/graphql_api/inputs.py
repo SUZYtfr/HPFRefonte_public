@@ -1,9 +1,10 @@
+import strawberry
 import strawberry_django
 from strawberry import auto, ID
 from strawberry_django import ListInput
 
 from news.models import NewsComment
-from fictions.models import Fiction, Chapter, ChapterVersion
+from fictions.models import Fiction, Chapter, ChapterVersion, Collection
 from reviews.models import BaseReview, ChapterReview, FictionReview
 
 
@@ -33,6 +34,22 @@ class ChapterInput:
     end_note: str
     is_draft: bool | None
     trigger_warnings: ListInput[ID] | None
+
+
+@strawberry_django.input(model=Collection)
+class CollectionInput:
+    title: auto
+    summary: auto
+    access: auto
+    fandoms: ListInput[ID] | None
+    characteristics: ListInput[ID] | None
+
+
+@strawberry.input(one_of=True)
+class CollectionItemInput:
+    fiction_id: strawberry.Maybe[strawberry.ID]
+    chapter_id: strawberry.Maybe[strawberry.ID]
+    collection_id: strawberry.Maybe[strawberry.ID]
 
 
 ### REVIEWS

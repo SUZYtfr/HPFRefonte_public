@@ -1,10 +1,18 @@
 import { Type, Exclude, Transform, plainToInstance } from "class-transformer";
 import { BasicClass } from "~/types/basics";
-import { SerieData, ChapterData, ReviewData, VersionData, type FandomData } from "~/types/fanfictions";
+import {
+  CollectionData,
+  CollectionItemData,
+  ChapterData,
+  ReviewData,
+  VersionData,
+  type FandomData,
+} from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
 import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
 import slugify from "slugify";
+import { CharacteristicModel } from "~/models/characteristics";
 
 export enum FanfictionStatus {
   OnGoing = 1,
@@ -34,9 +42,24 @@ export class ReviewModel extends ReviewData {
 // #endregion
 
 // #region Serie
-export class SerieModel extends SerieData {
+export class CollectionModel extends CollectionData {
   @Type(() => AuthorData)
   public authors: AuthorData[] | null = null;
+
+  @Type(() => CollectionItemData)
+  public items: CollectionItemData[] | null = null;
+
+  public itemCount: number | null = null;
+
+  public fandoms: FandomData[] | null = null;
+
+  @Type(() => CharacteristicModel)
+  public characteristics: CharacteristicModel[] | null = null;
+
+  constructor(init?: Partial<CollectionModel>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 // #endregion
 
@@ -129,8 +152,8 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   @Type(() => TriggerWarningData)
   public triggerWarnings: TriggerWarningData[] | null = null;
 
-  @Type(() => SerieModel)
-  public series: SerieModel[] | null = null;
+  @Type(() => CollectionModel)
+  public collections: CollectionModel[] | null = null;
 
   @Type(() => ChapterModel)
   @Transform(({ value }) => plainToInstance(ChapterModel, value?.results || value), { toClassOnly: true })

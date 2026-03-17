@@ -1,6 +1,8 @@
-import { Transform, Exclude } from "class-transformer";
+import { Transform, Exclude, Type } from "class-transformer";
 import { BasicClass } from "./basics";
 import slugify from "slugify";
+import { FanfictionModel, ChapterModel, CollectionModel } from "~/models";
+import { AuthorData } from "~/types/users";
 
 // #region Fanfiction
 export enum FanfictionStatus {
@@ -81,7 +83,7 @@ export class FanfictionData extends BasicClass<FanfictionData> {
 export enum ReviewItemTypeEnum {
   Fanfiction = 1,
   Chapter = 2,
-  Serie = 3,
+  Collection = 3,
   Author = 4,
 }
 
@@ -111,25 +113,106 @@ export class ReviewData extends BasicClass<ReviewData> {
   public postDate: Date | null = null;
 }
 
-// #region  Serie
-enum SerieStatusEnum {
+export enum Access {
   Closed = 1,
   Moderated = 2,
   Opened = 3,
 }
 
-export class SerieData extends BasicClass<SerieData> {
+export enum itemType {
+  Chapter = "chapitre",
+  Fiction = "fiction",
+  Collection = "série",
+}
+
+export class CollectionData extends BasicClass<CollectionData> {
   @Exclude()
-  public get serieId(): number {
+  public get collectionId(): number {
     return Number(this.id);
   }
 
   public title: string = "";
   public summary: string | null = null;
   public parentId: number | null = null;
-  public status: SerieStatusEnum = SerieStatusEnum.Closed;
+  public reviewCount: number | null = null;
+  public average: number | null = null;
+
+  public access: Access | null = null;
+  public get accessAsText(): "fermée" | "modérée" | "ouverte" | null {
+    switch (this.access) {
+      case Access.Closed:
+        return "fermée";
+      case Access.Moderated:
+        return "modérée";
+      case Access.Opened:
+        return "ouverte";
+      default:
+        return null;
+    }
+  }
 }
-// #endregion
+
+export class CollectionItemData extends BasicClass<CollectionItemData> {
+  @Exclude()
+  public get itemId(): string {
+    return this.id;
+  }
+
+  // TODO construire différents types en utilisant __typename?
+  public __typename: string | null = null;
+  public get itemType(): itemType | null {
+    switch (this.__typename) {
+      case "CollectionCollectionItemType":
+        return itemType.Collection;
+      case "FictionCollectionItemType":
+        return itemType.Fiction;
+      case "ChapterCollectionItemType":
+        return itemType.Chapter;
+      default:
+        return null;
+    }
+  }
+
+  public order: number | null = null;
+  public get position(): number | null {
+    return this.order !== null ? this.order + 1 : null;
+  }
+
+  public isAccepted: boolean | null = null;
+
+  @Type(() => AuthorData)
+  public additionUser: AuthorData | null = null;
+
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @Transform(
+    ({ value }) => {
+      return value instanceof Date ? value.toISOString() : value;
+    },
+    { toPlainOnly: true },
+  )
+  public additionDate: Date | null = null;
+
+  @Type(() => FanfictionModel)
+  public fiction: FanfictionModel | null = null;
+
+  @Type(() => ChapterModel)
+  public chapter: ChapterModel | null = null;
+
+  @Type(() => CollectionModel)
+  public collection: CollectionModel | null = null;
+
+  public get title(): string | null {
+    return (this.chapter || this.fiction || this.collection)?.title || null;
+  }
+
+  public get reviewCount(): number | null {
+    return (this.chapter || this.fiction || this.collection)?.reviewCount || null;
+  }
+
+  public get average(): number | null {
+    return (this.chapter || this.fiction || this.collection)?.average || null;
+  }
+}
 
 export enum ChapterValidationStatusEnum {
   Draft = 1,
@@ -149,7 +232,9 @@ export class ChapterData extends BasicClass<ChapterData> {
   }
 
   public title: string = "";
-  public fiction: number | null = null;
+
+  @Type(() => FanfictionModel)
+  public fiction: FanfictionModel | null = null;
 
   public creationUser: number | null = null;
   @Transform(({ value }) => new Date(value), { toClassOnly: true })

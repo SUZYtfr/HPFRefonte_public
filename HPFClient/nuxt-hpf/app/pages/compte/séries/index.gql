@@ -1,0 +1,52 @@
+query getPrivateCollections($filters: CollectionFilters, $pagination: OffsetPaginationInput, $order: CollectionOrder) {
+  privateCollections(filters: $filters, pagination: $pagination, order: $order) {
+    totalCount
+    pageInfo {
+      limit
+      offset
+    }
+    results {
+      id
+      title
+      reviewCount
+      average
+      access
+    }
+  }
+}
+
+query getPrivateCollectionItems($collectionId: ID!) {
+  privateCollection(pk: $collectionId) {
+    id
+    items {
+      __typename
+      ... on ChapterCollectionItemType {
+        order
+        chapter {
+          id
+          title
+          reviewCount
+          average
+        }
+      }
+      ... on FictionCollectionItemType {
+        order
+        fiction {
+          id
+          title
+          reviewCount
+          average
+        }
+      }
+      ... on CollectionCollectionItemType {
+        order
+        collection {
+          id
+          title
+          reviewCount
+          average
+        }
+      }
+    }
+  }
+}
