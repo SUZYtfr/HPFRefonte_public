@@ -15,12 +15,12 @@ query getPrivateCollections($filters: CollectionFilters, $pagination: OffsetPagi
   }
 }
 
-query getPrivateCollectionMembers($collectionId: ID!) {
+query getPrivateCollectionItems($collectionId: ID!) {
   privateCollection(pk: $collectionId) {
     id
-    members {
+    items {
       __typename
-      ... on ChapterCollectionMemberType {
+      ... on ChapterCollectionItemType {
         order
         chapter {
           id
@@ -29,7 +29,7 @@ query getPrivateCollectionMembers($collectionId: ID!) {
           average
         }
       }
-      ... on FictionCollectionMemberType {
+      ... on FictionCollectionItemType {
         order
         fiction {
           id
@@ -38,7 +38,7 @@ query getPrivateCollectionMembers($collectionId: ID!) {
           average
         }
       }
-      ... on CollectionCollectionMemberType {
+      ... on CollectionCollectionItemType {
         order
         collection {
           id

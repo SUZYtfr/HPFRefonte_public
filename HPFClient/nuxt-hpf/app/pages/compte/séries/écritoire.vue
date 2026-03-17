@@ -14,22 +14,22 @@
       </BStepItem>
       <BStepItem
         label="Éléments"
-        step="members"
-        value="members"
+        step="items"
+        value="items"
         icon-pack="fas"
-        :icon="membersComplete ? 'square-check' : 'square'"
+        :icon="itemsComplete ? 'square-check' : 'square'"
       >
-        <LazyManagerMembers
-          :members="collection.members!"
-          :search-member-filters
-          :searched-members
+        <LazyManagerItems
+          :items="collection.items!"
+          :search-item-filters
+          :searched-items
           :search-user-filters
           :searched-users
           @click-previous="steps?.prev()"
-          @create-collection-member="createCollectionMember"
-          @accept-collection-member="acceptCollectionMember"
-          @move-collection-member="moveCollectionMember"
-          @delete-collection-member="deleteCollectionMember"
+          @create-collection-item="createCollectionItem"
+          @accept-collection-item="acceptCollectionItem"
+          @move-collection-item="moveCollectionItem"
+          @delete-collection-item="deleteCollectionItem"
         />
       </BStepItem>
     </BSteps>
@@ -38,11 +38,11 @@
 
 <script setup lang="ts">
 import { CollectionModel } from "~/models";
-import { CollectionMemberData, MemberType } from "~/types/fanfictions";
+import { CollectionItemData, itemType } from "~/types/fanfictions";
 import { RecordStatusEnum } from "~/types/basics";
 import { BSteps, BStepItem, BLoading } from "buefy";
 import { plainToInstance } from "class-transformer";
-import type { CollectionMemberInput, SearchMemberTypeFilter, UserFilters } from "#gql";
+import type { CollectionItemInput, SearchItemTypeFilter, UserFilters } from "#gql";
 import { UserData } from "~/types/users";
 
 definePageMeta({
@@ -54,15 +54,15 @@ const route = useRoute();
 const initialCollectionId = route.query["série"] as string | undefined;
 
 const steps = useTemplateRef("steps");
-const currentStep = ref<"collection" | "members">("collection");
+const currentStep = ref<"collection" | "items">("collection");
 const pending = ref<boolean>(false);
 const isEditing = ref<boolean>(Boolean(initialCollectionId));
-const membersComplete = computed(() => true);
+const itemsComplete = computed(() => true);
 
 const collection = ref<CollectionModel>(
   new CollectionModel({
     recordStatus: RecordStatusEnum.New,
-    members: [],
+    items: [],
     fandoms: [],
     characteristics: [],
   }),
@@ -94,21 +94,21 @@ async function searchUsers(): Promise<UserData[]> {
 }
 watch(searchUserFilters, () => searchUsers());
 
-const searchedMembers = ref<CollectionMemberData[]>([]);
-const searchMemberFilters = reactive<SearchMemberTypeFilter>({
+const searchedItems = ref<CollectionItemData[]>([]);
+const searchItemFilters = reactive<SearchItemTypeFilter>({
   creationUsername: "Loutre", // TODO depuis profileData
   collectionId: collection.value.collectionId.toString(),
   title: null,
-  types: Object.values(MemberType),
+  types: Object.values(itemType),
 });
-async function searchMembers(): Promise<CollectionMemberData[]> {
-  const searchMembers = await GqlSearchMembers({
-    filters: searchMemberFilters,
+async function searchItems(): Promise<CollectionItemData[]> {
+  const searchItems = await GqlSearchItems({
+    filters: searchItemFilters,
   });
-  searchedMembers.value = plainToInstance(CollectionMemberData, searchMembers.membertypeSearch);
-  return searchedMembers.value;
+  searchedItems.value = plainToInstance(CollectionItemData, searchItems.itemtypeSearch);
+  return searchedItems.value;
 }
-watch(searchMemberFilters, () => searchMembers());
+watch(searchItemFilters, () => searchItems());
 
 async function createCollection(): Promise<true> {
   pending.value = true;
@@ -149,49 +149,49 @@ async function updateCollection(): Promise<true> {
   return true;
 }
 
-async function createCollectionMember(collectionMemberData: CollectionMemberInput): Promise<true> {
+async function createCollectionItem(collectionItemData: CollectionItemInput): Promise<true> {
   pending.value = true;
   try {
-    const data = await GqlCreateCollectionMember({
+    const data = await GqlCreateCollectionItem({
       collectionId: collection.value.collectionId.toString(),
-      collectionMemberData: collectionMemberData,
+      collectionItemData: collectionItemData,
     });
-    collection.value.members = plainToInstance(CollectionMemberData, data.createCollectionMember);
-    searchMembers(); // force la mise-à-jour de la recherche pour faire disparaître l'élément ajouté
+    collection.value.items = plainToInstance(CollectionItemData, data.createCollectionItem);
+    searchItems(); // force la mise-à-jour de la recherche pour faire disparaître l'élément ajouté
   } finally {
     pending.value = false;
   }
   return true;
 }
 
-async function acceptCollectionMember(collectionMemberId: string): Promise<true> {
+async function acceptCollectionItem(collectionItemId: string): Promise<true> {
   pending.value = true;
   try {
-    const data = await GqlAcceptCollectionMember({ collectionMemberId: collectionMemberId });
-    collection.value.members = plainToInstance(CollectionMemberData, data.acceptCollectionMember);
+    const data = await GqlAcceptCollectionItem({ collectionItemId: collectionItemId });
+    collection.value.items = plainToInstance(CollectionItemData, data.acceptCollectionItem);
   } finally {
     pending.value = false;
   }
   return true;
 }
 
-async function moveCollectionMember(collectionMemberId: string, position: number): Promise<true> {
+async function moveCollectionItem(collectionItemId: string, position: number): Promise<true> {
   pending.value = true;
   try {
-    const data = await GqlMoveCollectionMember({ collectionMemberId: collectionMemberId, position: position });
-    collection.value.members = plainToInstance(CollectionMemberData, data.moveCollectionMember);
+    const data = await GqlMoveCollectionItem({ collectionItemId: collectionItemId, position: position });
+    collection.value.items = plainToInstance(CollectionItemData, data.moveCollectionItem);
   } finally {
     pending.value = false;
   }
   return true;
 }
 
-async function deleteCollectionMember(collectionMemberId: string): Promise<true> {
+async function deleteCollectionItem(collectionItemId: string): Promise<true> {
   pending.value = true;
   try {
-    const data = await GqlDeleteCollectionMember({ collectionMemberId: collectionMemberId });
-    collection.value.members = plainToInstance(CollectionMemberData, data.deleteCollectionMember);
-    searchMembers(); // force la mise-à-jour de la recherche pour faire réapparaître l'élément ajouté
+    const data = await GqlDeleteCollectionItem({ collectionItemId: collectionItemId });
+    collection.value.items = plainToInstance(CollectionItemData, data.deleteCollectionItem);
+    searchItems(); // force la mise-à-jour de la recherche pour faire réapparaître l'élément ajouté
   } finally {
     pending.value = false;
   }

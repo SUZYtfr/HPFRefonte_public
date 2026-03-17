@@ -9,7 +9,7 @@ from strawberry_django_extras.jwt.mutations import JWTMutations
 from app.graphql_api.types import (
     NewsCommentType,
     CollectionType,
-    CollectionMemberType,
+    CollectionItemType,
     FictionType,
     ChapterType,
     ChapterVersionType,
@@ -23,7 +23,7 @@ from app.graphql_api.inputs import (
     InvalidationInput,
     ReviewInput,
     CollectionInput,
-    CollectionMemberInput,
+    CollectionItemInput,
 )
 from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
 from news.models import NewsComment
@@ -32,10 +32,10 @@ from fictions.models import (
     Chapter,
     ChapterVersion,
     Collection,
-    CollectionMember,
-    ChapterCollectionMember,
-    FictionCollectionMember,
-    CollectionCollectionMember,
+    CollectionItem,
+    ChapterCollectionItem,
+    FictionCollectionItem,
+    CollectionCollectionItem,
 )
 from reviews.models import ChapterReview, FictionReview
 from core.text_functions import count_words
@@ -445,11 +445,11 @@ def update_collection(
     return cast(CollectionType, collection)
 
 
-def create_collection_member(
+def create_collection_item(
     info: Info,
     collection_id: strawberry.ID,
-    collection_member_data: CollectionMemberInput,
-) -> list[CollectionMemberType]:
+    collection_item_data: CollectionItemInput,
+) -> list[CollectionItemType]:
     # récupération
     current_user = get_current_user(info)
     parent_collection: Collection = Collection.objects.get(pk=collection_id)
@@ -459,100 +459,100 @@ def create_collection_member(
         raise NotOwnerOrStaffError
 
     # mutation
-    if chapter_id := getattr(collection_member_data, "chapter_id", None):
-        if ChapterCollectionMember.objects.filter(parent=parent_collection, chapter_id=chapter_id.value):
+    if chapter_id := getattr(collection_item_data, "chapter_id", None):
+        if ChapterCollectionItem.objects.filter(parent=parent_collection, chapter_id=chapter_id.value):
             msg = "La série parente contient déjà le chapitre"
             raise ValueError(msg)
 
-        ChapterCollectionMember.objects.create(
+        ChapterCollectionItem.objects.create(
             parent=parent_collection,
             chapter_id=chapter_id.value,
             is_accepted=True,
             addition_user=current_user,
         )
-    elif fiction_id := getattr(collection_member_data, "fiction_id", None):
-        if FictionCollectionMember.objects.filter(parent=parent_collection, fiction_id=fiction_id.value):
+    elif fiction_id := getattr(collection_item_data, "fiction_id", None):
+        if FictionCollectionItem.objects.filter(parent=parent_collection, fiction_id=fiction_id.value):
             msg = "La série parente contient déjà la fiction"
             raise ValueError(msg)
 
-        FictionCollectionMember.objects.create(
+        FictionCollectionItem.objects.create(
             parent=parent_collection,
             fiction_id=fiction_id.value,
             is_accepted=True,
             addition_user=current_user,
         )
-    elif collection_id := getattr(collection_member_data, "collection_id", None):
-        if CollectionCollectionMember.objects.filter(parent=parent_collection, collection_id=collection_id.value):
+    elif collection_id := getattr(collection_item_data, "collection_id", None):
+        if CollectionCollectionItem.objects.filter(parent=parent_collection, collection_id=collection_id.value):
             msg = "La série parente contient déjà la série"
             raise ValueError(msg)
 
-        CollectionCollectionMember.objects.create(
+        CollectionCollectionItem.objects.create(
             parent=parent_collection,
             collection_id=collection_id.value,
             is_accepted=True,
             addition_user=current_user,
         )
 
-    return cast(CollectionMemberType, parent_collection.members.all())
+    return cast(CollectionItemType, parent_collection.items.all())
 
 
-def accept_collection_member(
+def accept_collection_item(
     info: Info,
-    collection_member_id: strawberry.ID,
-) -> list[CollectionMemberType]:
+    collection_item_id: strawberry.ID,
+) -> list[CollectionItemType]:
     # récupération
     current_user = get_current_user(info)
-    collection_member: CollectionMember = CollectionMember.objects.get(pk=collection_member_id)
-    collection: Collection = collection_member.parent
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
 
     # vérification
     if collection.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
 
     # mutation
-    collection_member.is_accepted = True
-    collection_member.save()
+    collection_item.is_accepted = True
+    collection_item.save()
 
-    return cast(CollectionMemberType, collection.members.all())
+    return cast(CollectionItemType, collection.items.all())
 
 
-def move_collection_member(
+def move_collection_item(
     info: Info,
-    collection_member_id: strawberry.ID,
+    collection_item_id: strawberry.ID,
     new_position: int,
-) -> list[CollectionMemberType]:
+) -> list[CollectionItemType]:
     # récupération
     current_user = get_current_user(info)
-    collection_member: CollectionMember = CollectionMember.objects.get(pk=collection_member_id)
-    collection: Collection = collection_member.parent
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
 
     # vérification
     if collection.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
 
     # mutation
-    collection_member.to(new_position)
+    collection_item.to(new_position)
 
-    return cast(CollectionMemberType, collection.members.all())
+    return cast(CollectionItemType, collection.items.all())
 
 
-def delete_collection_member(
+def delete_collection_item(
     info: Info,
-    collection_member_id: strawberry.ID,
-) -> list[CollectionMemberType]:
+    collection_item_id: strawberry.ID,
+) -> list[CollectionItemType]:
     # récupération
     current_user = get_current_user(info)
-    collection_member: CollectionMember = CollectionMember.objects.get(pk=collection_member_id)
-    collection: Collection = collection_member.parent
+    collection_item: CollectionItem = CollectionItem.objects.get(pk=collection_item_id)
+    collection: Collection = collection_item.parent
 
     # vérification
     if collection.creation_user != current_user and not current_user.is_staff:
         raise NotOwnerOrStaffError
 
     # mutation
-    collection_member.delete()
+    collection_item.delete()
 
-    return cast(CollectionMemberType, collection.members.all())
+    return cast(CollectionItemType, collection.items.all())
 
 
 ### REVIEWS
@@ -683,20 +683,20 @@ class Mutation:
         resolver=update_collection,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
-    create_collection_member = strawberry.mutation(
-        resolver=create_collection_member,
+    create_collection_item = strawberry.mutation(
+        resolver=create_collection_item,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
-    accept_collection_member = strawberry.mutation(
-        resolver=accept_collection_member,
+    accept_collection_item = strawberry.mutation(
+        resolver=accept_collection_item,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
-    move_collection_member = strawberry.mutation(
-        resolver=move_collection_member,
+    move_collection_item = strawberry.mutation(
+        resolver=move_collection_item,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
-    delete_collection_member = strawberry_django.mutation(
-        resolver=delete_collection_member,
+    delete_collection_item = strawberry_django.mutation(
+        resolver=delete_collection_item,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
 

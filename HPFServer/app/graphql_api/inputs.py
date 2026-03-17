@@ -46,7 +46,7 @@ class CollectionInput:
 
 
 @strawberry.input(one_of=True)
-class CollectionMemberInput:
+class CollectionItemInput:
     fiction_id: strawberry.Maybe[strawberry.ID]
     chapter_id: strawberry.Maybe[strawberry.ID]
     collection_id: strawberry.Maybe[strawberry.ID]

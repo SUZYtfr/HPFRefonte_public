@@ -119,7 +119,7 @@ export enum Access {
   Opened = 3,
 }
 
-export enum MemberType {
+export enum itemType {
   Chapter = "chapitre",
   Fiction = "fiction",
   Collection = "série",
@@ -152,22 +152,22 @@ export class CollectionData extends BasicClass<CollectionData> {
   }
 }
 
-export class CollectionMemberData extends BasicClass<CollectionMemberData> {
+export class CollectionItemData extends BasicClass<CollectionItemData> {
   @Exclude()
-  public get memberId(): string {
+  public get itemId(): string {
     return this.id;
   }
 
   // TODO construire différents types en utilisant __typename?
   public __typename: string | null = null;
-  public get memberType(): MemberType | null {
+  public get itemType(): itemType | null {
     switch (this.__typename) {
-      case "CollectionCollectionMemberType":
-        return MemberType.Collection;
-      case "FictionCollectionMemberType":
-        return MemberType.Fiction;
-      case "ChapterCollectionMemberType":
-        return MemberType.Chapter;
+      case "CollectionCollectionItemType":
+        return itemType.Collection;
+      case "FictionCollectionItemType":
+        return itemType.Fiction;
+      case "ChapterCollectionItemType":
+        return itemType.Chapter;
       default:
         return null;
     }

@@ -30,10 +30,10 @@ from fictions.models import (
     ChapterVersion,
     InvalidationReason,
     Collection,
-    CollectionMember,
-    CollectionCollectionMember,
-    FictionCollectionMember,
-    ChapterCollectionMember,
+    CollectionItem,
+    CollectionCollectionItem,
+    FictionCollectionItem,
+    ChapterCollectionItem,
     ChapterValidationStage,
 )
 from reviews.models import ChapterReview, FictionReview
@@ -145,8 +145,8 @@ class FictionType:
     average: auto
 
 
-@strawberry_django.interface(model=CollectionMember, disable_optimization=True)
-class CollectionMemberType:
+@strawberry_django.interface(model=CollectionItem, disable_optimization=True)
+class CollectionItemType:
     id: auto
     parent: "CollectionType"
     order: auto
@@ -155,27 +155,27 @@ class CollectionMemberType:
     addition_date: auto
 
 
-@strawberry_django.type(model=CollectionCollectionMember, disable_optimization=True)
-class CollectionCollectionMemberType(CollectionMemberType):
+@strawberry_django.type(model=CollectionCollectionItem, disable_optimization=True)
+class CollectionCollectionItemType(CollectionItemType):
     collection: "CollectionType"
 
 
-@strawberry_django.type(model=FictionCollectionMember, disable_optimization=True)
-class FictionCollectionMemberType(CollectionMemberType):
+@strawberry_django.type(model=FictionCollectionItem, disable_optimization=True)
+class FictionCollectionItemType(CollectionItemType):
     fiction: "FictionType"
 
 
-@strawberry_django.type(model=ChapterCollectionMember, disable_optimization=True)
-class ChapterCollectionMemberType(CollectionMemberType):
+@strawberry_django.type(model=ChapterCollectionItem, disable_optimization=True)
+class ChapterCollectionItemType(CollectionItemType):
     chapter: "ChapterType"
 
 
-# FIXME Selon la doc, CollectionMemberType suffirait, cependant si les sous-classes ne sont pas
-# utilisées quelque part, le schéma ne les inclut pas et CollectionMemberType est incapable de
+# FIXME Selon la doc, CollectionItemType suffirait, cependant si les sous-classes ne sont pas
+# utilisées quelque part, le schéma ne les inclut pas et CollectionItemType est incapable de
 # caster dans ces sous-classe.
-# MemberType est un workaround, on "mentionne" les sous-classes dans un alias de type, ce qui
+# ItemType est un workaround, on "mentionne" les sous-classes dans un alias de type, ce qui
 # les ajoute au schéma.
-MemberType = Annotated[CollectionCollectionMemberType | FictionCollectionMemberType | ChapterCollectionMemberType, union("MemberType")]
+ItemType = Annotated[CollectionCollectionItemType | FictionCollectionItemType | ChapterCollectionItemType, union("ItemType")]
 
 
 @strawberry_django.type(model=Collection, filters=CollectionFilters, order=CollectionOrder)
@@ -186,12 +186,12 @@ class CollectionType:
     characteristics: list["CharacteristicType"]
     average: auto
     review_count: auto
-    members: list[MemberType] = strawberry_django.field(disable_optimization=True)  # FIXME bug sur l'optimisateur de select_related
+    items: list[ItemType] = strawberry_django.field(disable_optimization=True)  # FIXME bug sur l'optimisateur de select_related
     creation_user: "UserType"
     modification_user: "UserType"
     authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
     access: auto
-    member_count: auto
+    item_count: auto
     fandoms: list["FandomType"] = strawberry_django.field()
 
 

@@ -2,7 +2,7 @@ import { Type, Exclude, Transform, plainToInstance } from "class-transformer";
 import { BasicClass } from "~/types/basics";
 import {
   CollectionData,
-  CollectionMemberData,
+  CollectionItemData,
   ChapterData,
   ReviewData,
   VersionData,
@@ -46,10 +46,10 @@ export class CollectionModel extends CollectionData {
   @Type(() => AuthorData)
   public authors: AuthorData[] | null = null;
 
-  @Type(() => CollectionMemberData)
-  public members: CollectionMemberData[] | null = null;
+  @Type(() => CollectionItemData)
+  public items: CollectionItemData[] | null = null;
 
-  public memberCount: number | null = null;
+  public itemCount: number | null = null;
 
   public fandoms: FandomData[] | null = null;
 

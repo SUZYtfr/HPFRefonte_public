@@ -503,17 +503,17 @@ class CollectionQuerySet(models.QuerySet):
         ) / models.Count(models.Q(reviews__grading__isnull=False))
         return self.annotate(_average=average)
 
-    def with_member_counts(self) -> models.QuerySet["Collection"]:
+    def with_item_counts(self) -> models.QuerySet["Collection"]:
         """Ajoute le total des éléments ajoutés"""
 
-        member_count = models.Count(
-            "members",
+        item_count = models.Count(
+            "items",
             distinct=True,
-            filter=models.Q(members__is_accepted=True),
+            filter=models.Q(items__is_accepted=True),
         )
 
         return self.annotate(
-            _member_count=member_count,
+            _item_count=item_count,
         )
 
 
@@ -584,32 +584,32 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         return [self.creation_user]
 
     @property
-    def member_count(self) -> int:
+    def item_count(self) -> int:
         """Renvoie le compte d'éléments ajoutés"""
 
-        return getattr(self, "_member_count", None) or self.members.filter(is_accepted=True).count()
-    member_count.fget.short_description = "compte d'éléments"
+        return getattr(self, "_item_count", None) or self.items.filter(is_accepted=True).count()
+    item_count.fget.short_description = "compte d'éléments"
 
 
-class CollectionMemberManager(ordered_models.OrderedModelManager, polymorphic_managers.PolymorphicManager):
-    class CollectionMemberQuerySet(ordered_models.OrderedModelQuerySet, polymorphic_managers.PolymorphicQuerySet):
+class CollectionItemManager(ordered_models.OrderedModelManager, polymorphic_managers.PolymorphicManager):
+    class CollectionItemQuerySet(ordered_models.OrderedModelQuerySet, polymorphic_managers.PolymorphicQuerySet):
         pass
 
-    def get_queryset(self) -> CollectionMemberQuerySet:
-        return self.CollectionMemberQuerySet(self.model, using=self._db)
+    def get_queryset(self) -> CollectionItemQuerySet:
+        return self.CollectionItemQuerySet(self.model, using=self._db)
 
 
-class CollectionMember(ordered_models.OrderedModel, polymorphic_models.PolymorphicModel):
+class CollectionItem(ordered_models.OrderedModel, polymorphic_models.PolymorphicModel):
     class Meta(ordered_models.OrderedModel.Meta):
-        verbose_name = "membre de série"
-        verbose_name_plural = "membres de série"
+        verbose_name = "élément de série"
+        verbose_name_plural = "élément de série"
         ordering = ["parent", "order"]
 
     parent = models.ForeignKey(
         verbose_name="série parente",
         to="fictions.Collection",
         on_delete=models.CASCADE,
-        related_name="members",
+        related_name="items",
     )
     is_accepted = models.BooleanField(
         verbose_name="accepté",
@@ -627,12 +627,12 @@ class CollectionMember(ordered_models.OrderedModel, polymorphic_models.Polymorph
         auto_now_add=True,
     )
 
-    objects = CollectionMemberManager()
-    order_class_path = "fictions.models.CollectionMember"
+    objects = CollectionItemManager()
+    order_class_path = "fictions.models.CollectionItem"
     order_with_respect_to = "parent"
 
 
-class CollectionCollectionMember(CollectionMember):
+class CollectionCollectionItem(CollectionItem):
     class Meta:
         verbose_name = "série de série"
         verbose_name_plural = "séries de série"
@@ -643,9 +643,9 @@ class CollectionCollectionMember(CollectionMember):
         on_delete=models.CASCADE,
         related_name="collections",
     )
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
 
-
-class FictionCollectionMember(CollectionMember):
+class FictionCollectionItem(CollectionItem):
     class Meta:
         verbose_name = "fiction de série"
         verbose_name_plural = "fictions de série"
@@ -656,9 +656,10 @@ class FictionCollectionMember(CollectionMember):
         on_delete=models.CASCADE,
         related_name="collections",
     )
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
 
 
-class ChapterCollectionMember(CollectionMember):
+class ChapterCollectionItem(CollectionItem):
     class Meta:
         verbose_name = "chapitre de série"
         verbose_name_plural = "chapitres de série"
@@ -669,6 +670,7 @@ class ChapterCollectionMember(CollectionMember):
         on_delete=models.CASCADE,
         related_name="collections",
     )
+    collectionitem_ptr = models.OneToOneField(CollectionItem, models.deletion.CASCADE, parent_link=True, primary_key=True)
 
 
 class Fandom(models.Model):

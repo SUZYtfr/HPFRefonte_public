@@ -1,4 +1,4 @@
-fragment MemberTypeContextInfo on CollectionMemberType {
+fragment ItemTypeContextInfo on CollectionItemType {
   __typename
   id
   order
@@ -8,7 +8,7 @@ fragment MemberTypeContextInfo on CollectionMemberType {
     username
   }
   additionDate
-  ... on ChapterCollectionMemberType {
+  ... on ChapterCollectionItemType {
     chapter {
       id
       title
@@ -22,7 +22,7 @@ fragment MemberTypeContextInfo on CollectionMemberType {
       }
     }
   }
-  ... on FictionCollectionMemberType {
+  ... on FictionCollectionItemType {
     fiction {
       id
       title
@@ -32,11 +32,11 @@ fragment MemberTypeContextInfo on CollectionMemberType {
       }
     }
   }
-  ... on CollectionCollectionMemberType {
+  ... on CollectionCollectionItemType {
     collection {
       id
       title
-      memberCount
+      itemCount
       authors {
         username
       }
@@ -58,8 +58,8 @@ query getPrivateCollection($collectionId: ID!) {
       id
       name
     }
-    members {
-      ...MemberTypeContextInfo
+    items {
+      ...ItemTypeContextInfo
     }
   }
 }
@@ -85,32 +85,32 @@ query searchUsers($filters: UserFilters) {
   }
 }
 
-query searchMembers($filters: SearchMemberTypeFilter!) {
-  membertypeSearch(filters: $filters) {
-    ...MemberTypeContextInfo
+query searchItems($filters: SearchItemTypeFilter!) {
+  itemtypeSearch(filters: $filters) {
+    ...ItemTypeContextInfo
   }
 }
 
-mutation createCollectionMember($collectionId: ID!, $collectionMemberData: CollectionMemberInput!) {
-  createCollectionMember(collectionId: $collectionId, collectionMemberData: $collectionMemberData) {
-    ...MemberTypeContextInfo
+mutation createCollectionItem($collectionId: ID!, $collectionItemData: CollectionItemInput!) {
+  createCollectionItem(collectionId: $collectionId, collectionItemData: $collectionItemData) {
+    ...ItemTypeContextInfo
   }
 }
 
-mutation acceptCollectionMember($collectionMemberId: ID!) {
-  acceptCollectionMember(collectionMemberId: $collectionMemberId) {
-    ...MemberTypeContextInfo
+mutation acceptCollectionItem($collectionItemId: ID!) {
+  acceptCollectionItem(collectionItemId: $collectionItemId) {
+    ...ItemTypeContextInfo
   }
 }
 
-mutation moveCollectionMember($collectionMemberId: ID!, $position: Int!) {
-  moveCollectionMember(collectionMemberId: $collectionMemberId, newPosition: $position) {
-    ...MemberTypeContextInfo
+mutation moveCollectionItem($collectionItemId: ID!, $position: Int!) {
+  moveCollectionItem(collectionItemId: $collectionItemId, newPosition: $position) {
+    ...ItemTypeContextInfo
   }
 }
 
-mutation deleteCollectionMember($collectionMemberId: ID!) {
-  deleteCollectionMember(collectionMemberId: $collectionMemberId) {
-    ...MemberTypeContextInfo
+mutation deleteCollectionItem($collectionItemId: ID!) {
+  deleteCollectionItem(collectionItemId: $collectionItemId) {
+    ...ItemTypeContextInfo
   }
 }

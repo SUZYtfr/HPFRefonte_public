@@ -121,7 +121,7 @@ class CharacteristicFilters:
 # Autres
 
 @strawberry.input
-class SearchMemberTypeFilter:
+class SearchItemTypeFilter:
     collection_id: ID | None
     creation_username: str
     title: str | None

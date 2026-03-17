@@ -1,6 +1,6 @@
 <template>
   <BTable
-    :data="members"
+    :data="items"
     detailed
     detail-key="position"
     :draggable="tableType === 'accepted'"
@@ -11,19 +11,19 @@
     @dragleave="dragleave"
     @drop="drop"
   >
-    <BTableColumn v-slot="{ row: member }: { row: CollectionMemberData; index: number }">
+    <BTableColumn v-slot="{ row: item }: { row: CollectionItemData; index: number }">
       <template v-if="tableType === 'accepted'">
-        {{ member.position }} <BIcon icon="grip" class="is-pulled-right" />
+        {{ item.position }} <BIcon icon="grip" class="is-pulled-right" />
       </template>
       <template v-else-if="tableType === 'searched'">
         <BButton
           type="is-success is-light"
           size="is-small"
           @click.prevent="
-            $emit('createCollectionMember', {
-              chapterId: member.chapter?.chapterId.toString(),
-              fictionId: member.fiction?.fanfictionId.toString(),
-              collectionId: member.collection?.collectionId.toString(),
+            $emit('createCollectionItem', {
+              chapterId: item.chapter?.chapterId.toString(),
+              fictionId: item.fiction?.fanfictionId.toString(),
+              collectionId: item.collection?.collectionId.toString(),
             })
           "
           ><BIcon icon="plus" icon-pack="fas"
@@ -33,39 +33,39 @@
         <BButton
           type="is-success is-light"
           size="is-small"
-          @click.prevent="$emit('acceptCollectionMember', member.memberId.toString())"
+          @click.prevent="$emit('acceptCollectionItem', item.itemId.toString())"
           ><BIcon icon="plus" icon-pack="fas"
         /></BButton>
       </template>
     </BTableColumn>
     <BTableColumn label="Titre" :searchable="tableType === 'searched'">
-      <template #default="{ row: member }: { row: CollectionMemberData }">
-        {{ member.title }}
+      <template #default="{ row: item }: { row: CollectionItemData }">
+        {{ item.title }}
       </template>
       <template #searchable>
-        <BInput v-model="searchMemberFilters!.title" :lazy="true" type="search" placeholder="Filtrer par titre"
+        <BInput v-model="searchItemFilters!.title" :lazy="true" type="search" placeholder="Filtrer par titre"
       /></template>
     </BTableColumn>
     <BTableColumn label="Type" :searchable="tableType === 'searched'">
-      <template #default="{ row: member }: { row: CollectionMemberData }">
-        {{ member.memberType }}
+      <template #default="{ row: item }: { row: CollectionItemData }">
+        {{ item.itemType }}
       </template>
       <template #searchable>
-        <BSelect v-model="searchMemberFilters!.types">
-          <option :value="Object.values(MemberType)">Tous</option>
-          <option v-for="[key, value] in Object.entries(MemberType)" :key="key" :value="[value]">
+        <BSelect v-model="searchItemFilters!.types">
+          <option :value="Object.values(itemType)">Tous</option>
+          <option v-for="[key, value] in Object.entries(itemType)" :key="key" :value="[value]">
             {{ value }}
           </option>
         </BSelect>
       </template>
     </BTableColumn>
     <BTableColumn label="Auteur•ice" :searchable="tableType === 'searched'">
-      <template #default="{ row: member }: { row: CollectionMemberData }">
-        {{ (member.chapter || member.fiction || member.collection)?.authors?.map((a) => a.username).join(", ") }}
+      <template #default="{ row: item }: { row: CollectionItemData }">
+        {{ (item.chapter || item.fiction || item.collection)?.authors?.map((a) => a.username).join(", ") }}
       </template>
       <template #searchable>
         <BAutocomplete
-          v-model="searchMemberFilters!.creationUsername"
+          v-model="searchItemFilters!.creationUsername"
           type="search"
           :data="searchedUsers"
           field="username"
@@ -81,20 +81,20 @@
         </BAutocomplete>
       </template>
     </BTableColumn>
-    <template #detail="{ row: member }: { row: CollectionMemberData }">
+    <template #detail="{ row: item }: { row: CollectionItemData }">
       <article>
-        <template v-if="member.chapter">
+        <template v-if="item.chapter">
           <div>
-            Chapitre {{ member.chapter.order! + 1 }} de la fiction {{ member.chapter.fiction!.title }} par
-            {{ member.chapter.authors?.map((a) => a.username).join(",") }}
+            Chapitre {{ item.chapter.order! + 1 }} de la fiction {{ item.chapter.fiction!.title }} par
+            {{ item.chapter.authors?.map((a) => a.username).join(",") }}
             <NuxtLink
               :to="{
                 name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
                 params: {
-                  fictionId: member.chapter.fiction!.fanfictionId,
-                  fictionTitle: member.chapter.fiction!.titleAsSlug,
-                  chapterId: member.chapter.chapterId,
-                  chapterTitle: member.chapter.titleAsSlug,
+                  fictionId: item.chapter.fiction!.fanfictionId,
+                  fictionTitle: item.chapter.fiction!.titleAsSlug,
+                  chapterId: item.chapter.chapterId,
+                  chapterTitle: item.chapter.titleAsSlug,
                 },
               }"
               no-prefetch
@@ -104,16 +104,16 @@
             </NuxtLink>
           </div>
         </template>
-        <template v-else-if="member.fiction">
+        <template v-else-if="item.fiction">
           <div>
-            Fiction de {{ member.fiction.chapterCount }} chapitre{{ member.fiction.chapterCount! > 1 ? "s" : "" }} par
-            {{ member.fiction.authors?.map((a) => a.username).join(",") }}
+            Fiction de {{ item.fiction.chapterCount }} chapitre{{ item.fiction.chapterCount! > 1 ? "s" : "" }} par
+            {{ item.fiction.authors?.map((a) => a.username).join(",") }}
             <NuxtLink
               :to="{
                 name: 'fictions-fictionId-fictionTitle-sommaire',
                 params: {
-                  fictionId: member.fiction.fanfictionId,
-                  fictionTitle: member.fiction.titleAsSlug,
+                  fictionId: item.fiction.fanfictionId,
+                  fictionTitle: item.fiction.titleAsSlug,
                 },
               }"
               no-prefetch
@@ -124,32 +124,32 @@
           </div>
           <div>Caractéristiques: --, --, --, -- Fandoms: --, --, --, --</div>
         </template>
-        <template v-else-if="member.collection">
+        <template v-else-if="item.collection">
           <div>
-            Série par {{ member.collection.authors?.map((a) => a.username).join(",") }} contenant
-            {{ member.collection.memberCount }} élément{{ member.collection.memberCount! > 1 ? "s" : "" }}
+            Série par {{ item.collection.authors?.map((a) => a.username).join(",") }} contenant
+            {{ item.collection.itemCount }} élément{{ item.collection.itemCount! > 1 ? "s" : "" }}
           </div>
           <BButton size="is-small" icon-right="up-right-from-square" icon-pack="fas">Voir</BButton>
           <div>Caractéristiques: --, --, --, -- Fandoms: --, --, --, --</div>
         </template>
         <template v-if="tableType === 'accepted'">
-          <div>Ajouté par {{ member.additionUser?.username }} le {{ member.additionDate?.toLocaleDateString() }}</div>
+          <div>Ajouté par {{ item.additionUser?.username }} le {{ item.additionDate?.toLocaleDateString() }}</div>
           <div>
             <BButton
               size="is-small"
               type="is-danger is-light"
-              @click.prevent="$emit('deleteCollectionMember', member.memberId)"
+              @click.prevent="$emit('deleteCollectionItem', item.itemId)"
               >Retirer</BButton
             >
           </div>
         </template>
         <template v-else-if="tableType === 'suggested'">
-          <div>Suggéré par {{ member.additionUser?.username }} le {{ member.additionDate?.toLocaleDateString() }}</div>
+          <div>Suggéré par {{ item.additionUser?.username }} le {{ item.additionDate?.toLocaleDateString() }}</div>
           <div>
             <BButton
               size="is-small"
               type="is-danger is-light"
-              @click.prevent="$emit('deleteCollectionMember', member.memberId)"
+              @click.prevent="$emit('deleteCollectionItem', item.itemId)"
               >Rejeter</BButton
             >
           </div>
@@ -168,24 +168,24 @@
 
 <script setup lang="ts">
 import { BTable, BTableColumn, BButton, BAutocomplete, BIcon, type TableRowDragEvent } from "buefy";
-import { type CollectionMemberData, MemberType } from "~/types/fanfictions";
-import type { UserFilters, SearchMemberTypeFilter, CollectionMemberInput } from "#gql";
+import { type CollectionItemData, itemType } from "~/types/fanfictions";
+import type { UserFilters, SearchItemTypeFilter, CollectionItemInput } from "#gql";
 import type { UserData } from "~/types/users";
 
 interface Props {
   tableType: "accepted" | "searched" | "suggested";
-  members: CollectionMemberData[];
+  items: CollectionItemData[];
   searchedUsers?: UserData[];
 }
 interface Emits {
-  (e: "createCollectionMember", collectionMemberData: CollectionMemberInput): void;
-  (e: "acceptCollectionMember" | "deleteCollectionMember", collectionMemberId: string): void;
-  (e: "moveCollectionMember", collectionMemberId: string, newPosition: number): void;
+  (e: "createCollectionItem", collectionItemData: CollectionItemInput): void;
+  (e: "acceptCollectionItem" | "deleteCollectionItem", collectionItemId: string): void;
+  (e: "moveCollectionItem", collectionItemId: string, newPosition: number): void;
 }
 
-const { tableType, members } = defineProps<Props>();
+const { tableType, items } = defineProps<Props>();
 const emit = defineEmits<Emits>();
-const searchMemberFilters = defineModel<SearchMemberTypeFilter>("searchMemberFilters");
+const searchItemFilters = defineModel<SearchItemTypeFilter>("searchItemFilters");
 const searchUserFilters = defineModel<UserFilters>("searchUserFilters");
 
 const draggingRowIndex = ref<number | null>(null);
@@ -212,9 +212,9 @@ function dragleave(payload: TableRowDragEvent): void {
 function drop(payload: TableRowDragEvent): void {
   if (tableType === "accepted") {
     (payload.event.target as Element).closest("tr")!.classList.remove("is-selected");
-    const collectionMemberId = members.find((m) => m.order === draggingRowIndex.value);
-    if (collectionMemberId) {
-      emit("moveCollectionMember", collectionMemberId.memberId, payload.index);
+    const collectionItemId = items.find((m) => m.order === draggingRowIndex.value);
+    if (collectionItemId) {
+      emit("moveCollectionItem", collectionItemId.itemId, payload.index);
     }
     draggingRowIndex.value = null;
   }

@@ -15,7 +15,7 @@
         custom-detail-row
         detailed
         detail-key="collectionId"
-        @details-open="async (row: CollectionModel) => (row.members = await getMembers(row.collectionId.toString()))"
+        @details-open="async (row: CollectionModel) => (row.items = await getItems(row.collectionId.toString()))"
         @page-change="(page: number | string) => (pagination.offset = (Number(page) - 1) * pagination.limit!)"
         @sort="
           (field: string | undefined, order: 'asc' | 'desc') => {
@@ -67,16 +67,16 @@
           </template>
         </BTableColumn>
         <template #detail="{ row: collection }: { row: CollectionModel }">
-          <tr v-for="member in collection.members" :key="member.id">
-            <td class="has-text-centered">{{ member.position }}</td>
+          <tr v-for="item in collection.items" :key="item.id">
+            <td class="has-text-centered">{{ item.position }}</td>
             <td>
-              {{ member.title }}<BTag class="is-pulled-right">{{ member.memberType }}</BTag>
+              {{ item.title }}<BTag class="is-pulled-right">{{ item.itemType }}</BTag>
             </td>
             <td>
-              {{ member.reviewCount }}
+              {{ item.reviewCount }}
             </td>
             <td>
-              <BRate v-if="member.average" v-model="member.average" disabled :max="1" rtl show-score />
+              <BRate v-if="item.average" v-model="item.average" disabled :max="1" rtl show-score />
             </td>
             <td></td>
           </tr>
@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { BTable, BTableColumn, BButton, BRate, BTag } from "buefy";
 import { CollectionModel } from "~/models";
-import { CollectionMemberData } from "~/types/fanfictions";
+import { CollectionItemData } from "~/types/fanfictions";
 import { plainToInstance } from "class-transformer";
 import { Ordering, type CollectionOrder, type OffsetPaginationInput /* CollectionFilters */ } from "#gql/default";
 
@@ -142,10 +142,10 @@ const { data: collections, status: collectionStatus } = await useAsyncGql(
   },
 );
 
-async function getMembers(collectionId: string): Promise<CollectionMemberData[]> {
-  const collection = await GqlGetPrivateCollectionMembers({
+async function getItems(collectionId: string): Promise<CollectionItemData[]> {
+  const collection = await GqlGetPrivateCollectionItems({
     collectionId: collectionId,
   });
-  return plainToInstance(CollectionMemberData, collection.privateCollection.members);
+  return plainToInstance(CollectionItemData, collection.privateCollection.items);
 }
 </script>

@@ -8,10 +8,10 @@ from core.admin import BaseAdminPage
 from core.text_functions import count_words
 from fictions.models import (
     Collection,
-    CollectionMember,
-    CollectionCollectionMember,
-    FictionCollectionMember,
-    ChapterCollectionMember,
+    CollectionItem,
+    CollectionCollectionItem,
+    FictionCollectionItem,
+    ChapterCollectionItem,
     Fiction,
     Chapter,
     ChapterVersion,
@@ -22,27 +22,27 @@ from fictions.models import (
 from typing import Any
 
 
-class CollectionMemberInline(polymorphic_admin.StackedPolymorphicInline):
-    class CollectionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
-        model = CollectionCollectionMember
+class CollectionItemInline(polymorphic_admin.StackedPolymorphicInline):
+    class CollectionCollectionItemInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = CollectionCollectionItem
         fields = ["collection", "is_accepted"]
         autocomplete_fields = ["collection"]
 
-    class FictionCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
-        model = FictionCollectionMember
+    class FictionCollectionItemInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = FictionCollectionItem
         fields = ["fiction", "is_accepted"]
         autocomplete_fields = ["fiction"]
 
-    class ChapterCollectionMemberInline(polymorphic_admin.StackedPolymorphicInline.Child):
-        model = ChapterCollectionMember
+    class ChapterCollectionItemInline(polymorphic_admin.StackedPolymorphicInline.Child):
+        model = ChapterCollectionItem
         fields = ["chapter", "is_accepted"]
         autocomplete_fields = ["chapter"]
 
-    model = CollectionMember
+    model = CollectionItem
     child_inlines = [
-        CollectionCollectionMemberInline,
-        FictionCollectionMemberInline,
-        ChapterCollectionMemberInline,
+        CollectionCollectionItemInline,
+        FictionCollectionItemInline,
+        ChapterCollectionItemInline,
     ]
     extra = 0
 
@@ -74,7 +74,7 @@ class CollectionAdminPage(polymorphic_admin.PolymorphicInlineSupportMixin, BaseA
             "classes": ["collapse"],
         }),
     ]
-    inlines = [CollectionMemberInline]
+    inlines = [CollectionItemInline]
     readonly_fields = ["average"]
     autocomplete_fields = ["characteristics"]
 

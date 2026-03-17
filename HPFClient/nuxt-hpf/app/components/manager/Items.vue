@@ -3,13 +3,13 @@
     <div class="card-content">
       <div class="panel">
         <div class="panel-heading">Éléments</div>
-        <ManagerMemberTable
+        <ManagerItemTable
           :table-type="'accepted'"
-          :members="members.filter((m) => m.isAccepted)"
-          @move-collection-member="
-            (collectionMemberId, newPosition) => $emit('moveCollectionMember', collectionMemberId, newPosition)
+          :items="items.filter((m) => m.isAccepted)"
+          @move-collection-item="
+            (collectionItemId, newPosition) => $emit('moveCollectionItem', collectionItemId, newPosition)
           "
-          @delete-collection-member="(collectionMemberId) => $emit('deleteCollectionMember', collectionMemberId)"
+          @delete-collection-item="(collectionItemId) => $emit('deleteCollectionItem', collectionItemId)"
         />
       </div>
     </div>
@@ -20,7 +20,7 @@
         class="panel"
         @open="
           openPanel = 'search';
-          searchMemberFilters.title = ''; /* déclenche le watcher pour faire le premier appel*/
+          searchItemFilters.title = ''; /* déclenche le watcher pour faire le premier appel*/
         "
       >
         <template #trigger>
@@ -33,13 +33,13 @@
             <p>Ajouter de nouveaux éléments</p>
           </div>
         </template>
-        <ManagerMemberTable
+        <ManagerItemTable
           :table-type="'searched'"
-          :members="searchedMembers"
+          :items="searchedItems"
           :searched-users
-          :search-member-filters
+          :search-item-filters="searchItemFilters"
           :search-user-filters
-          @create-collection-member="(collectionMemberData) => $emit('createCollectionMember', collectionMemberData)"
+          @create-collection-item="(collectionItemData) => $emit('createCollectionItem', collectionItemData)"
         />
       </BCollapse>
       <!-- Propositions -->
@@ -53,15 +53,15 @@
           >
             <p>
               Voir les propositions
-              <BTag type="is-info is-light">{{ members.filter((m) => !m.isAccepted).length }}</BTag>
+              <BTag type="is-info is-light">{{ items.filter((m) => !m.isAccepted).length }}</BTag>
             </p>
           </div>
         </template>
-        <ManagerMemberTable
+        <ManagerItemTable
           :table-type="'suggested'"
-          :members="members.filter((m) => !m.isAccepted)"
-          @accept-collection-member="(collectionMemberId) => $emit('acceptCollectionMember', collectionMemberId)"
-          @delete-collection-member="(collectionMemberId) => $emit('deleteCollectionMember', collectionMemberId)"
+          :items="items.filter((m) => !m.isAccepted)"
+          @accept-collection-item="(collectionItemId) => $emit('acceptCollectionItem', collectionItemId)"
+          @delete-collection-item="(collectionItemId) => $emit('deleteCollectionItem', collectionItemId)"
         />
       </BCollapse>
     </div>
@@ -74,27 +74,27 @@
 
 <script setup lang="ts">
 import { BButton, BTag, BCollapse } from "buefy";
-import type { CollectionMemberData } from "~/types/fanfictions";
-import type { SearchMemberTypeFilter, UserFilters, CollectionMemberInput } from "#gql";
+import type { CollectionItemData } from "~/types/fanfictions";
+import type { SearchItemTypeFilter, UserFilters, CollectionItemInput } from "#gql";
 import type { UserData } from "~/types/users";
 
 interface Props {
-  searchedMembers: CollectionMemberData[];
+  searchedItems: CollectionItemData[];
   searchedUsers: UserData[];
-  members: CollectionMemberData[];
+  items: CollectionItemData[];
 }
 interface Emits {
   (e: "clickPrevious"): void;
-  (e: "createCollectionMember", collectionMemberData: CollectionMemberInput): void;
-  (e: "acceptCollectionMember" | "deleteCollectionMember", collectionMemberId: string): void;
-  (e: "moveCollectionMember", collectionMemberId: string, newPosition: number): void;
+  (e: "createCollectionItem", collectionItemData: CollectionItemInput): void;
+  (e: "acceptCollectionItem" | "deleteCollectionItem", collectionItemId: string): void;
+  (e: "moveCollectionItem", collectionItemId: string, newPosition: number): void;
 }
 
-const { searchedMembers, searchedUsers, members } = defineProps<Props>();
+const { searchedItems: searchedItems, searchedUsers, items } = defineProps<Props>();
 defineEmits<Emits>();
 
 const openPanel = ref<"search" | "suggestions" | null>(null);
 
-const searchMemberFilters = defineModel<SearchMemberTypeFilter>("searchMemberFilters", { required: true });
+const searchItemFilters = defineModel<SearchItemTypeFilter>("searchItemFilters", { required: true });
 const searchUserFilters = defineModel<UserFilters>("searchUserFilters", { required: true });
 </script>

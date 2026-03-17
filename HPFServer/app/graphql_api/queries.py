@@ -12,9 +12,9 @@ from fictions.models import (
     ChapterVersion,
     Fandom,
     Collection,
-    ChapterCollectionMember,
-    FictionCollectionMember,
-    CollectionCollectionMember,
+    ChapterCollectionItem,
+    FictionCollectionItem,
+    CollectionCollectionItem,
 )
 from news.models import NewsArticle, NewsStatus
 from reviews.models import ChapterReview, FictionReview
@@ -32,12 +32,12 @@ from app.graphql_api.types import (
     TriggerWarningType,
     ChapterReviewType,
     FictionReviewType,
-    CollectionMemberType,
-    ChapterCollectionMemberType,
-    FictionCollectionMemberType,
-    CollectionCollectionMemberType,
+    CollectionItemType,
+    ChapterCollectionItemType,
+    FictionCollectionItemType,
+    CollectionCollectionItemType,
 )
-from app.graphql_api.filters import SearchMemberTypeFilter
+from app.graphql_api.filters import SearchItemTypeFilter
 
 
 # PUBLIQUE
@@ -124,9 +124,9 @@ def resolve_admin_chapter_versions() -> QuerySet[ChapterVersion]:
 
 # AUTRES
 
-def resolve_membertype_search(info: Info, filters: SearchMemberTypeFilter) -> list[CollectionMemberType]:
+def resolve_itemtype_search(info: Info, filters: SearchItemTypeFilter) -> list[CollectionItemType]:
     """\
-    Toutes les créations (séries, fictions, chapitres) en MemberType hors queryset.
+    Toutes les créations (séries, fictions, chapitres) en ItemType hors queryset.
     A utiliser dans le contexte de la création de série pour la recherche de nouveaux éléments.
     """
 
@@ -168,12 +168,12 @@ def resolve_membertype_search(info: Info, filters: SearchMemberTypeFilter) -> li
     collections = collections if not filters.types or "série" in filters.types else collections.none()
     ensemble = fictions.union(chapters).union(collections).order_by("-date")[:20]
 
-    fake_members: list[CollectionMemberType] = []
+    fake_items: list[CollectionItemType] = []
     for index, element in enumerate(ensemble):
         if element["type"] == "chapitre":
-            fake_members.append(strawberry.cast(
-                ChapterCollectionMemberType,
-                ChapterCollectionMember(
+            fake_items.append(strawberry.cast(
+                ChapterCollectionItemType,
+                ChapterCollectionItem(
                     chapter_id=element["id"],
                     id=strawberry.UNSET,
                     order=0 - index,
@@ -183,9 +183,9 @@ def resolve_membertype_search(info: Info, filters: SearchMemberTypeFilter) -> li
                 ),
             ))
         elif element["type"] == "fiction":
-            fake_members.append(strawberry.cast(
-                FictionCollectionMemberType,
-                FictionCollectionMember(
+            fake_items.append(strawberry.cast(
+                FictionCollectionItemType,
+                FictionCollectionItem(
                     fiction_id=element["id"],
                     id=strawberry.UNSET,
                     order=0 - index,
@@ -195,9 +195,9 @@ def resolve_membertype_search(info: Info, filters: SearchMemberTypeFilter) -> li
                 ),
             ))
         elif element["type"] == "série":
-            fake_members.append(strawberry.cast(
-                CollectionCollectionMemberType,
-                CollectionCollectionMember(
+            fake_items.append(strawberry.cast(
+                CollectionCollectionItemType,
+                CollectionCollectionItem(
                     collection_id=element["id"],
                     id=strawberry.UNSET,
                     order=0 - index,
@@ -207,7 +207,7 @@ def resolve_membertype_search(info: Info, filters: SearchMemberTypeFilter) -> li
                 ),
             ))
 
-    return fake_members
+    return fake_items
 
 
 @strawberry.type
@@ -274,8 +274,8 @@ class Query:
     )
 
     # autres
-    membertype_search: list[CollectionMemberType] = strawberry_django.field(
-        resolver=resolve_membertype_search,
+    itemtype_search: list[CollectionItemType] = strawberry_django.field(
+        resolver=resolve_itemtype_search,
         extensions=[IsAuthenticated(fail_silently=False)],
-        description="Toutes les créations (séries, fictions, chapitres) en MemberType hors queryset",
+        description="Toutes les créations (séries, fictions, chapitres) en ItemType hors queryset",
     )
