@@ -3,151 +3,72 @@
     <BSteps ref="steps" v-model="currentStep" :has-navigation="false">
       <BLoading v-model="pending" :is-full-page="false" />
       <!-- Règlement -->
-      <BStepItem
-        label="Règlement"
-        step="rules"
-        value="rules"
-        icon-pack="fas"
-        :icon="rulesAccepted ? 'square-check' : 'square'"
-      >
-        <LazyManagerRules v-if="currentStep === 'rules'" v-model:rules-accepted="rulesAccepted">
-          <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
-            <div></div>
-            <BButton type="is-danger" @click.prevent="router.back">Annuler</BButton>
-            <BButton type="is-primary" :disabled="!rulesAccepted" @click.prevent="() => steps?.next()">{{
-              isEditing ? "Modifier la fiction" : "Créer une fiction"
-            }}</BButton>
-          </div>
-        </LazyManagerRules>
+      <BStepItem label="Règlement" step="rules" value="rules" icon-pack="fas" icon="square-check">
+        <LazyManagerRules
+          v-if="currentStep === 'rules'"
+          v-model:rules-accepted="rulesAccepted"
+          :is-editing
+          @click-cancel="router.back()"
+          @click-next="steps?.next()"
+        />
       </BStepItem>
       <!-- Modification de fiction -->
-      <BStepItem
-        label="Fiction"
-        step="fiction"
-        value="fiction"
-        icon-pack="fas"
-        :icon="fictionComplete ? 'book' : 'book-open'"
-      >
+      <BStepItem label="Fiction" step="fiction" value="fiction" icon-pack="fas" icon="book-open">
         <LazyManagerFiction
           v-if="currentStep === 'fiction'"
-          :fiction="fiction"
-          :unsaved-changes="unsavedChanges"
+          v-model:fiction="fiction"
+          v-model:unsaved-changes="unsavedChanges"
           :is-editing
-        >
-          <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
-            <BButton @click.prevent="() => steps?.prev()">Relire le réglement</BButton>
-            <BButton
-              v-if="isEditing"
-              type="is-danger"
-              :disabled="!unsavedChanges"
-              @click.prevent="
-                () => {
-                  fetchFiction(fiction.fanfictionId.toString());
-                  unsavedChanges = false;
-                }
-              "
-              >Annuler les modifications</BButton
-            >
-            <BButton
-              type="is-primary"
-              :disabled="!(rulesAccepted && fictionComplete)"
-              @click.prevent="
-                () => {
-                  isEditing && unsavedChanges ? updateFiction() : undefined;
-                  unsavedChanges = false;
-                  steps?.next();
-                }
-              "
-            >
-              {{ isEditing && unsavedChanges ? "Enregistrer et aller aux chapitres" : "Aller aux chapitres" }}
-            </BButton>
-          </div>
-        </LazyManagerFiction>
+          @click-previous="steps?.prev()"
+          @click-cancel="
+            fetchFiction(fiction.fanfictionId.toString());
+            unsavedChanges = false;
+          "
+          @click-next="
+            isEditing && unsavedChanges ? updateFiction() : undefined;
+            unsavedChanges = false;
+            steps?.next();
+          "
+        />
       </BStepItem>
       <!-- Modification de chapitre -->
-      <BStepItem
-        label="Chapitres"
-        step="chapter"
-        value="chapter"
-        icon-pack="fas"
-        :icon="chapterComplete ? 'file-lines' : 'file'"
-      >
+      <BStepItem label="Chapitres" step="chapter" value="chapter" icon-pack="fas" icon="file-lines">
         <LazyManagerChapter
           v-if="currentStep === 'chapter'"
           v-model:chapter="chapter"
-          v-model:active-tab="activeTab"
           v-model:unsaved-changes="unsavedChanges"
+          v-model:active-tab="activeTab"
           :is-editing
           :chapter-ids="fiction.chapters?.map((c) => c.chapterId.toString()) || []"
-        >
-          <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
-            <BButton @click.prevent="async () => steps?.prev()">Revenir à la fiction</BButton>
-            <BButton
-              v-if="activeTab"
-              type="is-danger"
-              :disabled="!unsavedChanges"
-              @click.prevent="
-                async () => {
-                  await fetchChapter(activeTab); // FIXME pourquoi le chapitre ne se remet pas à zéro ?
-                  unsavedChanges = false;
+          @click-previous="steps?.prev()"
+          @click-cancel="
+            async () => {
+              await fetchChapter(activeTab); // FIXME pourquoi le chapitre ne se remet pas à zéro ?
+              unsavedChanges = false;
+            }
+          "
+          @click-save="
+            (isDraft) => {
+              if (isEditing) {
+                if (activeTab === '') {
+                  createChapter(isDraft);
+                } else {
+                  updateChapter(isDraft);
                 }
-              "
-              >Annuler les modifications</BButton
-            >
-            <BField>
-              <p class="control">
-                <BButton
-                  type="is-warning"
-                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges && !isEditing)"
-                  @click.prevent="
-                    () => {
-                      if (isEditing) {
-                        if (activeTab === '') {
-                          createChapter(true);
-                        } else {
-                          updateChapter(true);
-                        }
-                      } else {
-                        postFiction(true);
-                      }
-                      unsavedChanges = false;
-                    }
-                  "
-                  >Brouillon</BButton
-                >
-              </p>
-              <p class="control">
-                <BButton
-                  type="is-success"
-                  :disabled="!(rulesAccepted && fictionComplete && chapterComplete && unsavedChanges)"
-                  @click.prevent="
-                    () => {
-                      if (isEditing) {
-                        if (activeTab === '') {
-                          createChapter(false);
-                        } else {
-                          updateChapter(false);
-                        }
-                      } else {
-                        postFiction(false);
-                      }
-                      unsavedChanges = false;
-                    }
-                  "
-                >
-                  {{ autoPublish ? "Publier" : "Envoyer à la modération" }}</BButton
-                >
-              </p>
-            </BField>
-          </div>
-        </LazyManagerChapter>
+              } else {
+                postFiction(isDraft);
+              }
+              unsavedChanges = false;
+            }
+          "
+        />
       </BStepItem>
     </BSteps>
   </div>
 </template>
 
 <script setup lang="ts">
-import { BButton, BSteps, BStepItem, BLoading, BField } from "buefy";
+import { BSteps, BStepItem, BLoading } from "buefy";
 import { RecordStatusEnum } from "~/types/basics";
 import { ChapterModel, FanfictionModel } from "~/models";
 import { plainToInstance } from "class-transformer";
@@ -227,20 +148,6 @@ watch(activeTab, async (newValue) => {
   }
 });
 
-// TODO méthode sur FanfictionModel, et/ou isComplete sur les composants / formulaires en question
-const fictionComplete = computed<boolean>(() => {
-  return [
-    fiction.value.title,
-    fiction.value.summary,
-    fiction.value.status,
-    fiction.value.rating,
-    fiction.value.fandoms?.length,
-    fiction.value.characteristics?.filter((c) => c.characteristicTypeId.toString() === "2").length,
-  ].every((field) => Boolean(field));
-});
-const chapterComplete = computed<boolean>(() => {
-  return Boolean(chapter.value.title && chapter.value.text);
-});
 const rulesAccepted = ref<boolean>(isEditing.value);
 
 async function postFiction(isDraft: boolean): Promise<void> {

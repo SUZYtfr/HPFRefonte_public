@@ -45,7 +45,12 @@ interface Props {
   initialExcludedIds: number[];
 }
 
+interface Emits {
+  (e: "change", characteristicId: number, state: boolean | null): void;
+}
+
 const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const includedValues = ref<number[]>(
   initialIncludedIds.filter((iii) => characteristics.map((c) => c.characteristicId).includes(iii)),
@@ -59,15 +64,13 @@ const totalChecked = computed<number>(() => {
   return includedValues.value.length + excludedValues.value.length;
 });
 
-const $emit = defineEmits(["change"]);
-
 function threeStateChanged(characteristicId: number, state: boolean | null): void {
   includedValues.value = includedValues.value.filter((iv) => iv !== characteristicId);
   excludedValues.value = excludedValues.value.filter((iv) => iv !== characteristicId);
 
   if (state === true) includedValues.value.push(characteristicId);
   else if (state === false) excludedValues.value.push(characteristicId);
-  $emit("change", characteristicId, state);
+  emit("change", characteristicId, state);
 }
 
 function stateForCheckbox(value: number): boolean | null {

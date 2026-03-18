@@ -4,9 +4,15 @@
       <BLoading v-model="pending" :is-full-page="false" />
       <BStepItem label="Série" step="collection" value="collection" icon-pack="fas" icon="book-open-reader">
         <LazyManagerCollection
+          v-model:collection="collection"
+          v-model:unsaved-changes="unsavedChanges"
           :is-editing
-          :collection
-          @click-cancel="fetchCollection(collection.collectionId.toString())"
+          @click-cancel="
+            async () => {
+              fetchCollection(collection.collectionId.toString());
+              unsavedChanges = false;
+            }
+          "
           @click-next="steps?.next()"
           @create-collection="createCollection"
           @update-collection="updateCollection"
@@ -58,6 +64,7 @@ const currentStep = ref<"collection" | "items">("collection");
 const pending = ref<boolean>(false);
 const isEditing = ref<boolean>(Boolean(initialCollectionId));
 const itemsComplete = computed(() => true);
+const unsavedChanges = ref<boolean>(false);
 
 const collection = ref<CollectionModel>(
   new CollectionModel({

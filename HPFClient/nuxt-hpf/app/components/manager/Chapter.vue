@@ -11,13 +11,7 @@
           </template>
           <template v-if="value === (chapter.chapterId || '').toString()">
             <BField label="Titre" grouped>
-              <BInput
-                v-model="chapter.title"
-                type="text"
-                required
-                expanded
-                @update:model-value="() => (unsavedChanges = true)"
-              />
+              <BInput v-model="chapter.title" type="text" required expanded />
               <BDropdown aria-role="list" :disabled="!isEditing || activeTab === ''">
                 <template #trigger="{ active }">
                   <BButton label="Plus d'actions" type="is-warning" :icon-right="active ? 'caret-up' : 'caret-down'" />
@@ -38,7 +32,6 @@
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
-                @update:text="() => (unsavedChanges = true)"
               />
             </BField>
             <BField label="Texte">
@@ -52,7 +45,6 @@
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
-                @update:text="() => (unsavedChanges = true)"
               />
             </BField>
             <BField label="Notes de fin">
@@ -66,7 +58,6 @@
                   oneLineToolbar: true,
                   canUseImage: false,
                 }"
-                @update:text="() => (unsavedChanges = true)"
               />
             </BField>
             <BField label="Avertissements">
@@ -86,7 +77,6 @@
                 @update:model-value="
                   (value: TriggerWarningData[]) => {
                     chapter.triggerWarnings = value;
-                    unsavedChanges = true;
                   }
                 "
               />
@@ -97,11 +87,35 @@
     </div>
   </div>
   <!-- Barre de navigation -->
-  <slot></slot>
+  <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
+    <BButton @click.prevent="$emit('clickPrevious')">Revenir à la fiction</BButton>
+    <BButton v-if="activeTab" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
+      >Annuler les modifications</BButton
+    >
+    <BField>
+      <p class="control">
+        <BButton
+          type="is-warning"
+          :disabled="!(isComplete && unsavedChanges && !isEditing)"
+          @click.prevent="$emit('clickSave', true)"
+          >Brouillon</BButton
+        >
+      </p>
+      <p class="control">
+        <BButton
+          type="is-success"
+          :disabled="!(isComplete && unsavedChanges)"
+          @click.prevent="$emit('clickSave', false)"
+        >
+          {{ autoPublish ? "Publier" : "Envoyer à la modération" }}</BButton
+        >
+      </p>
+    </BField>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { BTabs, BTabItem, BField, BInput, BTaginput } from "buefy";
+import { BTabs, BTabItem, BField, BInput, BTaginput, BButton } from "buefy";
 import type { ChapterModel } from "~/models";
 import type { TriggerWarningData } from "~/types/characteristics";
 
@@ -109,13 +123,23 @@ interface Props {
   isEditing: boolean;
   chapterIds: string[];
 }
+interface Emits {
+  (e: "clickPrevious" | "clickCancel"): void;
+  (e: "clickSave", isDraft: boolean): void;
+}
 
-// NOTE J'aurais préféré watch(fiction, () => {}, { deep: true }) mais fiction est ref et pas reactive
-// Quand la fiction vide par défaut est remplacée par la fiction chargée, on perd l'unité et donc la réactivité
 const unsavedChanges = defineModel<boolean>("unsavedChanges", { required: true });
 const chapter = defineModel<ChapterModel>("chapter", { required: true });
+watch(chapter, () => (unsavedChanges.value = true), { deep: true }); // si les champs changent
+watch(chapter, () => (unsavedChanges.value = false)); // si le chapitre est rechargé
+
 const activeTab = defineModel<string>("activeTab", { required: true });
 const { chapterIds } = defineProps<Props>();
+defineEmits<Emits>();
+const isComplete = computed<boolean>(() => {
+  return [chapter.value.title, chapter.value.text].every((field) => Boolean(field));
+});
+const autoPublish = true; // TODO depuis profileData ou payloadData
 
 // Préremplit le titre du nouveau chapitre
 watch(

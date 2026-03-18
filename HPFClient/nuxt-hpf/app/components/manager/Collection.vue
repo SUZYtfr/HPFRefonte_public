@@ -2,14 +2,7 @@
   <div class="card">
     <div class="card-content">
       <BField label="Titre" grouped>
-        <BInput
-          v-model="collection.title"
-          type="text"
-          placeholder="Titre de la série"
-          required
-          expanded
-          @update:model-value="() => (unsavedChanges = true)"
-        />
+        <BInput v-model="collection.title" type="text" placeholder="Titre de la série" required expanded />
         <BDropdown aria-role="list" :disabled="!isEditing">
           <template #trigger="{ active }">
             <BButton label="Plus d'actions" type="is-warning" :icon-right="active ? 'caret-up' : 'caret-down'" />
@@ -20,7 +13,7 @@
         </BDropdown>
       </BField>
       <BField label="Accès" expanded>
-        <BSelect v-model="collection.access" required @update:model-value="() => (unsavedChanges = true)">
+        <BSelect v-model="collection.access" required>
           <option v-for="[key, value] in Object.entries(Access)" :key="key" :value="key">
             {{ value }}
           </option>
@@ -37,19 +30,10 @@
             oneLineToolbar: true,
             canUseImage: false,
           }"
-          @update:text="() => (unsavedChanges = true)"
         />
       </BField>
       <BField label="Fandoms" expanded>
-        <ManagerFandomInput
-          :fandom-field="collection.fandoms!"
-          @update:fandom-field="
-            (fandoms) => {
-              collection.fandoms = fandoms;
-              unsavedChanges = true;
-            }
-          "
-        />
+        <ManagerFandomInput v-model:fandom-field="collection.fandoms!" />
       </BField>
       <BField label="Caractéristiques">
         <ManagerCharacteristicInput
@@ -57,7 +41,6 @@
           @update:characteristic-field="
             (characteristics) => {
               collection.characteristics = characteristics;
-              unsavedChanges = true;
             }
           "
         />
@@ -98,8 +81,8 @@ interface Emits {
 defineProps<Props>();
 defineEmits<Emits>();
 const collection = defineModel<CollectionModel>("collection", { required: true });
+const unsavedChanges = defineModel<boolean>("unsavedChanges", { required: true });
 
-const unsavedChanges = ref<boolean>(false);
 const isComplete = computed<boolean>(() => {
   return [
     collection.value.title,
@@ -108,6 +91,6 @@ const isComplete = computed<boolean>(() => {
     collection.value.fandoms?.length,
   ].every((field) => Boolean(field));
 });
-// si la série change, elle a été rechargée (enregistrement ou abandon des modifs)
-watch(collection, () => (unsavedChanges.value = false));
+watch(collection, () => (unsavedChanges.value = true), { deep: true }); // si les champs changent
+watch(collection, () => (unsavedChanges.value = false)); // si la série est rechargée
 </script>

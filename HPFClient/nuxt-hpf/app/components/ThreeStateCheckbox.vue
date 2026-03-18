@@ -16,23 +16,27 @@ interface Props {
   title: string;
 }
 
+interface Emits {
+  (e: "change", internalState: boolean | null): void;
+}
+
 const { externalState = null } = defineProps<Props>();
 
 const checkboxStatus = computed<boolean>(() => {
   return externalState === true;
 });
 
-const $emit = defineEmits(["change"]);
+const emit = defineEmits<Emits>();
 
 // alterne au clic : true (inclus) => false (exclu) => null (vide)
 // Note : "indeterminate" = false (exclu)
 function checkBoxClicked(): void {
   if (externalState === true) {
-    $emit("change", false);
+    emit("change", false);
   } else if (externalState === false) {
-    $emit("change", null);
+    emit("change", null);
   } else {
-    $emit("change", true);
+    emit("change", true);
   }
 }
 </script>

@@ -80,7 +80,7 @@
               <template #default="{ row: fiction }: { row: FanfictionModel }">
                 <NuxtLink
                   :to="{
-                    name: 'écritoire',
+                    name: 'compte-fictions-écritoire',
                     query: {
                       fiction: fiction.fanfictionId,
                     },
@@ -92,7 +92,7 @@
               <template #header>
                 <NuxtLink
                   :to="{
-                    name: 'écritoire',
+                    name: 'compte-fictions-écritoire',
                     query: activeTab
                       ? {
                           fandom: activeTab,
@@ -123,7 +123,7 @@
                 <td>
                   <NuxtLink
                     :to="{
-                      name: 'écritoire',
+                      name: 'compte-fictions-écritoire',
                       query: {
                         fiction: fiction.fanfictionId,
                         chapitre: chapter.chapterId,
@@ -139,7 +139,7 @@
                 <td colspan="5" class="has-text-centered">
                   <NuxtLink
                     :to="{
-                      name: 'écritoire',
+                      name: 'compte-fictions-écritoire',
                       query: {
                         fiction: fiction.fanfictionId,
                         chapitre: '',

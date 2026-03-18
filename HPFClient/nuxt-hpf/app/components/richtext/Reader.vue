@@ -42,6 +42,10 @@ interface Props {
   text: string;
   config?: TipTapReaderConfig;
 }
+interface Emits {
+  (e: "quote", quoteText: string): void;
+}
+
 const {
   text,
   config = {
@@ -51,7 +55,7 @@ const {
   },
 } = defineProps<Props>();
 
-const emit = defineEmits(["quote"]);
+const emit = defineEmits<Emits>();
 
 const editor = useEditor({
   editable: false,

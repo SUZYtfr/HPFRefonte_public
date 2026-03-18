@@ -327,11 +327,26 @@
     </footer>
   </div>
   <!-- Barre de navigation -->
-  <slot></slot>
+  <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
+    <div></div>
+    <BButton type="is-danger" @click.prevent="$emit('clickCancel')">Annuler</BButton>
+    <BButton type="is-primary" :disabled="!rulesAccepted" @click.prevent="$emit('clickNext')">{{
+      isEditing ? "Modifier la fiction" : "Créer une fiction"
+    }}</BButton>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { BCheckbox } from "buefy";
+import { BCheckbox, BButton } from "buefy";
 
+interface Props {
+  isEditing: boolean;
+}
+interface Emits {
+  (e: "clickCancel" | "clickNext"): void;
+}
+
+defineProps<Props>();
+defineEmits<Emits>();
 const rulesAccepted = defineModel<boolean>("rulesAccepted", { required: true });
 </script>

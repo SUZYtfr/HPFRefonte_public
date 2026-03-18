@@ -2,14 +2,7 @@
   <div class="card">
     <div class="card-content">
       <BField label="Titre" grouped>
-        <BInput
-          v-model="fiction.title"
-          type="text"
-          placeholder="Titre de la fiction"
-          required
-          expanded
-          @update:model-value="() => (unsavedChanges = true)"
-        />
+        <BInput v-model="fiction.title" type="text" placeholder="Titre de la fiction" required expanded />
         <BDropdown aria-role="list" :disabled="!isEditing">
           <template #trigger="{ active }">
             <BButton label="Plus d'actions" type="is-warning" :icon-right="active ? 'caret-up' : 'caret-down'" />
@@ -21,19 +14,14 @@
       </BField>
       <BField grouped>
         <BField label="Statut" expanded>
-          <BSelect v-model="fiction.status" required @update:model-value="() => (unsavedChanges = true)">
+          <BSelect v-model="fiction.status" required>
             <option v-for="[key, value] in Object.entries(FanfictionStatus)" :key="key" :value="key">
               {{ value }}
             </option>
           </BSelect>
         </BField>
         <BField label="Rating" expanded>
-          <BSelect
-            v-model="fiction.rating"
-            placeholder="Sélectionner un rating"
-            required
-            @update:model-value="() => (unsavedChanges = true)"
-          >
+          <BSelect v-model="fiction.rating" placeholder="Sélectionner un rating" required>
             <option v-for="[key, value] in Object.entries(FanfictionRating)" :key="key" :value="key">
               {{ value }}
             </option>
@@ -51,32 +39,12 @@
             oneLineToolbar: true,
             canUseImage: false,
           }"
-          @update:text="() => (unsavedChanges = true)"
         />
       </BField>
 
       <BField grouped>
         <BField label="Fandoms" expanded>
-          <BTaginput
-            v-model="selectedFandoms"
-            field="name"
-            ellipsis
-            :allow-new="false"
-            autocomplete
-            :required="!selectedFandoms.length"
-            keep-first
-            keep-open
-            open-on-focus
-            placeholder="Ajouter au moins un fandom"
-            :data="filteredFandoms"
-            @typing="getFilteredFandoms"
-            @update:model-value="
-              (value: FandomData[]) => {
-                fiction.fandoms = value;
-                unsavedChanges = true;
-              }
-            "
-          />
+          <ManagerFandomInput v-model:fandom-field="fiction.fandoms!" />
         </BField>
         <BField label="Genres" expanded>
           <BTaginput
@@ -97,7 +65,6 @@
               (value: CharacteristicModel) =>
                 (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
             "
-            @update:model-value="() => (unsavedChanges = true)"
           />
         </BField>
       </BField>
@@ -140,7 +107,6 @@
             (value: CharacteristicModel) =>
               (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
           "
-          @update:model-value="() => (unsavedChanges = true)"
         />
       </BField>
 
@@ -155,55 +121,55 @@
             oneLineToolbar: true,
             canUseImage: false,
           }"
-          @update:text="() => (unsavedChanges = true)"
         />
       </BField>
     </div>
   </div>
   <!-- Barre de navigation -->
-  <slot></slot>
+  <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
+    <BButton @click.prevent="$emit('clickPrevious')">Relire le réglement</BButton>
+    <BButton v-if="isEditing" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
+      >Annuler les modifications</BButton
+    >
+    <BButton type="is-primary" :disabled="!isComplete" @click.prevent="$emit('clickNext')">
+      {{ isEditing && unsavedChanges ? "Enregistrer et aller aux chapitres" : "Aller aux chapitres" }}
+    </BButton>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { BField, BInput, BTaginput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
 import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "~/models";
-import type { FandomData } from "~/types/fanfictions";
 import { FanfictionStatus, FanfictionRating } from "~/models";
 
 interface Props {
   isEditing: boolean;
 }
+interface Emits {
+  (e: "clickPrevious" | "clickCancel" | "clickNext"): void;
+}
 
 defineProps<Props>();
-// NOTE J'aurais préféré watch(fiction, () => {}, { deep: true }) mais fiction est ref et pas reactive
-// Quand la fiction vide par défaut est remplacée par la fiction chargée, on perd l'unité et donc la réactivité
+defineEmits<Emits>();
+
 const unsavedChanges = defineModel<boolean>("unsavedChanges", { required: true });
 const fiction = defineModel<FanfictionModel>("fiction", { required: true });
+watch(fiction, () => (unsavedChanges.value = true), { deep: true }); // si les champs changent
+watch(fiction, () => (unsavedChanges.value = false)); // si la fiction est rechargée
 
-const { fandoms } = useConfigStore();
+const isComplete = computed<boolean>(() => {
+  return [
+    fiction.value.title,
+    fiction.value.summary,
+    fiction.value.status,
+    fiction.value.rating,
+    fiction.value.fandoms?.length,
+    fiction.value.characteristics?.filter((c) => c.characteristicTypeId.toString() === "2").length,
+  ].every((field) => Boolean(field));
+});
+
 const { characteristicTypes } = useConfigStore();
 const { characteristics } = useConfigStore();
-
-// les fandoms et caractéristiques de la fiction sont "remplacés"
-// par les fandoms stockés, pour garder une identité des objets
-// BTagInput utilise l'identité des objets (===) et pas la similitude (==)
-// pour comparer les tags entrés, ce qui potentiellement permet de choisir
-// deux fois le même tag (un préselectionné, un sélectionné)
-// TODO - effectuer ce "remplacement" en amont dans FictionModel?
-
-// FANDOM
-const selectedFandoms = ref<FandomData[]>(
-  fandoms!.filter((f) => fiction.value.fandoms!.map((ff) => ff.id.toString()).includes(f.id.toString())),
-);
-const filteredFandoms = ref<FandomData[]>(fandoms!);
-function getFilteredFandoms(text: number | string | undefined): string[] | undefined {
-  if (text == null) {
-    return;
-  }
-  filteredFandoms.value = fandoms!.filter((option) => {
-    return option.name.toString().toLowerCase().indexOf(text.toString().toLowerCase()) >= 0;
-  });
-}
 
 // GENRE
 const genres = characteristics!.filter((c) => c.characteristicTypeId.toString() === "2");
