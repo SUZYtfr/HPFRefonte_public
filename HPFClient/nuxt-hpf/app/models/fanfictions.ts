@@ -6,6 +6,8 @@ import {
   ChapterData,
   ReviewData,
   VersionData,
+  FanfictionStatus,
+  type FanfictionRating,
   type FandomData,
 } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
@@ -13,20 +15,6 @@ import { ImageHPFData } from "~/types/images";
 import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
 import slugify from "slugify";
 import { CharacteristicModel } from "~/models/characteristics";
-
-export enum FanfictionStatus {
-  OnGoing = 1,
-  Paused = 2,
-  Abandoned = 3,
-  Finished = 4,
-}
-
-export enum FanfictionRating {
-  ALL = 1,
-  P12 = 2,
-  P16 = 3,
-  P18 = 4,
-}
 
 export enum ValidationStatus {
   Unvalidated = 0,
@@ -89,51 +77,12 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   public wordCount: number | null = null;
   public reviewCount: number | null = null;
   public collectionCount: number | null = null;
-  public status: FanfictionStatus = FanfictionStatus.OnGoing;
+  public status: FanfictionStatus = FanfictionStatus.ONGOING;
   public rating: FanfictionRating | null = null;
+
   public featured: boolean = false;
   public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
   public watched: boolean = false;
-
-  @Exclude()
-  public get statusAsText(): string {
-    let result: string = "";
-    switch (this.status) {
-      case 1:
-        result = "Mise à jour";
-        break;
-      case 2:
-        result = "Arrêtée";
-        break;
-      case 3:
-        result = "Abandonnée";
-        break;
-      case 4:
-        result = "Terminée";
-        break;
-    }
-    return result;
-  }
-
-  @Exclude()
-  public get ratingAsText(): string {
-    let result: string = "";
-    switch (this.rating) {
-      case 1:
-        result = "Tout public";
-        break;
-      case 2:
-        result = "Déconseillé aux moins de 12 ans";
-        break;
-      case 3:
-        result = "Déconseillé aux moins de 16 ans";
-        break;
-      case 4:
-        result = "Déconseillé aux moins de 18 ans";
-        break;
-    }
-    return result;
-  }
 
   @Exclude()
   public get titleAsSlug(): string {

@@ -37,7 +37,7 @@
         </h3>
       </div>
       <div class="column is-narrow py-0 px-0 is-flex is-flex-direction-row">
-        <BIcon v-if="fanfiction?.featured" pack="fas" type="is-primary" icon="award" />
+        <BIcon v-if="fanfiction.featured" pack="fas" type="is-primary" icon="award" />
         <span class="has-text-weight-bold">{{ fanfiction.average }}</span>
         <BRate
           v-if="fanfiction.average"
@@ -53,9 +53,9 @@
     <div class="is-flex is-flex-direction-row is-align-items-center">
       <div class="is-flex-grow-5">
         <span class="is-size-6"
-          ><strong>{{ "Auteur" + ((fanfiction?.authors?.length ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
+          ><strong>{{ "Auteur" + ((fanfiction.authors?.length ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
         >
-        <template v-for="(author, index) in fanfiction?.authors" :key="'author_' + author.userId.toString()">
+        <template v-for="(author, index) in fanfiction.authors" :key="'author_' + author.userId.toString()">
           <template v-if="index > 0"> , </template>
           <a class="is-size-6-5 has-text-weight-normal" :href="'auteurs/' + author.userId">{{ author.username }} </a>
         </template>
@@ -63,8 +63,8 @@
       <div class="">
         <a class="is-size-6 has-text-weight-normal"
           >{{
-            fanfiction?.reviewCount != null
-              ? fanfiction?.reviewCount + " review" + (fanfiction?.reviewCount > 1 ? "s" : "")
+            fanfiction.reviewCount != null
+              ? fanfiction.reviewCount + " review" + (fanfiction.reviewCount > 1 ? "s" : "")
               : "aucune review"
           }}<FontAwesomeIcon class="ml-1" icon="comments" />
         </a>
@@ -73,9 +73,9 @@
     <div class="is-flex is-flex-direction-row is-align-items-center">
       <div class="is-flex-grow-5">
         <span class="is-size-6"
-          ><strong>{{ "Fandom" + ((fanfiction?.fandoms?.length ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
+          ><strong>{{ "Fandom" + ((fanfiction.fandoms?.length ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
         >
-        <template v-for="(fandom, index) in fanfiction?.fandoms" :key="'author_' + fandom.id.toString()">
+        <template v-for="(fandom, index) in fanfiction.fandoms" :key="'author_' + fandom.id.toString()">
           <template v-if="index > 0">, </template>
           <NuxtLink
             class="is-size-6-5 has-text-weight-normal"
@@ -85,12 +85,12 @@
         </template>
       </div>
     </div>
-    <div v-if="(fanfiction?.collectionCount ?? 0) > 0" class="is-flex is-flex-direction-row">
+    <div v-if="(fanfiction.collectionCount ?? 0) > 0" class="is-flex is-flex-direction-row">
       <div class="is-flex-grow-5">
         <span
-          ><strong>{{ "Série" + ((fanfiction?.collectionCount ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
+          ><strong>{{ "Série" + ((fanfiction.collectionCount ?? 0) > 1 ? "s" : "") + " : " }}</strong></span
         >
-        <template v-for="(collection, index) in fanfiction?.collections" :key="collection.collectionId.toString()">
+        <template v-for="(collection, index) in fanfiction.collections" :key="collection.collectionId.toString()">
           <template v-if="index > 0"> , </template>
           <a class="is-size-6-5 has-text-weight-normal" :href="'series/' + collection.collectionId"
             >{{ collection.title }}
@@ -100,7 +100,7 @@
     </div>
     <BTaglist class="mb-0">
       <span
-        v-for="characteristic in fanfiction?.characteristics"
+        v-for="characteristic in fanfiction.characteristics"
         :key="'tag_' + characteristic.characteristicId.toString()"
         ><BTag :class="[getClassType(characteristic), 'mt-0  mb-1 mr-2 is-size-8']" type="is-info">{{
           characteristic.name
@@ -109,34 +109,34 @@
     </BTaglist>
     <div class="columns mb-0 mx-0 mt-0">
       <div class="column py-0 pl-0">
-        <RichtextReader :text="fanfiction?.summary || ''" />
+        <RichtextReader :text="fanfiction.summary || ''" />
       </div>
     </div>
     <div class="is-flex is-flex-direction-row is-justify-content-space-evenly">
       <span
-        ><strong>{{ fanfiction?.chapterCount }}</strong>
-        {{ " chapitre" + ((fanfiction?.chapterCount ?? 0) > 1 ? "s" : "") }}</span
+        ><strong>{{ fanfiction.chapterCount }}</strong>
+        {{ " chapitre" + ((fanfiction.chapterCount ?? 0) > 1 ? "s" : "") }}</span
       >
       <span
-        ><strong>{{ fanfiction?.wordCount }}</strong> {{ " mot" + ((fanfiction?.wordCount ?? 0) > 1 ? "s" : "") }}</span
+        ><strong>{{ fanfiction.wordCount }}</strong> {{ " mot" + ((fanfiction.wordCount ?? 0) > 1 ? "s" : "") }}</span
       >
       <span
-        ><strong>{{ fanfiction?.readCount }}</strong>
-        {{ " lecture" + ((fanfiction?.readCount ?? 0) > 1 ? "s" : "") }}</span
+        ><strong>{{ fanfiction.readCount }}</strong>
+        {{ " lecture" + ((fanfiction.readCount ?? 0) > 1 ? "s" : "") }}</span
       >
     </div>
     <div
       class="is-flex is-flex-direction-row is-flex-wrap-nowrap is-justify-content-space-between is-align-items-center"
     >
       <div>
-        <span class="has-text-weight-semibold has-text-primary">{{ fanfiction?.statusAsText }}</span>
+        <span class="has-text-weight-semibold has-text-primary">{{ fanfiction.status }}</span>
         <span class="is-size-6">le </span>
-        <span v-if="fanfiction?.lastUpdateDate instanceof Date" class="is-size-6"
-          ><strong>{{ (fanfiction?.lastUpdateDate ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span
+        <span v-if="fanfiction.lastUpdateDate instanceof Date" class="is-size-6"
+          ><strong>{{ (fanfiction.lastUpdateDate ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span
         >
         <span class="is-size-6-5 is-hidden-mobile">(publiée depuis le </span>
-        <span v-if="fanfiction?.creationDate instanceof Date" class="is-size-6-5 is-hidden-mobile"
-          ><strong>{{ (fanfiction?.creationDate ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span
+        <span v-if="fanfiction.creationDate instanceof Date" class="is-size-6-5 is-hidden-mobile"
+          ><strong>{{ (fanfiction.creationDate ?? new Date()).toLocaleDateString("fr-FR") }}</strong></span
         ><span class="is-size-6-5 is-hidden-mobile">)</span>
       </div>
       <div class="is-block">

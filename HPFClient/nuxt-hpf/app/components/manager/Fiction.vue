@@ -140,7 +140,7 @@
 <script setup lang="ts">
 import { BField, BInput, BTaginput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
 import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "~/models";
-import { FanfictionStatus, FanfictionRating } from "~/models";
+import { FanfictionStatus, FanfictionRating } from "~/types/fanfictions";
 
 interface Props {
   isEditing: boolean;

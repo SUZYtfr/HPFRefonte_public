@@ -124,7 +124,7 @@ async function createCollection(): Promise<true> {
       collectionData: {
         title: collection.value.title,
         summary: collection.value.summary!,
-        access: Number(collection.value.access!),
+        access: collection.value.access!,
         fandoms: { set: collection.value.fandoms!.map((f) => f.id) },
         characteristics: { set: collection.value.characteristics!.map((c) => c.characteristicId.toString()) },
       },
@@ -145,7 +145,7 @@ async function updateCollection(): Promise<true> {
       collectionData: {
         title: collection.value.title,
         summary: collection.value.summary!,
-        access: Number(collection.value.access!),
+        access: collection.value.access!,
         fandoms: { set: collection.value.fandoms!.map((f) => f.id) },
         characteristics: { set: collection.value.characteristics!.map((c) => c.characteristicId.toString()) },
       },

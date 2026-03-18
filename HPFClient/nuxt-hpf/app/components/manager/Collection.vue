@@ -14,7 +14,7 @@
       </BField>
       <BField label="Accès" expanded>
         <BSelect v-model="collection.access" required>
-          <option v-for="[key, value] in Object.entries(Access)" :key="key" :value="key">
+          <option v-for="[key, value] in Object.entries(CollectionAccess)" :key="key" :value="key">
             {{ value }}
           </option>
         </BSelect>
@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { BField, BInput, BDropdown, BDropdownItem, BSelect, BButton } from "buefy";
 import type { CharacteristicModel, CollectionModel } from "~/models";
-import { Access } from "~/types/fanfictions";
+import { CollectionAccess } from "~/types/fanfictions";
 
 interface Props {
   isEditing: boolean;

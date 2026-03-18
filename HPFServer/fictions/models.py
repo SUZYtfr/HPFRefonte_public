@@ -93,10 +93,10 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         blank=True,
         default="",
     )
-    status = models.SmallIntegerField(
+    status = models.CharField(
         verbose_name="état d'écriture",
         choices=FictionStatus.choices,
-        default=FictionStatus.PROGRESS,
+        default=FictionStatus.ONGOING,
     )
     is_watched = models.BooleanField(
         default=False,
@@ -127,7 +127,7 @@ class Fiction(DatedModel, CreatedModel, CharacteristicModel):
         to="fictions.Fandom",
         related_name="fictions",
     )
-    rating = models.PositiveSmallIntegerField(
+    rating = models.CharField(
         verbose_name="audience",
         choices=Rating.choices,
     )
@@ -536,8 +536,8 @@ class Collection(DatedModel, CreatedModel, CharacteristicModel):
         to="images.ContentImage",
         related_name="collection_summaries",
     )
-    access = models.SmallIntegerField(
-        verbose_name="état",
+    access = models.CharField(
+        verbose_name="accès",
         choices=CollectionAccess.choices,
         default=CollectionAccess.CLOSED,
     )

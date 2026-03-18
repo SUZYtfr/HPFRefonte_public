@@ -1,22 +1,22 @@
-from django.db.models import IntegerChoices
+from django.db.models import IntegerChoices, TextChoices
 
 
-class FictionStatus(IntegerChoices):
+class FictionStatus(TextChoices):
     """Statuts d'écriture des fictions"""
 
-    PROGRESS = (1, "En cours")
-    PAUSED = (2, "À l'arrêt")
-    ABANDONED = (3, "Abandonnée")
-    COMPLETED = (4, "Terminée")
+    ONGOING = ("ONGOING", "En cours")
+    PAUSED = ("PAUSED", "À l'arrêt")
+    ABANDONED = ("ABANDONED", "Abandonnée")
+    FINISHED = ("FINISHED", "Terminée")
 
 
-class Rating(IntegerChoices):
+class Rating(TextChoices):
     """Audience d'une fiction"""
 
-    ALL = (1, "Tout public")
-    P12 = (2, "Déconseillé aux moins de 12 ans")
-    P16 = (3, "Déconseillé aux moins de 16 ans")
-    P18 = (4, "Déconseillé aux moins de 18 ans")
+    ALL = ("ALL", "Tout public")
+    P12 = ("P12", "Déconseillé aux moins de 12 ans")
+    P16 = ("P16", "Déconseillé aux moins de 16 ans")
+    P18 = ("P18", "Déconseillé aux moins de 18 ans")
 
 
 class ChapterValidationStage(IntegerChoices):
@@ -32,9 +32,9 @@ class ChapterValidationStage(IntegerChoices):
     DISCUSSED = (8, "À discuter")
 
 
-class CollectionAccess(IntegerChoices):
+class CollectionAccess(TextChoices):
     """Niveaux d'accès aux séries"""
 
-    CLOSED = (1, "Fermée")
-    MODERATED = (2, "Modérée")
-    OPEN = (3, "Ouverte")
+    CLOSED = ("CLOSED", "Fermée")
+    MODERATED = ("MODERATED", "Modérée")
+    OPEN = ("OPEN", "Ouverte")

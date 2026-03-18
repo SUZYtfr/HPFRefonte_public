@@ -6,10 +6,17 @@ import { AuthorData } from "~/types/users";
 
 // #region Fanfiction
 export enum FanfictionStatus {
-  OnGoing = 1,
-  Paused = 2,
-  Abandoned = 3,
-  Finished = 4,
+  ONGOING = "Mise à jour",
+  PAUSED = "Arrêtée",
+  ABANDONED = "Abandonnée",
+  FINISHED = "Terminée",
+}
+
+export enum FanfictionRating {
+  ALL = "tout public",
+  P12 = "-12 ans",
+  P16 = "-16 ans",
+  P18 = "-18 ans",
 }
 
 export enum ValidationStatus {
@@ -43,30 +50,11 @@ export class FanfictionData extends BasicClass<FanfictionData> {
   public wordCount: number | null = null;
   public reviewCount: number | null = null;
   public collectionCount: number | null = null;
-  public status: FanfictionStatus = FanfictionStatus.OnGoing;
+  public status: FanfictionStatus = FanfictionStatus.ONGOING;
+  public rating: FanfictionRating | null = null;
   public featured: boolean = false;
   public validationStatus: ValidationStatus = ValidationStatus.Unvalidated;
   public watched: boolean = false;
-
-  @Exclude()
-  public get statusAsText(): string {
-    let result: string = "";
-    switch (this.status) {
-      case 1:
-        result = "Mise à jour";
-        break;
-      case 2:
-        result = "Arrêtée";
-        break;
-      case 3:
-        result = "Abandonnée";
-        break;
-      case 4:
-        result = "Terminée";
-        break;
-    }
-    return result;
-  }
 
   @Exclude()
   public get titleAsSlug(): string {
@@ -113,10 +101,10 @@ export class ReviewData extends BasicClass<ReviewData> {
   public postDate: Date | null = null;
 }
 
-export enum Access {
-  Closed = 1,
-  Moderated = 2,
-  Opened = 3,
+export enum CollectionAccess {
+  CLOSED = "Fermée",
+  MODERATED = "Modérée",
+  OPEN = "Ouverte",
 }
 
 export enum itemType {
@@ -137,19 +125,7 @@ export class CollectionData extends BasicClass<CollectionData> {
   public reviewCount: number | null = null;
   public average: number | null = null;
 
-  public access: Access | null = null;
-  public get accessAsText(): "fermée" | "modérée" | "ouverte" | null {
-    switch (this.access) {
-      case Access.Closed:
-        return "fermée";
-      case Access.Moderated:
-        return "modérée";
-      case Access.Opened:
-        return "ouverte";
-      default:
-        return null;
-    }
-  }
+  public access: CollectionAccess | null = null;
 }
 
 export class CollectionItemData extends BasicClass<CollectionItemData> {

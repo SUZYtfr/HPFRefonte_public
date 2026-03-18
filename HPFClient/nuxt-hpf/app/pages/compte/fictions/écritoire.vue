@@ -157,8 +157,8 @@ async function postFiction(isDraft: boolean): Promise<void> {
       title: fiction.value.title,
       summary: fiction.value.summary || "",
       storynote: fiction.value.storynote || "",
-      status: Number(fiction.value.status),
-      rating: Number(fiction.value.rating!),
+      status: fiction.value.status,
+      rating: fiction.value.rating!,
       fandoms: {
         set: fiction.value.fandoms!.map((f) => f.id),
       },
@@ -265,8 +265,8 @@ async function updateFiction(): Promise<void> {
       title: fiction.value.title,
       summary: fiction.value.summary || "",
       storynote: fiction.value.storynote,
-      status: Number(fiction.value.status),
-      rating: Number(fiction.value.rating!),
+      status: fiction.value.status,
+      rating: fiction.value.rating!,
       fandoms: {
         set: fiction.value.fandoms!.map((f) => f.id),
       },

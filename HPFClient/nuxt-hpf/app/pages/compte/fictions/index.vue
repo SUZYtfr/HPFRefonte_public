@@ -54,7 +54,7 @@
               sortable
             >
               {{ fiction.lastUpdateDate?.toLocaleDateString("fr-fr") || "Non publiée" }}
-              <BTag class="is-pulled-right">{{ fiction.statusAsText }}</BTag>
+              <BTag class="is-pulled-right">{{ Object.fromEntries(Object.entries(FanfictionStatus))[fiction.status] }}</BTag>
             </BTableColumn>
             <!-- TODO dont ràr -->
             <BTableColumn
@@ -174,6 +174,7 @@ import { BTable, BTableColumn, BButton, BTabs, BTabItem, BSwitch, BRate, BTag } 
 import { ChapterModel, FanfictionModel } from "@/models";
 import { plainToInstance } from "class-transformer";
 import { Ordering, type FictionOrder, type OffsetPaginationInput, type FictionFilters } from "#gql/default";
+import { FanfictionStatus } from "~/types/fanfictions";
 
 definePageMeta({
   auth: true,

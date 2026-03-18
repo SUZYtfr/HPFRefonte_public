@@ -27,7 +27,7 @@
         "
       >
         <BTableColumn v-slot="{ row: collection }: { row: CollectionModel }" field="title" label="Titre" sortable>
-          {{ collection.title }} <BTag class="is-pulled-right">{{ collection.accessAsText }}</BTag>
+          {{ collection.title }} <BTag class="is-pulled-right">{{ Object.fromEntries(Object.entries(CollectionAccess))[collection.access!] }}</BTag>
         </BTableColumn>
         <!-- TODO dont ràr -->
         <BTableColumn
@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { BTable, BTableColumn, BButton, BRate, BTag } from "buefy";
 import { CollectionModel } from "~/models";
-import { CollectionItemData } from "~/types/fanfictions";
+import { CollectionAccess, CollectionItemData } from "~/types/fanfictions";
 import { plainToInstance } from "class-transformer";
 import { Ordering, type CollectionOrder, type OffsetPaginationInput /* CollectionFilters */ } from "#gql/default";
 
