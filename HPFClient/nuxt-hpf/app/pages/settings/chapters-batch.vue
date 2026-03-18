@@ -357,7 +357,13 @@
 
 <script setup lang="ts">
 //#region Imports
-import { ChapterModel, FanfictionModel, VersionModel, type BatchChapterFilters } from "~/models";
+import {
+  ChapterModel,
+  type CharacteristicModel,
+  FanfictionModel,
+  VersionModel,
+  type BatchChapterFilters,
+} from "~/models";
 import { ChapterValidationStatusEnum, type ChapterValidationData } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { getClassTypeColor } from "~/utils/characteristics";
@@ -444,7 +450,7 @@ for (let i = 1; i <= 100; i++) {
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
               configStore.characteristics[Math.floor(Math.random() * (configStore.characteristics?.length - 1))],
-            ] as CharacteristicData[])
+            ] as CharacteristicModel[])
           : [],
     }),
   });

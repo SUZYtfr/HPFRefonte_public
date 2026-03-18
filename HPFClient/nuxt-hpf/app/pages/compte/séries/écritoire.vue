@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { CollectionModel } from "~/models";
-import { CollectionItemData, itemType } from "~/types/fanfictions";
+import { CollectionItemData, ItemType } from "~/types/fanfictions";
 import { RecordStatusEnum } from "~/types/basics";
 import { BSteps, BStepItem, BLoading } from "buefy";
 import { plainToInstance } from "class-transformer";
@@ -106,7 +106,7 @@ const searchItemFilters = reactive<SearchItemTypeFilter>({
   creationUsername: "Loutre", // TODO depuis profileData
   collectionId: collection.value.collectionId.toString(),
   title: null,
-  types: Object.values(itemType),
+  types: Object.values(ItemType),
 });
 async function searchItems(): Promise<CollectionItemData[]> {
   const searchItems = await GqlSearchItems({

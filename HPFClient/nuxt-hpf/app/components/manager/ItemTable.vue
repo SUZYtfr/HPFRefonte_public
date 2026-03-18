@@ -52,8 +52,8 @@
       </template>
       <template #searchable>
         <BSelect v-model="searchItemFilters!.types">
-          <option :value="Object.values(itemType)">Tous</option>
-          <option v-for="[key, value] in Object.entries(itemType)" :key="key" :value="[value]">
+          <option :value="Object.values(ItemType)">Tous</option>
+          <option v-for="[key, value] in Object.entries(ItemType)" :key="key" :value="[value]">
             {{ value }}
           </option>
         </BSelect>
@@ -168,7 +168,7 @@
 
 <script setup lang="ts">
 import { BTable, BTableColumn, BButton, BAutocomplete, BIcon, type TableRowDragEvent } from "buefy";
-import { type CollectionItemData, itemType } from "~/types/fanfictions";
+import { type CollectionItemData, ItemType } from "~/types/fanfictions";
 import type { UserFilters, SearchItemTypeFilter, CollectionItemInput } from "#gql";
 import type { UserData } from "~/types/users";
 

@@ -27,7 +27,10 @@
         "
       >
         <BTableColumn v-slot="{ row: collection }: { row: CollectionModel }" field="title" label="Titre" sortable>
-          {{ collection.title }} <BTag class="is-pulled-right">{{ Object.fromEntries(Object.entries(CollectionAccess))[collection.access!] }}</BTag>
+          {{ collection.title }}
+          <BTag class="is-pulled-right">{{
+            Object.fromEntries(Object.entries(CollectionAccess))[collection.access!]
+          }}</BTag>
         </BTableColumn>
         <!-- TODO dont ràr -->
         <BTableColumn

@@ -107,7 +107,7 @@ export enum CollectionAccess {
   OPEN = "Ouverte",
 }
 
-export enum itemType {
+export enum ItemType {
   Chapter = "chapitre",
   Fiction = "fiction",
   Collection = "série",
@@ -136,14 +136,14 @@ export class CollectionItemData extends BasicClass<CollectionItemData> {
 
   // TODO construire différents types en utilisant __typename?
   public __typename: string | null = null;
-  public get itemType(): itemType | null {
+  public get itemType(): ItemType | null {
     switch (this.__typename) {
       case "CollectionCollectionItemType":
-        return itemType.Collection;
+        return ItemType.Collection;
       case "FictionCollectionItemType":
-        return itemType.Fiction;
+        return ItemType.Fiction;
       case "ChapterCollectionItemType":
-        return itemType.Chapter;
+        return ItemType.Chapter;
       default:
         return null;
     }

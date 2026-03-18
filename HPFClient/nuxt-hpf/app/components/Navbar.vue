@@ -141,13 +141,17 @@
                 <NuxtLink class="dropdown-item" :to="{ name: 'compte-fictions' }" no-prefetch>Mes fictions</NuxtLink>
               </BDropdownItem>
               <BDropdownItem aria-role="listitem" has-link>
-                <NuxtLink class="dropdown-item" :to="{ name: 'compte-fictions-écritoire' }" no-prefetch>Nouvelle fiction</NuxtLink>
+                <NuxtLink class="dropdown-item" :to="{ name: 'compte-fictions-écritoire' }" no-prefetch
+                  >Nouvelle fiction</NuxtLink
+                >
               </BDropdownItem>
               <BDropdownItem aria-role="listitem" has-link>
                 <NuxtLink class="dropdown-item" :to="{ name: 'compte-séries' }" no-prefetch>Mes séries</NuxtLink>
               </BDropdownItem>
               <BDropdownItem aria-role="listitem" has-link>
-                <NuxtLink class="dropdown-item" :to="{ name: 'compte-séries-écritoire' }" no-prefetch>Nouvelle série</NuxtLink>
+                <NuxtLink class="dropdown-item" :to="{ name: 'compte-séries-écritoire' }" no-prefetch
+                  >Nouvelle série</NuxtLink
+                >
               </BDropdownItem>
               <BDropdownItem aria-role="listitem" @click="logout">Se déconnecter</BDropdownItem>
             </BDropdown>

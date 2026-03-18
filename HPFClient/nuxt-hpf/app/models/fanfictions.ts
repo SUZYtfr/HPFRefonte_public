@@ -12,7 +12,7 @@ import {
 } from "~/types/fanfictions";
 import { AuthorData, UserData } from "~/types/users";
 import { ImageHPFData } from "~/types/images";
-import { CharacteristicData, TriggerWarningData } from "~/types/characteristics";
+import { TriggerWarningData } from "~/types/characteristics";
 import slugify from "slugify";
 import { CharacteristicModel } from "~/models/characteristics";
 
@@ -95,8 +95,8 @@ export class FanfictionModel extends BasicClass<FanfictionModel> {
   @Type(() => ReviewModel)
   public reviews: ReviewModel[] | null = null;
 
-  @Type(() => CharacteristicData)
-  public characteristics: CharacteristicData[] | null = null;
+  @Type(() => CharacteristicModel)
+  public characteristics: CharacteristicModel[] | null = null;
 
   @Type(() => TriggerWarningData)
   public triggerWarnings: TriggerWarningData[] | null = null;

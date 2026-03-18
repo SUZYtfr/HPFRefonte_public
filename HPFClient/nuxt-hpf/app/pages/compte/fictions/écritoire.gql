@@ -11,6 +11,7 @@ query getPrivateFiction($fictionId: ID) {
     }
     characteristics {
       id
+      characteristicTypeId
     }
     chapters {
       results {

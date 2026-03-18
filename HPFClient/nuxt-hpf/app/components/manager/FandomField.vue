@@ -1,30 +1,38 @@
 <template>
-  <BTaginput
-    v-model="selectedFandoms"
-    field="name"
-    ellipsis
-    :allow-new="false"
-    autocomplete
-    :required="!selectedFandoms.length"
-    keep-first
-    keep-open
-    open-on-focus
-    placeholder="Ajouter au moins un fandom"
-    :data="filteredFandoms"
-    @typing="getFilteredFandoms"
-    @update:model-value="
-      (value: FandomData[]) => {
-        fandomField = value;
-      }
-    "
-  />
+  <BField :label :expanded>
+    <BTaginput
+      v-model="selectedFandoms"
+      field="name"
+      ellipsis
+      :allow-new="false"
+      autocomplete
+      :required="!selectedFandoms.length"
+      keep-first
+      keep-open
+      open-on-focus
+      placeholder="Ajouter au moins un fandom"
+      :data="filteredFandoms"
+      @typing="getFilteredFandoms"
+      @update:model-value="
+        (value: FandomData[]) => {
+          fandomField = value;
+        }
+      "
+    />
+  </BField>
 </template>
 
 <script setup lang="ts">
-import { BTaginput } from "buefy";
+import { BField, BTaginput } from "buefy";
 import type { FandomData } from "~/types/fanfictions";
 
+interface Props {
+  label?: string;
+  expanded?: boolean;
+}
+
 const fandomField = defineModel<FandomData[]>("fandomField", { required: true });
+defineProps<Props>();
 
 const { fandoms } = useConfigStore();
 

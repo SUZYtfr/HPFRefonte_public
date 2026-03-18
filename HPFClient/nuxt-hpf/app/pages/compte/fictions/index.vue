@@ -54,7 +54,9 @@
               sortable
             >
               {{ fiction.lastUpdateDate?.toLocaleDateString("fr-fr") || "Non publiée" }}
-              <BTag class="is-pulled-right">{{ Object.fromEntries(Object.entries(FanfictionStatus))[fiction.status] }}</BTag>
+              <BTag class="is-pulled-right">{{
+                Object.fromEntries(Object.entries(FanfictionStatus))[fiction.status]
+              }}</BTag>
             </BTableColumn>
             <!-- TODO dont ràr -->
             <BTableColumn

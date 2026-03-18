@@ -32,25 +32,18 @@
           }"
         />
       </BField>
-      <BField label="Fandoms" expanded>
-        <ManagerFandomInput v-model:fandom-field="collection.fandoms!" />
-      </BField>
-      <BField label="Caractéristiques">
-        <ManagerCharacteristicInput
-          :characteristic-field="collection.characteristics! as CharacteristicModel[]"
-          @update:characteristic-field="
-            (characteristics) => {
-              collection.characteristics = characteristics;
-            }
-          "
-        />
-      </BField>
+      <ManagerFandomField v-model:fandom-field="collection.fandoms!" label="Fandoms" expanded />
+      <ManagerCharacteristicField
+        v-model:characteristic-field="collection.characteristics!"
+        label="Caractéristiques"
+        :select-addon="true"
+      />
     </div>
   </div>
   <!-- Barre de navigation -->
   <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
     <div></div>
-    <BButton v-if="isEditing" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
+    <BButton v-show="isEditing" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
       >Annuler les modifications</BButton
     >
     <BButton
@@ -68,7 +61,7 @@
 
 <script setup lang="ts">
 import { BField, BInput, BDropdown, BDropdownItem, BSelect, BButton } from "buefy";
-import type { CharacteristicModel, CollectionModel } from "~/models";
+import type { CollectionModel } from "~/models";
 import { CollectionAccess } from "~/types/fanfictions";
 
 interface Props {

@@ -43,72 +43,22 @@
       </BField>
 
       <BField grouped>
-        <BField label="Fandoms" expanded>
-          <ManagerFandomInput v-model:fandom-field="fiction.fandoms!" />
-        </BField>
-        <BField label="Genres" expanded>
-          <BTaginput
-            v-model="selectedGenres"
-            field="name"
-            ellipsis
-            :allow-new="false"
-            autocomplete
-            :required="!selectedGenres.length"
-            keep-first
-            keep-open
-            open-on-focus
-            placeholder="Ajouter au moins un genre"
-            :data="filteredGenres"
-            @typing="getFilteredGenres"
-            @add="(value: CharacteristicModel) => (fiction.characteristics = fiction.characteristics!.concat(value))"
-            @remove="
-              (value: CharacteristicModel) =>
-                (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
-            "
-          />
-        </BField>
-      </BField>
-
-      <BField label="Autres caractéristiques">
-        <BSelect v-model="selectedCharacteristicType">
-          <option
-            v-for="characteristicType in otherCharacteristicTypes"
-            :key="characteristicType.characteristicTypeId"
-            :value="characteristicType"
-          >
-            {{ characteristicType.name }}
-          </option>
-        </BSelect>
-        <BTaginput
-          v-model="selectedCharacteristics"
-          field="name"
+        <ManagerFandomField v-model:fandom-field="fiction.fandoms!" label="Fandoms" expanded />
+        <ManagerCharacteristicField
+          v-model:characteristic-field="fiction.characteristics!"
+          :required="!fiction.characteristics!.filter((c) => c.characteristicTypeId.toString() === '2').length"
+          :characteristic-type-ids="['2'] /* juste 2 - Genre */"
+          label="Genres"
           expanded
-          ellipsis
-          :allow-new="false"
-          autocomplete
-          keep-first
-          keep-open
-          open-on-focus
-          :placeholder="
-            'Ajouter des ' +
-            selectedCharacteristicType.name.toLowerCase() +
-            's parmi ' +
-            characteristics
-              ?.filter(
-                (c) => c.characteristicTypeId.toString() === selectedCharacteristicType.characteristicTypeId.toString(),
-              )!
-              .length.toString() +
-            ' choix'
-          "
-          :data="filteredCharacteristics"
-          @typing="getFilteredCharacteristics"
-          @add="(value: CharacteristicModel) => (fiction.characteristics = fiction.characteristics!.concat(value))"
-          @remove="
-            (value: CharacteristicModel) =>
-              (fiction.characteristics = fiction.characteristics!.slice(fiction.characteristics!.indexOf(value)))
-          "
         />
       </BField>
+
+      <ManagerCharacteristicField
+        v-model:characteristic-field="fiction.characteristics!"
+        :select-addon="true"
+        :characteristic-type-ids="'1345678'.split('') /* exclut 2 - Genre */"
+        label="Autres caractéristiques"
+      />
 
       <BField label="Notes de fictions">
         <RichtextEditor
@@ -128,7 +78,7 @@
   <!-- Barre de navigation -->
   <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
     <BButton @click.prevent="$emit('clickPrevious')">Relire le réglement</BButton>
-    <BButton v-if="isEditing" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
+    <BButton v-show="isEditing" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
       >Annuler les modifications</BButton
     >
     <BButton type="is-primary" :disabled="!isComplete" @click.prevent="$emit('clickNext')">
@@ -138,8 +88,8 @@
 </template>
 
 <script setup lang="ts">
-import { BField, BInput, BTaginput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
-import type { CharacteristicModel, CharacteristicTypeModel, FanfictionModel } from "~/models";
+import { BField, BInput, BSelect, BDropdown, BDropdownItem, BButton } from "buefy";
+import type { FanfictionModel } from "~/models";
 import { FanfictionStatus, FanfictionRating } from "~/types/fanfictions";
 
 interface Props {
@@ -167,54 +117,4 @@ const isComplete = computed<boolean>(() => {
     fiction.value.characteristics?.filter((c) => c.characteristicTypeId.toString() === "2").length,
   ].every((field) => Boolean(field));
 });
-
-const { characteristicTypes } = useConfigStore();
-const { characteristics } = useConfigStore();
-
-// GENRE
-const genres = characteristics!.filter((c) => c.characteristicTypeId.toString() === "2");
-const selectedGenres = ref<CharacteristicModel[]>(
-  genres!.filter((ct) =>
-    fiction.value.characteristics!.map((c) => c.characteristicId.toString()).includes(ct.characteristicId.toString()),
-  ),
-);
-const filteredGenres = ref<CharacteristicModel[]>(genres);
-function getFilteredGenres(text: number | string | undefined): string[] | undefined {
-  if (text == null) {
-    return;
-  }
-  filteredGenres.value = genres!.filter((option) => {
-    return option.name.toString().toLowerCase().indexOf(text.toString().toLowerCase()) >= 0;
-  });
-}
-
-// AUTRES CARACTÉRISTIQUES
-const otherCharacteristicTypes = characteristicTypes!.filter((ct) => ct.characteristicTypeId.toString() !== "2");
-const selectedCharacteristicType = ref<CharacteristicTypeModel>(otherCharacteristicTypes[0]!);
-const otherCharacteristics = characteristics!.filter((c) => c.characteristicTypeId.toString() !== "2");
-const selectedCharacteristics = ref<CharacteristicModel[]>(
-  otherCharacteristics!.filter((ct) =>
-    fiction.value.characteristics!.map((c) => c.characteristicId.toString()).includes(ct.characteristicId.toString()),
-  ),
-);
-const filteredCharacteristics = ref<CharacteristicModel[]>(
-  otherCharacteristics!.filter(
-    (option) =>
-      option.characteristicTypeId.toString() === selectedCharacteristicType.value.characteristicTypeId.toString(),
-  ),
-);
-function getFilteredCharacteristics(text: number | string | undefined): string[] | undefined {
-  if (text == null) {
-    return;
-  }
-  filteredCharacteristics.value = otherCharacteristics!
-    .filter(
-      (option) =>
-        option.characteristicTypeId.toString() === selectedCharacteristicType.value.characteristicTypeId.toString(),
-    )
-    .filter((option) => {
-      return option.name.toString().toLowerCase().indexOf(text.toString().toLowerCase()) >= 0;
-    });
-}
-watch(selectedCharacteristicType, () => getFilteredCharacteristics(""));
 </script>

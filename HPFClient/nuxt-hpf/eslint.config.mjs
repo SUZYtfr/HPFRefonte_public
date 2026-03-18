@@ -56,7 +56,7 @@ export default withNuxt({
         multiline: "below",
       },
     ],
-
+    "vue/require-default-prop": "off",
     "vue/html-self-closing": [
       "error",
       {

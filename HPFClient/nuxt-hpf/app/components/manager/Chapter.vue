@@ -89,7 +89,7 @@
   <!-- Barre de navigation -->
   <div class="p-2 is-flex is-flex-direction-row is-justify-content-space-between">
     <BButton @click.prevent="$emit('clickPrevious')">Revenir à la fiction</BButton>
-    <BButton v-if="activeTab" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
+    <BButton v-show="activeTab" type="is-danger" :disabled="!unsavedChanges" @click.prevent="$emit('clickCancel')"
       >Annuler les modifications</BButton
     >
     <BField>
