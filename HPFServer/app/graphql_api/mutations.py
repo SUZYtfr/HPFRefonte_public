@@ -15,6 +15,7 @@ from app.graphql_api.types import (
     ChapterVersionType,
     ChapterReviewType,
     FictionReviewType,
+    CollectionReviewType,
 )
 from app.graphql_api.inputs import (
     NewsCommentInput,
@@ -37,8 +38,9 @@ from fictions.models import (
     FictionCollectionItem,
     CollectionCollectionItem,
 )
-from reviews.models import ChapterReview, FictionReview
+from reviews.models import ChapterReview, FictionReview, CollectionReview
 from core.text_functions import count_words
+
 
 ### NEWS
 def post_comment(
@@ -70,7 +72,7 @@ def create_fiction(
 
     # mutation
     word_count = count_words(first_chapter_data.text)
-    if not first_chapter_data.is_draft:   # TODO - and user.has_auto_publish
+    if not first_chapter_data.is_draft:  # TODO - and user.has_auto_publish
         publication_date = timezone.now()
     else:
         publication_date = None
@@ -123,7 +125,9 @@ def create_fiction(
             if first_chapter_data.trigger_warnings.add:
                 chapter.trigger_warnings.add(*first_chapter_data.trigger_warnings.add)
             if first_chapter_data.trigger_warnings.remove:
-                chapter.trigger_warnings.remove(*first_chapter_data.trigger_warnings.remove)
+                chapter.trigger_warnings.remove(
+                    *first_chapter_data.trigger_warnings.remove,
+                )
             if first_chapter_data.trigger_warnings.set == []:
                 chapter.trigger_warnings.clear()
             if first_chapter_data.trigger_warnings.set:
@@ -161,12 +165,12 @@ def update_fiction(
         raise NotOwnerOrStaffError
 
     # mutation
-    fiction.modification_user=current_user
-    fiction.title=fiction_data.title
-    fiction.summary=fiction_data.summary
-    fiction.storynote=fiction_data.storynote
-    fiction.status=fiction_data.status
-    fiction.rating=fiction_data.rating
+    fiction.modification_user = current_user
+    fiction.title = fiction_data.title
+    fiction.summary = fiction_data.summary
+    fiction.storynote = fiction_data.storynote
+    fiction.status = fiction_data.status
+    fiction.rating = fiction_data.rating
     fiction.save()
 
     if fiction_data.fandoms:
@@ -222,7 +226,7 @@ def create_chapter(
 
     # mutation
     word_count = count_words(chapter_data.text)
-    if not chapter_data.is_draft:   # TODO - and user.has_auto_publish
+    if not chapter_data.is_draft:  # TODO - and user.has_auto_publish
         publication_date = timezone.now()
     else:
         publication_date = None
@@ -290,7 +294,7 @@ def update_chapter(
     # mutation
     is_publishing = not chapter.is_published() and not chapter_data.is_draft
 
-    if not chapter_data.is_draft:   # TODO - and user.has_auto_publish
+    if not chapter_data.is_draft:  # TODO - and user.has_auto_publish
         publication_date = timezone.now()
     else:
         publication_date = chapter.publication_date
@@ -361,6 +365,7 @@ def delete_chapter(
 
 # Séries
 
+
 def create_collection(
     info: Info,
     collection_data: CollectionInput,
@@ -392,7 +397,9 @@ def create_collection(
             if collection_data.characteristics.add:
                 collection.characteristics.add(*collection_data.characteristics.add)
             if collection_data.characteristics.remove:
-                collection.characteristics.remove(*collection_data.characteristics.remove)
+                collection.characteristics.remove(
+                    *collection_data.characteristics.remove,
+                )
             if collection_data.characteristics.set == []:
                 collection.characteristics.clear()
             if collection_data.characteristics.set:
@@ -436,7 +443,9 @@ def update_collection(
             if collection_data.characteristics.add:
                 collection.characteristics.add(*collection_data.characteristics.add)
             if collection_data.characteristics.remove:
-                collection.characteristics.remove(*collection_data.characteristics.remove)
+                collection.characteristics.remove(
+                    *collection_data.characteristics.remove,
+                )
             if collection_data.characteristics.set == []:
                 collection.characteristics.clear()
             if collection_data.characteristics.set:
@@ -460,7 +469,10 @@ def create_collection_item(
 
     # mutation
     if chapter_id := getattr(collection_item_data, "chapter_id", None):
-        if ChapterCollectionItem.objects.filter(parent=parent_collection, chapter_id=chapter_id.value):
+        if ChapterCollectionItem.objects.filter(
+            parent=parent_collection,
+            chapter_id=chapter_id.value,
+        ):
             msg = "La série parente contient déjà le chapitre"
             raise ValueError(msg)
 
@@ -471,7 +483,10 @@ def create_collection_item(
             addition_user=current_user,
         )
     elif fiction_id := getattr(collection_item_data, "fiction_id", None):
-        if FictionCollectionItem.objects.filter(parent=parent_collection, fiction_id=fiction_id.value):
+        if FictionCollectionItem.objects.filter(
+            parent=parent_collection,
+            fiction_id=fiction_id.value,
+        ):
             msg = "La série parente contient déjà la fiction"
             raise ValueError(msg)
 
@@ -482,7 +497,10 @@ def create_collection_item(
             addition_user=current_user,
         )
     elif collection_id := getattr(collection_item_data, "collection_id", None):
-        if CollectionCollectionItem.objects.filter(parent=parent_collection, collection_id=collection_id.value):
+        if CollectionCollectionItem.objects.filter(
+            parent=parent_collection,
+            collection_id=collection_id.value,
+        ):
             msg = "La série parente contient déjà la série"
             raise ValueError(msg)
 
@@ -557,6 +575,7 @@ def delete_collection_item(
 
 ### REVIEWS
 
+
 def create_fiction_review(
     info: Info,
     fiction_id: strawberry.ID,
@@ -597,7 +616,28 @@ def create_chapter_review(
     return cast(ChapterReviewType, chapter_review)
 
 
+def create_collection_review(
+    info: Info,
+    collection_id: strawberry.ID,
+    review_data: ReviewInput,
+) -> CollectionReviewType:
+    current_user = get_current_user(info)
+    collection = Collection.objects.get(pk=collection_id)
+
+    # TODO vérifier les conditions de reviews ici
+    collection_review = CollectionReview.objects.create(
+        **vars(review_data),
+        creation_user=current_user,
+        collection=collection,
+        is_draft=False,
+        publication_date=timezone.now(),
+    )
+
+    return cast(CollectionReviewType, collection_review)
+
+
 ### ADMIN
+
 
 ### Fictions
 def invalidate_chapter_version(
@@ -613,15 +653,18 @@ def invalidate_chapter_version(
     if not chapter_version.submission_date:
         msg = "Invalidation impossible : La version de texte est un brouillon."
         raise Exception(msg)
-    if chapter_version != chapter_version.chapter.last_version \
-        and chapter_version != chapter_version.chapter.published_version:
+    if (
+        chapter_version != chapter_version.chapter.last_version
+        and chapter_version != chapter_version.chapter.published_version
+    ):
         msg = "Invalidation impossible : La version de texte n'est pas une version publiée ou de travail."
         raise Exception(msg)
 
     # mutation
     with django.db.transaction.atomic():
         for field, value in vars(invalidation_data).items():
-            if field == "invalidation_reasons": continue  # TODO moche  #noqa:E701
+            if field == "invalidation_reasons":
+                continue  # TODO moche  #noqa:E701
             setattr(chapter_version, field, value)
             chapter_version.invalidation_date = timezone.now()
             chapter_version.invalidation_user = current_user
@@ -671,6 +714,10 @@ class Mutation:
     )
     create_chapter_review = strawberry_django.mutation(
         resolver=create_chapter_review,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
+    create_collection_review = strawberry_django.mutation(
+        resolver=create_collection_review,
         extensions=[IsAuthenticated(fail_silently=False)],
     )
 

@@ -5,7 +5,7 @@ from strawberry_django import ListInput
 
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion, Collection
-from reviews.models import BaseReview, ChapterReview, FictionReview
+from reviews.models import BaseReview, ChapterReview, FictionReview, CollectionReview
 
 
 ### NEWS
@@ -56,19 +56,25 @@ class CollectionItemInput:
 @strawberry_django.input(model=BaseReview)
 class ReviewInput:
     text: str
-    grading: int | None
+    grading: int | None = None
 
 
 @strawberry_django.input(model=ChapterReview)
 class ChapterReviewInput:
     text: str
-    grading: int | None
+    grading: int | None = None
 
 
 @strawberry_django.input(model=FictionReview)
 class FictionReviewInput:
     text: str
-    grading: int | None
+    grading: int | None = None
+
+
+@strawberry_django.input(model=CollectionReview)
+class CollectionReviewInput:
+    text: str
+    grading: int | None = None
 
 
 @strawberry_django.input(model=ChapterVersion)  # seulement les champs concernés
@@ -77,4 +83,3 @@ class InvalidationInput:
     private_comment: auto
     invalidation_reasons: list[int]
     to_be_discussed: auto
-

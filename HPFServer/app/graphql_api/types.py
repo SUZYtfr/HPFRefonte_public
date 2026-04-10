@@ -13,6 +13,7 @@ from app.graphql_api.filters import (
     FandomFilters,
     ChapterReviewFilters,
     FictionReviewFilters,
+    CollectionReviewFilters,
 )
 from app.graphql_api.orders import (
     NewsArticleOrder,
@@ -21,6 +22,7 @@ from app.graphql_api.orders import (
     ChapterOrder,
     ChapterReviewOrder,
     FictionReviewOrder,
+    CollectionReviewOrder,
 )
 
 from fictions.models import (
@@ -36,7 +38,7 @@ from fictions.models import (
     ChapterCollectionItem,
     ChapterValidationStage,
 )
-from reviews.models import ChapterReview, FictionReview
+from reviews.models import ChapterReview, FictionReview, CollectionReview
 from characteristics.models import (
     Characteristic,
     CharacteristicType as CharType,
@@ -50,6 +52,7 @@ from typing import Optional, Annotated
 
 
 ### USERS & SITES
+
 
 @strawberry_django.type(model=UserPreferences, fields="__all__")
 class UserPreferencesType:
@@ -82,6 +85,7 @@ class ThemeType:
 
 ### CHARACTERISTICS
 
+
 @strawberry_django.type(model=Characteristic, exclude=["_order"])
 class CharacteristicType:
     order: auto
@@ -108,7 +112,13 @@ class TriggerWarningType:
 
 ### FICTIONS
 
-@strawberry_django.type(model=Chapter, exclude=["_order"], filters=ChapterFilters, order=ChapterOrder)
+
+@strawberry_django.type(
+    model=Chapter,
+    exclude=["_order"],
+    filters=ChapterFilters,
+    order=ChapterOrder,
+)
 class ChapterType:
     def resolve_validation_status(self: Chapter) -> ChapterValidationStage:
         return self.last_version.validation_status
@@ -117,8 +127,10 @@ class ChapterType:
     review_count: auto
     order: auto
     trigger_warnings: list["TriggerWarningType"]
-    versions: OffsetPaginated["ChapterVersionType"] = strawberry_django.offset_paginated(
-        extensions=[IsStaffOrOwner(owner_field="creation_user")],
+    versions: OffsetPaginated["ChapterVersionType"] = (
+        strawberry_django.offset_paginated(
+            extensions=[IsStaffOrOwner(owner_field="creation_user")],
+        )
     )
     authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
     creation_user: "UserType"
@@ -128,7 +140,12 @@ class ChapterType:
     word_count: auto
 
 
-@strawberry_django.type(model=Fiction, fields="__all__", filters=FictionFilters, order=FictionOrder)
+@strawberry_django.type(
+    model=Fiction,
+    fields="__all__",
+    filters=FictionFilters,
+    order=FictionOrder,
+)
 class FictionType:
     chapters: OffsetPaginated["ChapterType"] = strawberry_django.offset_paginated()
     characteristics: list["CharacteristicType"]
@@ -144,7 +161,9 @@ class FictionType:
     is_published: auto
     author: "UserType" = strawberry_django.field(field_name="creation_user")
     fandoms: list["FandomType"]
-    trigger_warnings: list["TriggerWarningType"] = strawberry_django.field(prefetch_related="chapters__trigger_warnings")
+    trigger_warnings: list["TriggerWarningType"] = strawberry_django.field(
+        prefetch_related="chapters__trigger_warnings",
+    )
     average: auto
 
 
@@ -178,10 +197,19 @@ class ChapterCollectionItemType(CollectionItemType):
 # caster dans ces sous-classe.
 # ItemType est un workaround, on "mentionne" les sous-classes dans un alias de type, ce qui
 # les ajoute au schéma.
-ItemType = Annotated[CollectionCollectionItemType | FictionCollectionItemType | ChapterCollectionItemType, union("ItemType")]
+ItemType = Annotated[
+    CollectionCollectionItemType
+    | FictionCollectionItemType
+    | ChapterCollectionItemType,
+    union("ItemType"),
+]
 
 
-@strawberry_django.type(model=Collection, filters=CollectionFilters, order=CollectionOrder)
+@strawberry_django.type(
+    model=Collection,
+    filters=CollectionFilters,
+    order=CollectionOrder,
+)
 class CollectionType:
     id: auto
     title: auto
@@ -189,7 +217,9 @@ class CollectionType:
     characteristics: list["CharacteristicType"]
     average: auto
     review_count: auto
-    items: list[ItemType] = strawberry_django.field(disable_optimization=True)  # FIXME bug sur l'optimisateur de select_related
+    items: list[ItemType] = strawberry_django.field(
+        disable_optimization=True,
+    )  # FIXME bug sur l'optimisateur de select_related
     creation_user: "UserType"
     modification_user: "UserType"
     authors: list["UserType"] = strawberry_django.field(select_related="creation_user")
@@ -237,6 +267,20 @@ class FictionReviewType:
         return [cast(UserType, self.creation_user)]
 
 
+@strawberry_django.type(
+    model=CollectionReview,
+    exclude=["parent"],
+    filters=CollectionReviewFilters,
+    order=CollectionReviewOrder,
+)
+class CollectionReviewType:
+    text: auto
+
+    @strawberry_django.field(select_related="creation_user")
+    def authors(self) -> list["UserType"]:
+        return [cast(UserType, self.creation_user)]
+
+
 @strawberry_django.type(model=InvalidationReason, fields="__all__")
 class InvalidationReasonType:
     pass
@@ -249,6 +293,7 @@ class FandomType:
 
 ### NEWS
 
+
 @strawberry_django.type(model=NewsComment, fields="__all__")
 class NewsCommentType:
     creation_user: "UserType"
@@ -257,6 +302,7 @@ class NewsCommentType:
     author: "UserType" = strawberry_django.field(field_name="creation_user")
     content: auto = strawberry_django.field(field_name="text")
     post_date: auto = strawberry_django.field(field_name="creation_date")
+
 
 @strawberry_django.type(
     model=NewsArticle,
@@ -275,6 +321,7 @@ class NewsArticleType:
 
 
 ### IMAGES
+
 
 @strawberry_django.type(model=ContentImage, fields="__all__")
 class ContentImageType:

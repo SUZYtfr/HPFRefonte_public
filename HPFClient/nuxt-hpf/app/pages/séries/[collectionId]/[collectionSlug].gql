@@ -1,0 +1,99 @@
+query getCollection($collectionId: ID!) {
+  collection(pk: $collectionId) {
+    id
+    title
+    summary
+    access
+    authors {
+      id
+      username
+    }
+    fandoms {
+      id
+      name
+      slug
+    }
+    characteristics {
+      id
+      name
+      characteristicTypeId
+    }
+    reviewCount
+    average
+    items {
+      __typename
+      ... on ChapterCollectionItemType {
+        order
+        chapter {
+          id
+          title
+          order
+          reviewCount
+          average
+          fiction {
+            id
+            title
+          }
+          authors {
+            id
+            username
+          }
+        }
+      }
+      ... on FictionCollectionItemType {
+        order
+        fiction {
+          id
+          title
+          reviewCount
+          average
+          authors {
+            id
+            username
+          }
+          characteristics {
+            id
+            name
+            characteristicTypeId
+          }
+          summary
+        }
+      }
+      ... on CollectionCollectionItemType {
+        order
+        collection {
+          id
+          title
+          reviewCount
+          average
+          itemCount
+        }
+      }
+    }
+  }
+}
+
+query getCollectionReviews($filters: CollectionReviewFilters, $pagination: OffsetPaginationInput) {
+  collectionReviews(filters: $filters, pagination: $pagination, order: { publicationDate: DESC }) {
+    totalCount
+    pageInfo {
+      limit
+      offset
+    }
+    results {
+      id
+      grading
+      text
+      authors {
+        id
+        username
+      }
+    }
+  }
+}
+
+mutation createCollectionReview($collectionId: ID!, $collectionReviewData: ReviewInput!) {
+  createCollectionReview(collectionId: $collectionId, reviewData: $collectionReviewData) {
+    id
+  }
+}

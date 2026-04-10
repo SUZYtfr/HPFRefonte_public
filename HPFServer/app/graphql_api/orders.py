@@ -2,11 +2,9 @@ from strawberry import auto, Info
 import strawberry_django
 from django.db.models import QuerySet
 
-from django.db.models import QuerySet
-
 from news.models import NewsArticle
 from fictions.models import Fiction, Chapter, Collection
-from reviews.models import ChapterReview, FictionReview
+from reviews.models import ChapterReview, FictionReview, CollectionReview
 
 
 @strawberry_django.order_type(model=NewsArticle)
@@ -100,4 +98,9 @@ class ChapterReviewOrder:
 
 @strawberry_django.order_type(model=FictionReview)
 class FictionReviewOrder:
+    publication_date: auto
+
+
+@strawberry_django.order_type(model=CollectionReview)
+class CollectionReviewOrder:
     publication_date: auto

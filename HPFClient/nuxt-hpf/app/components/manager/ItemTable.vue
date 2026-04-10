@@ -83,55 +83,9 @@
     </BTableColumn>
     <template #detail="{ row: item }: { row: CollectionItemData }">
       <article>
-        <template v-if="item.chapter">
-          <div>
-            Chapitre {{ item.chapter.order! + 1 }} de la fiction {{ item.chapter.fiction!.title }} par
-            {{ item.chapter.authors?.map((a) => a.username).join(",") }}
-            <NuxtLink
-              :to="{
-                name: 'fictions-fictionId-fictionTitle-chapitres-chapterId-chapterTitle',
-                params: {
-                  fictionId: item.chapter.fiction!.fanfictionId,
-                  fictionTitle: item.chapter.fiction!.titleAsSlug,
-                  chapterId: item.chapter.chapterId,
-                  chapterTitle: item.chapter.titleAsSlug,
-                },
-              }"
-              no-prefetch
-              target="_blank"
-            >
-              <BButton size="is-small" icon-right="up-right-from-square" icon-pack="fas">Voir</BButton>
-            </NuxtLink>
-          </div>
-        </template>
-        <template v-else-if="item.fiction">
-          <div>
-            Fiction de {{ item.fiction.chapterCount }} chapitre{{ item.fiction.chapterCount! > 1 ? "s" : "" }} par
-            {{ item.fiction.authors?.map((a) => a.username).join(",") }}
-            <NuxtLink
-              :to="{
-                name: 'fictions-fictionId-fictionTitle-sommaire',
-                params: {
-                  fictionId: item.fiction.fanfictionId,
-                  fictionTitle: item.fiction.titleAsSlug,
-                },
-              }"
-              no-prefetch
-              target="_blank"
-            >
-              <BButton size="is-small" icon-right="up-right-from-square" icon-pack="fas">Voir</BButton>
-            </NuxtLink>
-          </div>
-          <div>Caractéristiques: --, --, --, -- Fandoms: --, --, --, --</div>
-        </template>
-        <template v-else-if="item.collection">
-          <div>
-            Série par {{ item.collection.authors?.map((a) => a.username).join(",") }} contenant
-            {{ item.collection.itemCount }} élément{{ item.collection.itemCount! > 1 ? "s" : "" }}
-          </div>
-          <BButton size="is-small" icon-right="up-right-from-square" icon-pack="fas">Voir</BButton>
-          <div>Caractéristiques: --, --, --, -- Fandoms: --, --, --, --</div>
-        </template>
+        <ChapterItem v-if="item.chapter" :chapter="item.chapter" />
+        <FictionItem v-else-if="item.fiction" :fiction="item.fiction" />
+        <CollectionItem v-else-if="item.collection" :collection="item.collection" />
         <template v-if="tableType === 'accepted'">
           <div>Ajouté par {{ item.additionUser?.username }} le {{ item.additionDate?.toLocaleDateString() }}</div>
           <div>

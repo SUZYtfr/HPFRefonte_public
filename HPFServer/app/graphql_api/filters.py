@@ -8,7 +8,7 @@ from users.models import User
 from news.models import NewsArticle
 from fictions.models import Fiction, Chapter, Fandom, Collection
 from characteristics.models import Characteristic
-from reviews.models import ChapterReview, FictionReview
+from reviews.models import ChapterReview, FictionReview, CollectionReview
 
 from typing import Optional
 
@@ -63,6 +63,12 @@ class ChapterReviewFilters:
 class FictionReviewFilters:
     id: auto
     fiction: Optional["FictionFilters"]
+
+
+@strawberry_django.filter_type(model=CollectionReview, lookups=True)
+class CollectionReviewFilters:
+    id: auto
+    collection: Optional["CollectionFilters"]
 
 
 @strawberry_django.filter_type(model=Fandom, lookups=True)
@@ -120,6 +126,7 @@ class CharacteristicFilters:
 
 
 # Autres
+
 
 @strawberry.input
 class SearchItemTypeFilter:

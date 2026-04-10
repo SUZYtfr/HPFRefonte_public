@@ -1,94 +1,90 @@
 <template>
-  <div>
-    <div>
-      <!-- Editeur de review -->
-      <div v-if="isAuthenticated">
-        <!-- TODO - le conditionnement de l'apparence selon captureEditor est moche,
+  <!-- Editeur de review -->
+  <div v-if="isAuthenticated">
+    <!-- TODO - le conditionnement de l'apparence selon captureEditor est moche,
         trouver un meilleur moyen de rendre l'éditeur responsif -->
-        <ClientOnly>
-          <Teleport :to="captureEditorTarget" :disabled="!captureEditor" defer>
-            <RichtextEditor
-              ref="review-editor"
-              v-model:text="reviewText"
-              v-model:word-count="wordCount"
-              :config="tiptapConfig"
-            />
-            <div :class="[captureEditor ? 'mt-1' : 'm-2', 'is-flex', 'is-flex-direction-row', 'is-flex-wrap-wrap']">
-              <BCheckbox v-model="canGrade"> Ajouter une note </BCheckbox>
-              <BRate
-                v-model="grading"
-                icon-pack="fas"
-                :max="10"
-                :size="captureEditor ? 'default' : 'is-medium'"
-                :show-score="canGrade"
-                :rtl="false"
-                :spaced="true"
-                :disabled="!canGrade"
-              />
-            </div>
-            <component
-              :is="captureEditor ? 'footer' : 'div'"
-              :class="[captureEditor ? 'card-footer py-2' : 'buttons mt-1']"
-            >
-              <BButton
-                :disabled="wordCount < 3"
-                :expanded="false"
-                label="Poster une review"
-                type="is-primary"
-                class="mx-auto"
-                @click="() => postReview({ text: reviewText, grading: grading })"
-              />
-            </component>
-          </Teleport>
-        </ClientOnly>
+    <ClientOnly>
+      <Teleport :to="captureEditorTarget" :disabled="!captureEditor" defer>
+        <RichtextEditor
+          ref="review-editor"
+          v-model:text="reviewText"
+          v-model:word-count="wordCount"
+          :config="tiptapConfig"
+        />
+        <div :class="[captureEditor ? 'mt-1' : 'm-2', 'is-flex', 'is-flex-direction-row', 'is-flex-wrap-wrap']">
+          <BCheckbox v-model="canGrade"> Ajouter une note </BCheckbox>
+          <BRate
+            v-model="grading"
+            icon-pack="fas"
+            :max="10"
+            :size="captureEditor ? 'default' : 'is-medium'"
+            :show-score="canGrade"
+            :rtl="false"
+            :spaced="true"
+            :disabled="!canGrade"
+          />
+        </div>
+        <component
+          :is="captureEditor ? 'footer' : 'div'"
+          :class="[captureEditor ? 'card-footer py-2' : 'buttons mt-1']"
+        >
+          <BButton
+            :disabled="wordCount < 3"
+            :expanded="false"
+            label="Poster une review"
+            type="is-primary"
+            class="mx-auto"
+            @click="() => postReview({ text: reviewText, grading: grading })"
+          />
+        </component>
+      </Teleport>
+    </ClientOnly>
+  </div>
+  <div v-else class="buttons mt-1 is-centered">
+    <BButton
+      :disabled="false"
+      :expanded="false"
+      label="Se connecter pour laisser une review"
+      type="is-primary"
+      @click="useModalsStateStore().setLoginModalActive(true)"
+    />
+  </div>
+
+  <!-- Liste paginée des reviews -->
+  <div>
+    <BLoading v-model="listLoading" :is-full-page="false" />
+    <div class="px-2 py-3 is-flex-grow-5">
+      <div v-if="!paginatedReviews?.totalCount" class="mx-auto my-auto has-text-centered">
+        <span class="is-italic mt-3">Aucune review, soyez le premier !</span>
       </div>
-      <div v-else class="buttons mt-1 is-centered">
-        <BButton
-          :disabled="false"
-          :expanded="false"
-          label="Se connecter pour laisser une review"
-          type="is-primary"
-          @click="useModalsStateStore().setLoginModalActive(true)"
+      <div v-else>
+        <ReviewEntity
+          v-for="(review, innerindex) of paginatedReviews?.results"
+          :key="'rv_' + review.reviewId.toString()"
+          class="my-2"
+          :review="review"
+          :index="innerindex"
         />
       </div>
-
-      <!-- Liste paginée des reviews -->
-      <div>
-        <BLoading v-model="listLoading" :is-full-page="false" />
-        <div class="px-2 py-3 is-flex-grow-5">
-          <div v-if="!paginatedReviews?.totalCount" class="mx-auto my-auto has-text-centered">
-            <span class="is-italic mt-3">Aucune review, soyez le premier !</span>
-          </div>
-          <div v-else>
-            <ReviewEntity
-              v-for="(review, innerindex) of paginatedReviews?.results"
-              :key="'rv_' + review.reviewId.toString()"
-              class="my-2"
-              :review="review"
-              :index="innerindex"
-            />
-          </div>
-        </div>
-        <footer>
-          <BPagination
-            v-model="pageReviewPagination.page"
-            class="py-2"
-            :total="paginatedReviews?.totalCount"
-            :range-before="3"
-            :range-after="1"
-            :rounded="false"
-            :per-page="pageReviewPagination.pageSize"
-            icon-prev="chevron-left"
-            icon-next="chevron-right"
-            aria-next-label="Page suivante"
-            aria-previous-label="Page précedente"
-            aria-page-label="Page"
-            aria-current-label="Page actuelle"
-            @change="(page: number) => (pageReviewPagination.page = page)"
-          />
-        </footer>
-      </div>
     </div>
+    <footer>
+      <BPagination
+        v-model="pageReviewPagination.page"
+        class="py-2"
+        :total="paginatedReviews?.totalCount"
+        :range-before="3"
+        :range-after="1"
+        :rounded="false"
+        :per-page="pageReviewPagination.pageSize"
+        icon-prev="chevron-left"
+        icon-next="chevron-right"
+        aria-next-label="Page suivante"
+        aria-previous-label="Page précedente"
+        aria-page-label="Page"
+        aria-current-label="Page actuelle"
+        @change="(page: number) => (pageReviewPagination.page = page)"
+      />
+    </footer>
   </div>
 </template>
 
