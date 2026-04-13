@@ -295,6 +295,7 @@ class Query:
     news_articles: OffsetPaginated[NewsArticleType] = (
         strawberry_django.offset_paginated(resolver=resolve_public_news)
     )
+    user: UserType = strawberry_django.field()
     users: OffsetPaginated[UserType] = strawberry_django.offset_paginated()
     themes: list[ThemeType] = strawberry_django.field()
     characteristic_types: list[CharacteristicTypeType] = strawberry_django.field()

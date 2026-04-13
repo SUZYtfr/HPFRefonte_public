@@ -164,8 +164,8 @@ import type { CharacteristicModel } from "~/models";
 type TooltipPosition = "is-left" | "is-right" | "is-top" | "is-bottom" | "is-auto" | undefined;
 
 interface Props {
-  initialIncludedIds: number[];
-  initialExcludedIds: number[];
+  initialIncludedIds?: number[];
+  initialExcludedIds?: number[];
   isFixedHeightCard?: boolean;
   tooltipPosition?: TooltipPosition;
   searchFictions: () => Promise<void>;

@@ -170,12 +170,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def word_count(self) -> int:
         last_version = ChapterVersion.objects.filter(chapter=models.OuterRef("pk")).order_by("-creation_date")
-        word_count = models.Subquery(last_version.values("word_count")[:1])
+        _word_count = models.Subquery(last_version.values("word_count")[:1])
         return (
             self.created_chapters
             .published()
-            .annotate(word_count=word_count)
-            .aggregate(models.Sum("word_count"))["word_count__sum"]
+            .annotate(_word_count=_word_count)
+            .aggregate(models.Sum("_word_count"))["_word_count__sum"]
         ) or 0
 
     @property
@@ -188,7 +188,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def review_count(self) -> int:
-        return self.created_reviews.filter(draft=False).count()
+        return self.created_basereviews.filter(is_draft=False).count()
 
     @property
     def comment_count(self) -> int:

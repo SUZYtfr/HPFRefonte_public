@@ -16,9 +16,12 @@
               >
               <template v-for="(author, index) in collection.authors" :key="'author_' + author.userId.toString()">
                 <template v-if="index > 0"> , </template>
-                <!-- <a class="is-size-6-5 has-text-weight-normal" :href="'auteurs/' + author.userId" -->
-                {{ author.username }}
-                <!-- </a> -->
+                <NuxtLink
+                  class="is-size-6-5 has-text-weight-normal"
+                  :to="{ name: 'auteurs-userId', params: { userId: author.userId } }"
+                >
+                  {{ author.username }}
+                </NuxtLink>
               </template>
             </div>
             <div class="">

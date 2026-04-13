@@ -35,13 +35,13 @@
       <div class="mr-3 white-space-nowrap">
         <template v-for="(author, index) in fanfiction.authors" :key="'author_' + author.userId.toString()">
           <template v-if="index > 0"> , </template>
-          <!-- <NuxtLink
+          <NuxtLink
             class="is-size-7 has-text-weight-normal"
-            :to="{ name: 'auteurs-id', params: { id: author.userId } }"
+            :to="{ name: 'auteurs-userId', params: { userId: author.userId } }"
             no-prefetch
-          > -->
-          {{ author.username }}
-          <!-- </NuxtLink> -->
+          >
+            {{ author.username }}
+          </NuxtLink>
         </template>
       </div>
       <div class="overflow-hidden white-space-nowrap">

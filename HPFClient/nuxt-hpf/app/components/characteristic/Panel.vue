@@ -41,15 +41,15 @@ import type { CharacteristicModel, CharacteristicTypeModel } from "~/models/char
 interface Props {
   characteristicType: CharacteristicTypeModel;
   characteristics: CharacteristicModel[];
-  initialIncludedIds: number[];
-  initialExcludedIds: number[];
+  initialIncludedIds?: number[];
+  initialExcludedIds?: number[];
 }
 
 interface Emits {
   (e: "change", characteristicId: number, state: boolean | null): void;
 }
 
-const { characteristicType, characteristics, initialIncludedIds, initialExcludedIds } = defineProps<Props>();
+const { characteristicType, characteristics, initialIncludedIds = [], initialExcludedIds = [] } = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const includedValues = ref<number[]>(

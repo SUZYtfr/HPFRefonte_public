@@ -54,6 +54,31 @@ from typing import Optional, Annotated
 ### USERS & SITES
 
 
+@strawberry_django.type(model=User)
+class UserStats:
+    word_count: auto
+    review_count: auto
+    fiction_count: auto
+    chapter_count: auto
+    collection_count: auto
+
+    @strawberry_django.field
+    def challenge_count(self) -> int:
+        return 0
+
+    @strawberry_django.field
+    def favorite_fiction_count(self) -> int:
+        return 0
+
+    @strawberry_django.field
+    def favorite_author_count(self) -> int:
+        return 0
+
+    @strawberry_django.field
+    def favorite_collection_count(self) -> int:
+        return 0
+
+
 @strawberry_django.type(model=UserPreferences, fields="__all__")
 class UserPreferencesType:
     user: "UserType"
@@ -64,6 +89,7 @@ class UserPreferencesType:
 @strawberry_django.type(model=UserProfile, fields="__all__")
 class UserProfileType:
     user: "UserType"
+    realname: auto
     modification_user: "UserType"
     bio_images: list["ContentImageType"]
     profile_picture: Optional["ContentImageType"]
@@ -76,6 +102,11 @@ class UserType:
     profile: "UserProfileType"
     preferences: "UserPreferencesType"
     is_watched: auto = strawberry_django.field(extensions=[IsStaff()])
+    first_seen: auto
+
+    @strawberry_django.field
+    def stats(self) -> "UserStats":
+        return cast(UserStats, self)
 
 
 @strawberry_django.type(model=Theme, fields="__all__")

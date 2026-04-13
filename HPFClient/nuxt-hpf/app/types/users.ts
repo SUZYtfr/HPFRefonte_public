@@ -34,6 +34,9 @@ export class UserData extends BasicClass<UserData> {
   public isBeta: boolean = false;
   public team: number[] | null = null;
 
+  public profile: UserProfileData | null = null;
+  public stats: UserStats | null = null;
+
   @Transform(
     ({ value }) => {
       return value != null ? new Date(value) : null;
@@ -96,6 +99,7 @@ export class UserProfileData extends BasicClass<UserProfileData> {
   public gender: UserGender | null = null;
   public bio: string | null = null;
   public profilePicture: string | ArrayBuffer | null = null;
+  public links: UserLinkData[] | null = null;
 }
 
 // Table UserPreferences
@@ -145,6 +149,18 @@ export class UserLinkData extends BasicClass<UserLinkData> {
   public displayName: string = "";
   public linkUrl: string = "";
   public visible: boolean = true;
+}
+
+export class UserStats extends BasicClass<UserStats> {
+  public reviewCount: number | null = null;
+  public fictionCount: number | null = null;
+  public chapterCount: number | null = null;
+  public collectionCount: number | null = null;
+  public challengeCount: number | null = null;
+  public wordCount: number | null = null;
+  public favoriteFictionCount: number | null = null;
+  public favoriteAuthorCount: number | null = null;
+  public favoriteCollectionCount: number | null = null;
 }
 
 export interface UserRegisterProfileData {

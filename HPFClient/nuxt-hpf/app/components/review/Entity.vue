@@ -12,12 +12,12 @@
             <div class="mr-3 white-space-nowrap">
               <template v-for="(author, index) in review.authors" :key="'author_' + author.userId.toString()">
                 <template v-if="index > 0"> , </template>
-                <!-- <NuxtLink
+                <NuxtLink
                   class="is-size-7 has-text-weight-normal"
-                  :to="{ name: 'auteurs-id', params: { id: author.userId } }"
-                > -->
-                {{ author.username }}
-                <!-- </NuxtLink> -->
+                  :to="{ name: 'auteurs-userId', params: { userId: author.userId } }"
+                >
+                  {{ author.username }}
+                </NuxtLink>
               </template>
             </div>
           </div>

@@ -1,0 +1,68 @@
+query getUser($userId: ID!) {
+  user(pk: $userId) {
+    id
+    username
+    firstSeen
+    profile {
+      realname
+      bio
+    }
+    stats {
+      reviewCount
+      fictionCount
+      chapterCount
+      collectionCount
+      challengeCount
+      wordCount
+      favoriteFictionCount
+      favoriteAuthorCount
+      favoriteCollectionCount
+    }
+  }
+}
+
+query searchAuthorFictions($pagination: OffsetPaginationInput, $order: FictionOrder, $filters: FictionFilters) {
+  fictions(pagination: $pagination, order: $order, filters: $filters) {
+    totalCount
+    pageInfo {
+      limit
+      offset
+    }
+    results {
+      id
+      title
+      summary
+      storynote
+      creationUser {
+        ...BaseUserInfo
+      }
+      authors {
+        ...BaseUserInfo
+      }
+      characteristics {
+        id
+        name
+        characteristicTypeId
+      }
+      fandoms {
+        id
+        name
+        slug
+      }
+      chapters(pagination: { limit: 1 }) {
+        results {
+          id
+          title
+        }
+      }
+      lastUpdateDate
+      creationDate
+      reviewCount
+      wordCount
+      readCount
+      chapterCount
+      status
+      featured
+    }
+  }
+}

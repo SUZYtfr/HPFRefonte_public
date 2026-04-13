@@ -8,9 +8,9 @@
     <div class="media-content">
       <div class="content">
         <div class="is-flex is-flex-direction-row is-justify-content-space-between">
-          <!-- <NuxtLink :to="{ name: 'auteurs-id', params: { id: comment.author?.userId } }"> -->
-          <strong>{{ comment.author?.username }}</strong>
-          <!-- </NuxtLink> -->
+          <NuxtLink :to="{ name: 'auteurs-userId', params: { userId: comment.author?.userId } }" no-prefetch>
+            <strong>{{ comment.author?.username }}</strong>
+          </NuxtLink>
           <small>{{
             comment.postDate != null
               ? comment.postDate.toLocaleDateString("fr-FR") +

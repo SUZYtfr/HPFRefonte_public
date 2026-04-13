@@ -5,5 +5,6 @@ export * from "./fanfictions";
 // export * from './reviews';
 export * from "./themes";
 export * from "./news";
+export * from "~/types/users";
 export * from "~/types/config";
 export * from "~/types/characteristics";
