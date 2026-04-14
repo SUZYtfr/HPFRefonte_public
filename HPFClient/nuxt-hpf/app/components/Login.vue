@@ -40,18 +40,15 @@
 <script setup lang="ts">
 //#region Imports
 import type { UserLoginData } from "~/types/users";
-import { useChangeTheme } from "~/composables/useTheme";
-import { ColorSchemeEnum } from "~/types/themes";
 import { snackbar } from "~/composables/useBuefy";
 //#endregion
 
 //#region Usings
-const { data, signIn } = useCustomAuth();
+const { signIn } = useCustomAuth();
 // #endregion
 
 // #region Stores
 const modalsStateStore = useModalsStateStore();
-const configStore = useConfigStore();
 // #endregion
 
 //#region Ref
@@ -74,12 +71,6 @@ const login = async (): Promise<void> => {
   isLoading.value = true;
   try {
     await signIn(loginForm.value);
-    // Mettre le thème de l'utilisateur
-    useChangeTheme(
-      configStore.currentTheme?.details?.find((t) => {
-        return t.colorScheme === ((data.value?.preferences.colorScheme as ColorSchemeEnum) ?? ColorSchemeEnum.Light);
-      }) ?? null,
-    );
     modalsStateStore.setLoginModalActive(false);
   } catch (error) {
     if (import.meta.server) {

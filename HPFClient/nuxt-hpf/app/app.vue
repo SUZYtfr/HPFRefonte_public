@@ -11,36 +11,13 @@
 </template>
 
 <script setup lang="ts">
-//#region Imports
-import { ColorSchemeEnum } from "./types/themes";
-//#endregion
-
-//#region Reactive
 const isMounted = ref(false);
-//#endregion
 
-//#region Usings
-const { data } = useCustomAuth();
-//#endregion
-
-//#region Stores
-const configStore = useConfigStore();
-//#endregion
-
-//#region Hooks
 onMounted(() => {
-  // Mettre le thème de l'utilisateur
-  useChangeTheme(
-    configStore.currentTheme?.details?.find((t) => {
-      return t.colorScheme === ((data.value?.preferences.colorScheme as ColorSchemeEnum) ?? ColorSchemeEnum.Light);
-    }) ?? null,
-  );
-
   requestAnimationFrame(() => {
     isMounted.value = true;
   });
 });
-//#endregion
 </script>
 
 <style lang="scss">

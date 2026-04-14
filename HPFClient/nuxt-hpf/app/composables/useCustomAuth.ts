@@ -29,7 +29,7 @@ interface SignInCredentials {
 type SessionData = Awaited<ReturnType<GqlSdkFuncs["getSession"]>>;
 
 const loading = ref<boolean>(false);
-const accountData = ref<SessionData["account"] | null>(null);
+// const accountData = ref<SessionData["account"] | null>(null);
 
 interface UseCustomAuthReturn {
   token: CookieRef<string | null | undefined>;
@@ -54,10 +54,12 @@ export function useCustomAuth(): UseCustomAuthReturn {
   });
   const isAuthenticated = computed<boolean>(() => Boolean(token.value));
   const isStaff = computed<boolean>(() => payloadData.value?.isStaff || false);
+  const profileCookie = useCookie<SessionData["account"]>("profile");
+  const accountData = profileCookie;
 
   async function signIn(credentials: SignInCredentials): Promise<void> {
     loading.value = true;
-    accountData.value = null;
+    // accountData.value = null;
     useGqlToken(null);
 
     const { requestToken } = await GqlRequestToken(credentials);
@@ -77,15 +79,19 @@ export function useCustomAuth(): UseCustomAuthReturn {
   async function getAccountData(): Promise<void> {
     if (!isAuthenticated) return;
     const { account } = await GqlGetSession();
-    accountData.value = account;
+    // accountData.value = account;
+    const profileCookie = useCookie("profile");
+    profileCookie.value = JSON.stringify(account);
     return;
   }
 
   async function signOut(): Promise<void> {
     loading.value = true;
     useGqlToken(null);
-    accountData.value = null;
+    // accountData.value = null;
     loading.value = false;
+    const profileCookie = useCookie("profile");
+    profileCookie.value = undefined;
     return;
   }
 

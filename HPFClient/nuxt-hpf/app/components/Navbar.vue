@@ -37,13 +37,15 @@
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
                   <BImage
-                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
+                    :src="
+                      accountData?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'
+                    "
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span class="username-visibility" style="margin-left: 5px">{{ data?.username }}</span>
+                  <span class="username-visibility" style="margin-left: 5px">{{ accountData?.username }}</span>
                   <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
@@ -126,13 +128,15 @@
               <template #trigger="{ active }">
                 <button type="button" class="button is-light" style="padding-left: 8px">
                   <BImage
-                    :src="data?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'"
+                    :src="
+                      accountData?.profile?.profilePicture ?? 'https://bulma.io/assets/images/placeholders/24x24.png'
+                    "
                     alt="Image de profil"
                     style="width: 22px; height: 22px; margin-left: -8px"
                     :rounded="true"
                     :responsive="true"
                   />
-                  <span style="margin-left: 5px">{{ data?.username }}</span>
+                  <span style="margin-left: 5px">{{ accountData?.username }}</span>
                   <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
@@ -175,27 +179,12 @@
 </template>
 
 <script setup lang="ts">
-// #region Imports
-import { useChangeTheme } from "~/composables/useTheme";
-import Login from "./Login.vue";
-// #endregion
+const { accountData, isAuthenticated, isStaff, signOut } = useCustomAuth();
 
-//#region Usings
-const { data, isAuthenticated, isStaff, signOut } = useCustomAuth();
-//#endregion
-
-// #region Stores
 const modalsStateStore = useModalsStateStore();
-const configStore = useConfigStore();
-// #endregion
-
-// #region Methods
 const logout = async (): Promise<void> => {
   await signOut();
-  // Remettre le thème par défaut
-  useChangeTheme(configStore.currentTheme?.details[0] ?? null);
 };
-// #endregion
 </script>
 
 <style lang="css" scoped>

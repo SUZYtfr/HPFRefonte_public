@@ -24,43 +24,6 @@ export const useConfigStore = defineStore("config", () => {
   ]);
   //#endregion
 
-  //#region Getter
-  const currentTheme = computed(() => {
-    if (themes.value == null || themes.value.length === 0) return null;
-
-    const { data, isAuthenticated } = useCustomAuth();
-
-    let currentTheme = null;
-    // Theme évènementiel
-    currentTheme =
-      themes.value.find(
-        (theme) =>
-          theme.useDefaultFrom != null &&
-          theme.useDefaultTo != null &&
-          theme.useDefaultFrom <= new Date() &&
-          theme.useDefaultTo >= new Date(),
-      ) ?? null;
-
-    // Cas utilisateur connecté
-    if (isAuthenticated.value && data.value?.preferences != null) {
-      // Theme utilisateur
-      // (si le thème évènementiel est null ou si l'utilisateur a overridé son thème)
-      if (
-        currentTheme == null ||
-        (data.value.preferences.themeOverridenAt != null &&
-          currentTheme.useDefaultTo != null &&
-          new Date(data.value.preferences.themeOverridenAt) > currentTheme.useDefaultTo)
-      )
-        currentTheme = themes.value.find((theme) => theme.themeId === data?.value?.preferences.theme) ?? null;
-    }
-
-    // Theme par défaut si pas de thème évènementiel / pas de thème utilisateur
-    if (currentTheme == null) currentTheme = themes.value.find((theme) => theme.default) ?? null;
-
-    return currentTheme;
-  });
-  //#endregion
-
   // Bizarrement il faut séparer ces deux appels dans leur méthodes respectives
   // Sinon on a une erreur:
   // [nuxt] A composable that requires access to the Nuxt instance was called outside
@@ -143,7 +106,6 @@ export const useConfigStore = defineStore("config", () => {
     characteristicTypes,
     triggerWarnings,
     themes,
-    currentTheme,
     fandoms,
     invalidationReasons,
     fetchCharacteristicTypes,

@@ -11,6 +11,15 @@ export class ThemeData extends BasicClass<ThemeData> {
   public default: boolean = true;
   public enabled: boolean = true;
 
+  public get isCurrent(): boolean {
+    if (this.useDefaultFrom && this.useDefaultTo) {
+      return this.useDefaultFrom < new Date() && new Date() < this.useDefaultTo;
+    }
+    else {
+      return false;
+    }
+  }
+
   @Transform(
     ({ value }) => {
       return value != null ? new Date(value) : null;
