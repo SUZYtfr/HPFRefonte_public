@@ -4,6 +4,8 @@ from strawberry_django.optimizer import DjangoOptimizerExtension
 from app.graphql_api.queries import Query
 from app.graphql_api.mutations import Mutation
 
+from decimal import Decimal
+
 
 """
 TODO :
@@ -30,4 +32,11 @@ schema = strawberry.Schema(
     extensions=[
         DjangoOptimizerExtension,
     ],
+    scalar_overrides={
+        Decimal: strawberry.scalar(
+            name="Decimal",
+            serialize=lambda value: float(value),
+            parse_value=lambda value: str(value),
+        ),
+    },
 )

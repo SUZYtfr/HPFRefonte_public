@@ -1,12 +1,13 @@
 import django.db.transaction
 from django.utils import timezone
 import strawberry
-from strawberry import Info, cast
+from strawberry import Info, cast, UNSET
 import strawberry_django
 from strawberry_django.auth.utils import get_current_user
 from strawberry_django.permissions import IsAuthenticated, IsStaff
 from strawberry_django_extras.jwt.mutations import JWTMutations
 from app.graphql_api.types import (
+    UserPreferencesType,
     NewsCommentType,
     CollectionType,
     CollectionItemType,
@@ -18,6 +19,7 @@ from app.graphql_api.types import (
     CollectionReviewType,
 )
 from app.graphql_api.inputs import (
+    UserPreferencesInput,
     NewsCommentInput,
     FictionInput,
     ChapterInput,
@@ -636,6 +638,22 @@ def create_collection_review(
     return cast(CollectionReviewType, collection_review)
 
 
+def update_user_preferences(
+    info: Info,
+    user_preferences_data: UserPreferencesInput,
+) -> UserPreferencesType:
+    current_user = get_current_user(info)
+    pref = vars(user_preferences_data)
+    if theme_id := pref.pop("theme", None):
+        current_user.preferences.theme_id = theme_id
+    for key, value in pref.items():
+        if value is not UNSET:
+            setattr(current_user.preferences, key, value)
+    current_user.preferences.save()
+
+    return cast(UserPreferencesType, current_user.preferences)
+
+
 ### ADMIN
 
 
@@ -678,6 +696,12 @@ def invalidate_chapter_version(
 class Mutation:
     # publique
     request_token = JWTMutations.issue
+
+    # compte
+    update_preferences = strawberry_django.mutation(
+        resolver=update_user_preferences,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
 
     # privé
     post_comment = strawberry_django.mutation(

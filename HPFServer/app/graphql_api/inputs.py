@@ -6,6 +6,36 @@ from strawberry_django import ListInput
 from news.models import NewsComment
 from fictions.models import Fiction, Chapter, ChapterVersion, Collection
 from reviews.models import BaseReview, ChapterReview, FictionReview, CollectionReview
+from users.models import UserPreferences
+
+
+### COMPTE
+@strawberry_django.input(model=UserPreferences)
+class UserPreferencesInput:
+    display_content: auto
+    theme: int | None = None
+    theme_overriden_at: auto
+    color_scheme: auto
+    color_scheme_in_reader: auto
+    show_animations: auto
+    show_profile_pictures: auto
+    font: auto
+    font_size: auto
+    line_spacing: auto
+    letter_spacing: auto
+    paragraph_spacing: auto
+    redirect_to_summary: auto
+    show_trigger_warnings: auto
+    show_review_editor: auto
+    email_for_review: auto
+    email_for_reply: auto
+    email_for_news: auto
+    email_for_favorite: auto
+    email_for_favorite_activity: auto
+    email_for_chapter_status: auto
+    member_review_policy: auto
+    anonymous_review_policy: auto
+    result_order: auto
 
 
 ### NEWS

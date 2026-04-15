@@ -1,0 +1,7 @@
+mutation updateUserPreferences($userPreferencesData: UserPreferencesInput!) {
+  updatePreferences(userPreferencesData: $userPreferencesData) {
+    user {
+      id
+    }
+  }
+}

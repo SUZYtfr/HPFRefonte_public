@@ -159,6 +159,9 @@ export default defineNuxtConfig({
   "graphql-client": {
     codegen: {
       onlyOperationTypes: false,
+      scalars: {
+        Decimal: "number",
+      }
     },
     // codegen: false,  // désactive codegen si le serveur n'est pas dispo pour le schéma
     clients: {

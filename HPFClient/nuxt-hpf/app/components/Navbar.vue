@@ -140,7 +140,9 @@
                   <BIcon :icon="active ? 'angle-up' : 'angle-down'" />
                 </button>
               </template>
-              <BDropdownItem aria-role="listitem">Mon compte</BDropdownItem>
+              <BDropdownItem aria-role="listitem" has-link>
+                <NuxtLink class="dropdown-item" :to="{ name: 'compte-préférences' }" no-prefetch>Préférences</NuxtLink>
+              </BDropdownItem>
               <BDropdownItem aria-role="listitem" has-link>
                 <NuxtLink class="dropdown-item" :to="{ name: 'compte-fictions' }" no-prefetch>Mes fictions</NuxtLink>
               </BDropdownItem>
