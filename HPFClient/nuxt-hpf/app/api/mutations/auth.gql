@@ -3,3 +3,17 @@ mutation requestToken($username: String!, $password: String!) {
     token
   }
 }
+
+mutation createAccount($accountData: AccountInput!) {
+  createAccount(accountData: $accountData) {
+    id
+  }
+}
+
+mutation updateProfile($profileData: UserProfileInput!) {
+  updateProfile(userProfileData: $profileData) {
+    user {
+      id
+    }
+  }
+}

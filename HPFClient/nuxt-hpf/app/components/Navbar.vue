@@ -177,6 +177,7 @@
     <Login />
     <!-- Modal d'inscription -->
     <!-- <Register /> -->
+    <Register2 />
   </div>
 </template>
 

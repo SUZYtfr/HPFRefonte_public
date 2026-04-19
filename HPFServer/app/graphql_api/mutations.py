@@ -7,6 +7,8 @@ from strawberry_django.auth.utils import get_current_user
 from strawberry_django.permissions import IsAuthenticated, IsStaff
 from strawberry_django_extras.jwt.mutations import JWTMutations
 from app.graphql_api.types import (
+    UserType,
+    UserProfileType,
     UserPreferencesType,
     NewsCommentType,
     CollectionType,
@@ -29,6 +31,7 @@ from app.graphql_api.inputs import (
     CollectionItemInput,
 )
 from app.graphql_api.exceptions import NotOwnerError, NotOwnerOrStaffError
+from users.models import User, UserProfile
 from news.models import NewsComment
 from fictions.models import (
     Fiction,
@@ -42,6 +45,61 @@ from fictions.models import (
 )
 from reviews.models import ChapterReview, FictionReview, CollectionReview
 from core.text_functions import count_words
+
+
+@strawberry_django.input(model=User)
+class AccountInput:
+    username: strawberry.auto
+    password: strawberry.auto
+    email: strawberry.auto
+
+
+@strawberry_django.input(model=UserProfile)
+class UserProfileInput:
+    realname: strawberry.auto
+    website: strawberry.auto
+    bio: strawberry.auto
+    # profile_picture: strawberry.auto
+
+
+### PUBLIC
+def create_account(
+    info: Info,
+    account_data: AccountInput,
+) -> UserType:
+    user = User.objects.create_user(**vars(account_data))
+    return cast(UserType, user)
+
+
+### COMPTE
+def update_user_profile(
+    info: Info,
+    user_profile_data: UserProfileInput,
+) -> UserProfileType:
+    current_user = get_current_user(info)
+    profile = vars(user_profile_data)
+    for key, value in profile.items():
+        if value is not UNSET:
+            setattr(current_user.profile, key, value)
+    current_user.profile.save()
+
+    return cast(UserProfileType, current_user.profile)
+
+
+def update_user_preferences(
+    info: Info,
+    user_preferences_data: UserPreferencesInput,
+) -> UserPreferencesType:
+    current_user = get_current_user(info)
+    pref = vars(user_preferences_data)
+    if theme_id := pref.pop("theme", None):
+        current_user.preferences.theme_id = theme_id
+    for key, value in pref.items():
+        if value is not UNSET:
+            setattr(current_user.preferences, key, value)
+    current_user.preferences.save()
+
+    return cast(UserPreferencesType, current_user.preferences)
 
 
 ### NEWS
@@ -638,22 +696,6 @@ def create_collection_review(
     return cast(CollectionReviewType, collection_review)
 
 
-def update_user_preferences(
-    info: Info,
-    user_preferences_data: UserPreferencesInput,
-) -> UserPreferencesType:
-    current_user = get_current_user(info)
-    pref = vars(user_preferences_data)
-    if theme_id := pref.pop("theme", None):
-        current_user.preferences.theme_id = theme_id
-    for key, value in pref.items():
-        if value is not UNSET:
-            setattr(current_user.preferences, key, value)
-    current_user.preferences.save()
-
-    return cast(UserPreferencesType, current_user.preferences)
-
-
 ### ADMIN
 
 
@@ -696,8 +738,15 @@ def invalidate_chapter_version(
 class Mutation:
     # publique
     request_token = JWTMutations.issue
+    create_account = strawberry_django.mutation(
+        resolver=create_account,
+    )
 
     # compte
+    update_profile = strawberry_django.mutation(
+        resolver=update_user_profile,
+        extensions=[IsAuthenticated(fail_silently=False)],
+    )
     update_preferences = strawberry_django.mutation(
         resolver=update_user_preferences,
         extensions=[IsAuthenticated(fail_silently=False)],
